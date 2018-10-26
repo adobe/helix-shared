@@ -1,0 +1,106 @@
+{
+    "strains": {
+        "client": {
+            "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
+            "condition": "req.http.host == \"client.project-helix.io\"",
+            "content": {
+                "host": "github.com",
+                "hostname": "github.com",
+                "owner": "adobe",
+                "path": "",
+                "port": "",
+                "protocol": "https",
+                "ref": "master",
+                "repo": "helix-cli"
+            },
+            "directoryIndex": "readme.html",
+            "name": "client",
+            "perf": {
+                "connection": "",
+                "device": "",
+                "location": ""
+            },
+            "static": {
+                "allow": [],
+                "deny": [],
+                "host": "github.com",
+                "hostname": "github.com",
+                "magic": false,
+                "owner": "adobe",
+                "path": "/webroot",
+                "port": "",
+                "protocol": "https",
+                "ref": "",
+                "repo": "project-helix.io"
+            }
+        },
+        "default": {
+            "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
+            "condition": "req.http.host == \"www.project-helix.io\"",
+            "content": {
+                "host": "github.com",
+                "hostname": "github.com",
+                "owner": "adobe",
+                "path": "",
+                "port": "",
+                "protocol": "https",
+                "ref": "",
+                "repo": "project-helix.io"
+            },
+            "directoryIndex": "index.html",
+            "name": "default",
+            "perf": {
+                "connection": "",
+                "device": "",
+                "location": ""
+            },
+            "static": {
+                "allow": [],
+                "deny": [],
+                "host": "github.com",
+                "hostname": "github.com",
+                "magic": false,
+                "owner": "adobe",
+                "path": "/webroot",
+                "port": "",
+                "protocol": "https",
+                "ref": "",
+                "repo": "project-helix.io"
+            }
+        },
+        "pipeline": {
+            "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
+            "condition": "req.http.host == \"pipeline.project-helix.io\"",
+            "content": {
+                "host": "github.com",
+                "hostname": "github.com",
+                "owner": "adobe",
+                "path": "",
+                "port": "",
+                "protocol": "https",
+                "ref": "master",
+                "repo": "hypermedia-pipeline"
+            },
+            "directoryIndex": "index.html",
+            "name": "pipeline",
+            "perf": {
+                "connection": "",
+                "device": "",
+                "location": ""
+            },
+            "static": {
+                "allow": [],
+                "deny": [],
+                "host": "github.com",
+                "hostname": "github.com",
+                "magic": false,
+                "owner": "adobe",
+                "path": "/webroot",
+                "port": "",
+                "protocol": "https",
+                "ref": "",
+                "repo": "project-helix.io"
+            }
+        }
+    }
+}

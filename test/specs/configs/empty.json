@@ -1,0 +1,38 @@
+{
+    "strains": {
+        "default": {
+            "code": "",
+            "condition": "",
+            "content": {
+                "host": "localhost:443",
+                "hostname": "localhost",
+                "owner": "local",
+                "path": "",
+                "port": "443",
+                "protocol": "http",
+                "ref": "",
+                "repo": "default"
+            },
+            "directoryIndex": "index.html",
+            "name": "default",
+            "perf": {
+                "connection": "",
+                "device": "",
+                "location": ""
+            },
+            "static": {
+                "allow": [],
+                "deny": [],
+                "host": "localhost:443",
+                "hostname": "localhost",
+                "magic": false,
+                "owner": "local",
+                "path": "/dist",
+                "port": "443",
+                "protocol": "http",
+                "ref": "",
+                "repo": "default"
+            }
+        }
+    }
+}

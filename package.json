@@ -1,7 +1,7 @@
 {
-  "name": "@adobe/new-package-template",
+  "name": "@adobe/helix-shared",
   "version": "0.0.1",
-  "description": "Example Package",
+  "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc mocha",
@@ -13,15 +13,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-rnd/new-nodejs-repository-template"
+    "url": "https://github.com/adobe/helix-shared"
   },
   "author": "",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/adobe-rnd/new-nodejs-repository-template/issues"
+    "url": "https://github.com/adobe/helix-shared/issues"
   },
-  "homepage": "https://github.com/adobe-rnd/new-nodejs-repository-template#readme",
-  "dependencies": {},
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "js-yaml": "^3.12.0",
+    "shelljs": "^0.8.2"
+  },
   "devDependencies": {
     "ajv": "^6.5.3",
     "codecov": "^3.0.2",
