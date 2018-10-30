@@ -32,11 +32,12 @@ const MY_LEVELS = {
 };
 
 /**
- * Winston format that suppresses messages when the `info.progress` is `true` and process.stdout
+ * Winston format that suppresses messages when the `info.progress` is `true` and console._stdout
  * is a TTY. This is used to log steps during a progress meter.
  */
 const progressFormat = winston.format((info) => {
-  if (info.progress && process.stdout.isTTY) {
+  // eslint-disable-next-line no-underscore-dangle,no-console
+  if (info.progress && console._stdout.isTTY) {
     return false;
   }
   return info;
@@ -77,8 +78,6 @@ function getLogger(config) {
     ? config.logFile
     : ['-', (config && config.logFile) || path.join(logsDir, `${categ}-server.log`)];
 
-  fs.ensureDirSync(logsDir);
-
   const transports = [];
   logFiles.forEach((logFile) => {
     if (logFile === '-') {
@@ -96,6 +95,7 @@ function getLogger(config) {
         format: winston.format.combine(...formats),
       }));
     } else {
+      fs.ensureDirSync(path.dirname(logFile));
       transports.push(new winston.transports.File({
         level: 'debug',
         filename: logFile,
