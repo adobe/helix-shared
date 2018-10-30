@@ -13,10 +13,12 @@ const GitUrl = require('./GitUrl.js');
 const GitUtils = require('./GitUtils.js');
 const HelixConfig = require('./HelixConfig.js');
 const Strain = require('./Strain.js');
+const Logger = require('./Logger.js');
 
 module.exports = {
   GitUrl,
   GitUtils,
   HelixConfig,
   Strain,
+  Logger,
 };
