@@ -66,19 +66,39 @@ describe('Logger tests', () => {
   it('can set a log files', async () => {
     const file1 = path.resolve(LOG_DIR, 'f1.log');
     const file2 = path.resolve(LOG_DIR, 'f2.log');
+    const file3 = path.resolve(LOG_DIR, 'f3.json');
     const log = Logger.getLogger({
-      logFile: [file1, file2],
+      logFile: [file1, file2, file3],
     });
 
     log.info('hello, world');
+    log.error('gnu not unix');
     log.end();
 
     // maybe not the best condition to wait for the streams to close
     await new Promise(r => setTimeout(r, 100));
     const f1 = await fs.readFile(file1, 'utf-8');
     const f2 = await fs.readFile(file2, 'utf-8');
+    const f3 = await fs.readFile(file3, 'utf-8');
     assert.ok(/.*hello, world.*/.test(f1));
     assert.ok(/.*hello, world.*/.test(f2));
+    const r1 = JSON.parse(f3.split('\n')[0]);
+    delete r1['@timestamp'];
+    assert.deepEqual(r1, {
+      '@fields': {
+        level: 'info',
+      },
+      '@message': 'hello, world',
+    });
+
+    const r2 = JSON.parse(f3.split('\n')[1]);
+    delete r2['@timestamp'];
+    assert.deepEqual(r2, {
+      '@fields': {
+        level: 'error',
+      },
+      '@message': 'gnu not unix',
+    });
   });
 
   it('suppressed logs for tty', async () => {

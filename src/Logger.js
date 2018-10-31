@@ -96,13 +96,18 @@ function getLogger(config) {
       }));
     } else {
       fs.ensureDirSync(path.dirname(logFile));
+
+      const formats = [winston.format.timestamp()];
+      if (/\.json/.test(logFile)) {
+        formats.push(winston.format.logstash());
+      } else {
+        formats.push(winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`));
+      }
+
       transports.push(new winston.transports.File({
         level: 'debug',
         filename: logFile,
-        format: winston.format.combine(
-          winston.format.timestamp(),
-          winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`),
-        ),
+        format: winston.format.combine(...formats),
       }));
     }
   });
