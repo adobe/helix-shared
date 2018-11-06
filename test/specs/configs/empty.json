@@ -4,11 +4,11 @@
             "code": "",
             "condition": "",
             "content": {
-                "host": "localhost:443",
+                "host": "localhost",
                 "hostname": "localhost",
                 "owner": "local",
                 "path": "",
-                "port": "443",
+                "port": "",
                 "protocol": "http",
                 "ref": "",
                 "repo": "default"
@@ -23,12 +23,12 @@
             "static": {
                 "allow": [],
                 "deny": [],
-                "host": "localhost:443",
+                "host": "localhost",
                 "hostname": "localhost",
                 "magic": false,
                 "owner": "local",
                 "path": "/dist",
-                "port": "443",
+                "port": "",
                 "protocol": "http",
                 "ref": "",
                 "repo": "default"

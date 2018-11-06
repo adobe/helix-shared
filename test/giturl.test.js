@@ -378,4 +378,30 @@ describe('GitUrl from object tests', () => {
       assert.equal(e.message, 'Invalid URL: no repo');
     }
   });
+
+  it('parse roundtrip from http', () => {
+    const original = 'http://localhost/owner/repo.git#local_path';
+    const result = new GitUrl(original).toString();
+    assert.equal(result, original);
+  });
+
+  it('parse roundtrip from https', () => {
+    const original = 'https://localhost/owner/repo.git#local_path';
+    const result = new GitUrl(original).toString();
+    assert.equal(result, original);
+  });
+
+  it('init roundtrip from http', () => {
+    const src = 'http://localhost/owner/repo.git#local_path';
+    const original = new GitUrl(src);
+    const result = new GitUrl(original);
+    assert.equal(result.toString(), src);
+  });
+
+  it('init roundtrip from https', () => {
+    const src = 'https://localhost/owner/repo.git#local_path';
+    const original = new GitUrl(src);
+    const result = new GitUrl(original);
+    assert.equal(result.toString(), src);
+  });
 });

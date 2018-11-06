@@ -32,8 +32,8 @@ class GitUrl {
    */
   constructor(url, defaults = {}) {
     if (url === Object(url)) {
-      this._url = new URL(`${url.protocol || defaults.protocol || 'https'}://${url.hostname || defaults.hostname || 'github.com'}`);
-      this._url.port = url.port || defaults.port || 443;
+      const portStr = url.port || defaults.port ? `:${url.port || defaults.port}` : '';
+      this._url = new URL(`${url.protocol || defaults.protocol || 'https'}://${url.hostname || defaults.hostname || 'github.com'}${portStr}`);
       this._owner = url.owner || defaults.owner;
       this._repo = url.repo || defaults.repo;
       this._ref = url.ref || defaults.ref;
