@@ -37,7 +37,7 @@ class HelixConfig {
     this._defaults = {
       content: new GitUrl('http://localhost/local/default.git'),
       code: new GitUrl('http://localhost/local/default.git'),
-      staticRoot: '/dist',
+      staticRoot: '/',
       directoryIndex: 'index.html',
     };
 
