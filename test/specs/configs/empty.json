@@ -27,7 +27,7 @@
                 "hostname": "localhost",
                 "magic": false,
                 "owner": "local",
-                "path": "/dist",
+                "path": "",
                 "port": "",
                 "protocol": "http",
                 "ref": "",
