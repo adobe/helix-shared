@@ -45,4 +45,4 @@ strains:
       ref: master
       owner: adobe
     static:
-      root: /dist
+      path: /dist

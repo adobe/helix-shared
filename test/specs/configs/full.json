@@ -95,7 +95,7 @@
                 "hostname": "github.com",
                 "magic": false,
                 "owner": "adobe",
-                "path": "/webroot",
+                "path": "/dist",
                 "port": "",
                 "protocol": "https",
                 "ref": "",
