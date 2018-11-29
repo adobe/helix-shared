@@ -42,3 +42,42 @@ describe('Strain Config', () => {
     assert.equal(cfg.strains.get('default').content, 'foo');
   });
 });
+
+
+describe('Static Config', () => {
+  it('get path', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))
+      .init();
+    assert.ok(cfg.strains);
+    assert.ok(cfg.strains.get('default').static);
+    assert.equal(cfg.strains.get('default').static.path, '/webroot');
+  });
+
+  it('get owner', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))
+      .init();
+    assert.ok(cfg.strains);
+    assert.ok(cfg.strains.get('default').static);
+    assert.equal(cfg.strains.get('default').static.owner, 'adobe');
+  });
+
+  it('get repo', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))
+      .init();
+    assert.ok(cfg.strains);
+    assert.ok(cfg.strains.get('default').static);
+    assert.equal(cfg.strains.get('default').static.repo, 'project-helix.io');
+  });
+
+  it('get ref', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))
+      .init();
+    assert.ok(cfg.strains);
+    assert.ok(cfg.strains.get('default').static);
+    assert.equal(cfg.strains.get('default').static.ref, '');
+  });
+});
