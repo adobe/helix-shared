@@ -50,3 +50,9 @@ strains:
   proxy:
     origin: https://www.adobe.io/
     condition: req.http.host == "proxy.project-helix.io"
+
+  proxy-detailed :
+    origin:
+      address: 192.168.0.1
+      name: publish
+      use_ssl: false
