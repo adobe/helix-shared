@@ -43,7 +43,7 @@ strains:
     url: https://pipeline.project-helix.io
     urls:
       - https://pipeline.project-helix.io/index.html
-      - https://pipeline.project-helix.io/index.html
+      - https://pipeline.project-helix.io/README.html
     content:
       repo: hypermedia-pipeline
       ref: master
@@ -55,7 +55,7 @@ strains:
     origin: https://www.adobe.io/
     condition: req.http.host == "proxy.project-helix.io"
 
-  proxy-detailed :
+  proxy-detailed:
     sticky: true
     origin:
       address: 192.168.0.1

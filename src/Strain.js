@@ -142,6 +142,25 @@ class Strain {
     } else {
       this._origin = null;
     }
+    this._url = cfg.url || undefined;
+    
+    if (Array.isArray(cfg.urls)) {
+      this._urls = new Set(cfg.urls);
+    } else {
+      this._urls = new Set();
+    }
+    if (this._url) {
+      this._urls.add(this._url);
+    }
+    
+    if (cfg.sticky===false) {
+      this._sticky = false;
+    } else if (cfg.sticky===true) {
+      this._sticky = true;
+    } else {
+      // strains with a condition are sticky by default
+      this._sticky = !!this._condition;
+    }
   }
 
   get name() {
@@ -188,6 +207,18 @@ class Strain {
     return this._origin !== null;
   }
 
+  get url() {
+    return this._url;
+  }
+
+  get urls() {
+    return this._urls;
+  }
+
+  get sticky() {
+    return this._sticky;
+  }
+
   /**
    * JSON Serialization of a Strain
    * @typedef Strain~JSON
@@ -206,11 +237,17 @@ class Strain {
    * @returns {Strain~JSON}
    */
   toJSON() {
-    const json = {
+    let json = {
       name: this.name,
       condition: this.condition,
       perf: this.perf.toJSON(),
+      sticky: this.sticky,
+      urls: this.urls,
+      url: undefined
     };
+    if (this.url) {
+      json = Object.assign({url: this.url}, json);
+    }
     if (this.isProxy()) {
       return Object.assign({
         origin: this.origin.toJSON(),

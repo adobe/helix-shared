@@ -32,7 +32,9 @@
         "protocol": "https",
         "ref": "",
         "repo": "project-helix.io"
-      }
+      },
+      "sticky": true,
+      "urls": []
     },
     "default": {
       "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
@@ -66,11 +68,13 @@
         "protocol": "https",
         "ref": "",
         "repo": "project-helix.io"
-      }
+      },
+      "sticky": false,
+      "urls": []
     },
     "pipeline": {
       "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
-      "condition": "req.http.host == \"pipeline.project-helix.io\"",
+      "condition": "",
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -100,7 +104,15 @@
         "protocol": "https",
         "ref": "",
         "repo": "project-helix.io"
-      }
+      },
+      "sticky": false,
+      "url": "https://pipeline.project-helix.io",
+      "urls": [
+        "https://pipeline.project-helix.io",
+        "https://pipeline.project-helix.io/index.html",
+        "https://pipeline.project-helix.io/README.html"
+      ]
+
     },
     "proxy": {
       "condition": "req.http.host == \"proxy.project-helix.io\"",
@@ -124,7 +136,9 @@
         "connection": "",
         "device": "",
         "location": ""
-      }
+      },
+      "urls": [],
+      "sticky": true
     },
     "proxy-detailed": {
       "condition": "",
@@ -148,7 +162,9 @@
         "connection": "",
         "device": "",
         "location": ""
-      }
+      },
+      "sticky": true,
+      "urls": []
     }
   }
 }
