@@ -142,8 +142,8 @@ class Strain {
     } else {
       this._origin = null;
     }
-    this._url = cfg.url || "";
-    
+    this._url = cfg.url || '';
+
     if (Array.isArray(cfg.urls)) {
       this._urls = new Set(cfg.urls);
     } else {
@@ -152,10 +152,10 @@ class Strain {
     if (this._url) {
       this._urls.add(this._url);
     }
-    
-    if (cfg.sticky===false) {
+
+    if (cfg.sticky === false) {
       this._sticky = false;
-    } else if (cfg.sticky===true) {
+    } else if (cfg.sticky === true) {
       this._sticky = true;
     } else {
       // strains with a condition are sticky by default
@@ -237,13 +237,13 @@ class Strain {
    * @returns {Strain~JSON}
    */
   toJSON() {
-    let json = {
+    const json = {
       name: this.name,
       condition: this.condition,
       perf: this.perf.toJSON(),
       sticky: this.sticky,
       urls: this.urls,
-      url: this.url
+      url: this.url,
     };
     if (this.isProxy()) {
       return Object.assign({
