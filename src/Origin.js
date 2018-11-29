@@ -42,7 +42,7 @@ class Origin {
       this._shield = 'iad-va-us';
       this._SSLCertHostname = backenduri.host;
       this._maxConn = 200;
-      this.useSSL = backenduri.scheme === 'https';
+      this._useSSL = backenduri.scheme === 'https';
     } else {
       throw new Error('Origin must be an absolute URL or an Object');
     }
@@ -57,7 +57,7 @@ class Origin {
   }
 
   get firstByteTimeout() {
-    return this.firstByteTimeout();
+    return this._firstByteTimeout;
   }
 
   get weight() {

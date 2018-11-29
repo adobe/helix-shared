@@ -46,3 +46,7 @@ strains:
       owner: adobe
     static:
       path: /dist
+  
+  proxy:
+    origin: https://www.adobe.io/
+    condition: req.http.host == "proxy.project-helix.io"
