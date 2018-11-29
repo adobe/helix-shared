@@ -22,12 +22,12 @@ class Origin {
       this._address = cfg.address;
       this._connectTimeout = cfg.connect_timeout || 1000;
       this._name = cfg.name || `Proxy${this._hostname.replace(/[^\w]/g, '')}${hash(this._hostname).substr(0, 4)}`;
-      this._port = cfg.port || 443;
       this._betweenBytesTimeout = cfg.between_bytes_timeout || 10000;
       this._shield = cfg.shield || 'iad-va-us';
       this._SSLCertHostname = cfg.ssl_cert_hostname || this._hostname;
       this._maxConn = cfg.max_conn || 200;
       this._useSSL = !(cfg.use_ssl === false);
+      this._port = cfg.port || this._useSSL ? 443 : 80;
     } else if (URI.parse(cfg).scheme) {
       const backenduri = URI.parse(cfg);
       this._hostname = backenduri.host;
@@ -77,7 +77,7 @@ class Origin {
   }
 
   get port() {
-    return this._name;
+    return this._port;
   }
 
   get betweenBytesTimeout() {

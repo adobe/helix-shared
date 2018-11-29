@@ -114,7 +114,7 @@
         "hostname": "www.adobe.io",
         "max_conn": 200,
         "name": "Proxywwwadobeio861b",
-        "port": "Proxywwwadobeio861b",
+        "port": 443,
         "shield": "iad-va-us",
         "ssl_cert_hostname": "www.adobe.io",
         "use_ssl": true,
