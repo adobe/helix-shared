@@ -32,7 +32,10 @@
                 "protocol": "http",
                 "ref": "",
                 "repo": "default"
-            }
+            },
+            "sticky": false,
+            "url": "",
+            "urls": []
         }
     }
 }

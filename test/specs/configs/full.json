@@ -34,6 +34,7 @@
         "repo": "project-helix.io"
       },
       "sticky": true,
+      "url": "",
       "urls": []
     },
     "default": {
@@ -70,6 +71,7 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
+      "url": "",
       "urls": []
     },
     "pipeline": {
@@ -108,9 +110,9 @@
       "sticky": false,
       "url": "https://pipeline.project-helix.io",
       "urls": [
-        "https://pipeline.project-helix.io",
         "https://pipeline.project-helix.io/index.html",
-        "https://pipeline.project-helix.io/README.html"
+        "https://pipeline.project-helix.io/README.html",
+        "https://pipeline.project-helix.io"
       ]
 
     },
@@ -138,6 +140,7 @@
         "location": ""
       },
       "urls": [],
+      "url": "",
       "sticky": true
     },
     "proxy-detailed": {
@@ -164,6 +167,7 @@
         "location": ""
       },
       "sticky": true,
+      "url": "",
       "urls": []
     }
   }

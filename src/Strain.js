@@ -142,7 +142,7 @@ class Strain {
     } else {
       this._origin = null;
     }
-    this._url = cfg.url || undefined;
+    this._url = cfg.url || "";
     
     if (Array.isArray(cfg.urls)) {
       this._urls = new Set(cfg.urls);
@@ -212,7 +212,7 @@ class Strain {
   }
 
   get urls() {
-    return this._urls;
+    return [...this._urls];
   }
 
   get sticky() {
@@ -243,11 +243,8 @@ class Strain {
       perf: this.perf.toJSON(),
       sticky: this.sticky,
       urls: this.urls,
-      url: undefined
+      url: this.url
     };
-    if (this.url) {
-      json = Object.assign({url: this.url}, json);
-    }
     if (this.isProxy()) {
       return Object.assign({
         origin: this.origin.toJSON(),
