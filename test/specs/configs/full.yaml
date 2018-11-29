@@ -27,6 +27,7 @@ strains:
   default:
     code: /acapt/default/https---github-com-adobe-project-helix-io-git--master--
     condition: req.http.host == "www.project-helix.io"
+    sticky: false
 
   client:
     code: /acapt/default/https---github-com-adobe-project-helix-io-git--master--
@@ -39,7 +40,10 @@ strains:
 
   pipeline:
     code: /acapt/default/https---github-com-adobe-project-helix-io-git--master--
-    condition: req.http.host == "pipeline.project-helix.io"
+    url: https://pipeline.project-helix.io
+    urls:
+      - https://pipeline.project-helix.io/index.html
+      - https://pipeline.project-helix.io/index.html
     content:
       repo: hypermedia-pipeline
       ref: master
@@ -52,6 +56,7 @@ strains:
     condition: req.http.host == "proxy.project-helix.io"
 
   proxy-detailed :
+    sticky: true
     origin:
       address: 192.168.0.1
       name: publish
