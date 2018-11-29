@@ -11,6 +11,7 @@
  */
 
 const GitUrl = require('./GitUrl.js');
+const Origin = require('./Origin');
 
 /**
  * Static content handling
@@ -136,6 +137,11 @@ class Strain {
     this._condition = cfg.condition || '';
     this._directoryIndex = cfg.directoryIndex || defaults.directoryIndex;
     this._perf = new Performance(cfg.perf);
+    if (cfg.origin) {
+      this._origin = new Origin(cfg.origin);
+    } else {
+      this._origin = null;
+    }
   }
 
   get name() {
@@ -174,6 +180,14 @@ class Strain {
     return this._perf;
   }
 
+  get origin() {
+    return this._origin;
+  }
+
+  isProxy() {
+    return this._origin !== null;
+  }
+
   /**
    * JSON Serialization of a Strain
    * @typedef Strain~JSON
@@ -184,6 +198,7 @@ class Strain {
    * @property {String} condition
    * @property {String} directoryIndex
    * @property {Performance~JSON} perf
+   * @property {Origin~JSON} origin
    */
 
   /**
@@ -191,15 +206,22 @@ class Strain {
    * @returns {Strain~JSON}
    */
   toJSON() {
-    return {
+    const json = {
       name: this.name,
-      code: this.code,
-      content: this.content.toJSON(),
-      static: this.static.toJSON(),
       condition: this.condition,
-      directoryIndex: this.directoryIndex,
       perf: this.perf.toJSON(),
     };
+    if (this.isProxy()) {
+      return Object.assign({
+        origin: this.origin.toJSON(),
+      }, json);
+    }
+    return Object.assign({
+      code: this.code,
+      content: this.content.toJSON(),
+      directoryIndex: this.directoryIndex,
+      static: this.static.toJSON(),
+    }, json);
   }
 }
 
