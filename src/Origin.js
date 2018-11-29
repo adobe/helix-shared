@@ -28,7 +28,7 @@ class Origin {
       this._maxConn = cfg.max_conn || 200;
       this._useSSL = !(cfg.use_ssl === false);
       this._port = cfg.port || this._useSSL ? 443 : 80;
-    } else if (URI.parse(cfg).scheme) {
+    } else if (cfg && URI.parse(cfg).scheme) {
       const backenduri = URI.parse(cfg);
       this._hostname = backenduri.host;
       this._errorThreshold = 0;
@@ -43,8 +43,10 @@ class Origin {
       this._SSLCertHostname = backenduri.host;
       this._maxConn = 200;
       this._useSSL = backenduri.scheme === 'https';
-    } else {
+    } else if (cfg) {
       throw new Error('Origin must be an absolute URL or an Object');
+    } else {
+      throw new Error('Invalid or empty configuration');
     }
   }
 
