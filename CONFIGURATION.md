@@ -174,3 +174,11 @@ The default configuration should have two strains:
 ## Proposal: Move `url` under `condition`
 
 The `url` property for a strain is currently used as a shorthand for a strain matching condition (it also sets the base URL), so it would make sense to move it below `conditions`, especially considering that additional conditions may be added later.
+
+# Discussion: Parallel Deployments in a CI environment
+
+Concurrent deployments from a CI environment pose a hard problem at the moment:
+
+- if the strain configuration cannot be modified by the deployment action, a new strain must be introduced for every new branch, prior to the creation of the branch, so that the branch can be deployed and tested
+- if the strain configuration can be modified by the deployment action, a new strain can be introduced, but as the `helix-config.yaml` is the single point of synchronization, deployment in one branch will automatically deactivate all strains that refer to concurrent deployments made in different branches. In active development, this will lead to race conditions and intermittent test failures because the strain you just deployed got "undeployed" by a build triggered in another branch.
+- even within one branch, making two committs in short succession will lead to the second commit tainting the deployment of the first build, with potentially misleading results. For instance a bug fix might get attributed to the first commit because this is where testing first succeeds, although the fix was deployed in the second commit
