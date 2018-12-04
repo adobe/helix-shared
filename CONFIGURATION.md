@@ -175,10 +175,27 @@ The default configuration should have two strains:
 
 The `url` property for a strain is currently used as a shorthand for a strain matching condition (it also sets the base URL), so it would make sense to move it below `conditions`, especially considering that additional conditions may be added later.
 
-# Discussion: Parallel Deployments in a CI environment
+## Discussion: Parallel Deployments in a CI environment
 
 Concurrent deployments from a CI environment pose a hard problem at the moment:
 
-- if the strain configuration cannot be modified by the deployment action, a new strain must be introduced for every new branch, prior to the creation of the branch, so that the branch can be deployed and tested
-- if the strain configuration can be modified by the deployment action, a new strain can be introduced, but as the `helix-config.yaml` is the single point of synchronization, deployment in one branch will automatically deactivate all strains that refer to concurrent deployments made in different branches. In active development, this will lead to race conditions and intermittent test failures because the strain you just deployed got "undeployed" by a build triggered in another branch.
-- even within one branch, making two committs in short succession will lead to the second commit tainting the deployment of the first build, with potentially misleading results. For instance a bug fix might get attributed to the first commit because this is where testing first succeeds, although the fix was deployed in the second commit
+1. if the strain configuration cannot be modified by the deployment action, a new strain must be introduced for every new branch, prior to the creation of the branch, so that the branch can be deployed and tested
+2. if the strain configuration can be modified by the deployment action, a new strain can be introduced, but as the `helix-config.yaml` is the single point of synchronization, deployment in one branch will automatically deactivate all strains that refer to concurrent deployments made in different branches. In active development, this will lead to race conditions and intermittent test failures because the strain you just deployed got "undeployed" by a build triggered in another branch.
+3. even within one branch, making two committs in short succession will lead to the second commit tainting the deployment of the first build, with potentially misleading results. For instance a bug fix might get attributed to the first commit because this is where testing first succeeds, although the fix was deployed in the second commit
+
+
+### Proposal: Temporary Strains
+
+We introduce a new option for `hlx deploy --temp <tag[]?>` that takes zero or more tags for temporary deployments. By default, it uses `CIRCLE_SHA1` as the tag, i.e. the SHA1 hash of the last commit of the current build. This ties the deployment to the individual commit and avoids accidential overwriting.
+
+When running `hlx deploy --temp`, all strains that refer a code repository that differs from the current repository will be ignored to avoid unccessary deploys.
+All strains that refer to the current code repository will be deployed with a `code` prefix that ends with the value of `tag`, e.g. `/acapt/default/https---github-com-adobe-project-helix-io-git--master--` would become `/acapt/default/https---github-com-adobe-project-helix-io-git--35ef52a772a7656be3d31527f8e595e4e286a0d4--`. 
+Each strain that is thus modified will be transformed into a temporary strain where the name includes the old strain name and the new `tag`, e.g. `default/35ef52a772a7656be3d31527f8e595e4e286a0d4`, `client/35ef52a772a7656be3d31527f8e595e4e286a0d4`, `pipeline/35ef52a772a7656be3d31527f8e595e4e286a0d4`. 
+These modified strains will not be written into `.hlx/strains.json` or persisted in any other way.
+Instead, the strain resolution logic in VCL will be modified so that when an `X-Strain` cookie or header is present and the value of the header contains a `/`, both the `X-Strain` (name) and `X-Tag` (tag) will be parsed. 
+For the most part, the default logic of the current `X-Strain` will be applied, so that the strain's directory index, static repo, etc. will be used. The only exception is the resolution of the OpenWhisk action to execute.
+Here, the `-git--([\w]+)--` pattern will be replaced with the `X-Tag` value, effectively pinning the used action to the tagged deployment. 
+
+As this will lead to a large number of temporary actions in OpenWhisk, we also introduce a `hlx undeploy` command that clears a temporary deployment made earlier. This can be run at the end of every CI job.
+
+`hlx test` and `hlx perf` should use the new temporary strains when running in CI.
