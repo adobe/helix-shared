@@ -144,7 +144,7 @@ class Strain {
     }
     // when `sticky` is not set
     // assume the strain to be sticky when there is a condition
-    this._sticky = cfg.sticky === undefined ? this._condition!=='' : !!cfg.sticky;
+    this._sticky = cfg.sticky === undefined ? this._condition !== '' : !!cfg.sticky;
   }
 
   get sticky() {
