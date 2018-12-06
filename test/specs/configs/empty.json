@@ -4,6 +4,8 @@
             "code": "",
             "condition": "",
             "sticky": false,
+            "urls": [],
+            "url": "",
             "content": {
                 "host": "localhost",
                 "hostname": "localhost",

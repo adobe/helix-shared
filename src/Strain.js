@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+const URI = require('uri-js');
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin');
 
@@ -145,6 +146,19 @@ class Strain {
     // when `sticky` is not set
     // assume the strain to be sticky when there is a condition
     this._sticky = cfg.sticky === undefined ? this._condition !== '' : !!cfg.sticky;
+    this._url = cfg.url ? URI.normalize(cfg.url) : '';
+    this._urls = new Set(Array.isArray(cfg.urls) ? cfg.urls.map(URI.normalize) : []);
+    if (this._url) {
+      this._urls.add(this._url);
+    }
+  }
+
+  get url() {
+    return this._url;
+  }
+
+  get urls() {
+    return Array.from(this._urls.values());
   }
 
   get sticky() {
@@ -218,6 +232,8 @@ class Strain {
       sticky: this.sticky,
       condition: this.condition,
       perf: this.perf.toJSON(),
+      url: this.url,
+      urls: this.urls,
     };
     if (this.isProxy()) {
       return Object.assign({
