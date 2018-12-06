@@ -31,6 +31,7 @@ strains:
   client:
     code: /acapt/default/https---github-com-adobe-project-helix-io-git--master--
     condition: req.http.host == "client.project-helix.io"
+    sticky: false
     content:
       repo: helix-cli
       ref: master
@@ -50,6 +51,7 @@ strains:
   proxy:
     origin: https://www.adobe.io/
     condition: req.http.host == "proxy.project-helix.io"
+    sticky: true
 
   proxy-detailed :
     origin:

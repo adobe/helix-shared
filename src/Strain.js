@@ -142,6 +142,13 @@ class Strain {
     } else {
       this._origin = null;
     }
+    // when `sticky` is not set
+    // assume the strain to be sticky when there is a condition
+    this._sticky = cfg.sticky === undefined ? this._condition!=='' : !!cfg.sticky;
+  }
+
+  get sticky() {
+    return this._sticky;
   }
 
   get name() {
@@ -208,6 +215,7 @@ class Strain {
   toJSON() {
     const json = {
       name: this.name,
+      sticky: this.sticky,
       condition: this.condition,
       perf: this.perf.toJSON(),
     };

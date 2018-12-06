@@ -3,6 +3,7 @@
     "client": {
       "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
       "condition": "req.http.host == \"client.project-helix.io\"",
+      "sticky": false,
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -37,6 +38,7 @@
     "default": {
       "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
       "condition": "req.http.host == \"www.project-helix.io\"",
+      "sticky": true,
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -71,6 +73,7 @@
     "pipeline": {
       "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
       "condition": "req.http.host == \"pipeline.project-helix.io\"",
+      "sticky": true,
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -105,6 +108,7 @@
     "proxy": {
       "condition": "req.http.host == \"proxy.project-helix.io\"",
       "name": "proxy",
+      "sticky": true,
       "origin": {
         "address": "www.adobe.io",
         "between_bytes_timeout": 10000,
@@ -129,6 +133,7 @@
     "proxy-detailed": {
       "condition": "",
       "name": "proxy-detailed",
+      "sticky": false,
       "origin": {
         "address": "192.168.0.1",
         "between_bytes_timeout": 10000,

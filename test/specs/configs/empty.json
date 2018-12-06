@@ -3,6 +3,7 @@
         "default": {
             "code": "",
             "condition": "",
+            "sticky": false,
             "content": {
                 "host": "localhost",
                 "hostname": "localhost",
