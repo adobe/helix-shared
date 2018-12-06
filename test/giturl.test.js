@@ -219,7 +219,7 @@ describe('GitUrl from string tests', () => {
   });
 
   it('scp origin format', () => {
-    const url = new GitUrl('git@git.example.com:company/repository');
+    const url = new GitUrl('git@git.example.com:company/repository.git');
     assert.equal(url.protocol, 'ssh');
     assert.equal(url.hostname, 'git.example.com');
     assert.equal(url.port, '');
@@ -240,6 +240,32 @@ describe('GitUrl from string tests', () => {
       path: '',
       port: '',
       ref: '',
+      repo: 'repository',
+    });
+  });
+
+  it('scp origin format with branch', () => {
+    const url = new GitUrl('git@git.example.com:company/repository.git#products/v2');
+    assert.equal(url.protocol, 'ssh');
+    assert.equal(url.hostname, 'git.example.com');
+    assert.equal(url.port, '');
+    assert.equal(url.host, 'git.example.com');
+    assert.equal(url.owner, 'company');
+    assert.equal(url.repo, 'repository');
+    assert.equal(url.path, '');
+    assert.equal(url.ref, 'products/v2');
+    assert.equal(url.raw, 'https://raw.git.example.com/company/repository/products/v2');
+    assert.equal(url.rawRoot, 'https://raw.git.example.com');
+    assert.equal(url.apiRoot, 'https://api.git.example.com');
+    assert.equal(url.toString(), 'ssh://git@git.example.com/company/repository.git#products/v2');
+    assert.deepEqual(url.toJSON(), {
+      protocol: 'ssh',
+      host: 'git.example.com',
+      hostname: 'git.example.com',
+      owner: 'company',
+      path: '',
+      port: '',
+      ref: 'products/v2',
       repo: 'repository',
     });
   });
