@@ -2,10 +2,10 @@
   "strains": {
     "client": {
       "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
-      "condition": "req.http.host == \"client.project-helix.io\"",
       "sticky": false,
-      "urls": [],
-      "url": "",
+      "condition": "",
+      "urls": ["https://client.project-helix.io/index.html", "https://client.project-helix.io/README.html", "https://client.project-helix.io/"],
+      "url": "https://client.project-helix.io/",
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -39,9 +39,9 @@
     },
     "default": {
       "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
-      "condition": "req.http.host == \"www.project-helix.io\"",
-      "sticky": true,
-      "urls": [],
+      "sticky": false,
+      "condition": "",
+      "urls": ["https://www.project-helix.io/index.html"],
       "url": "",
       "content": {
         "host": "github.com",
@@ -76,10 +76,10 @@
     },
     "pipeline": {
       "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
-      "condition": "req.http.host == \"pipeline.project-helix.io\"",
-      "sticky": true,
-      "urls": [],
-      "url": "",
+      "sticky": false,
+      "condition": "",
+      "urls": ["https://pipeline.project-helix.io/"],
+      "url": "https://pipeline.project-helix.io/",
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -112,11 +112,11 @@
       }
     },
     "proxy": {
-      "condition": "req.http.host == \"proxy.project-helix.io\"",
       "name": "proxy",
-      "sticky": true,
-      "urls": [],
-      "url": "",
+      "urls": ["https://proxy.project-helix.io/"],
+      "url": "https://proxy.project-helix.io/",
+      "sticky": false,
+      "condition": "",
       "origin": {
         "address": "www.adobe.io",
         "between_bytes_timeout": 10000,
@@ -141,9 +141,9 @@
     "proxy-detailed": {
       "condition": "",
       "name": "proxy-detailed",
-      "sticky": false,
       "urls": [],
       "url": "",
+      "sticky": false,
       "origin": {
         "address": "192.168.0.1",
         "between_bytes_timeout": 10000,

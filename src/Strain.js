@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+const URI = require('uri-js');
 const GitUrl = require('./GitUrl.js');
+const Origin = require('./Origin');
 
 /**
  * Static content handling
@@ -136,6 +138,31 @@ class Strain {
     this._condition = cfg.condition || '';
     this._directoryIndex = cfg.directoryIndex || defaults.directoryIndex;
     this._perf = new Performance(cfg.perf);
+    if (cfg.origin) {
+      this._origin = new Origin(cfg.origin);
+    } else {
+      this._origin = null;
+    }
+    // when `sticky` is not set
+    // assume the strain to be sticky when there is a condition
+    this._sticky = cfg.sticky === undefined ? this._condition !== '' : !!cfg.sticky;
+    this._url = cfg.url ? URI.normalize(cfg.url) : '';
+    this._urls = new Set(Array.isArray(cfg.urls) ? cfg.urls.map(URI.normalize) : []);
+    if (this._url) {
+      this._urls.add(this._url);
+    }
+  }
+
+  get url() {
+    return this._url;
+  }
+
+  get urls() {
+    return Array.from(this._urls.values());
+  }
+
+  get sticky() {
+    return this._sticky;
   }
 
   get name() {
@@ -174,6 +201,14 @@ class Strain {
     return this._perf;
   }
 
+  get origin() {
+    return this._origin;
+  }
+
+  isProxy() {
+    return this._origin !== null;
+  }
+
   /**
    * JSON Serialization of a Strain
    * @typedef Strain~JSON
@@ -184,6 +219,7 @@ class Strain {
    * @property {String} condition
    * @property {String} directoryIndex
    * @property {Performance~JSON} perf
+   * @property {Origin~JSON} origin
    */
 
   /**
@@ -191,15 +227,25 @@ class Strain {
    * @returns {Strain~JSON}
    */
   toJSON() {
-    return {
+    const json = {
       name: this.name,
+      sticky: this.sticky,
+      condition: this.condition,
+      perf: this.perf.toJSON(),
+      url: this.url,
+      urls: this.urls,
+    };
+    if (this.isProxy()) {
+      return Object.assign({
+        origin: this.origin.toJSON(),
+      }, json);
+    }
+    return Object.assign({
       code: this.code,
       content: this.content.toJSON(),
-      static: this.static.toJSON(),
-      condition: this.condition,
       directoryIndex: this.directoryIndex,
-      perf: this.perf.toJSON(),
-    };
+      static: this.static.toJSON(),
+    }, json);
   }
 }
 
