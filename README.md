@@ -5,7 +5,6 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/adobe/helix-shared.svg)](https://circleci.com/gh/adobe/helix-shared)
 [![GitHub license](https://img.shields.io/github/license/adobe/helix-shared.svg)](https://github.com/adobe/helix-shared/blob/master/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/adobe/helix-shared.svg)](https://github.com/adobe/helix-shared/issues)
-[![Greenkeeper badge](https://badges.greenkeeper.io/adobe/helix-shared.svg)](https://greenkeeper.io/)
 [![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/helix-shared.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/helix-shared)
 
 > Shared modules for Project Helix
