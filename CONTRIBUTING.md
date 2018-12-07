@@ -72,5 +72,5 @@ $ git push --tags
 
 ```bash
 $ npm login
-$ npm publish --tag=lates --access public
+$ npm publish --tag=latest --access public
 ```
