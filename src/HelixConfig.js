@@ -81,7 +81,11 @@ class HelixConfig {
   async loadConfig() {
     const cfgPath = this._cfgPath || path.resolve(this._cwd, HELIX_CONFIG);
     if (await isFile(cfgPath)) {
-      this._cfg = yaml.safeLoad(await fs.readFile(cfgPath, 'utf8')) || {};
+      const data = await fs.readFile(cfgPath, 'utf8');
+      if (data.indexOf('\t')) {
+        throw Error('Tabs not allowed in helix-config.yaml');
+      }
+      this._cfg = yaml.safeLoad(data) || {};
       this._cfgPath = cfgPath;
       this._cfgRelPath = path.relative(this._cwd, cfgPath);
     }
