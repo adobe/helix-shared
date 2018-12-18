@@ -40,6 +40,18 @@ describe('Helix Config', () => {
     assert.deepEqual(actual, expected);
   });
 
+  it('fails if the config contains tabs', async () => {
+    try {
+      await new HelixConfig()
+        .withConfigPath(path.resolve(SPEC_ROOT, 'config_with_tabs.yaml'))
+        .init();
+      assert.fail('config with tabs should fail.');
+    } catch (e) {
+      // ok
+      assert.equal(e.toString(), 'Error: Tabs not allowed in helix-config.yaml');
+    }
+  });
+
   it('loads a config with URLs', async () => {
     const cfg = await new HelixConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'urls.yaml'))
