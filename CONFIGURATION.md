@@ -34,7 +34,11 @@ While I have a good collection of scars from dealing with YAML (especially in Ci
 
 ## Proposal: We introduce a JSON Schema for configuration files
 
-This way you can see errors in configuration files while editing them, and we have a formal way of describing and documenting the configuration format.
+This way you can see errors in configuration files while editing them, and we have a formal way of describing and documenting the configuration format. 
+
+> Notes:
+> - The validation is done during `HelixConfig.parse()`. 
+> - Using a IDE plugin, the yaml can also be validated during input.
 
 ## Proposal: Strains are the only top-level concept
 
@@ -96,6 +100,10 @@ Option (1) is easier to validate than option (2) and less error prone (every YAM
 `hlx publish` should fail when no `default` strain exists.
 `hlx up` can continue without a `default` strain, but should issue a warning
 
+> Notes:
+> - Option (1) is favoured.
+> - selecting a predefined strain is simple with yaml references, eg: `default: *strains.master`
+
 ## Proposal: There is no implicit inheritance from `default`
 
 All inheritance becomes explicit, using the mechanism laid out in 
@@ -103,6 +111,12 @@ https://github.com/adobe/helix-shared/issues/11#issuecomment-443122026. This mea
 
 ## Proposal: Strains can have a `mount` configuration that maps URL paths to content paths
 
+**DECLINED**
+
+> Notes:
+> We decided during the 4/2018 hackathon not to introduce mount points, so that it will be X strains for X mount points.
+
+<del>
 Right now, strains can have only one `content` node. With support for `mount`, a strain can have either a `content` or a `mount` property. Each `mount` object is a map between the URL path (key) and a `content` property (either git URL or object).
 
 ```yaml
@@ -113,20 +127,47 @@ strains:
       /pipeline: https://github.com/adobe/helix-pipeline.git
       /cli: https://github.com/adobe/helix-cli.git
 ```
+</del>
 
 ## Proposal: `mount` points can take Git URLs, `content` objects/references, Backend URLs, `origin` objects/references
 
+> Notes:
+> We decided during the 4/2018 hackathon not to introduce mount points, so that it will be X strains for X mount points.
+
+<del>
 That way you can have a consistent traffic mapping without having to switch strains.
+</del>
 
 ## Proposal: `hlx deploy` lists all strains that are affected by the deployment and suggests the creation of a new strain if none are affected
+
+> Notes:
+> - `hlx deploy` always acts on only 1 strain. which is either the name of the current branch, dirty or what is specified with `--strain`
+> - `hlx deploy` would generate a finite amount of deployment packages, and we can find out if there are referenced in the YAML.
+
 
 In order to increase the visibility of changes happening during deployment, `hlx deploy` will list all strain names that will be affected by the deployment.
 
 If no strains are affected, `hlx deploy` will print a new strain config to `stdout` that points to the new `code` location, copies all other values from `default` except for `url` or `condition`. The new strain will have an auto-generated, hard-to-guess name, so that it cannot unwittingly be accessed.
 
+> Notes:
+> - Q: why is it important to have a random name? why not using the branch-name ?
+> - A: Two reasons:
+>      - to avoid conflicts
+>      - to prevent people from forging the X-Strain cookie and getting access to development- or staging-only strains.
+
 A deployment that does not affect any strains will have a non-zero exit code, so that it can fail in CI.
 
 When running `hlx deploy --add=foo` the new strain will be added to the configuration file automatically and `hlx deploy` will instead show instructions on accessing the strain.
+
+
+## Discussion: files
+
+> Notes from the 4/2018 hackathon:
+
+- we will have **one** config helix-config.yaml
+- it will create a canonical `effective-helix-config.yaml` which contains comments for the source of all values
+- the effective file will/must not be checked into git
+
 
 ## Discussion: No implicit defaults
 
@@ -199,3 +240,42 @@ Here, the `-git--([\w]+)--` pattern will be replaced with the `X-Tag` value, eff
 As this will lead to a large number of temporary actions in OpenWhisk, we also introduce a `hlx undeploy` command that clears a temporary deployment made earlier. This can be run at the end of every CI job.
 
 `hlx test` and `hlx perf` should use the new temporary strains when running in CI.
+
+## Discussion: layout
+
+During the 4/2018 hackathon we also discussed the layout of the project. it was decided that:
+
+- templates and pre functions will be in `./src`
+- client side javascript **must not** go into `./src`. 
+- we will provide a react example, and put the sources in `./react`
+- all static files will go to `htdocs`
+- all additional openwhisk actions will go to `htdocs/cgi-bin`
+
+## Discussion: the `code` property
+
+- the `code` property points to the code repository
+
+## Discussion: action names
+
+The deployment mechanism changes so that the **sha of the code repository** at deployment time will become the package name. the action name will simply be the script name without any extensions.
+ 
+for example: 
+
+legacy name:
+```
+/helix/https---github-com-trieloff-helix-demo-git--master--html
+```
+
+new name:
+
+```
+/helix/dcfee99d45c6a2baed86c8e4921623c48b902522/html
+```
+
+The `--dirty` suffix will move to the package name.
+ 
+for example:
+
+```
+/helix/dcfee99d45c6a2baed86c8e4921623c48b902522-dirty/html
+```
