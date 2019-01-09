@@ -247,7 +247,7 @@ Concurrent deployments from a CI environment pose a hard problem at the moment:
 
 ### Proposal: Temporary Strains
 
-We introduce a new option for `hlx deploy --temp <tag[]?>` that takes zero or more tags for temporary deployments. By default, it uses `CIRCLE_SHA1` as the tag, i.e. the SHA1 hash of the last commit of the current build. This ties the deployment to the individual commit and avoids accidential overwriting.
+For testing a deployment in a Continuous Integration environment, it can be useful to have strains that are not persisted in the `helix-config.yaml`, but can still be activated for testing.
 
 When running `hlx deploy --temp`, all strains that refer a code repository that differs from the current repository will be ignored to avoid unccessary deploys.
 All strains that refer to the current code repository will be deployed with a `code` prefix that ends with the value of `tag`, e.g. `/acapt/default/https---github-com-adobe-project-helix-io-git--master--` would become `/acapt/default/https---github-com-adobe-project-helix-io-git--35ef52a772a7656be3d31527f8e595e4e286a0d4--`. 
