@@ -138,6 +138,23 @@ strains:
 That way you can have a consistent traffic mapping without having to switch strains.
 </del>
 
+## Discussion: the `code` property
+
+- the `code` property of a strain is either a giturl string or giturl object (but not an action name).
+
+assume a non-dirty checkout, `git@github.com/adobe/helix-io.git#master (923c1e6)`.
+1. the default strain contains a code property: `code: "git@github.com/adobe/helix-io.git#master"`
+2. `hlx deploy` would generate an action `/helix/923c1e6/html`
+3. and `effective-helix-config.yaml` would then have a property: `code: "git@github.com/adobe/helix-io.git#923c1e6"`
+
+assume a dirty checkout, `git@github.com/adobe/helix-io.git#master (a0c96a5)`
+1. the default strain contains a code property: `code: "git@github.com/adobe/helix-io.git#master"`
+2. `hlx deploy --dirty` would generate an action `/helix/a0c96a5-dirty/html`
+3. and `effective-helix-config.yaml` would then have a property: `code: "git@github.com/adobe/helix-io.git#a0c96a50-dirty"`<sup>1</sup>
+
+<sup>1</sup> not sure about the `-dirty` suffix in the ref here. but fastly wouldn't have a way to figure it our
+
+
 ## Proposal: `hlx deploy` lists all strains that are affected by the deployment and suggests the creation of a new strain if none are affected
 
 > Notes:
@@ -145,7 +162,13 @@ That way you can have a consistent traffic mapping without having to switch stra
 
 In order to increase the visibility of changes happening during deployment, `hlx deploy` will list all strain names that will be affected by the deployment.
 
-If no strains are affected, `hlx deploy` will print a new strain config to `stdout` that points to the new `code` location, copies all other values from `default` except for `url` or `condition`. The new strain will have an auto-generated, hard-to-guess name, so that it cannot unwittingly be accessed.
+`hlx deploy` gets the current git-remote `git remote get-url origin` as `$CURRENT_CODE_REPO` and checks all strains for a `code` property that matches the `$CURRENT_CODE_REPO`.
+
+If no strains are affected, `hlx deploy` will print a new strain config to `stdout` that points to the new `code` location (`$CURRENT_CODE_REPO`), copies all other values from `default` except for `url` or `condition`. The new strain will have an auto-generated, hard-to-guess name, so that it cannot unwittingly be accessed.
+
+When running `hlx deploy --add=foo` the new strain will be added to the configuration file automatically and `hlx deploy` will instead show instructions on accessing the strain.
+
+When running `hlx deploy --add=default` the default strain will be created or updated.
 
 > Notes:
 > - Q: why is it important to have a random name? why not using the branch-name ?
@@ -155,7 +178,6 @@ If no strains are affected, `hlx deploy` will print a new strain config to `stdo
 
 A deployment that does not affect any strains will have a non-zero exit code, so that it can fail in CI.
 
-When running `hlx deploy --add=foo` the new strain will be added to the configuration file automatically and `hlx deploy` will instead show instructions on accessing the strain.
 
 
 ## Discussion: files
@@ -201,7 +223,7 @@ A default configuration should be suggested when:
 - running `hlx demo`
 - outside of a CI environment
 
-A default configuartion should be saved when:
+A default configuration should be saved when:
 - running `hlx * --save`
 - running `hlx up`
 
@@ -248,10 +270,6 @@ During the 4/2018 hackathon we also discussed the layout of the project. it was 
 - we will provide a react example, and put the sources in `./react`
 - all static files will go to `htdocs`
 - all additional openwhisk actions will go to `htdocs/cgi-bin`
-
-## Discussion: the `code` property
-
-- the `code` property of a strain is either a giturl string or giturl object (but not an action name).
 
 ## Discussion: action names
 
