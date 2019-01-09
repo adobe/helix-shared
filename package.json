@@ -4,6 +4,7 @@
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
   "scripts": {
+    "docs": "npx jsonschema2md -d src/schemas -o docs",
     "test": "nyc mocha",
     "lint": "./node_modules/.bin/eslint .",
     "junit": "mocha --exit -R mocha-junit-reporter",
@@ -32,6 +33,7 @@
     "winston": "^3.1.0"
   },
   "devDependencies": {
+    "@adobe/jsonschema2md": "^1.1.1-SNAPSHOT.236",
     "codecov": "^3.0.2",
     "eslint": "^5.4.0",
     "eslint-config-airbnb": "^17.1.0",
