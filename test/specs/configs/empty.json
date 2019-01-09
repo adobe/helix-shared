@@ -30,7 +30,7 @@
                 "hostname": "localhost",
                 "magic": false,
                 "owner": "local",
-                "path": "",
+                "path": "/htdocs",
                 "port": "",
                 "protocol": "http",
                 "ref": "",

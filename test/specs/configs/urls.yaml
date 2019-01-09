@@ -17,7 +17,7 @@ content: https://github.com/adobe/project-helix.io.git
 code: https://github.com/adobe/project-helix.io.git
 
 # defines the default static root relative to the code repository
-staticRoot: /webroot
+staticRoot: /htdocs
 
 # defines the directory index file
 directoryIndex: index.html
@@ -49,8 +49,8 @@ strains:
       ref: master
       owner: adobe
     static:
-      path: /dist
-  
+      path: /www
+
   proxy:
     origin: https://www.adobe.io/
     url: https://proxy.project-helix.io
