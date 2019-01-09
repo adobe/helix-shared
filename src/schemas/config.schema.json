@@ -23,9 +23,9 @@
       "description": "A container for referencable objects that can be re-used elsewhere in the configuration."
     },
     "version": {
-      "type":"string",
-      "enum": ["1"],
-      "default": "1",
+      "type":["string", "number"],
+      "enum": ["1", 1],
+      "default": 1,
       "description": "The helix-config file format version"
     },
     "strains": {
@@ -33,7 +33,13 @@
       "description": "A map of strains. Every strain name must be unique for a given config.",
       "additionalProperties": {
         "$ref": "https://ns.adobe.com/helix/shared/strain"
-      }
+      },
+      "properties": {
+        "default": {
+          "$ref": "https://ns.adobe.com/helix/shared/strain"
+        }
+      },
+      "required": ["default"]
     }
   },
   "required": [
