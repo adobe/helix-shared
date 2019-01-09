@@ -249,10 +249,6 @@ Concurrent deployments from a CI environment pose a hard problem at the moment:
 
 For testing a deployment in a Continuous Integration environment, it can be useful to have strains that are not persisted in the `helix-config.yaml`, but can still be activated for testing.
 
-When running `hlx deploy --temp`, all strains that refer a code repository that differs from the current repository will be ignored to avoid unccessary deploys.
-All strains that refer to the current code repository will be deployed with a `code` prefix that ends with the value of `tag`, e.g. `/acapt/default/https---github-com-adobe-project-helix-io-git--master--` would become `/acapt/default/https---github-com-adobe-project-helix-io-git--35ef52a772a7656be3d31527f8e595e4e286a0d4--`. 
-Each strain that is thus modified will be transformed into a temporary strain where the name includes the old strain name and the new `tag`, e.g. `default/35ef52a772a7656be3d31527f8e595e4e286a0d4`, `client/35ef52a772a7656be3d31527f8e595e4e286a0d4`, `pipeline/35ef52a772a7656be3d31527f8e595e4e286a0d4`. 
-These modified strains will not be written into `.hlx/strains.json` or persisted in any other way.
 Instead, the strain resolution logic in VCL will be modified so that when an `X-Strain` cookie or header is present and the value of the header contains a `/`, both the `X-Strain` (name) and `X-Tag` (tag) will be parsed. 
 For the most part, the default logic of the current `X-Strain` will be applied, so that the strain's directory index, static repo, etc. will be used. The only exception is the resolution of the OpenWhisk action to execute.
 Here, the `-git--([\w]+)--` pattern will be replaced with the `X-Tag` value, effectively pinning the used action to the tagged deployment. 
