@@ -141,9 +141,7 @@ That way you can have a consistent traffic mapping without having to switch stra
 ## Proposal: `hlx deploy` lists all strains that are affected by the deployment and suggests the creation of a new strain if none are affected
 
 > Notes:
-> - `hlx deploy` always acts on only 1 strain. which is either the name of the current branch, dirty or what is specified with `--strain`
 > - `hlx deploy` would generate a finite amount of deployment packages, and we can find out if there are referenced in the YAML.
-
 
 In order to increase the visibility of changes happening during deployment, `hlx deploy` will list all strain names that will be affected by the deployment.
 
