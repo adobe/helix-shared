@@ -44,7 +44,7 @@ This way you can see errors in configuration files while editing them, and we ha
 
 This means that there are no concepts that are orthogonal to strains, but that every other configuration object can be assigned to one or more strains, and that every request can be assigned to one specific strain.
 
-There will be no reconciliation of strains and some other concept at runtime. Every .hlx/strains.json will contain a fully deterministic, fully resolved and denormalized representation of all strains.
+There will be no reconciliation of strains and some other concept at runtime. Every `.hlx/strains.json` will contain a fully deterministic, fully resolved and denormalized representation of all strains.
 
 ## Proposal: Other complex configuration objects can be defined in a definitions container and re-used
 
@@ -249,7 +249,7 @@ Concurrent deployments from a CI environment pose a hard problem at the moment:
 
 For testing a deployment in a Continuous Integration environment, it can be useful to have strains that are not persisted in the `helix-config.yaml`, but can still be activated for testing.
 
-Instead, the strain resolution logic in VCL will be modified so that when an `X-Strain` cookie or header is present and the value of the header contains a `/`, both the `X-Strain` (name) and `X-Tag` (tag) will be parsed. 
+To enable temporary strains, the strain resolution logic in VCL will be modified so that when an `X-Strain` cookie or header is present and the value of the header contains a `/`, both the `X-Strain` (name) and `X-Tag` (tag) will be parsed. 
 For the most part, the default logic of the current `X-Strain` will be applied, so that the strain's directory index, static repo, etc. will be used. The only exception is the resolution of the OpenWhisk action to execute.
 Here, the `-git--([\w]+)--` pattern will be replaced with the `X-Tag` value, effectively pinning the used action to the tagged deployment. 
 
