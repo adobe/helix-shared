@@ -252,9 +252,6 @@ During the 4/2018 hackathon we also discussed the layout of the project. it was 
 ## Discussion: the `code` property
 
 - the `code` property of a strain is either a giturl string or giturl object (but not an action name).
-- the `code` property points to the code git repository
-- if no code repository is specified the current directory is used
-- if a code repository is specified, `hlx` must clone/pull the respective branch and use that checkout as code base.
 
 ## Discussion: action names
 
