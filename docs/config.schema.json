@@ -35,19 +35,7 @@
             "description": "The helix-config file format version"
         },
         "strains": {
-            "type": "object",
-            "description": "A map of strains. Every strain name must be unique for a given config.",
-            "additionalProperties": {
-                "$ref": "https://ns.adobe.com/helix/shared/strain"
-            },
-            "properties": {
-                "default": {
-                    "$ref": "https://ns.adobe.com/helix/shared/strain"
-                }
-            },
-            "required": [
-                "default"
-            ]
+            "$ref": "https://ns.adobe.com/helix/shared/strains"
         }
     },
     "required": [

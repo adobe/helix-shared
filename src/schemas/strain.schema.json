@@ -37,6 +37,20 @@
         },
         {"$ref": "https://ns.adobe.com/helix/shared/giturl"}
       ]
+    },
+    "static": {
+      "description": "Pointer to the repository for static resources",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {"$ref": "https://ns.adobe.com/helix/shared/giturl"}
+      ]
+    },
+    "sticky": {
+      "description": "Sticky strains are not re-evaluated on every request. As soon as a visitor is determined to match a sticky strain, a session cookie will be set to keep the user in the strain.",
+      "type": "boolean"
     }
   },
   "required": [

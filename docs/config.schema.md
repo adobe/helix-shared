@@ -10,13 +10,18 @@ A Configuration File for Project Helix.
 | Abstract | Extensible | Status | Identifiable | Custom Properties | Additional Properties | Defined In |
 |----------|------------|--------|--------------|-------------------|-----------------------|------------|
 | Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [config.schema.json](config.schema.json) |
+## Schema Hierarchy
+
+* Configuration `https://ns.adobe.com/helix/shared/config`
+  * [Strains](strains.schema.md) `https://ns.adobe.com/helix/shared/strains`
+
 
 # Configuration Properties
 
 | Property | Type | Required | Default | Defined by |
 |----------|------|----------|---------|------------|
 | [definitions](#definitions) | `object` | Optional |  | Configuration (this schema) |
-| [strains](#strains) | `object` | **Required** |  | Configuration (this schema) |
+| [strains](#strains) | Strains | **Required** |  | Configuration (this schema) |
 | [version](#version) | `enum` | Optional | `1` | Configuration (this schema) |
 
 ## definitions
@@ -45,44 +50,17 @@ A container for referencable objects that can be re-used elsewhere in the config
 
 ## strains
 
-A map of strains. Every strain name must be unique for a given config.
 
 `strains`
 
 * is **required**
-* type: `object`
+* type: Strains
 * defined in this schema
 
 ### strains Type
 
 
-`object` with following properties:
-
-
-| Property | Type | Required |
-|----------|------|----------|
-| `default`|  | **Required** |
-
-
-
-#### default
-
-undefined
-
-`default`
-
-* is **required**
-* type: reference
-
-##### default Type
-
-
-* []() – `https://ns.adobe.com/helix/shared/strain`
-
-
-
-
-
+* [Strains](strains.schema.md) – `https://ns.adobe.com/helix/shared/strains`
 
 
 

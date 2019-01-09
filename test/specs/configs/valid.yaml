@@ -3,3 +3,11 @@ strains:
   default:
     code: https://github.com/adobe/project-helix.io.git
     content: https://github.com/adobe/project-helix.io.git
+  sticky:
+    sticky: true
+    code: https://github.com/adobe/project-helix.io.git
+    content: https://github.com/adobe/project-helix.io.git
+    static:
+      owner: adobe
+      repo: project-helix.io
+      ref: master

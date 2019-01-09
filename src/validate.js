@@ -13,10 +13,11 @@
 const Ajv = require('ajv');
 const configschema = require('./schemas/config.schema.json');
 const strainschema = require('./schemas/strain.schema.json');
+const strainsschema = require('./schemas/strains.schema.json');
 const giturlschema = require('./schemas/giturl.schema.json');
 
 const ajv = new Ajv({ allErrors: true, verbose: true });
-ajv.addSchema([configschema, strainschema, giturlschema]);
+ajv.addSchema([configschema, strainschema, strainsschema, giturlschema]);
 
 function validate(config = {}) {
   const valid = ajv.validate('https://ns.adobe.com/helix/shared/config', config);
