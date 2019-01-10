@@ -27,6 +27,12 @@ const tests = [
     error: 'Error: Invalid configuration: data should have required property \'strains\'',
   },
   {
+    title: 'fails with no default strain',
+    config: 'no-default.yaml',
+    result: null,
+    error: 'Error: Invalid configuration: data.strains should have required property \'default\'',
+  },
+  {
     title: 'loads a full config',
     config: 'full.yaml',
     result: 'full.json',
