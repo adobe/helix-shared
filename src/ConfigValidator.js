@@ -14,12 +14,49 @@ const Ajv = require('ajv');
 const schemas = [
   /* eslint-disable global-require */
   require('./schemas/config.schema.json'),
-  require('./schemas/strain.schema.json'),
+  require('./schemas/runtimestrain.schema.json'),
+  require('./schemas/proxystrain.schema.json'),
   require('./schemas/strains.schema.json'),
   require('./schemas/giturl.schema.json'),
   require('./schemas/origin.schema.json'),
   /* eslint-enable global-require */
 ];
+
+class ValidationError extends Error {
+  constructor(message, errors = []) {
+    function prettyname(path, schema) {
+      if (path.startsWith('.strains')) {
+        return `${schema.title || 'Invalid Strain'} ${path.replace(/\.strains(\.|\[')(.*)/, '$2').replace(/'.*/, '')}`;
+      }
+      return `${schema.title || schema.$id} ${path}`;
+    } 
+
+    const detail = errors.map(({keyword, dataPath, message, data, params, parentSchema}) => 
+    {
+      if (keyword==='additionalProperties') {
+        return `${prettyname(dataPath, parentSchema)} has unknown property '${params.additionalProperty}'`;
+      }
+      if (keyword==='required'&&dataPath==='') {
+        return `A set of strains and a default strain are missing.`;
+      }
+      if (keyword==='required'&&dataPath==='.strains') {
+        return `A default strain is missing.`;
+      }
+      if (keyword==='required') {
+        return `${prettyname(dataPath, parentSchema)} ${message}`;
+      }
+      if (keyword==='oneOf' && dataPath.startsWith('.strains')) {
+        return `${prettyname(dataPath, parentSchema)} must be either a Runtime Strain or a Proxy Strain`;
+      }
+      return `${prettyname(dataPath, parentSchema)} ${message}: ${keyword}(${JSON.stringify(data)}, ${JSON.stringify(params)})`;
+    }).join('\n')
+    super(`Invalid configuration:
+${detail}
+
+${message}`);
+    this._errors = errors;
+  }
+}
 
 class ConfigValidator {
   constructor() {
@@ -33,13 +70,14 @@ class ConfigValidator {
   }
 
   validate(config = {}) {
+    this._ajv.errors = [];
     return this._ajv.validate('https://ns.adobe.com/helix/shared/config', config);
   }
 
   assetValid(config = {}) {
     const valid = this.validate(config);
     if (!valid) {
-      throw new Error(`Invalid configuration: ${this._ajv.errorsText()}`);
+      throw new ValidationError(this._ajv.errorsText(), this._ajv.errors);
     }
   }
 }

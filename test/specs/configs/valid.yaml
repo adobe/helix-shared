@@ -7,6 +7,7 @@ definitions:
     base: &basestrain
       code: *myrepo
       content: *myrepo
+      static: *myrepo
 
 strains:
   default:

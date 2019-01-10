@@ -19,12 +19,14 @@ definitions:
     base: &basestrain
       code: *myrepo
       content: *myrepo
+      static: *myrepo
 
 strains:
   default: *basestrain
 
   client:
     code: *myrepo
+    static: *myrepo
     condition: req.http.host == "client.project-helix.io"
     sticky: false
     content:

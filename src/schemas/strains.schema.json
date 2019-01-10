@@ -17,11 +17,25 @@
   "meta:status": "stabilizing",
   "description": "A map of strains. Every strain name must be unique for a given config.",
   "additionalProperties": {
-    "$ref": "https://ns.adobe.com/helix/shared/strain"
+    "oneOf": [
+      {
+        "$ref": "https://ns.adobe.com/helix/shared/proxystrain"
+      },
+      {
+        "$ref": "https://ns.adobe.com/helix/shared/runtimestrain"
+      }
+    ]
   },
   "properties": {
     "default": {
-      "$ref": "https://ns.adobe.com/helix/shared/strain"
+      "oneOf": [
+        {
+          "$ref": "https://ns.adobe.com/helix/shared/proxystrain"
+        },
+        {
+          "$ref": "https://ns.adobe.com/helix/shared/runtimestrain"
+        }
+      ]
     }
   },
   "required": ["default"]

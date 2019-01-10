@@ -24,13 +24,24 @@ const tests = [
     title: 'fails with an empty config',
     config: 'empty.yaml',
     result: null,
-    error: 'Error: Invalid configuration: data should have required property \'strains\'',
+    error: `Error: Invalid configuration:
+A set of strains and a default strain are missing.
+
+data should have required property 'strains'`,
   },
   {
     title: 'fails with no default strain',
     config: 'no-default.yaml',
     result: null,
-    error: 'Error: Invalid configuration: data.strains should have required property \'default\'',
+    error: `Error: Invalid configuration:
+Proxy Strain no-default has unknown property 'code'
+Proxy Strain no-default has unknown property 'content'
+Proxy Strain no-default should have required property 'origin'
+Runtime Strain no-default should have required property 'static'
+Invalid Strain no-default must be either a Runtime Strain or a Proxy Strain
+A default strain is missing.
+
+data.strains['no-default'] should NOT have additional properties, data.strains['no-default'] should NOT have additional properties, data.strains['no-default'] should have required property 'origin', data.strains['no-default'] should have required property 'static', data.strains['no-default'] should match exactly one schema in oneOf, data.strains should have required property 'default'`,
   },
   {
     title: 'loads a full config',
