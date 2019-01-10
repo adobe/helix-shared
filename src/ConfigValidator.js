@@ -23,7 +23,12 @@ const schemas = [
 
 class ConfigValidator {
   constructor() {
-    this._ajv = new Ajv({ allErrors: true, verbose: true });
+    this._ajv = new Ajv({
+      allErrors: true,
+      verbose: true,
+      useDefaults: true,
+      coerceTypes: true,
+    });
     this._ajv.addSchema(schemas);
   }
 

@@ -98,6 +98,7 @@ class HelixConfig {
     await this.validate();
 
     const cfg = this._cfg;
+    this._version = cfg.version;
 
     Object.keys(cfg.strains).forEach((name) => {
       this._strains.set(name, new Strain(name, cfg.strains[name]));
@@ -108,6 +109,7 @@ class HelixConfig {
 
   toJSON() {
     return {
+      version: this._version,
       strains: this._strains.toJSON(),
     };
   }
