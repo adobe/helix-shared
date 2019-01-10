@@ -197,6 +197,15 @@ class GitUrl {
   }
 
   /**
+   * Checks if this git url is _local_. A git-url is considered local if hostname is `localhost` and
+   * the owner is `local` and the repo name is `default`. This is specific to helix.
+   * @returns {boolean}
+   */
+  get isLocal() {
+    return this.hostname === 'localhost' && this.owner === 'local' && this.repo === 'default';
+  }
+
+  /**
    * String representation of the git url.
    * @returns {String} url.
    */
