@@ -13,8 +13,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
-const GitUrl = require('./GitUrl.js');
 const Strain = require('./Strain.js');
+const ConfigValidator = require('./ConfigValidator.js');
 
 const HELIX_CONFIG = 'helix-config.yaml';
 
@@ -33,13 +33,7 @@ class HelixConfig {
     this._cfgRelPath = '';
     this._cfg = {};
     this._logger = console;
-
-    this._defaults = {
-      content: new GitUrl('http://localhost/local/default.git'),
-      code: new GitUrl('http://localhost/local/default.git'),
-      staticRoot: '/htdocs',
-      directoryIndex: 'index.html',
-    };
+    this._version = '';
 
     this._strains = new Map();
     this._strains.toJSON = () => {
@@ -70,6 +64,10 @@ class HelixConfig {
     return this._cwd;
   }
 
+  get version() {
+    return this._version;
+  }
+
   get strains() {
     return this._strains;
   }
@@ -91,35 +89,20 @@ class HelixConfig {
     }
   }
 
+  async validate() {
+    new ConfigValidator().assetValid(this._cfg);
+  }
+
   async init() {
     await this.loadConfig();
+    await this.validate();
+
     const cfg = this._cfg;
 
-    if (cfg.content) {
-      this._defaults.content = new GitUrl(cfg.content);
-    } else if (cfg.contentRepo) {
-      this.log.warn(`${this._cfgRelPath}: 'contentRepo' is deprecated. Use 'content' instead.`);
-      this._defaults.content = new GitUrl(cfg.contentRepo);
-    }
-    if (cfg.code) {
-      this._defaults.code = new GitUrl(cfg.code);
-    }
-    if (cfg.staticRoot) {
-      this._defaults.staticRoot = cfg.staticRoot;
-    }
-    if (cfg.directoryIndex) {
-      this._defaults.directoryIndex = cfg.directoryIndex;
-    }
+    Object.keys(cfg.strains).forEach((name) => {
+      this._strains.set(name, new Strain(name, cfg.strains[name]));
+    });
 
-    if (cfg.strains) {
-      Object.keys(cfg.strains).forEach((name) => {
-        this._strains.set(name, new Strain(name, cfg.strains[name], this._defaults));
-      });
-    }
-    // ensure that there is a default strain
-    if (!this._strains.has('default')) {
-      this._strains.set('default', new Strain('default', {}, this._defaults));
-    }
     return this;
   }
 

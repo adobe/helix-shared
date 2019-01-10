@@ -16,39 +16,37 @@ const assert = require('assert');
 const yaml = require('js-yaml');
 const path = require('path');
 const fs = require('fs-extra');
-const validate = require('../src/validate');
+const ConfigValidator = require('../src/ConfigValidator.js');
 
-function validyaml(file) {
-  return validate(yaml.load(fs.readFileSync(path.resolve(__dirname, 'specs', 'configs', file))))
+async function validate(filename) {
+  const file = await fs.readFile(path.resolve(__dirname, 'specs', 'configs', filename));
+  const json = yaml.load(file);
+  new ConfigValidator().assetValid(json);
 }
 
-function assertvalid(file) {
-  assert.ok(validyaml(file));
+async function assertValid(filename) {
+  await validate(filename);
 }
 
-function assertinvalid(file) {
+async function assertInvalid(filename) {
   try {
-    const valid = validyaml(file);
-    assert.equal(valid, false, `${file} should be invalid`);
+    await validate(filename);
+    assert.fail(`${filename} should be invalid`);
   } catch (e) {
-    if (e.code && e.code==='ERR_ASSERTION') {
-      throw e;
-    }
+    // ok
   }
 }
 
 describe('Validator Tests', () => {
-  ['empty.yaml', 'no-default.yaml'].forEach(i => {
-    it(`${i} is invalid`, () => {
-      assertinvalid(i);
+  ['empty.yaml', 'no-default.yaml'].forEach((filename) => {
+    it(`${filename} is invalid`, async () => {
+      await assertInvalid(filename);
     });
   });
 
-  ['valid.yaml'].forEach(i => {
-    it(`${i} is valid`, () => {
-      assertvalid(i);
+  ['valid.yaml', 'full.yaml'].forEach((filename) => {
+    it(`${filename} is valid`, async () => {
+      await assertValid(filename);
     });
   });
-
-
 });

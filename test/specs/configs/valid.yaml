@@ -1,12 +1,20 @@
 version: 1
+
+definitions:
+  constants:
+    - &myrepo https://github.com/adobe/project-helix.io.git
+  strains:
+    base: &basestrain
+      code: *myrepo
+      content: *myrepo
+
 strains:
   default:
-    code: https://github.com/adobe/project-helix.io.git
-    content: https://github.com/adobe/project-helix.io.git
+    <<: *basestrain
+
   sticky:
+    <<: *basestrain
     sticky: true
-    code: https://github.com/adobe/project-helix.io.git
-    content: https://github.com/adobe/project-helix.io.git
     static:
       owner: adobe
       repo: project-helix.io

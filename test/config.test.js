@@ -19,49 +19,57 @@ const { HelixConfig } = require('../src/index.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/configs');
 
-describe('Helix Config', () => {
-  it('loads an empty config', async () => {
-    const cfg = await new HelixConfig()
-      .withConfigPath(path.resolve(SPEC_ROOT, 'empty.yaml'))
-      .init();
+const tests = [
+  {
+    title: 'fails with an empty config',
+    config: 'empty.yaml',
+    result: null,
+    error: 'Error: Invalid configuration: data should have required property \'strains\'',
+  },
+  {
+    title: 'loads a full config',
+    config: 'full.yaml',
+    result: 'full.json',
+  },
+  {
+    title: 'fails if config contains tabs',
+    config: 'config_with_tabs.yaml',
+    result: null,
+    error: 'Error: Tabs not allowed in helix-config.yaml',
+  },
+  {
+    title: 'loads config with urls',
+    config: 'urls.yaml',
+    result: 'urls.json',
+  },
+];
 
-    const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'empty.json'), 'utf-8'));
-    const actual = cfg.toJSON();
-    assert.deepEqual(actual, expected);
+describe('Helix Config Loading', () => {
+  tests.forEach((test) => {
+    it(test.title, async () => {
+      try {
+        const cfg = await new HelixConfig()
+          .withConfigPath(path.resolve(SPEC_ROOT, test.config))
+          .init();
+        if (test.result) {
+          const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, test.result), 'utf-8'));
+          const actual = cfg.toJSON();
+          assert.deepEqual(actual, expected);
+        } else {
+          assert.fail(`${test.title} should be invalid.`);
+        }
+      } catch (e) {
+        if (test.error) {
+          assert.equal(e.toString(), test.error);
+        } else {
+          throw e;
+        }
+      }
+    });
   });
+});
 
-  it('loads a full config', async () => {
-    const cfg = await new HelixConfig()
-      .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))
-      .init();
-
-    const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'full.json'), 'utf-8'));
-    const actual = cfg.toJSON();
-    assert.deepEqual(actual, expected);
-  });
-
-  it('fails if the config contains tabs', async () => {
-    try {
-      await new HelixConfig()
-        .withConfigPath(path.resolve(SPEC_ROOT, 'config_with_tabs.yaml'))
-        .init();
-      assert.fail('config with tabs should fail.');
-    } catch (e) {
-      // ok
-      assert.equal(e.toString(), 'Error: Tabs not allowed in helix-config.yaml');
-    }
-  });
-
-  it('loads a config with URLs', async () => {
-    const cfg = await new HelixConfig()
-      .withConfigPath(path.resolve(SPEC_ROOT, 'urls.yaml'))
-      .init();
-
-    const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'urls.json'), 'utf-8'));
-    const actual = cfg.toJSON();
-    assert.deepEqual(actual, expected);
-  });
-
+describe('Helix Config Serialzing', () => {
   it('can serialize strains as json', async () => {
     const cfg = await new HelixConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))

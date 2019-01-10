@@ -7,29 +7,24 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
+version: 1
 
+definitions:
+  constants:
+    defaultRepo: &myrepo
+      owner: adobe
+      repo: project-helix.io
+      ref: master
+  strains:
+    base: &basestrain
+      code: *myrepo
+      content: *myrepo
 
-# defines the default content repository
-# content: local
-content: https://github.com/adobe/project-helix.io.git
-
-# defines the default code repository
-code: https://github.com/adobe/project-helix.io.git
-
-# defines the default static root relative to the code repository
-staticRoot: /htdocs
-
-# defines the directory index file
-directoryIndex: index.html
-
-# define additional configs (strains)
 strains:
-  default:
-    code: /acapt/default/https---github-com-adobe-project-helix-io-git--master--
-    condition: req.http.host == "www.project-helix.io"
+  default: *basestrain
 
   client:
-    code: /acapt/default/https---github-com-adobe-project-helix-io-git--master--
+    code: *myrepo
     condition: req.http.host == "client.project-helix.io"
     sticky: false
     content:
@@ -39,13 +34,14 @@ strains:
     directoryIndex: readme.html
 
   pipeline:
-    code: /acapt/default/https---github-com-adobe-project-helix-io-git--master--
+    <<: *basestrain
     condition: req.http.host == "pipeline.project-helix.io"
     content:
       repo: hypermedia-pipeline
       ref: master
       owner: adobe
     static:
+      <<: *myrepo
       path: /www
 
   proxy:
@@ -53,7 +49,7 @@ strains:
     condition: req.http.host == "proxy.project-helix.io"
     sticky: true
 
-  proxy-detailed :
+  proxy-detailed:
     origin:
       address: 192.168.0.1
       name: publish

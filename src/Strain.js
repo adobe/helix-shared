@@ -23,6 +23,12 @@ class Static {
     this._magic = cfg.magic || false;
     this._allow = cfg.allow || [];
     this._deny = cfg.deny || [];
+
+    if (!this._url.path) {
+      // todo: ... this is a by ugly
+      // eslint-disable-next-line no-underscore-dangle
+      this._url._path = '/htdocs';
+    }
   }
 
   get url() {
@@ -127,25 +133,33 @@ class Performance {
  * Strain
  */
 class Strain {
-  constructor(name, cfg, defaults) {
+  constructor(name, cfg) {
     this._name = name;
-    this._content = new GitUrl(cfg.content || {}, defaults.content);
-    this._code = cfg.code || '';
-    const staticDefaults = Object.assign({}, defaults.code.toJSON(), {
-      path: defaults.staticRoot,
-    });
-    this._static = new Static(cfg.static || {}, staticDefaults);
-    this._condition = cfg.condition || '';
-    this._directoryIndex = cfg.directoryIndex || defaults.directoryIndex;
-    this._perf = new Performance(cfg.perf);
     if (cfg.origin) {
+      // proxy
       this._origin = new Origin(cfg.origin);
     } else {
       this._origin = null;
+      this._content = new GitUrl(cfg.content);
+      this._code = new GitUrl(cfg.code);
+      // todo: 1. do we still need whilelists?
+      // todo: 2. do we want to fall back to code here, or should static be mandatory?
+      const staticDefaults = Object.assign({ }, this._code.toJSON());
+      this._static = new Static(cfg.static || {}, staticDefaults);
+      // todo: default for directory index from schema?
+      this._directoryIndex = cfg.directoryIndex || 'index.html';
     }
+
+    // todo: schema for perf
+    this._perf = new Performance(cfg.perf);
+    this._condition = cfg.condition || '';
+
     // when `sticky` is not set
     // assume the strain to be sticky when there is a condition
     this._sticky = cfg.sticky === undefined ? this._condition !== '' : !!cfg.sticky;
+
+    // todo: I assume this will go into the new condition language
+    // todo: if not, I would only have 1 property `url` that can be single or multi valued
     this._url = cfg.url ? URI.normalize(cfg.url) : '';
     this._urls = new Set(Array.isArray(cfg.urls) ? cfg.urls.map(URI.normalize) : []);
     if (this._url) {
@@ -241,7 +255,7 @@ class Strain {
       }, json);
     }
     return Object.assign({
-      code: this.code,
+      code: this.code.toJSON(),
       content: this.content.toJSON(),
       directoryIndex: this.directoryIndex,
       static: this.static.toJSON(),

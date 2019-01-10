@@ -54,13 +54,59 @@
                 }
             ]
         },
+        "origin": {
+            "description": "Origin backend for proxy strains.",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "format": "uri"
+                },
+                {
+                    "$ref": "https://ns.adobe.com/helix/shared/origin"
+                }
+            ]
+        },
+        "directoryIndex": {
+            "description": "Name of the resource to use for requests to directories (no extension).",
+            "type": "string",
+            "default": "index.html"
+        },
         "sticky": {
             "description": "Sticky strains are not re-evaluated on every request. As soon as a visitor is determined to match a sticky strain, a session cookie will be set to keep the user in the strain.",
             "type": "boolean"
+        },
+        "url": {
+            "description": "URL condition (note, this will be merged into a more general condition language)",
+            "type": "string",
+            "format": "uri"
+        },
+        "urls": {
+            "description": "URL condition (note, this will be merged into a more general condition language)",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "uri"
+            }
+        },
+        "condition": {
+            "description": "VLC condition that controls that can optionally activate this strain.",
+            "type": "string"
         }
     },
-    "required": [
-        "code",
-        "content"
-    ]
+    "if": {
+        "required": [
+            "origin"
+        ]
+    },
+    "then": {
+        "required": [
+            "origin"
+        ]
+    },
+    "else": {
+        "required": [
+            "code",
+            "content"
+        ]
+    }
 }
