@@ -73,9 +73,26 @@ describe('Helix Config Loading', () => {
       }
     });
   });
+
+  it('loads from string source', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'full.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+    assert.equals(cfg.source, source);
+  });
+
+  it('loads from string source and reports correct path', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'full.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withDirectory(SPEC_ROOT)
+      .withSource(source)
+      .init();
+    assert.equal(cfg.configPath, path.resolve(SPEC_ROOT, 'helix-config.yaml'));
+  });
 });
 
-describe('Helix Config Serialzing', () => {
+describe('Helix Config Serializing', () => {
   it('can serialize strains as json', async () => {
     const cfg = await new HelixConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))

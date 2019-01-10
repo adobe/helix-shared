@@ -30,7 +30,7 @@ class HelixConfig {
   constructor() {
     this._cwd = process.cwd();
     this._cfgPath = '';
-    this._cfgRelPath = '';
+    this._source = '';
     this._cfg = {};
     this._logger = console;
     this._version = '';
@@ -43,6 +43,11 @@ class HelixConfig {
       });
       return strains;
     };
+  }
+
+  withSource(value) {
+    this._source = value;
+    return this;
   }
 
   withConfigPath(cfgPath) {
@@ -68,6 +73,14 @@ class HelixConfig {
     return this._version;
   }
 
+  get configPath() {
+    return this._cfgPath;
+  }
+
+  get source() {
+    return this._source;
+  }
+
   get strains() {
     return this._strains;
   }
@@ -76,17 +89,23 @@ class HelixConfig {
     return this._logger;
   }
 
-  async loadConfig() {
-    const cfgPath = this._cfgPath || path.resolve(this._cwd, HELIX_CONFIG);
-    if (await isFile(cfgPath)) {
-      const data = await fs.readFile(cfgPath, 'utf8');
-      if (data.indexOf('\t') >= 0) {
-        throw Error('Tabs not allowed in helix-config.yaml');
-      }
-      this._cfg = yaml.safeLoad(data) || {};
-      this._cfgPath = cfgPath;
-      this._cfgRelPath = path.relative(this._cwd, cfgPath);
+  async hasFile() {
+    if (!this._cfgPath) {
+      this._cfgPath = path.resolve(this._cwd, HELIX_CONFIG);
     }
+    return isFile(this._cfgPath);
+  }
+
+  async loadConfig() {
+    if (!this._source) {
+      if (await this.hasFile()) {
+        this._source = await fs.readFile(this._cfgPath, 'utf8');
+      }
+    }
+    if (this._source.indexOf('\t') >= 0) {
+      throw Error('Tabs not allowed in helix-config.yaml');
+    }
+    this._cfg = yaml.safeLoad(this._source) || {};
   }
 
   async validate() {
