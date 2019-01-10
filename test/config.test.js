@@ -79,7 +79,7 @@ describe('Helix Config Loading', () => {
     const cfg = await new HelixConfig()
       .withSource(source)
       .init();
-    assert.equals(cfg.source, source);
+    assert.equal(cfg.source, source);
   });
 
   it('loads from string source and reports correct path', async () => {

@@ -74,7 +74,7 @@ class HelixConfig {
   }
 
   get configPath() {
-    return this._cfgPath;
+    return this._cfgPath || path.resolve(this._cwd, HELIX_CONFIG);
   }
 
   get source() {
@@ -90,16 +90,13 @@ class HelixConfig {
   }
 
   async hasFile() {
-    if (!this._cfgPath) {
-      this._cfgPath = path.resolve(this._cwd, HELIX_CONFIG);
-    }
-    return isFile(this._cfgPath);
+    return isFile(this.configPath);
   }
 
   async loadConfig() {
     if (!this._source) {
       if (await this.hasFile()) {
-        this._source = await fs.readFile(this._cfgPath, 'utf8');
+        this._source = await fs.readFile(this.configPath, 'utf8');
       }
     }
     if (this._source.indexOf('\t') >= 0) {
