@@ -202,7 +202,7 @@ class GitUrl {
    * @returns {boolean}
    */
   get isLocal() {
-    return this.hostname === 'localhost' && this.owner === 'local' && this.repo === 'default';
+    return (this.hostname === 'localhost' || this.hostname === '127.0.0.1') && this.owner === 'local' && this.repo === 'default';
   }
 
   /**
