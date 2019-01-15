@@ -11,6 +11,7 @@
  */
 
 const { URL } = require('url');
+const utils = require('./utils.js');
 
 const RAW_TYPE = 'raw';
 const API_TYPE = 'api';
@@ -32,6 +33,7 @@ class GitUrl {
    */
   constructor(url, defaults = {}) {
     if (url === Object(url)) {
+      this._type = 'object';
       const portStr = url.port || defaults.port ? `:${url.port || defaults.port}` : '';
       this._url = new URL(`${url.protocol || defaults.protocol || 'https'}://${url.hostname || defaults.hostname || 'github.com'}${portStr}`);
       this._owner = url.owner || defaults.owner;
@@ -49,6 +51,7 @@ class GitUrl {
       if (!url) {
         throw Error('Invalid URL: undefined');
       }
+      this._type = 'string';
       // special case for `scp` form
       if (url.startsWith('git@')) {
         const cIdx = url.indexOf(':');
@@ -256,10 +259,13 @@ class GitUrl {
 
   /**
    * Returns a plain object representation.
-   * @returns {GitUrl~JSON} A plain object suitable for serialization.
+   * @returns {GitUrl~JSON|String} A plain object suitable for serialization.
    */
-  toJSON() {
-    return {
+  toJSON(opts) {
+    if (opts && opts.keepFormat && this._type === 'string') {
+      return this.toString();
+    }
+    const json = {
       protocol: this.protocol,
       host: this.host,
       port: this.port,
@@ -269,6 +275,10 @@ class GitUrl {
       ref: this.ref,
       path: this.path,
     };
+    if (opts && opts.minimal) {
+      return utils.pruneEmptyValues(json);
+    }
+    return json;
   }
 }
 

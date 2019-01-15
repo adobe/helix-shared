@@ -11,9 +11,10 @@
  */
 
 const URI = require('uri-js');
+const yaml = require('js-yaml');
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin');
-
+const utils = require('./utils.js');
 /**
  * Static content handling
  */
@@ -76,12 +77,21 @@ class Static {
    * Returns a json representation
    * @returns {Static~JSON}
    */
-  toJSON() {
-    return Object.assign({}, this.url.toJSON(), {
+  toJSON(opts) {
+    let json = {
       magic: this.magic,
       allow: this.allow,
       deny: this.deny,
-    });
+    };
+    if (opts && (opts.minimal || opts.keepFormat)) {
+      json = utils.pruneEmptyValues(json);
+    }
+    if (!json) {
+      return this.url.toJSON(opts);
+    }
+    const myOpts = Object.assign({}, opts);
+    delete myOpts.keepFormat;
+    return Object.assign(json, this.url.toJSON(myOpts));
   }
 }
 
@@ -94,7 +104,6 @@ class Performance {
     this._location = cfg.location || '';
     this._connection = cfg.connection || '';
   }
-
 
   get device() {
     return this._device;
@@ -120,12 +129,16 @@ class Performance {
    * Returns a json representation
    * @returns {Performance~JSON}
    */
-  toJSON() {
-    return {
+  toJSON(opts) {
+    const json = {
       device: this.device,
       location: this.location,
       connection: this.connection,
     };
+    if (opts && opts.minimal) {
+      return utils.pruneEmptyValues(json);
+    }
+    return json;
   }
 }
 
@@ -167,12 +180,25 @@ class Strain {
     }
   }
 
+  clone() {
+    return new Strain(this.name, this.toJSON({ keepFormat: true }));
+  }
+
   get url() {
     return this._url;
   }
 
   get urls() {
     return Array.from(this._urls.values());
+  }
+
+  set urls(value) {
+    if (Array.isArray(value)) {
+      this._urls = Array.from(value);
+    } else {
+      this._urls = [value];
+    }
+    this._url = this._urls.length > 0 ? this._urls[0] : '';
   }
 
   get sticky() {
@@ -185,6 +211,10 @@ class Strain {
    */
   get name() {
     return this._name;
+  }
+
+  set name(value) {
+    this._name = value;
   }
 
   /**
@@ -223,6 +253,10 @@ class Strain {
     return this._condition;
   }
 
+  set condition(value) {
+    this._condition = value;
+  }
+
   get directoryIndex() {
     return this._directoryIndex;
   }
@@ -256,26 +290,37 @@ class Strain {
    * Returns a json representation
    * @returns {Strain~JSON}
    */
-  toJSON() {
+  toJSON(opts) {
     const json = {
       name: this.name,
       sticky: this.sticky,
       condition: this.condition,
-      perf: this.perf.toJSON(),
+      perf: this.perf.toJSON(opts),
       url: this.url,
       urls: this.urls,
     };
     if (this.isProxy()) {
       return Object.assign({
-        origin: this.origin.toJSON(),
+        origin: this.origin.toJSON(opts),
       }, json);
     }
-    return Object.assign({
-      code: this.code.toJSON(),
-      content: this.content.toJSON(),
+    const ret = Object.assign({
+      code: this.code.toJSON(opts),
+      content: this.content.toJSON(opts),
+      static: this.static.toJSON(opts),
       directoryIndex: this.directoryIndex,
-      static: this.static.toJSON(),
     }, json);
+    if (opts && opts.minimal) {
+      return utils.pruneEmptyValues(ret);
+    }
+    return ret;
+  }
+
+  toYAML() {
+    return yaml.safeDump(this.toJSON({
+      keepFormat: true,
+      minimal: true,
+    }));
   }
 }
 

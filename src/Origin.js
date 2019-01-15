@@ -11,6 +11,7 @@
  */
 const URI = require('uri-js');
 const hash = require('object-hash');
+const utils = require('./utils.js');
 
 class Origin {
   constructor(cfg) {
@@ -102,8 +103,8 @@ class Origin {
     return this._useSSL;
   }
 
-  toJSON() {
-    return {
+  toJSON(opts) {
+    const json = {
       hostname: this.hostname,
       error_threshold: this.errorThreshold,
       first_byte_timeout: this.firstByteTimeout,
@@ -118,6 +119,10 @@ class Origin {
       max_conn: this.maxConn,
       use_ssl: this.useSSL,
     };
+    if (opts && opts.minimal) {
+      return utils.pruneEmptyValues(json);
+    }
+    return json;
   }
 }
 
