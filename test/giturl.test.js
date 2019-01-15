@@ -503,4 +503,16 @@ describe('GitUrl from object tests', () => {
     const result = new GitUrl(original);
     assert.equal(result.toString(), src);
   });
+
+  it('equalsIgnoreTransport', () => {
+    const url0 = new GitUrl('https://localhost/owner/repo.git#local_path');
+    const url1 = new GitUrl('ssh://git@localhost/owner/repo.git#local_path');
+    assert.ok(url0.equalsIgnoreTransport(url1));
+  });
+
+  it('not equalsIgnoreTransport', () => {
+    const url0 = new GitUrl('https://localhost/owner/repo.git#master');
+    const url1 = new GitUrl('https://localhost/owner/repo.git#dev');
+    assert.ok(!url0.equalsIgnoreTransport(url1));
+  });
 });

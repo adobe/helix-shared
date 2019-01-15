@@ -14,6 +14,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 const Strain = require('./Strain.js');
+const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
 
 const HELIX_CONFIG = 'helix-config.yaml';
@@ -35,14 +36,7 @@ class HelixConfig {
     this._logger = console;
     this._version = '';
 
-    this._strains = new Map();
-    this._strains.toJSON = () => {
-      const strains = {};
-      this._strains.forEach((strain, name) => {
-        strains[name] = strain.toJSON();
-      });
-      return strains;
-    };
+    this._strains = new Strains();
   }
 
   withSource(value) {
@@ -81,6 +75,10 @@ class HelixConfig {
     return this._source;
   }
 
+  /**
+   * Strains of this config.
+   * @returns {Strains}
+   */
   get strains() {
     return this._strains;
   }
@@ -117,7 +115,7 @@ class HelixConfig {
     this._version = cfg.version;
 
     Object.keys(cfg.strains).forEach((name) => {
-      this._strains.set(name, new Strain(name, cfg.strains[name]));
+      this._strains.add(new Strain(name, cfg.strains[name]));
     });
 
     return this;

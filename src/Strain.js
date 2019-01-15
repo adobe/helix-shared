@@ -179,10 +179,18 @@ class Strain {
     return this._sticky;
   }
 
+  /**
+   * Name of this strain.
+   * @returns {String}
+   */
   get name() {
     return this._name;
   }
 
+  /**
+   * GitUrl of the content repository
+   * @returns {GitUrl}
+   */
   get content() {
     return this._content;
   }
@@ -191,6 +199,10 @@ class Strain {
     this._content = url;
   }
 
+  /**
+   * GitUrl of the code repository
+   * @returns {GitUrl}
+   */
   get code() {
     return this._code;
   }
@@ -199,6 +211,10 @@ class Strain {
     this._code = code;
   }
 
+  /**
+   * Static information of this strain
+   * @returns {Static}
+   */
   get static() {
     return this._static;
   }

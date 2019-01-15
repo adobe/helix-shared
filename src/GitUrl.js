@@ -206,6 +206,23 @@ class GitUrl {
   }
 
   /**
+   * Tests if this GitUrl is equal to `other` but ignores transport properties, such as protocol,
+   * user and password.
+   * @param other {GitUrl} the url to compare to
+   * @returns {boolean}
+   */
+  equalsIgnoreTransport(other) {
+    if (this === other) {
+      return true;
+    }
+    if (!other) {
+      return false;
+    }
+    return this.host === other.host && this.owner === other.owner && this.repo === other.repo
+      && this.path === other.path && this.ref === other.ref;
+  }
+
+  /**
    * String representation of the git url.
    * @returns {String} url.
    */
