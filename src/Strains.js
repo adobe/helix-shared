@@ -13,46 +13,21 @@
 /**
  * Strains
  */
-class Strains {
-  constructor() {
-    this._strains = new Map();
-  }
-
+class Strains extends Map {
   /**
    * Returns a json representation
    * @returns {Strains~JSON}
    */
   toJSON() {
     const strains = {};
-    this._strains.forEach((strain, name) => {
+    this.forEach((strain, name) => {
       strains[name] = strain.toJSON();
     });
     return strains;
   }
 
-
-  add(strain) {
-    this._strains.set(strain.name, strain);
-  }
-
-  get(name) {
-    return this._strains.get(name);
-  }
-
-  has(name) {
-    return this._strains.has(name);
-  }
-
-  get size() {
-    return this._strains.size;
-  }
-
-  forEach(fn) {
-    return this._strains.forEach(fn);
-  }
-
   filterByCode(code) {
-    return [...this._strains.values()].filter(strain => code.equalsIgnoreTransport(strain.code));
+    return [...this.values()].filter(strain => code.equalsIgnoreTransport(strain.code));
   }
 }
 

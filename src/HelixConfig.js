@@ -115,7 +115,7 @@ class HelixConfig {
     this._version = cfg.version;
 
     Object.keys(cfg.strains).forEach((name) => {
-      this._strains.add(new Strain(name, cfg.strains[name]));
+      this._strains.set(name, new Strain(name, cfg.strains[name]));
     });
 
     return this;
