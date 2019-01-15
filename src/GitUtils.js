@@ -31,29 +31,25 @@ class GitUtils {
       .exec('git rev-parse HEAD', {
         silent: true,
       })
-      .stdout.replace(/\n/g, '')
-      .replace(/[\W]/g, '-');
+      .stdout.replace(/\n/g, '');
 
     const tag = $
       .exec(`git name-rev --tags --name-only ${rev}`, {
         silent: true,
       })
-      .stdout.replace(/\n/g, '')
-      .replace(/[\W]/g, '-');
+      .stdout.replace(/\n/g, '');
 
     const branchname = $
       .exec('git rev-parse --abbrev-ref HEAD', {
         silent: true,
       })
-      .stdout.replace(/\n/g, '')
-      .replace(/[\W]/g, '-');
+      .stdout.replace(/\n/g, '');
 
     return tag !== 'undefined' ? tag : branchname;
   }
 
-
   static getBranchFlag() {
-    return GitUtils.isDirty() ? 'dirty' : GitUtils.getBranch();
+    return GitUtils.isDirty() ? 'dirty' : GitUtils.getBranch().replace(/[\W]/g, '-');
   }
 
 
