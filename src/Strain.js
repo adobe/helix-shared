@@ -317,10 +317,14 @@ class Strain {
   }
 
   toYAML() {
-    return yaml.safeDump(this.toJSON({
+    const json = this.toJSON({
       keepFormat: true,
       minimal: true,
-    }));
+    });
+    delete json.name;
+    return yaml.safeDump({
+      [this.name]: json,
+    });
   }
 }
 

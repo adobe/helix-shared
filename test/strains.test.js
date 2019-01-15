@@ -79,17 +79,17 @@ describe('Strains test', () => {
       .withConfigPath(path.resolve(SPEC_ROOT, 'clone-tests.yaml'))
       .init();
     const copy = cfg.strains.get('default').clone();
-    assert.deepEqual(copy.toYAML(), 'code: \'https://github.com/adobe/project-helix.io.git#master\'\n'
-      + 'content:\n'
-      + '  protocol: https\n'
-      + '  host: github.com\n'
-      + '  hostname: github.com\n'
-      + '  owner: adobe\n'
-      + '  repo: helix-cli\n'
-      + '  ref: master\n'
-      + 'static: \'https://github.com/adobe/project-helix.io.git/htdocs#dev\'\n'
-      + 'directoryIndex: readme.html\n'
-      + 'name: default\n'
-      + 'condition: req.http.host == "client.project-helix.io"\n');
+    assert.deepEqual(copy.toYAML(), 'default:\n'
+      + '  code: \'https://github.com/adobe/project-helix.io.git#master\'\n'
+      + '  content:\n'
+      + '    protocol: https\n'
+      + '    host: github.com\n'
+      + '    hostname: github.com\n'
+      + '    owner: adobe\n'
+      + '    repo: helix-cli\n'
+      + '    ref: master\n'
+      + '  static: \'https://github.com/adobe/project-helix.io.git/htdocs#dev\'\n'
+      + '  directoryIndex: readme.html\n'
+      + '  condition: req.http.host == "client.project-helix.io"\n');
   });
 });
