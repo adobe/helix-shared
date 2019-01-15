@@ -44,6 +44,22 @@ describe('Strains test', () => {
     assert.equal(strains.length, 0);
   });
 
+  it('finds one proxy strain', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'many-code-repos.yaml'))
+      .init();
+    const strains = cfg.strains.getProxyStrains();
+    assert.equal(strains.length, 1);
+  });
+
+  it('finds some runtime strains', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'many-code-repos.yaml'))
+      .init();
+    const strains = cfg.strains.getRuntimeStrains();
+    assert.equal(strains.length, 4);
+  });
+
   it('get a strain', async () => {
     const cfg = await new HelixConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'many-code-repos.yaml'))

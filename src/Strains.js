@@ -27,7 +27,19 @@ class Strains extends Map {
   }
 
   filterByCode(code) {
-    return [...this.values()].filter(strain => code.equalsIgnoreTransport(strain.code));
+    return this.getByFilter(strain => code.equalsIgnoreTransport(strain.code));
+  }
+
+  getByFilter(filterfn) {
+    return [...this.values()].filter(filterfn);
+  }
+
+  getRuntimeStrains() {
+    return this.getByFilter(strain => !strain.isProxy());
+  }
+
+  getProxyStrains() {
+    return this.getByFilter(strain => strain.isProxy());
   }
 }
 
