@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Adobe. All rights reserved.
+ * Copyright 2018 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,7 +13,6 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const fs = require('fs-extra');
 const path = require('path');
 const GitUrl = require('../src/GitUrl.js');
 const { HelixConfig } = require('../src/index.js');
@@ -71,7 +70,7 @@ describe('Strains test', () => {
       .withConfigPath(path.resolve(SPEC_ROOT, 'many-code-repos.yaml'))
       .init();
     const names = [];
-    cfg.strains.forEach((s) => { names.push(s.name)});
+    cfg.strains.forEach((s) => { names.push(s.name); });
     assert.deepEqual(names, ['default', 'dev', 'dev2', 'stage', 'proxy']);
   });
 });
