@@ -16,75 +16,96 @@ const $ = require('shelljs');
 const path = require('path');
 const GitUrl = require('./GitUrl.js');
 
+function runIn(dir, fn) {
+  const pwd = $.pwd();
+  try {
+    if (dir) {
+      $.cd(dir);
+    }
+    return fn();
+  } finally {
+    if (dir) {
+      $.cd(pwd);
+    }
+  }
+}
+
 class GitUtils {
-  static isDirty() {
-    return $
+  static isDirty(dir) {
+    return runIn(dir, () => $
       .exec('git status --porcelain', {
         silent: true,
       })
       .stdout.replace(/\n/g, '')
-      .replace(/[\W]/g, '-').length > 0;
+      .replace(/[\W]/g, '-').length > 0);
   }
 
-  static getBranch() {
-    const rev = $
-      .exec('git rev-parse HEAD', {
-        silent: true,
-      })
-      .stdout.replace(/\n/g, '');
+  static getBranch(dir) {
+    return runIn(dir, () => {
+      const rev = $
+        .exec('git rev-parse HEAD', {
+          silent: true,
+        })
+        .stdout.replace(/\n/g, '');
 
-    const tag = $
-      .exec(`git name-rev --tags --name-only ${rev}`, {
-        silent: true,
-      })
-      .stdout.replace(/\n/g, '');
+      const tag = $
+        .exec(`git name-rev --tags --name-only ${rev}`, {
+          silent: true,
+        })
+        .stdout.replace(/\n/g, '');
 
-    const branchname = $
-      .exec('git rev-parse --abbrev-ref HEAD', {
-        silent: true,
-      })
-      .stdout.replace(/\n/g, '');
+      const branchname = $
+        .exec('git rev-parse --abbrev-ref HEAD', {
+          silent: true,
+        })
+        .stdout.replace(/\n/g, '');
 
-    return tag !== 'undefined' ? tag : branchname;
+      return tag !== 'undefined' ? tag : branchname;
+    });
   }
 
-  static getBranchFlag() {
-    return GitUtils.isDirty() ? 'dirty' : GitUtils.getBranch().replace(/[\W]/g, '-');
+  static getBranchFlag(dir) {
+    return GitUtils.isDirty(dir) ? 'dirty' : GitUtils.getBranch(dir).replace(/[\W]/g, '-');
   }
 
-
-  static getRepository() {
-    const repo = GitUtils.getOrigin()
-      .replace(/[\W]/g, '-');
-    if (repo !== '') {
-      return repo;
-    }
-    return `local--${path.basename(process.cwd())}`;
+  static getRepository(dir) {
+    return runIn(dir, () => {
+      const repo = GitUtils.getOrigin()
+        .replace(/[\W]/g, '-');
+      if (repo !== '') {
+        return repo;
+      }
+      return `local--${path.basename(process.cwd())}`;
+    });
   }
 
-  static getOrigin() {
-    try {
-      const origin = $.exec('git config --get remote.origin.url', {
-        silent: true,
-      }).stdout.replace(/\n/g, '');
-      return origin;
-    } catch (e) {
-      return '';
-    }
+  static getOrigin(dir) {
+    return runIn(dir, () => {
+      try {
+        const origin = $.exec('git config --get remote.origin.url', {
+          silent: true,
+        }).stdout.replace(/\n/g, '');
+        return origin;
+      } catch (e) {
+        return '';
+      }
+    });
   }
 
-  static getOriginURL() {
-    return new GitUrl(GitUtils.getOrigin());
+  static getOriginURL(dir) {
+    return new GitUrl(GitUtils.getOrigin(dir));
   }
 
-  static getCurrentRevision() {
-    const rev = $
-      .exec('git rev-parse HEAD', {
-        silent: true,
-      })
-      .stdout.replace(/\n/g, '')
-      .replace(/[\W]/g, '-');
-    return rev;
+  static getCurrentRevision(dir) {
+    return runIn(dir, () => {
+      const rev = $
+        .exec('git rev-parse HEAD', {
+          silent: true,
+        })
+        .stdout.replace(/\n/g, '')
+        .replace(/[\W]/g, '-');
+      return rev;
+    });
   }
 }
 
