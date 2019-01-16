@@ -10,6 +10,11 @@ A strain is a combination of code and content that enables the creation of a dig
 | Abstract | Extensible | Status | Identifiable | Custom Properties | Additional Properties | Defined In |
 |----------|------------|--------|--------------|-------------------|-----------------------|------------|
 | Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [proxystrain.schema.json](proxystrain.schema.json) |
+## Schema Hierarchy
+
+* Proxy Strain `https://ns.adobe.com/helix/shared/proxystrain`
+  * [Runtime Strain](performance.schema.md) `https://ns.adobe.com/helix/shared/performance`
+
 
 # Proxy Strain Properties
 
@@ -17,6 +22,7 @@ A strain is a combination of code and content that enables the creation of a dig
 |----------|------|----------|------------|
 | [condition](#condition) | `string` | Optional | Proxy Strain (this schema) |
 | [origin](#origin) | complex | **Required** | Proxy Strain (this schema) |
+| [perf](#perf) | Runtime Strain | Optional | Proxy Strain (this schema) |
 | [sticky](#sticky) | `boolean` | Optional | Proxy Strain (this schema) |
 | [url](#url) | `string` | Optional | Proxy Strain (this schema) |
 | [urls](#urls) | `string[]` | Optional | Proxy Strain (this schema) |
@@ -72,6 +78,24 @@ Origin backend for proxy strains.
 
 * []() – `https://ns.adobe.com/helix/shared/origin`
 
+
+
+
+
+
+## perf
+
+
+`perf`
+
+* is optional
+* type: Runtime Strain
+* defined in this schema
+
+### perf Type
+
+
+* [Runtime Strain](performance.schema.md) – `https://ns.adobe.com/helix/shared/performance`
 
 
 

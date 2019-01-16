@@ -59,6 +59,11 @@ data.strains['no-default'] should NOT have additional properties, data.strains['
     config: 'urls.yaml',
     result: 'urls.json',
   },
+  {
+    title: 'loads config with performance',
+    config: 'perf.yaml',
+    result: 'perf.json',
+  },
 ];
 
 describe('Helix Config Loading', () => {

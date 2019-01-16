@@ -10,6 +10,11 @@ A runtime strain is a combination of code and content that enables the creation 
 | Abstract | Extensible | Status | Identifiable | Custom Properties | Additional Properties | Defined In |
 |----------|------------|--------|--------------|-------------------|-----------------------|------------|
 | Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [runtimestrain.schema.json](runtimestrain.schema.json) |
+## Schema Hierarchy
+
+* Runtime Strain `https://ns.adobe.com/helix/shared/runtimestrain`
+  * [Runtime Strain](performance.schema.md) `https://ns.adobe.com/helix/shared/performance`
+
 
 # Runtime Strain Properties
 
@@ -20,6 +25,7 @@ A runtime strain is a combination of code and content that enables the creation 
 | [content](#content) | complex | **Required** |  | Runtime Strain (this schema) |
 | [directoryIndex](#directoryindex) | `string` | Optional | `"index.html"` | Runtime Strain (this schema) |
 | [package](#package) | `string` | Optional |  | Runtime Strain (this schema) |
+| [perf](#perf) | Runtime Strain | Optional |  | Runtime Strain (this schema) |
 | [static](#static) | complex | **Required** |  | Runtime Strain (this schema) |
 | [sticky](#sticky) | `boolean` | Optional |  | Runtime Strain (this schema) |
 | [url](#url) | `string` | Optional |  | Runtime Strain (this schema) |
@@ -154,6 +160,24 @@ Name of the action package that renders this strain.
 `string`
 
 
+
+
+
+
+
+## perf
+
+
+`perf`
+
+* is optional
+* type: Runtime Strain
+* defined in this schema
+
+### perf Type
+
+
+* [Runtime Strain](performance.schema.md) – `https://ns.adobe.com/helix/shared/performance`
 
 
 

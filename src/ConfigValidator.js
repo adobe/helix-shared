@@ -19,6 +19,7 @@ const schemas = [
   require('./schemas/strains.schema.json'),
   require('./schemas/giturl.schema.json'),
   require('./schemas/origin.schema.json'),
+  require('./schemas/performance.schema.json'),
   /* eslint-enable global-require */
 ];
 
