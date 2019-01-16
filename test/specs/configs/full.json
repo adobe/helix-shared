@@ -182,7 +182,10 @@
         "repo": "project-helix.io"
       },
       "sticky": true,
-
+      "params": [
+        "search",
+        "lang"
+      ],
       "urls": []
     },
     "proxy": {
@@ -208,7 +211,10 @@
         "location": ""
       },
       "sticky": true,
-
+      "params": [
+        "search",
+        "api*"
+      ],
       "urls": []
     },
     "proxy-detailed": {
