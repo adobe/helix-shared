@@ -10,50 +10,14 @@
         "OF ANY KIND, either express or implied. See the License for the specific language",
         "governing permissions and limitations under the License."
     ],
-    "$id": "https://ns.adobe.com/helix/shared/strain",
+    "$id": "https://ns.adobe.com/helix/shared/proxystrain",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Strain",
+    "title": "Proxy Strain",
     "type": "object",
     "meta:status": "stabilizing",
     "description": "A strain is a combination of code and content that enables the creation of a digital experience. Strains can be used to create language variants of websites, A/B tests, personalization, or to aggregate content from multiple sources",
     "additionalProperties": false,
     "properties": {
-        "code": {
-            "description": "Pointer to the code repository",
-            "oneOf": [
-                {
-                    "type": "string",
-                    "format": "uri"
-                },
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/giturl"
-                }
-            ]
-        },
-        "content": {
-            "description": "Pointer to the content repository",
-            "oneOf": [
-                {
-                    "type": "string",
-                    "format": "uri"
-                },
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/giturl"
-                }
-            ]
-        },
-        "static": {
-            "description": "Pointer to the repository for static resources",
-            "oneOf": [
-                {
-                    "type": "string",
-                    "format": "uri"
-                },
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/giturl"
-                }
-            ]
-        },
         "origin": {
             "description": "Origin backend for proxy strains.",
             "oneOf": [
@@ -65,15 +29,6 @@
                     "$ref": "https://ns.adobe.com/helix/shared/origin"
                 }
             ]
-        },
-        "directoryIndex": {
-            "description": "Name of the resource to use for requests to directories (no extension).",
-            "type": "string",
-            "default": "index.html"
-        },
-        "package": {
-            "description": "Name of the action package that renders this strain.",
-            "type": "string"
         },
         "sticky": {
             "description": "Sticky strains are not re-evaluated on every request. As soon as a visitor is determined to match a sticky strain, a session cookie will be set to keep the user in the strain.",
@@ -97,20 +52,7 @@
             "type": "string"
         }
     },
-    "if": {
-        "required": [
-            "origin"
-        ]
-    },
-    "then": {
-        "required": [
-            "origin"
-        ]
-    },
-    "else": {
-        "required": [
-            "code",
-            "content"
-        ]
-    }
+    "required": [
+        "origin"
+    ]
 }

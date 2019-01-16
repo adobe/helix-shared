@@ -57,6 +57,10 @@
       "description": "Sticky strains are not re-evaluated on every request. As soon as a visitor is determined to match a sticky strain, a session cookie will be set to keep the user in the strain.",
       "type": "boolean"
     },
+    "package": {
+      "description": "Name of the action package that renders this strain.",
+      "type": "string"
+    },
     "url": {
       "description": "URL condition (note, this will be merged into a more general condition language)",
       "type": "string",

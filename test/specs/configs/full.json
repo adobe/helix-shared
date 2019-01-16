@@ -1,6 +1,53 @@
 {
   "version": 1,
   "strains": {
+    "adhoc": {
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "condition": "",
+      "content": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "directoryIndex": "index.html",
+      "name": "adhoc",
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": ""
+      },
+      "static": {
+        "allow": [],
+        "deny": [],
+        "host": "github.com",
+        "hostname": "github.com",
+        "magic": false,
+        "owner": "adobe",
+        "path": "/htdocs",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "sticky": false,
+      "url": "",
+      "urls": [],
+      "package": "75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty"
+    },
     "client": {
       "code": {
         "host": "github.com",
@@ -25,6 +72,7 @@
       },
       "directoryIndex": "readme.html",
       "name": "client",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",
@@ -71,6 +119,7 @@
       },
       "directoryIndex": "index.html",
       "name": "default",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",
@@ -117,6 +166,7 @@
       },
       "directoryIndex": "index.html",
       "name": "pipeline",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",

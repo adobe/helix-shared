@@ -10,12 +10,12 @@
         "OF ANY KIND, either express or implied. See the License for the specific language",
         "governing permissions and limitations under the License."
     ],
-    "$id": "https://ns.adobe.com/helix/shared/strain",
+    "$id": "https://ns.adobe.com/helix/shared/runtimestrain",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Strain",
+    "title": "Runtime Strain",
     "type": "object",
     "meta:status": "stabilizing",
-    "description": "A strain is a combination of code and content that enables the creation of a digital experience. Strains can be used to create language variants of websites, A/B tests, personalization, or to aggregate content from multiple sources",
+    "description": "A runtime strain is a combination of code and content that enables the creation of a digital experience.",
     "additionalProperties": false,
     "properties": {
         "code": {
@@ -54,30 +54,18 @@
                 }
             ]
         },
-        "origin": {
-            "description": "Origin backend for proxy strains.",
-            "oneOf": [
-                {
-                    "type": "string",
-                    "format": "uri"
-                },
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/origin"
-                }
-            ]
-        },
         "directoryIndex": {
             "description": "Name of the resource to use for requests to directories (no extension).",
             "type": "string",
             "default": "index.html"
         },
-        "package": {
-            "description": "Name of the action package that renders this strain.",
-            "type": "string"
-        },
         "sticky": {
             "description": "Sticky strains are not re-evaluated on every request. As soon as a visitor is determined to match a sticky strain, a session cookie will be set to keep the user in the strain.",
             "type": "boolean"
+        },
+        "package": {
+            "description": "Name of the action package that renders this strain.",
+            "type": "string"
         },
         "url": {
             "description": "URL condition (note, this will be merged into a more general condition language)",
@@ -85,7 +73,7 @@
             "format": "uri"
         },
         "urls": {
-            "description": "URL condition (note, this will be merged into a more general condition language)",
+            "description": "List of known URLs for testing this strain",
             "type": "array",
             "items": {
                 "type": "string",
@@ -97,20 +85,9 @@
             "type": "string"
         }
     },
-    "if": {
-        "required": [
-            "origin"
-        ]
-    },
-    "then": {
-        "required": [
-            "origin"
-        ]
-    },
-    "else": {
-        "required": [
-            "code",
-            "content"
-        ]
-    }
+    "required": [
+        "code",
+        "content",
+        "static"
+    ]
 }

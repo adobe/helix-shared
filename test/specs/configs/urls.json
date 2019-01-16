@@ -25,6 +25,7 @@
       },
       "directoryIndex": "readme.html",
       "name": "client",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",
@@ -75,6 +76,7 @@
       },
       "directoryIndex": "index.html",
       "name": "default",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",
@@ -123,6 +125,7 @@
       },
       "directoryIndex": "index.html",
       "name": "pipeline",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",

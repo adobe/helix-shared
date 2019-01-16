@@ -19,7 +19,7 @@ const utils = require('./utils.js');
  * Static content handling
  */
 class Static {
-  constructor(cfg, defaults) {
+  constructor(cfg, defaults = {}) {
     this._url = new GitUrl(cfg, defaults);
     this._magic = cfg.magic || false;
     this._allow = cfg.allow || [];
@@ -156,11 +156,9 @@ class Strain {
       this._content = new GitUrl(cfg.content);
       this._code = new GitUrl(cfg.code);
       // todo: 1. do we still need whilelists?
-      // todo: 2. do we want to fall back to code here, or should static be mandatory?
-      const staticDefaults = Object.assign({ }, this._code.toJSON());
-      this._static = new Static(cfg.static || {}, staticDefaults);
-      // todo: default for directory index from schema?
-      this._directoryIndex = cfg.directoryIndex || 'index.html';
+      this._static = new Static(cfg.static);
+      this._directoryIndex = cfg.directoryIndex;
+      this._package = cfg.package || '';
     }
 
     // todo: schema for perf
@@ -249,6 +247,14 @@ class Strain {
     return this._static;
   }
 
+  get package() {
+    return this._package;
+  }
+
+  set package(value) {
+    this._package = value;
+  }
+
   get condition() {
     return this._condition;
   }
@@ -309,6 +315,7 @@ class Strain {
       content: this.content.toJSON(opts),
       static: this.static.toJSON(opts),
       directoryIndex: this.directoryIndex,
+      package: this.package,
     }, json);
     if (opts && opts.minimal) {
       return utils.pruneEmptyValues(ret);
