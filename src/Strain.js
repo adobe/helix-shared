@@ -298,13 +298,14 @@ class Strain {
    */
   toJSON(opts) {
     const json = {
-      name: this.name,
       sticky: this.sticky,
       condition: this.condition,
       perf: this.perf.toJSON(opts),
-      url: this.url,
       urls: this.urls,
     };
+    if (this.url) {
+      json.url = this.url;
+    }
     if (this.isProxy()) {
       return Object.assign({
         origin: this.origin.toJSON(opts),

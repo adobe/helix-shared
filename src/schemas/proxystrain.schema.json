@@ -20,7 +20,7 @@
   "properties": {
     "origin": {
       "description": "Origin backend for proxy strains.",
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string",
           "format": "uri"

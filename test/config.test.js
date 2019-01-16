@@ -113,9 +113,9 @@ describe('Helix Config Loading', () => {
       .withSource(source)
       .init();
     const cfg2 = await new HelixConfig()
-       .withJSON(cfg1.toJSON())
-       .init();
-    assert.equal(cfg1.toJSON(), cfg2.toJSON());
+      .withJSON(cfg1.toJSON())
+      .init();
+    assert.deepEqual(cfg1.toJSON(), cfg2.toJSON());
   });
 });
 

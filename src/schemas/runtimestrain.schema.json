@@ -45,7 +45,7 @@
           "type": "string",
           "format": "uri"
         },
-        {"$ref": "https://ns.adobe.com/helix/shared/giturl"}
+        {"$ref": "https://ns.adobe.com/helix/shared/staticgiturl"}
       ]
     },
     "directoryIndex": {

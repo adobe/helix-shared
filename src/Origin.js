@@ -28,7 +28,11 @@ class Origin {
       this._SSLCertHostname = cfg.ssl_cert_hostname || this._hostname;
       this._maxConn = cfg.max_conn || 200;
       this._useSSL = !(cfg.use_ssl === false);
-      this._port = cfg.port || this._useSSL ? 443 : 80;
+      if (cfg.port && Number.parseInt(cfg.port, 10) > 0) {
+        this._port = cfg.port;
+      } else {
+        this._port = this._useSSL ? 443 : 80;
+      }
     } else if (cfg && URI.parse(cfg).scheme) {
       const backenduri = URI.parse(cfg);
       this._hostname = backenduri.host;
@@ -72,7 +76,7 @@ class Origin {
   }
 
   get connectTimeout() {
-    return this._connectTimeout;
+    return Number.parseInt(this._connectTimeout, 10);
   }
 
   get name() {
@@ -80,7 +84,7 @@ class Origin {
   }
 
   get port() {
-    return this._port;
+    return Number.parseInt(this._port, 10);
   }
 
   get betweenBytesTimeout() {
