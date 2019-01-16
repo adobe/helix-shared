@@ -28,11 +28,11 @@ async function isFile(filePath) {
 }
 
 class HelixConfig {
-  constructor() {
+  constructor(config = {}) {
     this._cwd = process.cwd();
     this._cfgPath = '';
     this._source = '';
-    this._cfg = {};
+    this._cfg = config;
     this._logger = console;
     this._version = '';
 
@@ -100,7 +100,7 @@ class HelixConfig {
     if (this._source.indexOf('\t') >= 0) {
       throw Error('Tabs not allowed in helix-config.yaml');
     }
-    this._cfg = yaml.safeLoad(this._source) || {};
+    this._cfg = yaml.safeLoad(this._source) || this._cfg;
   }
 
   async validate() {

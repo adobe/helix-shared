@@ -28,6 +28,10 @@
       "type":"string",
       "pattern": "hostname"
     },
+    "host": {
+      "description": "The hostname with port",
+      "type":"string"
+    },
     "port": {
       "description": "The port to access the Git Repository",
       "type":"integer"

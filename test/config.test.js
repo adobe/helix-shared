@@ -106,6 +106,15 @@ describe('Helix Config Loading', () => {
       .init();
     assert.equal(cfg.configPath, path.resolve(SPEC_ROOT, 'helix-config.yaml'));
   });
+
+  it('can be constructed with JSON object', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'full.yaml'), 'utf-8');
+    const cfg1 = await new HelixConfig()
+      .withSource(source)
+      .init();
+    const cfg2 = await new HelixConfig(cfg1.toJSON()).init();
+    assert.equal(cfg1.toJSON(), cfg2.toJSON());
+  });
 });
 
 describe('Helix Config Serializing', () => {
