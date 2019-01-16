@@ -25,6 +25,7 @@ A runtime strain is a combination of code and content that enables the creation 
 | [content](#content) | complex | **Required** |  | Runtime Strain (this schema) |
 | [directoryIndex](#directoryindex) | `string` | Optional | `"index.html"` | Runtime Strain (this schema) |
 | [package](#package) | `string` | Optional |  | Runtime Strain (this schema) |
+| [params](#params) | `string[]` | Optional |  | Runtime Strain (this schema) |
 | [perf](#perf) | Runtime Strain | Optional |  | Runtime Strain (this schema) |
 | [static](#static) | complex | **Required** |  | Runtime Strain (this schema) |
 | [sticky](#sticky) | `boolean` | Optional |  | Runtime Strain (this schema) |
@@ -165,6 +166,33 @@ Name of the action package that renders this strain.
 
 
 
+## params
+
+A whitelist (using globbing language) of URL parameters. Note: every parameter is a potential cache killer.
+
+`params`
+
+* is optional
+* type: `string[]`
+* defined in this schema
+
+### params Type
+
+
+Array type: `string[]`
+
+All items must be of the type:
+`string`
+
+
+
+
+
+
+
+
+
+
 ## perf
 
 
@@ -211,7 +239,7 @@ Pointer to the repository for static resources
 #### Condition 2
 
 
-* []() – `https://ns.adobe.com/helix/shared/giturl`
+* []() – `https://ns.adobe.com/helix/shared/staticgiturl`
 
 
 

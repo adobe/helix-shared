@@ -15,13 +15,35 @@ Representation of the fragments of a Git URL
 
 | Property | Type | Required | Default | Defined by |
 |----------|------|----------|---------|------------|
+| [host](#host) | `string` | Optional |  | Git URL (this schema) |
 | [hostname](#hostname) | `string` | Optional |  | Git URL (this schema) |
 | [owner](#owner) | `string` | **Required** |  | Git URL (this schema) |
 | [path](#path) | `string` | Optional |  | Git URL (this schema) |
-| [port](#port) | `integer` | Optional |  | Git URL (this schema) |
+| [port](#port) | complex | Optional |  | Git URL (this schema) |
 | [protocol](#protocol) | `enum` | Optional |  | Git URL (this schema) |
 | [ref](#ref) | `string` | **Required** | `"master"` | Git URL (this schema) |
 | [repo](#repo) | `string` | **Required** |  | Git URL (this schema) |
+
+## host
+
+The hostname with port
+
+`host`
+
+* is optional
+* type: `string`
+* defined in this schema
+
+### host Type
+
+
+`string`
+
+
+
+
+
+
 
 ## hostname
 
@@ -38,13 +60,7 @@ The hostname without port
 
 `string`
 
-
-
-All instances must conform to this regular expression 
-(test examples [here](https://regexr.com/?expression=hostname)):
-```regex
-hostname
-```
+* format: `hostname` – Domain Name (according to [RFC 1034, section 3.1](https://tools.ietf.org/html/rfc1034))
 
 
 
@@ -100,15 +116,23 @@ The port to access the Git Repository
 `port`
 
 * is optional
-* type: `integer`
+* type: complex
 * defined in this schema
 
 ### port Type
 
+Unknown type `integer,string`.
 
-`integer`
-
-
+```json
+{
+  "description": "The port to access the Git Repository",
+  "type": [
+    "integer",
+    "string"
+  ],
+  "simpletype": "complex"
+}
+```
 
 
 

@@ -30,11 +30,18 @@
         "hostname": {
             "description": "The hostname without port",
             "type": "string",
-            "pattern": "hostname"
+            "format": "hostname"
+        },
+        "host": {
+            "description": "The hostname with port",
+            "type": "string"
         },
         "port": {
             "description": "The port to access the Git Repository",
-            "type": "integer"
+            "type": [
+                "integer",
+                "string"
+            ]
         },
         "owner": {
             "description": "The owner or username that the repository belongs to",
