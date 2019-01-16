@@ -28,15 +28,20 @@ async function isFile(filePath) {
 }
 
 class HelixConfig {
-  constructor(config = {}) {
+  constructor() {
     this._cwd = process.cwd();
     this._cfgPath = '';
     this._source = '';
-    this._cfg = config;
+    this._cfg = {};
     this._logger = console;
     this._version = '';
 
     this._strains = new Strains();
+  }
+
+  withJSON(obj) {
+    this._cfg = obj;
+    return this;
   }
 
   withSource(value) {
