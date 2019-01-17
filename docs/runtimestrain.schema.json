@@ -50,7 +50,7 @@
                     "format": "uri"
                 },
                 {
-                    "$ref": "https://ns.adobe.com/helix/shared/staticgiturl"
+                    "$ref": "https://ns.adobe.com/helix/shared/static"
                 }
             ]
         },

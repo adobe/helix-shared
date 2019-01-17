@@ -10,55 +10,25 @@
         "OF ANY KIND, either express or implied. See the License for the specific language",
         "governing permissions and limitations under the License."
     ],
-    "$id": "https://ns.adobe.com/helix/shared/staticgiturl",
+    "$id": "https://ns.adobe.com/helix/shared/static",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Git URL",
+    "title": "Static",
     "type": "object",
     "meta:status": "stabilizing",
-    "description": "Representation of the fragments of a Git URL",
+    "description": "Where static assets for web applications are coming from",
     "additionalProperties": false,
     "properties": {
-        "protocol": {
-            "description": "The protocol to access the Git repository",
-            "enum": [
-                "https",
-                "http",
-                "ssh"
-            ],
-            "type": "string"
-        },
-        "hostname": {
-            "description": "The hostname without port",
-            "type": "string",
-            "format": "hostname"
-        },
-        "host": {
-            "description": "The hostname with port",
-            "type": "string"
-        },
-        "port": {
-            "description": "The port to access the Git Repository",
-            "type": [
-                "integer",
-                "string"
+        "repository": {
+            "description": "Pointer to the repository for static resources",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "format": "uri"
+                },
+                {
+                    "$ref": "https://ns.adobe.com/helix/shared/giturl"
+                }
             ]
-        },
-        "owner": {
-            "description": "The owner or username that the repository belongs to",
-            "type": "string"
-        },
-        "path": {
-            "description": "The path within the repository",
-            "type": "string"
-        },
-        "repo": {
-            "description": "The repository name",
-            "type": "string"
-        },
-        "ref": {
-            "description": "The branch, tag, or sha of the tree in the repository to use",
-            "default": "master",
-            "type": "string"
         },
         "allow": {
             "description": "List of white listed paths",
@@ -80,8 +50,6 @@
         }
     },
     "required": [
-        "owner",
-        "repo",
-        "ref"
+        "repository"
     ]
 }

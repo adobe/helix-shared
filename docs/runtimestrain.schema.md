@@ -239,7 +239,7 @@ Pointer to the repository for static resources
 #### Condition 2
 
 
-* []() – `https://ns.adobe.com/helix/shared/staticgiturl`
+* []() – `https://ns.adobe.com/helix/shared/static`
 
 
 
