@@ -126,6 +126,16 @@ class HelixConfig {
     return this;
   }
 
+  /**
+   * Saves this config to {@link #configPath}
+   * @returns {Promise<void>}
+   */
+  async saveConfig() {
+    const src = yaml.safeDump(this.toJSON());
+    await fs.copy(this.configPath, `${this.configPath}.old`);
+    return fs.writeFile(this.configPath, src, 'utf-8');
+  }
+
   toJSON() {
     return {
       version: this._version,
