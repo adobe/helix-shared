@@ -9,11 +9,16 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+const Strain = require('./Strain.js');
 
 /**
  * Strains
  */
 class Strains extends Map {
+  add(strain) {
+    this.set(strain.name, strain);
+  }
+
   /**
    * Returns a json representation
    * @returns {Strains~JSON}
@@ -40,6 +45,18 @@ class Strains extends Map {
 
   getProxyStrains() {
     return this.getByFilter(strain => strain.isProxy());
+  }
+
+  /**
+   * Creates the strains from a yaml node
+   * @param {YAMLMap} node
+   */
+  fromYAML(node) {
+    node.items.forEach((pair) => {
+      const json = pair.value.toJSON();
+      const strain = new Strain(pair.key, json);
+      this.set(strain.name, strain);
+    });
   }
 }
 

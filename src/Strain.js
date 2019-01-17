@@ -11,7 +11,7 @@
  */
 
 const URI = require('uri-js');
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin');
 const utils = require('./utils.js');
@@ -157,7 +157,7 @@ class Strain {
       this._code = new GitUrl(cfg.code);
       // todo: 1. do we still need whilelists?
       this._static = new Static(cfg.static);
-      this._directoryIndex = cfg.directoryIndex;
+      this._directoryIndex = cfg.directoryIndex || 'index.html';
       this._package = cfg.package || '';
     }
 
@@ -339,7 +339,7 @@ class Strain {
       minimal: true,
     });
     delete json.name;
-    return yaml.safeDump({
+    return yaml.stringify({
       [this.name]: json,
     });
   }
