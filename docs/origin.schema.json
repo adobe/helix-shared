@@ -70,17 +70,5 @@
             "type": "boolean",
             "description": ""
         }
-    },
-    "oneOf": [
-        {
-            "required": [
-                "hostname"
-            ]
-        },
-        {
-            "required": [
-                "address"
-            ]
-        }
-    ]
+    }
 }

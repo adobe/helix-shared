@@ -2,27 +2,84 @@
 # Git URL Schema
 
 ```
-https://ns.adobe.com/helix/shared/giturl
+https://ns.adobe.com/helix/shared/staticgiturl
 ```
 
 Representation of the fragments of a Git URL
 
 | Abstract | Extensible | Status | Identifiable | Custom Properties | Additional Properties | Defined In |
 |----------|------------|--------|--------------|-------------------|-----------------------|------------|
-| Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [giturl.schema.json](giturl.schema.json) |
+| Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [staticgiturl.schema.json](staticgiturl.schema.json) |
 
 # Git URL Properties
 
 | Property | Type | Required | Default | Defined by |
 |----------|------|----------|---------|------------|
+| [allow](#allow) | `string[]` | Optional |  | Git URL (this schema) |
+| [deny](#deny) | `string[]` | Optional |  | Git URL (this schema) |
 | [host](#host) | `string` | Optional |  | Git URL (this schema) |
 | [hostname](#hostname) | `string` | Optional |  | Git URL (this schema) |
+| [magic](#magic) | `boolean` | Optional |  | Git URL (this schema) |
 | [owner](#owner) | `string` | **Required** |  | Git URL (this schema) |
 | [path](#path) | `string` | Optional |  | Git URL (this schema) |
 | [port](#port) | complex | Optional |  | Git URL (this schema) |
 | [protocol](#protocol) | `enum` | Optional |  | Git URL (this schema) |
 | [ref](#ref) | `string` | **Required** | `"master"` | Git URL (this schema) |
 | [repo](#repo) | `string` | **Required** |  | Git URL (this schema) |
+
+## allow
+
+List of white listed paths
+
+`allow`
+
+* is optional
+* type: `string[]`
+* defined in this schema
+
+### allow Type
+
+
+Array type: `string[]`
+
+All items must be of the type:
+`string`
+
+
+
+
+
+
+
+
+
+
+## deny
+
+List of white listed paths
+
+`deny`
+
+* is optional
+* type: `string[]`
+* defined in this schema
+
+### deny Type
+
+
+Array type: `string[]`
+
+All items must be of the type:
+`string`
+
+
+
+
+
+
+
+
+
 
 ## host
 
@@ -62,6 +119,25 @@ The hostname without port
 
 * format: `hostname` – Domain Name (according to [RFC 1034, section 3.1](https://tools.ietf.org/html/rfc1034))
 
+
+
+
+
+
+## magic
+
+Deprecated: Enable server-side asset processing.
+
+`magic`
+
+* is optional
+* type: `boolean`
+* defined in this schema
+
+### magic Type
+
+
+`boolean`
 
 
 

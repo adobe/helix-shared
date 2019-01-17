@@ -24,7 +24,6 @@
         "repo": "project-helix.io"
       },
       "directoryIndex": "index.html",
-      "name": "adhoc",
       "perf": {
         "connection": "",
         "device": "",
@@ -44,7 +43,7 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-      "url": "",
+
       "urls": [],
       "package": "75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty"
     },
@@ -71,7 +70,6 @@
         "repo": "helix-cli"
       },
       "directoryIndex": "readme.html",
-      "name": "client",
       "package": "",
       "perf": {
         "connection": "",
@@ -92,7 +90,7 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-      "url": "",
+
       "urls": []
     },
     "default": {
@@ -118,7 +116,6 @@
         "repo": "project-helix.io"
       },
       "directoryIndex": "index.html",
-      "name": "default",
       "package": "",
       "perf": {
         "connection": "",
@@ -139,7 +136,7 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-      "url": "",
+
       "urls": []
     },
     "pipeline": {
@@ -165,7 +162,6 @@
         "repo": "hypermedia-pipeline"
       },
       "directoryIndex": "index.html",
-      "name": "pipeline",
       "package": "",
       "perf": {
         "connection": "",
@@ -186,12 +182,14 @@
         "repo": "project-helix.io"
       },
       "sticky": true,
-      "url": "",
+      "params": [
+        "search",
+        "lang"
+      ],
       "urls": []
     },
     "proxy": {
       "condition": "req.http.host == \"proxy.project-helix.io\"",
-      "name": "proxy",
       "origin": {
         "address": "www.adobe.io",
         "between_bytes_timeout": 10000,
@@ -213,12 +211,14 @@
         "location": ""
       },
       "sticky": true,
-      "url": "",
+      "params": [
+        "search",
+        "api*"
+      ],
       "urls": []
     },
     "proxy-detailed": {
       "condition": "",
-      "name": "proxy-detailed",
       "origin": {
         "address": "192.168.0.1",
         "between_bytes_timeout": 10000,
@@ -240,7 +240,7 @@
         "location": ""
       },
       "sticky": false,
-      "url": "",
+
       "urls": []
     }
   }

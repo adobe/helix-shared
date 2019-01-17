@@ -22,6 +22,7 @@ A strain is a combination of code and content that enables the creation of a dig
 |----------|------|----------|------------|
 | [condition](#condition) | `string` | Optional | Proxy Strain (this schema) |
 | [origin](#origin) | complex | **Required** | Proxy Strain (this schema) |
+| [params](#params) | `string[]` | Optional | Proxy Strain (this schema) |
 | [perf](#perf) | Runtime Strain | Optional | Proxy Strain (this schema) |
 | [sticky](#sticky) | `boolean` | Optional | Proxy Strain (this schema) |
 | [url](#url) | `string` | Optional | Proxy Strain (this schema) |
@@ -61,10 +62,10 @@ Origin backend for proxy strains.
 ### origin Type
 
 
-**One** of the following *conditions* need to be fulfilled.
+**Any** following *options* needs to be fulfilled.
 
 
-#### Condition 1
+#### Option 1
 
 
 `string`
@@ -73,10 +74,37 @@ Origin backend for proxy strains.
 
 
 
-#### Condition 2
+#### Option 2
 
 
 * []() – `https://ns.adobe.com/helix/shared/origin`
+
+
+
+
+
+
+## params
+
+A whitelist (using globbing language) of URL parameters. Note: every parameter is a potential cache killer.
+
+`params`
+
+* is optional
+* type: `string[]`
+* defined in this schema
+
+### params Type
+
+
+Array type: `string[]`
+
+All items must be of the type:
+`string`
+
+
+
+
 
 
 

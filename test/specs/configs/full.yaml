@@ -42,6 +42,9 @@ strains:
   pipeline:
     <<: *basestrain
     condition: req.http.host == "pipeline.project-helix.io"
+    params:
+      - search
+      - lang
     content:
       repo: hypermedia-pipeline
       ref: master
@@ -53,6 +56,9 @@ strains:
   proxy:
     origin: https://www.adobe.io/
     condition: req.http.host == "proxy.project-helix.io"
+    params:
+      - search
+      - api*
     sticky: true
 
   proxy-detailed:

@@ -23,7 +23,6 @@
         "repo": "project-helix.io"
       },
       "directoryIndex": "index.html",
-      "name": "client",
       "package": "",
       "perf": {
         "connection": "LTE",
@@ -44,7 +43,7 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-      "url": "",
+
       "urls": []
     },
     "default": {
@@ -70,7 +69,6 @@
         "repo": "project-helix.io"
       },
       "directoryIndex": "index.html",
-      "name": "default",
       "package": "",
       "perf": {
         "connection": "",
@@ -91,7 +89,7 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-      "url": "",
+
       "urls": []
     }
   },

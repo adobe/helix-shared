@@ -20,7 +20,7 @@
   "properties": {
     "origin": {
       "description": "Origin backend for proxy strains.",
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string",
           "format": "uri"
@@ -51,6 +51,13 @@
     },
     "perf": {
       "$ref": "https://ns.adobe.com/helix/shared/performance"
+    },
+    "params": {
+      "description": "A whitelist (using globbing language) of URL parameters. Note: every parameter is a potential cache killer.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": [

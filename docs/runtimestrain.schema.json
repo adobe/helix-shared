@@ -50,7 +50,7 @@
                     "format": "uri"
                 },
                 {
-                    "$ref": "https://ns.adobe.com/helix/shared/giturl"
+                    "$ref": "https://ns.adobe.com/helix/shared/staticgiturl"
                 }
             ]
         },
@@ -86,6 +86,13 @@
         },
         "perf": {
             "$ref": "https://ns.adobe.com/helix/shared/performance"
+        },
+        "params": {
+            "description": "A whitelist (using globbing language) of URL parameters. Note: every parameter is a potential cache killer.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         }
     },
     "required": [

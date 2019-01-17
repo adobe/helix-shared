@@ -176,6 +176,8 @@ class Strain {
     if (this._url) {
       this._urls.add(this._url);
     }
+
+    this._params = Array.isArray(cfg.params) ? cfg.params : [];
   }
 
   clone() {
@@ -255,6 +257,10 @@ class Strain {
     this._package = value;
   }
 
+  get params() {
+    return this._params;
+  }
+
   get condition() {
     return this._condition;
   }
@@ -298,13 +304,17 @@ class Strain {
    */
   toJSON(opts) {
     const json = {
-      name: this.name,
       sticky: this.sticky,
       condition: this.condition,
       perf: this.perf.toJSON(opts),
-      url: this.url,
       urls: this.urls,
     };
+    if (this.url) {
+      json.url = this.url;
+    }
+    if (this.params.length > 0) {
+      json.params = this.params;
+    }
     if (this.isProxy()) {
       return Object.assign({
         origin: this.origin.toJSON(opts),

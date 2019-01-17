@@ -10,7 +10,7 @@
     "OF ANY KIND, either express or implied. See the License for the specific language",
     "governing permissions and limitations under the License."
   ],
-  "$id": "https://ns.adobe.com/helix/shared/giturl",
+  "$id": "https://ns.adobe.com/helix/shared/staticgiturl",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Git URL",
   "type": "object",
@@ -52,6 +52,24 @@
       "description": "The branch, tag, or sha of the tree in the repository to use",
       "default": "master",
       "type":"string"
+    },
+    "allow": {
+      "description": "List of white listed paths",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deny": {
+      "description": "List of white listed paths",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "magic": {
+      "type": "boolean",
+      "description": "Deprecated: Enable server-side asset processing."
     }
   },
   "required": [

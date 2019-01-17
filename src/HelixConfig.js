@@ -39,6 +39,11 @@ class HelixConfig {
     this._strains = new Strains();
   }
 
+  withJSON(obj) {
+    this._cfg = obj;
+    return this;
+  }
+
   withSource(value) {
     this._source = value;
     return this;
@@ -100,7 +105,7 @@ class HelixConfig {
     if (this._source.indexOf('\t') >= 0) {
       throw Error('Tabs not allowed in helix-config.yaml');
     }
-    this._cfg = yaml.safeLoad(this._source) || {};
+    this._cfg = yaml.safeLoad(this._source) || this._cfg;
   }
 
   async validate() {
