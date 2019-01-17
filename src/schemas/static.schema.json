@@ -10,7 +10,7 @@
     "OF ANY KIND, either express or implied. See the License for the specific language",
     "governing permissions and limitations under the License."
   ],
-  "$id": "https://ns.adobe.com/helix/shared/staticgiturl",
+  "$id": "https://ns.adobe.com/helix/shared/static",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Static",
   "type": "object",
