@@ -32,15 +32,17 @@
       "static": {
         "allow": [],
         "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
         "magic": false,
-        "owner": "adobe",
-        "path": "/htdocs",
-        "port": "",
-        "protocol": "https",
-        "ref": "master",
-        "repo": "project-helix.io"
+        "repository": {
+          "host": "github.com",
+          "hostname": "github.com",
+          "owner": "adobe",
+          "path": "/htdocs",
+          "port": "",
+          "protocol": "https",
+          "ref": "master",
+          "repo": "project-helix.io"
+        }
       },
       "sticky": false,
 
@@ -79,15 +81,17 @@
       "static": {
         "allow": [],
         "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
         "magic": false,
-        "owner": "adobe",
-        "path": "/htdocs",
-        "port": "",
-        "protocol": "https",
-        "ref": "master",
-        "repo": "project-helix.io"
+        "repository": {
+          "host": "github.com",
+          "hostname": "github.com",
+          "owner": "adobe",
+          "path": "/htdocs",
+          "port": "",
+          "protocol": "https",
+          "ref": "master",
+          "repo": "project-helix.io"
+        }
       },
       "sticky": false,
 
@@ -125,15 +129,17 @@
       "static": {
         "allow": [],
         "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
         "magic": false,
-        "owner": "adobe",
-        "path": "/htdocs",
-        "port": "",
-        "protocol": "https",
-        "ref": "master",
-        "repo": "project-helix.io"
+        "repository": {
+          "host": "github.com",
+          "hostname": "github.com",
+          "owner": "adobe",
+          "path": "/htdocs",
+          "port": "",
+          "protocol": "https",
+          "ref": "master",
+          "repo": "project-helix.io"
+        }
       },
       "sticky": false,
 
@@ -171,15 +177,17 @@
       "static": {
         "allow": [],
         "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
         "magic": false,
-        "owner": "adobe",
-        "path": "/www",
-        "port": "",
-        "protocol": "https",
-        "ref": "master",
-        "repo": "project-helix.io"
+        "repository": {
+          "host": "github.com",
+          "hostname": "github.com",
+          "owner": "adobe",
+          "path": "/www",
+          "port": "",
+          "protocol": "https",
+          "ref": "master",
+          "repo": "project-helix.io"
+        }
       },
       "sticky": true,
       "params": [

@@ -19,7 +19,8 @@ definitions:
     base: &basestrain
       code: *myrepo
       content: *myrepo
-      static: *myrepo
+      static: 
+        repository: *myrepo
 
 strains:
   default: *basestrain
@@ -30,7 +31,8 @@ strains:
 
   client:
     code: *myrepo
-    static: *myrepo
+    static:
+      repository: *myrepo
     condition: req.http.host == "client.project-helix.io"
     sticky: false
     content:
@@ -50,8 +52,9 @@ strains:
       ref: master
       owner: adobe
     static:
-      <<: *myrepo
-      path: /www
+      repository:
+        <<: *myrepo
+        path: /www
 
   proxy:
     origin: https://www.adobe.io/

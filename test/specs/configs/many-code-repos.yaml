@@ -19,7 +19,8 @@ definitions:
     base: &basestrain
       code: *myrepo
       content: *myrepo
-      static: *myrepo
+      static: 
+        repository: *myrepo
 
 strains:
   default: *basestrain

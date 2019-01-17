@@ -20,7 +20,7 @@ const utils = require('./utils.js');
  */
 class Static {
   constructor(cfg, defaults = {}) {
-    this._url = new GitUrl(cfg, defaults);
+    this._url = new GitUrl(cfg.repository || cfg, defaults);
     this._magic = cfg.magic || false;
     this._allow = cfg.allow || [];
     this._deny = cfg.deny || [];
@@ -82,16 +82,12 @@ class Static {
       magic: this.magic,
       allow: this.allow,
       deny: this.deny,
+      repository: this.url.toJSON(),
     };
     if (opts && (opts.minimal || opts.keepFormat)) {
       json = utils.pruneEmptyValues(json);
     }
-    if (!json) {
-      return this.url.toJSON(opts);
-    }
-    const myOpts = Object.assign({}, opts);
-    delete myOpts.keepFormat;
-    return Object.assign(json, this.url.toJSON(myOpts));
+    return json;
   }
 }
 

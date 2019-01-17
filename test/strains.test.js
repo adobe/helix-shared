@@ -104,7 +104,16 @@ describe('Strains test', () => {
       + '    owner: adobe\n'
       + '    repo: helix-cli\n'
       + '    ref: master\n'
-      + '  static: \'https://github.com/adobe/project-helix.io.git/htdocs#dev\'\n'
+      + '  static:\n'
+      + '    repository:\n'
+      + '      protocol: https\n'
+      + '      host: github.com\n'
+      + '      port: \'\'\n'
+      + '      hostname: github.com\n'
+      + '      owner: adobe\n'
+      + '      repo: project-helix.io\n'
+      + '      ref: dev\n'
+      + '      path: /htdocs\n'
       + '  directoryIndex: readme.html\n'
       + '  condition: req.http.host == "client.project-helix.io"\n');
   });

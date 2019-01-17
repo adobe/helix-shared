@@ -17,6 +17,7 @@ strains:
     <<: *basestrain
     sticky: true
     static:
-      owner: adobe
-      repo: project-helix.io
-      ref: master
+      repository:
+        owner: adobe
+        repo: project-helix.io
+        ref: master

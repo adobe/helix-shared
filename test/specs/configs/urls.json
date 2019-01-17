@@ -33,15 +33,17 @@
       "static": {
         "allow": [],
         "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
         "magic": false,
-        "owner": "adobe",
-        "path": "/htdocs",
-        "port": "",
-        "protocol": "https",
-        "ref": "",
-        "repo": "project-helix.io"
+        "repository": {
+          "host": "github.com",
+          "hostname": "github.com",
+          "owner": "adobe",
+          "path": "/htdocs",
+          "port": "",
+          "protocol": "https",
+          "ref": "",
+          "repo": "project-helix.io"
+        }
       },
       "sticky": false,
       "url": "https://client.project-helix.io/",
@@ -83,15 +85,17 @@
       "static": {
         "allow": [],
         "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
         "magic": false,
-        "owner": "adobe",
-        "path": "/htdocs",
-        "port": "",
-        "protocol": "https",
-        "ref": "",
-        "repo": "project-helix.io"
+        "repository": {
+          "host": "github.com",
+          "hostname": "github.com",
+          "owner": "adobe",
+          "path": "/htdocs",
+          "port": "",
+          "protocol": "https",
+          "ref": "",
+          "repo": "project-helix.io"
+        }
       },
       "sticky": false,
       "urls": [
@@ -130,15 +134,17 @@
       "static": {
         "allow": [],
         "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
         "magic": false,
-        "owner": "adobe",
-        "path": "/htdocs",
-        "port": "",
-        "protocol": "https",
-        "ref": "",
-        "repo": "project-helix.io"
+        "repository": {
+          "host": "github.com",
+          "hostname": "github.com",
+          "owner": "adobe",
+          "path": "/htdocs",
+          "port": "",
+          "protocol": "https",
+          "ref": "",
+          "repo": "project-helix.io"
+        }
       },
       "sticky": false,
       "url": "https://pipeline.project-helix.io/",
