@@ -417,6 +417,36 @@ describe('GitUrl from object tests', () => {
     });
   });
 
+  it('minimal example with .git reponame', () => {
+    const url = new GitUrl({
+      owner: 'company',
+      repo: 'repository.git',
+    });
+    assert.equal(url.protocol, 'https');
+    assert.equal(url.hostname, 'github.com');
+    assert.equal(url.port, '');
+    assert.equal(url.host, 'github.com');
+    assert.equal(url.owner, 'company');
+    assert.equal(url.repo, 'repository');
+    assert.equal(url.path, '');
+    assert.equal(url.ref, '');
+    assert.equal(url.raw, 'https://raw.github.com/company/repository/master');
+    assert.equal(url.rawRoot, 'https://raw.github.com');
+    assert.equal(url.apiRoot, 'https://api.github.com');
+    assert.equal(url.isLocal, false);
+    assert.equal(url.toString(), 'https://github.com/company/repository.git');
+    assert.deepEqual(url.toJSON(), {
+      protocol: 'https',
+      host: 'github.com',
+      hostname: 'github.com',
+      owner: 'company',
+      path: '',
+      port: '',
+      ref: '',
+      repo: 'repository',
+    });
+  });
+
   it('Full example with defaults', () => {
     const url = new GitUrl({
     },
@@ -510,9 +540,38 @@ describe('GitUrl from object tests', () => {
     assert.ok(url0.equalsIgnoreTransport(url1));
   });
 
+  it('equalsIgnoreTransport (same)', () => {
+    const url0 = new GitUrl('https://localhost/owner/repo.git#local_path');
+    assert.ok(url0.equalsIgnoreTransport(url0));
+  });
+
   it('not equalsIgnoreTransport', () => {
     const url0 = new GitUrl('https://localhost/owner/repo.git#master');
     const url1 = new GitUrl('https://localhost/owner/repo.git#dev');
     assert.ok(!url0.equalsIgnoreTransport(url1));
+  });
+
+  it('to minimal json', () => {
+    const url = new GitUrl({
+      owner: 'company',
+      repo: 'repository',
+    });
+    assert.deepEqual(url.toJSON({ minimal: true }), {
+      owner: 'company',
+      repo: 'repository',
+    });
+  });
+
+  it('to minimal json with ref', () => {
+    const url = new GitUrl({
+      owner: 'company',
+      repo: 'repository',
+      ref: 'master',
+    });
+    assert.deepEqual(url.toJSON({ minimal: true }), {
+      owner: 'company',
+      repo: 'repository',
+      ref: 'master',
+    });
   });
 });

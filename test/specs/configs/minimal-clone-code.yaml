@@ -26,10 +26,6 @@ definitions:
 strains:
   default: *basestrain
 
-  foo:
-    code:
-      owner: adobe
-      repo: helix-shared
-      ref: master
-    content: https://github.com/adobe/helix-shared.git#master
-    static: https://github.com/adobe/helix-shared.git/htdocs#master
+  clone:
+    <<: *basestrain
+    code: https://github.com/adobe/helix-test.git#master

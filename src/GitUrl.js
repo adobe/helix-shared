@@ -11,6 +11,7 @@
  */
 
 const { URL } = require('url');
+const YAML = require('yaml');
 const utils = require('./utils.js');
 
 const RAW_TYPE = 'raw';
@@ -34,8 +35,12 @@ class GitUrl {
   constructor(url, defaults = {}) {
     if (url === Object(url)) {
       this._type = 'object';
-      const portStr = url.port || defaults.port ? `:${url.port || defaults.port}` : '';
-      this._url = new URL(`${url.protocol || defaults.protocol || 'https'}://${url.hostname || defaults.hostname || 'github.com'}${portStr}`);
+      this._port = url.port || defaults.port;
+      this._protocol = url.protocol || defaults.protocol;
+      this._hostname = url.hostname || defaults.hostname;
+      const portStr = this._port ? `:${url.port || defaults.port}` : '';
+      this._host = this._hostname ? `${this._hostname}${portStr}` : '';
+      this._url = new URL(`${this._protocol || 'https'}://${this._hostname || 'github.com'}${portStr}`);
       this._owner = url.owner || defaults.owner;
       this._repo = url.repo || defaults.repo;
       this._ref = url.ref || defaults.ref;
@@ -90,6 +95,10 @@ class GitUrl {
     if (this._path === '/') {
       this._path = '';
     }
+    // sanitize .git
+    if (this._repo.endsWith('.git')) {
+      this._repo = this._repo.substring(0, this._repo.length - 4);
+    }
   }
 
   /**
@@ -140,7 +149,7 @@ class GitUrl {
    * @type String
    */
   get protocol() {
-    return this._url.protocol.replace(':', '');
+    return this._protocol || this._url.protocol.replace(':', '');
   }
 
   /**
@@ -148,7 +157,7 @@ class GitUrl {
    * @type String
    */
   get hostname() {
-    return this._url.hostname;
+    return this._hostname || this._url.hostname;
   }
 
   /**
@@ -156,7 +165,7 @@ class GitUrl {
    * @type String
    */
   get host() {
-    return this._url.host;
+    return this._host || this._url.host;
   }
 
   /**
@@ -164,7 +173,7 @@ class GitUrl {
    * @type String
    */
   get port() {
-    return this._url.port;
+    return this._port || this._url.port;
   }
 
   /**
@@ -176,7 +185,7 @@ class GitUrl {
   }
 
   /**
-   * Repository name.
+   * Repository name (without .git extension).
    * @type String
    */
   get repo() {
@@ -265,7 +274,20 @@ class GitUrl {
     if (opts && opts.keepFormat && this._type === 'string') {
       return this.toString();
     }
-    const json = {
+    if (opts && opts.minimal) {
+      return utils.pruneEmptyValues({
+        protocol: this._protocol,
+        host: this._host,
+        port: this._port,
+        hostname: this._hostname,
+        owner: this.owner,
+        repo: this.repo,
+        ref: this.ref,
+        path: this.path,
+      });
+    }
+
+    return {
       protocol: this.protocol,
       host: this.host,
       port: this.port,
@@ -275,10 +297,13 @@ class GitUrl {
       ref: this.ref,
       path: this.path,
     };
-    if (opts && opts.minimal) {
-      return utils.pruneEmptyValues(json);
+  }
+
+  toYAMLNode(forceObject) {
+    if (this._type === 'string' && !forceObject) {
+      return YAML.createNode(this.toString());
     }
-    return json;
+    return YAML.createNode(this.toJSON({ minimal: true }));
   }
 }
 

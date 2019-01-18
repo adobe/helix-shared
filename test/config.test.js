@@ -17,6 +17,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const { HelixConfig } = require('../src/index.js');
 const Strain = require('../src/Strain.js');
+const GitUrl = require('../src/GitUrl.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/configs');
 
@@ -148,12 +149,80 @@ describe('Helix Config Serializing', () => {
       .init();
 
     cfg.strains.add(new Strain('foo', {
-      code: 'https://github.com/adobe/helix-shared.git#master',
+      code: {
+        owner: 'adobe',
+        repo: 'helix-shared',
+        ref: 'master',
+      },
       content: 'https://github.com/adobe/helix-shared.git#master',
       static: 'https://github.com/adobe/helix-shared.git#master',
     }));
     const actual = cfg.toYAML();
     const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-foo.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
+  it('can serialize back a new strain with static', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    cfg.strains.add(new Strain('foo', {
+      code: {
+        owner: 'adobe',
+        repo: 'helix-shared',
+        ref: 'master',
+      },
+      content: 'https://github.com/adobe/helix-shared.git#master',
+      static: {
+        owner: 'adobe',
+        repo: 'helix-shared',
+        ref: 'master',
+        magic: true,
+      },
+    }));
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-foo-static.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
+  it('can serialize back a modified strain with modified package', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    cfg.strains.get('default').package = 'bfbde5fbfbde5fbfbde5f';
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-package.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
+  it('can serialize back a modified strain with modified directoryIndex', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    cfg.strains.get('default').directoryIndex = 'readme.html';
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-directory.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
+  it.skip('can serialize back a cloned strain with modified code url', async () => {
+    // todo: would be nice!
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    const clone = cfg.strains.get('default').clone();
+    clone.code = new GitUrl('https://github.com/adobe/helix-test.git#master');
+    cfg.strains.add(clone);
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-clone-code.yaml'), 'utf-8');
     assert.equal(actual, expected);
   });
 });

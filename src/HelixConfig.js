@@ -12,7 +12,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const yaml = require('yaml');
+const YAML = require('yaml');
 const Strain = require('./Strain.js');
 const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
@@ -109,7 +109,7 @@ class HelixConfig {
     if (this._source.indexOf('\t') >= 0) {
       throw Error('Tabs not allowed in helix-config.yaml');
     }
-    this._document = yaml.parseDocument(this._source, {
+    this._document = YAML.parseDocument(this._source, {
       merge: true,
       schema: 'core',
     });
@@ -152,7 +152,7 @@ class HelixConfig {
     if (this._document) {
       return this._document.toString();
     }
-    return yaml.stringify(this.toJSON());
+    return YAML.stringify(this.toJSON());
   }
 
   toJSON() {

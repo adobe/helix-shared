@@ -32,4 +32,9 @@ strains:
       repo: helix-shared
       ref: master
     content: https://github.com/adobe/helix-shared.git#master
-    static: https://github.com/adobe/helix-shared.git/htdocs#master
+    static:
+      owner: adobe
+      repo: helix-shared
+      ref: master
+      path: /htdocs
+      magic: true

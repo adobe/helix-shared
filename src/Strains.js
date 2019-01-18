@@ -17,6 +17,11 @@ const Strain = require('./Strain.js');
 class Strains extends Map {
   add(strain) {
     this.set(strain.name, strain);
+    if (this._yamlNode) {
+      const node = strain.toYAMLNode();
+      node.spaceBefore = true;
+      this._yamlNode.items.push(node);
+    }
   }
 
   /**
@@ -52,9 +57,9 @@ class Strains extends Map {
    * @param {YAMLMap} node
    */
   fromYAML(node) {
+    this._yamlNode = node;
     node.items.forEach((pair) => {
-      const json = pair.value.toJSON();
-      const strain = new Strain(pair.key, json);
+      const strain = Strain.fromYAMLNode(pair);
       this.set(strain.name, strain);
     });
   }

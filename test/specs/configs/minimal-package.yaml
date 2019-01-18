@@ -24,12 +24,6 @@ definitions:
       static: *myrepo
 
 strains:
-  default: *basestrain
-
-  foo:
-    code:
-      owner: adobe
-      repo: helix-shared
-      ref: master
-    content: https://github.com/adobe/helix-shared.git#master
-    static: https://github.com/adobe/helix-shared.git/htdocs#master
+  default:
+    <<: *basestrain
+    package: bfbde5fbfbde5fbfbde5f

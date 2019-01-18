@@ -11,136 +11,16 @@
  */
 
 const URI = require('uri-js');
-const yaml = require('yaml');
+const YAML = require('yaml');
+const YAML_MAP = require('yaml/map');
+const YAML_PAIR = require('yaml/pair');
+const YAML_SEQ = require('yaml/seq');
+
 const GitUrl = require('./GitUrl.js');
-const Origin = require('./Origin');
+const Origin = require('./Origin.js');
+const Static = require('./Static.js');
+const Performance = require('./Performance.js');
 const utils = require('./utils.js');
-/**
- * Static content handling
- */
-class Static {
-  constructor(cfg, defaults = {}) {
-    this._url = new GitUrl(cfg, defaults);
-    this._magic = cfg.magic || false;
-    this._allow = cfg.allow || [];
-    this._deny = cfg.deny || [];
-
-    if (!this._url.path) {
-      // todo: ... this is a by ugly
-      // eslint-disable-next-line no-underscore-dangle
-      this._url._path = '/htdocs';
-    }
-  }
-
-  get url() {
-    return this._url;
-  }
-
-  get magic() {
-    return this._magic;
-  }
-
-  get allow() {
-    return this._allow;
-  }
-
-  get deny() {
-    return this._deny;
-  }
-
-  get path() {
-    return this._url.path;
-  }
-
-  get owner() {
-    return this._url.owner;
-  }
-
-  get repo() {
-    return this._url.repo;
-  }
-
-  get ref() {
-    return this._url.ref;
-  }
-
-  /**
-   * JSON Serialization of Static
-   * @typedef Static~JSON
-   * @augments GitUrl~JSON
-   * @property {boolean} magic
-   * @property {String[]} allow
-   * @property {String[]} deny
-   */
-
-  /**
-   * Returns a json representation
-   * @returns {Static~JSON}
-   */
-  toJSON(opts) {
-    let json = {
-      magic: this.magic,
-      allow: this.allow,
-      deny: this.deny,
-    };
-    if (opts && (opts.minimal || opts.keepFormat)) {
-      json = utils.pruneEmptyValues(json);
-    }
-    if (!json) {
-      return this.url.toJSON(opts);
-    }
-    const myOpts = Object.assign({}, opts);
-    delete myOpts.keepFormat;
-    return Object.assign(json, this.url.toJSON(myOpts));
-  }
-}
-
-/**
- * Performance Definition
- */
-class Performance {
-  constructor(cfg = {}) {
-    this._device = cfg.device || '';
-    this._location = cfg.location || '';
-    this._connection = cfg.connection || '';
-  }
-
-  get device() {
-    return this._device;
-  }
-
-  get location() {
-    return this._location;
-  }
-
-  get connection() {
-    return this._connection;
-  }
-
-  /**
-   * JSON Serialization of Performance
-   * @typedef Performance~JSON
-   * @property {String} device
-   * @property {String} location
-   * @property {String} connection
-   */
-
-  /**
-   * Returns a json representation
-   * @returns {Performance~JSON}
-   */
-  toJSON(opts) {
-    const json = {
-      device: this.device,
-      location: this.location,
-      connection: this.connection,
-    };
-    if (opts && opts.minimal) {
-      return utils.pruneEmptyValues(json);
-    }
-    return json;
-  }
-}
 
 /**
  * Strain
@@ -157,7 +37,7 @@ class Strain {
       this._code = new GitUrl(cfg.code);
       // todo: 1. do we still need whilelists?
       this._static = new Static(cfg.static);
-      this._directoryIndex = cfg.directoryIndex || 'index.html';
+      this._directoryIndex = cfg.directoryIndex;
       this._package = cfg.package || '';
     }
 
@@ -176,12 +56,33 @@ class Strain {
     if (this._url) {
       this._urls.add(this._url);
     }
-
     this._params = Array.isArray(cfg.params) ? cfg.params : [];
+    this._yamlNode = null;
+    // define them initially, and clear for alias node
+    // todo: improve
+    this._ownProperties = new Set([
+      'origin',
+      'code',
+      'content',
+      'static',
+      'package',
+      'perf',
+      'condition',
+      'sticky',
+      'url',
+      'urls',
+      'params',
+    ]);
   }
 
   clone() {
-    return new Strain(this.name, this.toJSON({ keepFormat: true }));
+    const strain = new Strain(this.name, this.toJSON({ keepFormat: true }));
+    if (this._directoryIndex) {
+      // this is a bit a hack...consider a better binding
+      // eslint-disable-next-line no-underscore-dangle
+      strain._ownProperties.add('directoryIndex');
+    }
+    return strain;
   }
 
   get url() {
@@ -255,6 +156,7 @@ class Strain {
 
   set package(value) {
     this._package = value;
+    this._modified('package', value);
   }
 
   get params() {
@@ -270,7 +172,12 @@ class Strain {
   }
 
   get directoryIndex() {
-    return this._directoryIndex;
+    return this._directoryIndex || 'index.html';
+  }
+
+  set directoryIndex(value) {
+    this._directoryIndex = value;
+    this._modified('directoryIndex', value);
   }
 
   get perf() {
@@ -333,15 +240,68 @@ class Strain {
     return ret;
   }
 
+  _modified(propertyName, propertyValue) {
+    if (this._yamlNode) {
+      if (propertyName) {
+        if (propertyValue) {
+          this._ownProperties.add(propertyName);
+        } else {
+          this._ownProperties.clear(propertyName);
+        }
+      }
+
+      let node = this._yamlNode.value;
+      if (node.type === 'ALIAS') {
+        // convert to merge first
+        const seq = new YAML_SEQ();
+        seq.items.push(node);
+        const merge = new YAML_PAIR('<<', node);
+        merge.type = 'MERGE_PAIR';
+        node = new YAML_MAP();
+        node.items.push(merge);
+        this._yamlNode.value = node;
+      }
+      this._ownProperties.forEach((key) => {
+        let value = this[key];
+        if (value) {
+          if (value.toYAMLNode) {
+            value = value.toYAMLNode();
+          }
+          if (!value || (Array.isArray(value) && value.length === 0)) {
+            return;
+          }
+          node.items.push(new YAML_PAIR(key, value));
+        }
+      });
+    }
+  }
+
   toYAML() {
-    const json = this.toJSON({
-      keepFormat: true,
-      minimal: true,
-    });
-    delete json.name;
-    return yaml.stringify({
-      [this.name]: json,
-    });
+    return YAML.stringify(this.toYAMLNode());
+  }
+
+  static fromYAMLNode(node) {
+    /* eslint-disable no-underscore-dangle */
+    const json = node.value.toJSON();
+    const strain = new Strain(node.key.value, json);
+    strain._yamlNode = node;
+    strain._ownProperties.clear();
+    if (node.value.type === 'MAP') {
+      // remember our 'own' properties
+      node.value.items.forEach((pair) => {
+        strain._ownProperties.add(pair.key.value);
+      });
+    }
+    /* eslint-enable no-underscore-dangle */
+    return strain;
+  }
+
+  toYAMLNode() {
+    if (!this._yamlNode) {
+      this._yamlNode = new YAML_PAIR(this.name, new YAML_MAP());
+      this._modified();
+    }
+    return this._yamlNode;
   }
 }
 
