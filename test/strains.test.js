@@ -131,4 +131,17 @@ describe('Strains test', () => {
     strain.urls = ['https://www.project-helix.io/', 'https://www.project-helix.io:443/', 'https://www.project-helix.io'];
     assert.deepEqual(strain.urls, ['https://www.project-helix.io/']);
   });
+
+  it('static can be read', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    assert.deepEqual(strain.static.path, strain.static.url.path);
+    assert.deepEqual(strain.static.owner, strain.static.url.owner);
+    assert.deepEqual(strain.static.repo, strain.static.url.repo);
+    assert.deepEqual(strain.static.ref, strain.static.url.ref);
+  });
 });
