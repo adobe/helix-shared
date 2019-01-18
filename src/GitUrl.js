@@ -40,20 +40,20 @@ class GitUrl {
       this._path = url.path || defaults.path;
 
       if (!this._owner) {
-        throw Error('Invalid URL: no owner');
+        throw Error('Invalid Git URL: Could not extract owner. Not a github repository url?');
       }
       if (!this._repo) {
-        throw Error('Invalid URL: no repo');
+        throw Error('Invalid Git URL: Could not extract repository. Not a github repository url?');
       }
     } else {
       if (!url) {
-        throw Error('Invalid URL: undefined');
+        throw Error('Invalid Git URL: URL is undefined (no URL given).');
       }
       // special case for `scp` form
       if (url.startsWith('git@')) {
         const cIdx = url.indexOf(':');
         if (cIdx < 0) {
-          throw Error(`Invalid URL: no valid scp url: ${url}`);
+          throw Error(`Invalid URL: Not a valid scp-style git url (missing the path to the actual repo): ${url}`);
         }
         const auth = url.substring(0, cIdx);
         const rIdx = url.indexOf('#');
@@ -76,7 +76,7 @@ class GitUrl {
 
       const parts = MATCH_GIT_URL.exec(this._url.pathname);
       if (parts === null) {
-        throw Error(`Invalid URL: no valid git-url: ${url}`);
+        throw Error(`Invalid URL: Not a valid git url (missing the .git suffix?): ${url}`);
       }
       // noinspection JSConsecutiveCommasInArrayLiteral
       [, this._owner, this._repo, this._path] = parts;

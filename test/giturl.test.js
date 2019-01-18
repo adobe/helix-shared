@@ -22,7 +22,7 @@ describe('GitUrl from string tests', () => {
       const url = new GitUrl();
       assert.fail('should fail with no arguments');
     } catch (e) {
-      assert.equal(e.message, 'Invalid URL: undefined');
+      assert.equal(e.message, 'Invalid Git URL: URL is undefined (no URL given).');
     }
   });
 
@@ -32,7 +32,7 @@ describe('GitUrl from string tests', () => {
       const url = new GitUrl('https://github.com/no/git');
       assert.fail('should fail with no arguments');
     } catch (e) {
-      assert.equal(e.message, 'Invalid URL: no valid git-url: https://github.com/no/git');
+      assert.equal(e.message, 'Invalid URL: Not a valid git url (missing the .git suffix?): https://github.com/no/git');
     }
   });
 
@@ -326,7 +326,7 @@ describe('GitUrl from string tests', () => {
       const url = new GitUrl('git@github.com/no/git');
       assert.fail('should fail with no arguments');
     } catch (e) {
-      assert.equal(e.message, 'Invalid URL: no valid scp url: git@github.com/no/git');
+      assert.equal(e.message, 'Invalid URL: Not a valid scp-style git url (missing the path to the actual repo): git@github.com/no/git');
     }
   });
 });
@@ -439,7 +439,7 @@ describe('GitUrl from object tests', () => {
       });
       assert.fail('should fail with no arguments');
     } catch (e) {
-      assert.equal(e.message, 'Invalid URL: no owner');
+      assert.equal(e.message, 'Invalid Git URL: Could not extract owner. Not a github repository url?');
     }
   });
 
@@ -451,7 +451,7 @@ describe('GitUrl from object tests', () => {
       });
       assert.fail('should fail with no arguments');
     } catch (e) {
-      assert.equal(e.message, 'Invalid URL: no repo');
+      assert.equal(e.message, 'Invalid Git URL: Could not extract repository. Not a github repository url?');
     }
   });
 
