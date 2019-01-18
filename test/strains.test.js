@@ -173,4 +173,31 @@ describe('Strains test', () => {
     assert.notDeepEqual(strain.package, '');
     assert.notDeepEqual(strain.condition, '');
   });
+
+  it('proxy static can be read', () => {
+    const strain = new Strain('test', {
+      origin: 'https://www.adobe.io',
+    });
+
+    assert.deepEqual(strain.toJSON({ minimal: true }), {
+      condition: '',
+      origin: {
+        address: 'www.adobe.io',
+        between_bytes_timeout: 10000,
+        connect_timeout: 1000,
+        first_byte_timeout: 15000,
+        hostname: 'www.adobe.io',
+        max_conn: 200,
+        name: 'Proxywwwadobeioff3d',
+        port: 443,
+        shield: 'iad-va-us',
+        ssl_cert_hostname: 'www.adobe.io',
+        use_ssl: true,
+        weight: 100,
+      },
+      perf: null,
+      sticky: false,
+      urls: [],
+    });
+  });
 });
