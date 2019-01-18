@@ -144,4 +144,33 @@ describe('Strains test', () => {
     assert.deepEqual(strain.static.repo, strain.static.url.repo);
     assert.deepEqual(strain.static.ref, strain.static.url.ref);
   });
+
+  it('strains can be mutated', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    const giturl = strain.content;
+
+    assert.deepEqual(strain.name, 'test');
+    assert.deepEqual(strain.content, giturl);
+    assert.deepEqual(strain.code, giturl);
+    assert.deepEqual(strain.package, '');
+    assert.deepEqual(strain.condition, '');
+
+    strain.name = 'dirty';
+    strain.content = 'https://github.com/adobe/project-helix.io.git#develop';
+    strain.code = 'https://github.com/adobe/project-helix.io.git#develop';
+    strain.package = 'dirty';
+    strain.condition = 'req.http.X-Dirty == "true"';
+
+
+    assert.notDeepEqual(strain.name, 'test');
+    assert.notDeepEqual(strain.content, giturl);
+    assert.notDeepEqual(strain.code, giturl);
+    assert.notDeepEqual(strain.package, '');
+    assert.notDeepEqual(strain.condition, '');
+  });
 });

@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "docs": "npx jsonschema2md -d src/schemas -o docs",
-    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 95 --statements 95 --lines 95 mocha",
+    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 97 --statements 97 --lines 97 mocha",
     "lint": "./node_modules/.bin/eslint .",
     "junit": "mocha --exit -R mocha-junit-reporter",
     "preversion": "npm run junit",
