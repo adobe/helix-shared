@@ -15,7 +15,7 @@
 const assert = require('assert');
 const path = require('path');
 const GitUrl = require('../src/GitUrl.js');
-const { HelixConfig } = require('../src/index.js');
+const { HelixConfig, Strain } = require('../src/index.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/configs');
 
@@ -107,5 +107,28 @@ describe('Strains test', () => {
       + '  static: \'https://github.com/adobe/project-helix.io.git/htdocs#dev\'\n'
       + '  directoryIndex: readme.html\n'
       + '  condition: req.http.host == "client.project-helix.io"\n');
+  });
+
+  it('urls can be set', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    strain.urls = 'https://www.project-helix.io/';
+    assert.deepEqual(strain.urls, ['https://www.project-helix.io/']);
+  });
+
+
+  it('urls are normalized', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    strain.urls = ['https://www.project-helix.io/', 'https://www.project-helix.io:443/', 'https://www.project-helix.io'];
+    assert.deepEqual(strain.urls, ['https://www.project-helix.io/']);
   });
 });
