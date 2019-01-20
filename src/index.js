@@ -14,6 +14,8 @@ const GitUtils = require('./GitUtils.js');
 const HelixConfig = require('./HelixConfig.js');
 const Strain = require('./Strain.js');
 const Logger = require('./Logger.js');
+const sequence = require('./sequence.js');
+const dom = require('./dom.js');
 
 module.exports = {
   GitUrl,
@@ -21,4 +23,6 @@ module.exports = {
   HelixConfig,
   Strain,
   Logger,
+  sequence,
+  dom,
 };
