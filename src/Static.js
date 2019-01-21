@@ -18,21 +18,28 @@ const utils = require('./utils.js');
  * Static content handling
  */
 class Static {
-  constructor(cfg, defaults = {}) {
-    this._url = new GitUrl(cfg, defaults);
+  constructor(cfg) {
+    this.url = cfg;
     this._magic = cfg.magic || false;
     this._allow = cfg.allow || [];
     this._deny = cfg.deny || [];
+  }
 
+  get url() {
+    return this._url;
+  }
+
+  set url(value) {
+    if (value.toJSON) {
+      this._url = new GitUrl(value.toJSON({ minimal: true, keepFormat: true }));
+    } else {
+      this._url = new GitUrl(value);
+    }
     if (!this._url.path) {
       // todo: ... this is a by ugly
       // eslint-disable-next-line no-underscore-dangle
       this._url._path = '/htdocs';
     }
-  }
-
-  get url() {
-    return this._url;
   }
 
   get magic() {
