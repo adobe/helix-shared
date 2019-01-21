@@ -285,6 +285,18 @@ describe('Helix Config Serializing', () => {
     assert.equal(actual, expected);
   });
 
+  it('can serialize back a modified merge strain', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-clone-code.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    cfg.strains.get('clone').package = 'bfbde5fbfbde5fbfbde5f';
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-clone-code-package.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
   it.skip('can serialize back a cloned strain with modified code url', async () => {
     // todo: would be nice!
     const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal.yaml'), 'utf-8');
