@@ -304,6 +304,7 @@ class Strain {
       node.value.items.forEach((pair) => {
         strain._ownProperties.add(pair.key.value);
       });
+      strain._ownProperties.delete('<<');
     }
     /* eslint-enable no-underscore-dangle */
     return strain;
