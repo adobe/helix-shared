@@ -18,7 +18,7 @@ const RAW_TYPE = 'raw';
 const API_TYPE = 'api';
 const DEFAULT_BRANCH = 'master';
 const MATCH_IP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
-const MATCH_GIT_URL = /^\/([^/]+)\/([^/]+)\.git(\/.*)?$/;
+const MATCH_GIT_URL = /^\/([^/]+)\/([^/]+)(\/.*)?$/;
 /**
  * Represents a GIT url.
  */
@@ -84,7 +84,7 @@ class GitUrl {
 
       const parts = MATCH_GIT_URL.exec(this._url.pathname);
       if (parts === null) {
-        throw Error(`Invalid URL: Not a valid git url (missing the .git suffix?): ${url}`);
+        throw Error(`Invalid URL: Not a valid git url: ${url}`);
       }
       // noinspection JSConsecutiveCommasInArrayLiteral
       [, this._owner, this._repo, this._path] = parts;

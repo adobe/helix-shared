@@ -29,10 +29,10 @@ describe('GitUrl from string tests', () => {
   it('Fails for non git-url arguments', () => {
     try {
       // eslint-disable-next-line no-unused-vars
-      const url = new GitUrl('https://github.com/no/git');
+      const url = new GitUrl('https://github.com/no');
       assert.fail('should fail with no arguments');
     } catch (e) {
-      assert.equal(e.message, 'Invalid URL: Not a valid git url (missing the .git suffix?): https://github.com/no/git');
+      assert.equal(e.message, 'Invalid URL: Not a valid git url: https://github.com/no');
     }
   });
 
@@ -512,6 +512,13 @@ describe('GitUrl from object tests', () => {
     const original = 'http://localhost/owner/repo.git#local_path';
     const result = new GitUrl(original).toString();
     assert.equal(result, original);
+  });
+
+  it('appends .git if missing', () => {
+    const original = 'http://localhost/owner/repo#local_path';
+    const expected = 'http://localhost/owner/repo.git#local_path';
+    const result = new GitUrl(original).toString();
+    assert.equal(result, expected);
   });
 
   it('parse roundtrip from https', () => {
