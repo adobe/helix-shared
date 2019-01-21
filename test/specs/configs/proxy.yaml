@@ -1,0 +1,4 @@
+version: 1
+strains:
+  default:
+    origin: https://www.example.com

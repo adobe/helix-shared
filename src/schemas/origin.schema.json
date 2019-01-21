@@ -1,0 +1,74 @@
+{
+  "meta:license": [
+    "Copyright 2018 Adobe. All rights reserved.",
+    "This file is licensed to you under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License. You may obtain a copy",
+    "of the License at http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software distributed under",
+    "the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS",
+    "OF ANY KIND, either express or implied. See the License for the specific language",
+    "governing permissions and limitations under the License."
+  ],
+  "$id": "https://ns.adobe.com/helix/shared/origin",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Origin",
+  "type": "object",
+  "meta:status": "stabilizing",
+  "description": "Representation of a origin host",
+  "additionalProperties": false,
+  "properties": {
+    "hostname": {
+      "type": "string",
+      "description": ""
+    },
+    "port": {
+      "type": "integer",
+      "description": ""
+    },
+    "error_threshold": {
+      "type": "integer",
+      "description": ""
+    },
+    "first_byte_timeout": {
+      "type": "integer",
+      "description": ""
+    },
+    "weight": {
+      "type": "integer",
+      "description": ""
+    },
+    "address": {
+      "type": "string",
+      "description": ""
+    },
+    "connect_timeout": {
+      "type": "string",
+      "description": ""
+    },
+    "name": {
+      "type": "string",
+      "description": ""
+    },
+    "between_bytes_timeout": {
+      "type": "integer",
+      "description": ""
+    },
+    "shield": {
+      "type": "string",
+      "description": ""
+    },
+    "ssl_cert_hostname": {
+      "type": "string",
+      "description": ""
+    },
+    "max_conn": {
+      "type": "integer",
+      "description": ""
+    },
+    "use_ssl": {
+      "type": "boolean",
+      "description": ""
+    }
+  }
+}

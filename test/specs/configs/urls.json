@@ -1,11 +1,18 @@
 {
+  "version": 1,
   "strains": {
     "client": {
-      "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
-      "sticky": false,
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
       "condition": "",
-      "urls": ["https://client.project-helix.io/index.html", "https://client.project-helix.io/README.html", "https://client.project-helix.io/"],
-      "url": "https://client.project-helix.io/",
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -17,7 +24,7 @@
         "repo": "helix-cli"
       },
       "directoryIndex": "readme.html",
-      "name": "client",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",
@@ -35,14 +42,27 @@
         "protocol": "https",
         "ref": "",
         "repo": "project-helix.io"
-      }
+      },
+      "sticky": false,
+      "url": "https://client.project-helix.io/",
+      "urls": [
+        "https://client.project-helix.io/index.html",
+        "https://client.project-helix.io/README.html",
+        "https://client.project-helix.io/"
+      ]
     },
     "default": {
-      "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
-      "sticky": false,
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
       "condition": "",
-      "urls": ["https://www.project-helix.io/index.html"],
-      "url": "",
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -54,7 +74,7 @@
         "repo": "project-helix.io"
       },
       "directoryIndex": "index.html",
-      "name": "default",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",
@@ -72,14 +92,24 @@
         "protocol": "https",
         "ref": "",
         "repo": "project-helix.io"
-      }
+      },
+      "sticky": false,
+      "urls": [
+        "https://www.project-helix.io/index.html"
+      ]
     },
     "pipeline": {
-      "code": "/acapt/default/https---github-com-adobe-project-helix-io-git--master--",
-      "sticky": false,
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
       "condition": "",
-      "urls": ["https://pipeline.project-helix.io/"],
-      "url": "https://pipeline.project-helix.io/",
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -91,7 +121,7 @@
         "repo": "hypermedia-pipeline"
       },
       "directoryIndex": "index.html",
-      "name": "pipeline",
+      "package": "",
       "perf": {
         "connection": "",
         "device": "",
@@ -104,18 +134,19 @@
         "hostname": "github.com",
         "magic": false,
         "owner": "adobe",
-        "path": "/www",
+        "path": "/htdocs",
         "port": "",
         "protocol": "https",
         "ref": "",
         "repo": "project-helix.io"
-      }
+      },
+      "sticky": false,
+      "url": "https://pipeline.project-helix.io/",
+      "urls": [
+        "https://pipeline.project-helix.io/"
+      ]
     },
     "proxy": {
-      "name": "proxy",
-      "urls": ["https://proxy.project-helix.io/"],
-      "url": "https://proxy.project-helix.io/",
-      "sticky": false,
       "condition": "",
       "origin": {
         "address": "www.adobe.io",
@@ -136,14 +167,15 @@
         "connection": "",
         "device": "",
         "location": ""
-      }
+      },
+      "sticky": false,
+      "url": "https://proxy.project-helix.io/",
+      "urls": [
+        "https://proxy.project-helix.io/"
+      ]
     },
     "proxy-detailed": {
       "condition": "",
-      "name": "proxy-detailed",
-      "urls": [],
-      "url": "",
-      "sticky": false,
       "origin": {
         "address": "192.168.0.1",
         "between_bytes_timeout": 10000,
@@ -163,7 +195,9 @@
         "connection": "",
         "device": "",
         "location": ""
-      }
+      },
+      "sticky": false,
+      "urls": []
     }
   }
 }

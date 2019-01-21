@@ -49,6 +49,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.raw, 'http://raw.git.example.com:1234/company/repository/products/v2');
     assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
     assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'http://users:password@git.example.com:1234/company/repository.git/docs/main#products/v2');
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
@@ -76,6 +77,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.rawRoot, 'http://raw.git.example.com');
     assert.equal(url.apiRoot, 'http://api.git.example.com');
     assert.equal(url.toString(), 'http://git.example.com/company/repository.git/docs/main#products/v2');
+    assert.equal(url.isLocal, false);
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
       host: 'git.example.com',
@@ -102,6 +104,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
     assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
     assert.equal(url.toString(), 'http://git.example.com:1234/company/repository.git/docs/main');
+    assert.equal(url.isLocal, false);
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
       host: 'git.example.com:1234',
@@ -128,6 +131,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
     assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
     assert.equal(url.toString(), 'http://git.example.com:1234/company/repository.git#products/v2');
+    assert.equal(url.isLocal, false);
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
       host: 'git.example.com:1234',
@@ -154,6 +158,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
     assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
     assert.equal(url.toString(), 'http://git.example.com:1234/company/repository.git#products/v2');
+    assert.equal(url.isLocal, false);
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
       host: 'git.example.com:1234',
@@ -179,6 +184,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.raw, 'http://raw.git.example.com:1234/company/repository/master');
     assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
     assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'http://git.example.com:1234/company/repository.git');
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
@@ -205,6 +211,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.raw, 'http://127.0.0.1:1234/raw/company/repository/master');
     assert.equal(url.rawRoot, 'http://127.0.0.1:1234/raw');
     assert.equal(url.apiRoot, 'http://127.0.0.1:1234/api');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'http://127.0.0.1:1234/company/repository.git');
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
@@ -231,6 +238,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.raw, 'https://raw.git.example.com/company/repository/master');
     assert.equal(url.rawRoot, 'https://raw.git.example.com');
     assert.equal(url.apiRoot, 'https://api.git.example.com');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'ssh://git@git.example.com/company/repository.git');
     assert.deepEqual(url.toJSON(), {
       protocol: 'ssh',
@@ -256,6 +264,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.raw, 'https://raw.git.example.com/company/repository/master');
     assert.equal(url.rawRoot, 'https://raw.git.example.com');
     assert.equal(url.apiRoot, 'https://api.git.example.com');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'ssh://git@git.example.com/company/repository.git');
     assert.deepEqual(url.toJSON(), {
       protocol: 'ssh',
@@ -282,6 +291,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.raw, 'https://raw.git.example.com/company/repository/products/v2');
     assert.equal(url.rawRoot, 'https://raw.git.example.com');
     assert.equal(url.apiRoot, 'https://api.git.example.com');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'ssh://git@git.example.com/company/repository.git#products/v2');
     assert.deepEqual(url.toJSON(), {
       protocol: 'ssh',
@@ -307,6 +317,7 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.raw, 'https://raw.git.example.com/company/repository/products/v2');
     assert.equal(url.rawRoot, 'https://raw.git.example.com');
     assert.equal(url.apiRoot, 'https://api.git.example.com');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'ssh://git@git.example.com/company/repository.git#products/v2');
     assert.deepEqual(url.toJSON(), {
       protocol: 'ssh',
@@ -318,6 +329,15 @@ describe('GitUrl from string tests', () => {
       ref: 'products/v2',
       repo: 'repository',
     });
+  });
+
+  it('local git url', () => {
+    const url = new GitUrl('https://localhost/local/default.git');
+    assert.equal(url.isLocal, true);
+  });
+  it('local git url with ref', () => {
+    const url = new GitUrl('https://localhost/local/default.git#tag123');
+    assert.equal(url.isLocal, true);
   });
 
   it('Fails for non scp-url arguments', () => {
@@ -353,6 +373,7 @@ describe('GitUrl from object tests', () => {
     assert.equal(url.raw, 'http://raw.git.example.com:1234/company/repository/products/v2');
     assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
     assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'http://git.example.com:1234/company/repository.git/docs/main#products/v2');
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
@@ -382,6 +403,37 @@ describe('GitUrl from object tests', () => {
     assert.equal(url.raw, 'https://raw.github.com/company/repository/master');
     assert.equal(url.rawRoot, 'https://raw.github.com');
     assert.equal(url.apiRoot, 'https://api.github.com');
+    assert.equal(url.isLocal, false);
+    assert.equal(url.toString(), 'https://github.com/company/repository.git');
+    assert.deepEqual(url.toJSON(), {
+      protocol: 'https',
+      host: 'github.com',
+      hostname: 'github.com',
+      owner: 'company',
+      path: '',
+      port: '',
+      ref: '',
+      repo: 'repository',
+    });
+  });
+
+  it('minimal example with .git reponame', () => {
+    const url = new GitUrl({
+      owner: 'company',
+      repo: 'repository.git',
+    });
+    assert.equal(url.protocol, 'https');
+    assert.equal(url.hostname, 'github.com');
+    assert.equal(url.port, '');
+    assert.equal(url.host, 'github.com');
+    assert.equal(url.owner, 'company');
+    assert.equal(url.repo, 'repository');
+    assert.equal(url.path, '');
+    assert.equal(url.ref, '');
+    assert.equal(url.raw, 'https://raw.github.com/company/repository/master');
+    assert.equal(url.rawRoot, 'https://raw.github.com');
+    assert.equal(url.apiRoot, 'https://api.github.com');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'https://github.com/company/repository.git');
     assert.deepEqual(url.toJSON(), {
       protocol: 'https',
@@ -418,6 +470,7 @@ describe('GitUrl from object tests', () => {
     assert.equal(url.raw, 'http://raw.git.example.com:1234/company/repository/products/v2');
     assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
     assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
+    assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'http://git.example.com:1234/company/repository.git/docs/main#products/v2');
     assert.deepEqual(url.toJSON(), {
       protocol: 'http',
@@ -479,5 +532,46 @@ describe('GitUrl from object tests', () => {
     const original = new GitUrl(src);
     const result = new GitUrl(original);
     assert.equal(result.toString(), src);
+  });
+
+  it('equalsIgnoreTransport', () => {
+    const url0 = new GitUrl('https://localhost/owner/repo.git#local_path');
+    const url1 = new GitUrl('ssh://git@localhost/owner/repo.git#local_path');
+    assert.ok(url0.equalsIgnoreTransport(url1));
+  });
+
+  it('equalsIgnoreTransport (same)', () => {
+    const url0 = new GitUrl('https://localhost/owner/repo.git#local_path');
+    assert.ok(url0.equalsIgnoreTransport(url0));
+  });
+
+  it('not equalsIgnoreTransport', () => {
+    const url0 = new GitUrl('https://localhost/owner/repo.git#master');
+    const url1 = new GitUrl('https://localhost/owner/repo.git#dev');
+    assert.ok(!url0.equalsIgnoreTransport(url1));
+  });
+
+  it('to minimal json', () => {
+    const url = new GitUrl({
+      owner: 'company',
+      repo: 'repository',
+    });
+    assert.deepEqual(url.toJSON({ minimal: true }), {
+      owner: 'company',
+      repo: 'repository',
+    });
+  });
+
+  it('to minimal json with ref', () => {
+    const url = new GitUrl({
+      owner: 'company',
+      repo: 'repository',
+      ref: 'master',
+    });
+    assert.deepEqual(url.toJSON({ minimal: true }), {
+      owner: 'company',
+      repo: 'repository',
+      ref: 'master',
+    });
   });
 });

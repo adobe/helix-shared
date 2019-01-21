@@ -16,35 +16,11 @@ definitions:
 strains:
   default:
     <<: *default
-    urls:
-      - https://www.project-helix.io/index.html
+    perf:
+      location: us-east
 
   client:
     <<: *default
-    url: HTTPs://client.project-helix.io
-    urls:
-      - https://client.project-helix.io/index.html
-      - https://client.project-helix.io/README.html
-    content:
-      repo: helix-cli
-      ref: master
-      owner: adobe
-    directoryIndex: readme.html
-
-  pipeline:
-    <<: *default
-    url: https://pipeline.project-helix.io
-    content:
-      repo: hypermedia-pipeline
-      ref: master
-      owner: adobe
-
-  proxy:
-    origin: https://www.adobe.io/
-    url: https://proxy.project-helix.io
-
-  proxy-detailed:
-    origin:
-      address: 192.168.0.1
-      name: publish
-      use_ssl: false
+    perf:
+      device: iPhoneX
+      connection: LTE

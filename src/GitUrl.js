@@ -11,6 +11,8 @@
  */
 
 const { URL } = require('url');
+const YAML = require('yaml');
+const utils = require('./utils.js');
 
 const RAW_TYPE = 'raw';
 const API_TYPE = 'api';
@@ -32,8 +34,13 @@ class GitUrl {
    */
   constructor(url, defaults = {}) {
     if (url === Object(url)) {
-      const portStr = url.port || defaults.port ? `:${url.port || defaults.port}` : '';
-      this._url = new URL(`${url.protocol || defaults.protocol || 'https'}://${url.hostname || defaults.hostname || 'github.com'}${portStr}`);
+      this._type = 'object';
+      this._port = url.port || defaults.port;
+      this._protocol = url.protocol || defaults.protocol;
+      this._hostname = url.hostname || defaults.hostname;
+      const portStr = this._port ? `:${url.port || defaults.port}` : '';
+      this._host = this._hostname ? `${this._hostname}${portStr}` : '';
+      this._url = new URL(`${this._protocol || 'https'}://${this._hostname || 'github.com'}${portStr}`);
       this._owner = url.owner || defaults.owner;
       this._repo = url.repo || defaults.repo;
       this._ref = url.ref || defaults.ref;
@@ -49,6 +56,7 @@ class GitUrl {
       if (!url) {
         throw Error('Invalid Git URL: URL is undefined (no URL given).');
       }
+      this._type = 'string';
       // special case for `scp` form
       if (url.startsWith('git@')) {
         const cIdx = url.indexOf(':');
@@ -86,6 +94,10 @@ class GitUrl {
     // sanitize path
     if (this._path === '/') {
       this._path = '';
+    }
+    // sanitize .git
+    if (this._repo.endsWith('.git')) {
+      this._repo = this._repo.substring(0, this._repo.length - 4);
     }
   }
 
@@ -137,7 +149,7 @@ class GitUrl {
    * @type String
    */
   get protocol() {
-    return this._url.protocol.replace(':', '');
+    return this._protocol || this._url.protocol.replace(':', '');
   }
 
   /**
@@ -145,7 +157,7 @@ class GitUrl {
    * @type String
    */
   get hostname() {
-    return this._url.hostname;
+    return this._hostname || this._url.hostname;
   }
 
   /**
@@ -153,7 +165,7 @@ class GitUrl {
    * @type String
    */
   get host() {
-    return this._url.host;
+    return this._host || this._url.host;
   }
 
   /**
@@ -161,7 +173,7 @@ class GitUrl {
    * @type String
    */
   get port() {
-    return this._url.port;
+    return this._port || this._url.port;
   }
 
   /**
@@ -173,7 +185,7 @@ class GitUrl {
   }
 
   /**
-   * Repository name.
+   * Repository name (without .git extension).
    * @type String
    */
   get repo() {
@@ -194,6 +206,32 @@ class GitUrl {
    */
   get path() {
     return this._path || '';
+  }
+
+  /**
+   * Checks if this git url is _local_. A git-url is considered local if hostname is `localhost` and
+   * the owner is `local` and the repo name is `default`. This is specific to helix.
+   * @returns {boolean}
+   */
+  get isLocal() {
+    return (this.hostname === 'localhost' || this.hostname === '127.0.0.1') && this.owner === 'local' && this.repo === 'default';
+  }
+
+  /**
+   * Tests if this GitUrl is equal to `other` but ignores transport properties, such as protocol,
+   * user and password.
+   * @param other {GitUrl} the url to compare to
+   * @returns {boolean}
+   */
+  equalsIgnoreTransport(other) {
+    if (this === other) {
+      return true;
+    }
+    if (!other) {
+      return false;
+    }
+    return this.host === other.host && this.owner === other.owner && this.repo === other.repo
+      && this.path === other.path && this.ref === other.ref;
   }
 
   /**
@@ -230,9 +268,25 @@ class GitUrl {
 
   /**
    * Returns a plain object representation.
-   * @returns {GitUrl~JSON} A plain object suitable for serialization.
+   * @returns {GitUrl~JSON|String} A plain object suitable for serialization.
    */
-  toJSON() {
+  toJSON(opts) {
+    if (opts && opts.keepFormat && this._type === 'string') {
+      return this.toString();
+    }
+    if (opts && opts.minimal) {
+      return utils.pruneEmptyValues({
+        protocol: this._protocol,
+        host: this._host,
+        port: this._port,
+        hostname: this._hostname,
+        owner: this.owner,
+        repo: this.repo,
+        ref: this.ref,
+        path: this.path,
+      });
+    }
+
     return {
       protocol: this.protocol,
       host: this.host,
@@ -243,6 +297,13 @@ class GitUrl {
       ref: this.ref,
       path: this.path,
     };
+  }
+
+  toYAMLNode(forceObject) {
+    if (this._type === 'string' && !forceObject) {
+      return YAML.createNode(this.toString());
+    }
+    return YAML.createNode(this.toJSON({ minimal: true }));
   }
 }
 

@@ -11,14 +11,12 @@ version: 1
 
 definitions:
   constants:
-    defaultRepo:
-      &myrepo
+    defaultRepo: &myrepo
       owner: adobe
       repo: project-helix.io
       ref: master
   strains:
-    base:
-      &basestrain
+    base: &basestrain
       code: *myrepo
       content: *myrepo
       static: *myrepo
@@ -26,45 +24,19 @@ definitions:
 strains:
   default: *basestrain
 
-  adhoc:
+  dev:
     <<: *basestrain
-    package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
+    code: https://github.com/adobe/project-helix.io.git#dev
 
-  client:
-    code: *myrepo
-    static: *myrepo
-    condition: req.http.host == "client.project-helix.io"
-    sticky: false
-    content:
-      repo: helix-cli
-      ref: master
-      owner: adobe
-    directoryIndex: readme.html
-
-  pipeline:
+  dev2:
     <<: *basestrain
-    condition: req.http.host == "pipeline.project-helix.io"
-    params:
-      - search
-      - lang
-    content:
-      repo: hypermedia-pipeline
-      ref: master
-      owner: adobe
-    static:
-      <<: *myrepo
-      path: /www
+    content: https://github.com/adobe/project-helix.io-v2.git
+    code: ssh://git@github.com/adobe/project-helix.io.git#dev
+
+  stage:
+    <<: *basestrain
+    code: https://github.com/adobe/project-helix.io.git#stage
 
   proxy:
     origin: https://www.adobe.io/
     condition: req.http.host == "proxy.project-helix.io"
-    params:
-      - search
-      - api*
-    sticky: true
-
-  proxy-detailed:
-    origin:
-      address: 192.168.0.1
-      name: publish
-      use_ssl: false

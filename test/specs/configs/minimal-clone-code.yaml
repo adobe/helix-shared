@@ -26,45 +26,6 @@ definitions:
 strains:
   default: *basestrain
 
-  adhoc:
+  clone:
     <<: *basestrain
-    package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
-
-  client:
-    code: *myrepo
-    static: *myrepo
-    condition: req.http.host == "client.project-helix.io"
-    sticky: false
-    content:
-      repo: helix-cli
-      ref: master
-      owner: adobe
-    directoryIndex: readme.html
-
-  pipeline:
-    <<: *basestrain
-    condition: req.http.host == "pipeline.project-helix.io"
-    params:
-      - search
-      - lang
-    content:
-      repo: hypermedia-pipeline
-      ref: master
-      owner: adobe
-    static:
-      <<: *myrepo
-      path: /www
-
-  proxy:
-    origin: https://www.adobe.io/
-    condition: req.http.host == "proxy.project-helix.io"
-    params:
-      - search
-      - api*
-    sticky: true
-
-  proxy-detailed:
-    origin:
-      address: 192.168.0.1
-      name: publish
-      use_ssl: false
+    code: https://github.com/adobe/helix-test.git#master

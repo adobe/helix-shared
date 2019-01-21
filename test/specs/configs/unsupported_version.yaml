@@ -1,0 +1,6 @@
+version: 42
+
+strains:
+  default:
+    content: https://github.com/adobe/project-helix.io.git
+    code: https://github.com/adobe/project-helix.io.git

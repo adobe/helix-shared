@@ -12,9 +12,10 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const yaml = require('js-yaml');
-const GitUrl = require('./GitUrl.js');
+const YAML = require('yaml');
 const Strain = require('./Strain.js');
+const Strains = require('./Strains.js');
+const ConfigValidator = require('./ConfigValidator.js');
 
 const HELIX_CONFIG = 'helix-config.yaml';
 
@@ -30,25 +31,22 @@ class HelixConfig {
   constructor() {
     this._cwd = process.cwd();
     this._cfgPath = '';
-    this._cfgRelPath = '';
-    this._cfg = {};
+    this._source = '';
+    this._cfg = null;
+    this._document = null;
     this._logger = console;
+    this._version = '';
+    this._strains = new Strains();
+  }
 
-    this._defaults = {
-      content: new GitUrl('http://localhost/local/default.git'),
-      code: new GitUrl('http://localhost/local/default.git'),
-      staticRoot: '/htdocs',
-      directoryIndex: 'index.html',
-    };
+  withJSON(obj) {
+    this._cfg = obj;
+    return this;
+  }
 
-    this._strains = new Map();
-    this._strains.toJSON = () => {
-      const strains = {};
-      this._strains.forEach((strain, name) => {
-        strains[name] = strain.toJSON();
-      });
-      return strains;
-    };
+  withSource(value) {
+    this._source = value;
+    return this;
   }
 
   withConfigPath(cfgPath) {
@@ -70,6 +68,22 @@ class HelixConfig {
     return this._cwd;
   }
 
+  get version() {
+    return this._version;
+  }
+
+  get configPath() {
+    return this._cfgPath || path.resolve(this._cwd, HELIX_CONFIG);
+  }
+
+  get source() {
+    return this._source;
+  }
+
+  /**
+   * Strains of this config.
+   * @returns {Strains}
+   */
   get strains() {
     return this._strains;
   }
@@ -78,53 +92,74 @@ class HelixConfig {
     return this._logger;
   }
 
+  async hasFile() {
+    return isFile(this.configPath);
+  }
+
   async loadConfig() {
-    const cfgPath = this._cfgPath || path.resolve(this._cwd, HELIX_CONFIG);
-    if (await isFile(cfgPath)) {
-      const data = await fs.readFile(cfgPath, 'utf8');
-      if (data.indexOf('\t') >= 0) {
-        throw Error('Tabs not allowed in helix-config.yaml');
-      }
-      this._cfg = yaml.safeLoad(data) || {};
-      this._cfgPath = cfgPath;
-      this._cfgRelPath = path.relative(this._cwd, cfgPath);
+    if (this._cfg) {
+      return;
     }
+
+    if (!this._source) {
+      if (await this.hasFile()) {
+        this._source = await fs.readFile(this.configPath, 'utf8');
+      }
+    }
+    if (this._source.indexOf('\t') >= 0) {
+      throw Error('Tabs not allowed in helix-config.yaml');
+    }
+    this._document = YAML.parseDocument(this._source, {
+      merge: true,
+      schema: 'core',
+    });
+    this._cfg = this._document.toJSON() || {};
+  }
+
+  async validate() {
+    new ConfigValidator().assetValid(this._cfg);
   }
 
   async init() {
     await this.loadConfig();
-    const cfg = this._cfg;
+    await this.validate();
 
-    if (cfg.content) {
-      this._defaults.content = new GitUrl(cfg.content);
-    } else if (cfg.contentRepo) {
-      this.log.warn(`${this._cfgRelPath}: 'contentRepo' is deprecated. Use 'content' instead.`);
-      this._defaults.content = new GitUrl(cfg.contentRepo);
-    }
-    if (cfg.code) {
-      this._defaults.code = new GitUrl(cfg.code);
-    }
-    if (cfg.staticRoot) {
-      this._defaults.staticRoot = cfg.staticRoot;
-    }
-    if (cfg.directoryIndex) {
-      this._defaults.directoryIndex = cfg.directoryIndex;
-    }
-
-    if (cfg.strains) {
-      Object.keys(cfg.strains).forEach((name) => {
-        this._strains.set(name, new Strain(name, cfg.strains[name], this._defaults));
+    this._version = this._cfg.version;
+    if (this._document) {
+      // create strains from document
+      const strains = this._document.contents.items.filter(item => item.key.value === 'strains');
+      // strains.length is always > 0, since JSON schema mandates a strains object
+      this._strains.fromYAML(strains[0].value);
+    } else {
+      Object.keys(this._cfg.strains).forEach((name) => {
+        this._strains.add(new Strain(name, this._cfg.strains[name]));
       });
-    }
-    // ensure that there is a default strain
-    if (!this._strains.has('default')) {
-      this._strains.set('default', new Strain('default', {}, this._defaults));
     }
     return this;
   }
 
+  /**
+   * Saves this config to {@link #configPath}
+   * @returns {Promise<void>}
+   */
+  async saveConfig() {
+    const src = this.toYAML();
+    if (await fs.pathExists(this.configPath)) {
+      await fs.copy(this.configPath, `${this.configPath}.old`);
+    }
+    return fs.writeFile(this.configPath, src, 'utf-8');
+  }
+
+  toYAML() {
+    if (this._document) {
+      return this._document.toString();
+    }
+    return YAML.stringify(this.toJSON());
+  }
+
   toJSON() {
     return {
+      version: this._version,
       strains: this._strains.toJSON(),
     };
   }

@@ -1,0 +1,97 @@
+{
+  "strains": {
+    "client": {
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "condition": "",
+      "content": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "directoryIndex": "index.html",
+      "package": "",
+      "perf": {
+        "connection": "LTE",
+        "device": "iPhoneX",
+        "location": ""
+      },
+      "static": {
+        "allow": [],
+        "deny": [],
+        "host": "github.com",
+        "hostname": "github.com",
+        "magic": false,
+        "owner": "adobe",
+        "path": "/htdocs",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "sticky": false,
+
+      "urls": []
+    },
+    "default": {
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "condition": "",
+      "content": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "directoryIndex": "index.html",
+      "package": "",
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": "us-east"
+      },
+      "static": {
+        "allow": [],
+        "deny": [],
+        "host": "github.com",
+        "hostname": "github.com",
+        "magic": false,
+        "owner": "adobe",
+        "path": "/htdocs",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "sticky": false,
+
+      "urls": []
+    }
+  },
+  "version": 1
+}
