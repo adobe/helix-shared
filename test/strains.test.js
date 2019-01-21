@@ -15,7 +15,7 @@
 const assert = require('assert');
 const path = require('path');
 const GitUrl = require('../src/GitUrl.js');
-const { HelixConfig } = require('../src/index.js');
+const { HelixConfig, Strain } = require('../src/index.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/configs');
 
@@ -107,5 +107,97 @@ describe('Strains test', () => {
       + '  static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
       + '  condition: req.http.host == "client.project-helix.io"\n'
       + '  directoryIndex: readme.html\n');
+  });
+
+  it('urls can be set', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    strain.urls = 'https://www.project-helix.io/';
+    assert.deepEqual(strain.urls, ['https://www.project-helix.io/']);
+  });
+
+
+  it('urls are normalized', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    strain.urls = ['https://www.project-helix.io/', 'https://www.project-helix.io:443/', 'https://www.project-helix.io'];
+    assert.deepEqual(strain.urls, ['https://www.project-helix.io/']);
+  });
+
+  it('static can be read', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    assert.deepEqual(strain.static.path, strain.static.url.path);
+    assert.deepEqual(strain.static.owner, strain.static.url.owner);
+    assert.deepEqual(strain.static.repo, strain.static.url.repo);
+    assert.deepEqual(strain.static.ref, strain.static.url.ref);
+  });
+
+  it('strains can be mutated', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    const giturl = strain.content;
+
+    assert.deepEqual(strain.name, 'test');
+    assert.deepEqual(strain.content, giturl);
+    assert.deepEqual(strain.code, giturl);
+    assert.deepEqual(strain.package, '');
+    assert.deepEqual(strain.condition, '');
+
+    strain.name = 'dirty';
+    strain.content = 'https://github.com/adobe/project-helix.io.git#develop';
+    strain.code = 'https://github.com/adobe/project-helix.io.git#develop';
+    strain.package = 'dirty';
+    strain.condition = 'req.http.X-Dirty == "true"';
+
+
+    assert.notDeepEqual(strain.name, 'test');
+    assert.notDeepEqual(strain.content, giturl);
+    assert.notDeepEqual(strain.code, giturl);
+    assert.notDeepEqual(strain.package, '');
+    assert.notDeepEqual(strain.condition, '');
+  });
+
+  it('proxy static can be read', () => {
+    const strain = new Strain('test', {
+      origin: 'https://www.adobe.io',
+    });
+
+    assert.deepEqual(strain.toJSON({ minimal: true }), {
+      condition: '',
+      origin: {
+        address: 'www.adobe.io',
+        between_bytes_timeout: 10000,
+        connect_timeout: 1000,
+        first_byte_timeout: 15000,
+        hostname: 'www.adobe.io',
+        max_conn: 200,
+        name: 'Proxywwwadobeioff3d',
+        port: 443,
+        shield: 'iad-va-us',
+        ssl_cert_hostname: 'www.adobe.io',
+        use_ssl: true,
+        weight: 100,
+      },
+      perf: null,
+      sticky: false,
+      urls: [],
+    });
   });
 });

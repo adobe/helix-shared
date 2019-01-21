@@ -90,16 +90,15 @@ class Strain {
   }
 
   get urls() {
-    return Array.from(this._urls.values());
+    return Array.from(this._urls);
   }
 
   set urls(value) {
     if (Array.isArray(value)) {
-      this._urls = Array.from(value);
+      this._urls = new Set(value.map(URI.normalize));
     } else {
-      this._urls = [value];
+      this._urls = new Set([value].map(URI.normalize));
     }
-    this._url = this._urls.length > 0 ? this._urls[0] : '';
   }
 
   get sticky() {
