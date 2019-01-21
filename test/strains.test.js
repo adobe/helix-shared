@@ -200,4 +200,44 @@ describe('Strains test', () => {
       urls: [],
     });
   });
+
+  it('strain.toJSON() minimizes json', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    assert.deepEqual(strain.toJSON({ minimal: true }), {
+      code: {
+        owner: 'adobe',
+        repo: 'project-helix.io',
+      },
+      content: {
+        owner: 'adobe',
+        repo: 'project-helix.io',
+      },
+      directoryIndex: 'index.html',
+      static: {
+        owner: 'adobe',
+        path: '/htdocs',
+        repo: 'project-helix.io',
+      },
+    });
+  });
+
+  it('strain.toJSON() keeps format json', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    assert.deepEqual(strain.toJSON({ keepFormat: true, minimal: true }), {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      directoryIndex: 'index.html',
+      static: 'https://github.com/adobe/project-helix.io.git/htdocs',
+    });
+  });
 });
