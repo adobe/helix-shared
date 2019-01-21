@@ -12,7 +12,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const yaml = require('js-yaml');
+const YAML = require('yaml');
 const Strain = require('./Strain.js');
 const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
@@ -32,10 +32,10 @@ class HelixConfig {
     this._cwd = process.cwd();
     this._cfgPath = '';
     this._source = '';
-    this._cfg = {};
+    this._cfg = null;
+    this._document = null;
     this._logger = console;
     this._version = '';
-
     this._strains = new Strains();
   }
 
@@ -97,6 +97,10 @@ class HelixConfig {
   }
 
   async loadConfig() {
+    if (this._cfg) {
+      return;
+    }
+
     if (!this._source) {
       if (await this.hasFile()) {
         this._source = await fs.readFile(this.configPath, 'utf8');
@@ -105,7 +109,11 @@ class HelixConfig {
     if (this._source.indexOf('\t') >= 0) {
       throw Error('Tabs not allowed in helix-config.yaml');
     }
-    this._cfg = yaml.safeLoad(this._source) || this._cfg;
+    this._document = YAML.parseDocument(this._source, {
+      merge: true,
+      schema: 'core',
+    });
+    this._cfg = this._document.toJSON() || {};
   }
 
   async validate() {
@@ -116,13 +124,17 @@ class HelixConfig {
     await this.loadConfig();
     await this.validate();
 
-    const cfg = this._cfg;
-    this._version = cfg.version;
-
-    Object.keys(cfg.strains).forEach((name) => {
-      this._strains.set(name, new Strain(name, cfg.strains[name]));
-    });
-
+    this._version = this._cfg.version;
+    if (this._document) {
+      // create strains from document
+      const strains = this._document.contents.items.filter(item => item.key.value === 'strains');
+      // strains.length is always > 0, since JSON schema mandates a strains object
+      this._strains.fromYAML(strains[0].value);
+    } else {
+      Object.keys(this._cfg.strains).forEach((name) => {
+        this._strains.add(new Strain(name, this._cfg.strains[name]));
+      });
+    }
     return this;
   }
 
@@ -131,9 +143,18 @@ class HelixConfig {
    * @returns {Promise<void>}
    */
   async saveConfig() {
-    const src = yaml.safeDump(this.toJSON());
-    await fs.copy(this.configPath, `${this.configPath}.old`);
+    const src = this.toYAML();
+    if (await fs.pathExists(this.configPath)) {
+      await fs.copy(this.configPath, `${this.configPath}.old`);
+    }
     return fs.writeFile(this.configPath, src, 'utf-8');
+  }
+
+  toYAML() {
+    if (this._document) {
+      return this._document.toString();
+    }
+    return YAML.stringify(this.toJSON());
   }
 
   toJSON() {

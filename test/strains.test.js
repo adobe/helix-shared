@@ -96,7 +96,7 @@ describe('Strains test', () => {
       .init();
     const copy = cfg.strains.get('default').clone();
     assert.deepEqual(copy.toYAML(), 'default:\n'
-      + '  code: \'https://github.com/adobe/project-helix.io.git#master\'\n'
+      + '  code: https://github.com/adobe/project-helix.io.git#master\n'
       + '  content:\n'
       + '    protocol: https\n'
       + '    host: github.com\n'
@@ -104,9 +104,9 @@ describe('Strains test', () => {
       + '    owner: adobe\n'
       + '    repo: helix-cli\n'
       + '    ref: master\n'
-      + '  static: \'https://github.com/adobe/project-helix.io.git/htdocs#dev\'\n'
-      + '  directoryIndex: readme.html\n'
-      + '  condition: req.http.host == "client.project-helix.io"\n');
+      + '  static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
+      + '  condition: req.http.host == "client.project-helix.io"\n'
+      + '  directoryIndex: readme.html\n');
   });
 
   it('urls can be set', () => {

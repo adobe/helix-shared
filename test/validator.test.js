@@ -13,14 +13,16 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const path = require('path');
 const fs = require('fs-extra');
 const ConfigValidator = require('../src/ConfigValidator.js');
 
 async function validate(filename) {
-  const file = await fs.readFile(path.resolve(__dirname, 'specs', 'configs', filename));
-  const json = yaml.load(file);
+  const file = await fs.readFile(path.resolve(__dirname, 'specs', 'configs', filename), 'utf-8');
+  const json = yaml.parse(file, {
+    merge: true,
+  });
   new ConfigValidator().assetValid(json);
 }
 
