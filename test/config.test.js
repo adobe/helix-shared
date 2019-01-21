@@ -199,6 +199,42 @@ describe('Helix Config Serializing', () => {
     assert.equal(actual, expected);
   });
 
+  it('can serialize back a modified strain with modified package (with refs)', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-with-refs.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    cfg.strains.get('default').package = 'bfbde5fbfbde5fbfbde5f';
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-with-refs-package.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
+  it('can serialize back a modified strain with modified package2 (with refs)', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-with-refs-package.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    cfg.strains.get('default').package = 'bfbde5fbfbde5fbfbde5f-dirty';
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-with-refs-package2.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
+  it('can serialize back a modified strain with removed package (with refs)', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-with-refs-package.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    cfg.strains.get('default').package = null;
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-with-refs-no-package.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
   it('can serialize back a modified strain with modified directoryIndex', async () => {
     const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal.yaml'), 'utf-8');
     const cfg = await new HelixConfig()

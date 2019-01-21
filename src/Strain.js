@@ -242,12 +242,8 @@ class Strain {
 
   _modified(propertyName, propertyValue) {
     if (this._yamlNode) {
-      if (propertyName) {
-        if (propertyValue) {
-          this._ownProperties.add(propertyName);
-        } else {
-          this._ownProperties.clear(propertyName);
-        }
+      if (propertyName && propertyValue) {
+        this._ownProperties.add(propertyName);
       }
 
       let node = this._yamlNode.value;
@@ -262,17 +258,32 @@ class Strain {
         this._yamlNode.value = node;
       }
       this._ownProperties.forEach((key) => {
+        const idx = node.items.findIndex(i => i.key.value === key);
         let value = this[key];
+        if (value && value.toYAMLNode) {
+          value = value.toYAMLNode();
+        }
+        if (Array.isArray(value) && value.length === 0) {
+          value = null;
+        }
         if (value) {
-          if (value.toYAMLNode) {
-            value = value.toYAMLNode();
+          if (idx >= 0) {
+            const item = node.items[idx];
+            const oldValue = item.value.type === 'ALIAS' ? item.value.source : item.value;
+            if (oldValue.toString() !== value.toString()) {
+              item.value = value;
+            }
+          } else {
+            node.items.push(new YAML_PAIR(key, value));
           }
-          if (!value || (Array.isArray(value) && value.length === 0)) {
-            return;
-          }
-          node.items.push(new YAML_PAIR(key, value));
+        } else if (idx >= 0) {
+          node.items.splice(idx, 1);
         }
       });
+    }
+
+    if (propertyName && !propertyValue) {
+      this._ownProperties.clear(propertyName);
     }
   }
 
