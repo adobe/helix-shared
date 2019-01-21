@@ -128,6 +128,7 @@ class Strain {
 
   set content(url) {
     this._content = url;
+    this._modified('content', url);
   }
 
   /**
@@ -140,6 +141,7 @@ class Strain {
 
   set code(code) {
     this._code = code;
+    this._modified('code', code);
   }
 
   /**
@@ -258,7 +260,8 @@ class Strain {
         this._yamlNode.value = node;
       }
       this._ownProperties.forEach((key) => {
-        const idx = node.items.findIndex(i => i.key.value === key);
+        const idx = node.items.findIndex(i => i.key === key
+          || (i.key.value && i.key.value === key));
         let value = this[key];
         if (value && value.toYAMLNode) {
           value = value.toYAMLNode();

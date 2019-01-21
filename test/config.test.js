@@ -211,6 +211,25 @@ describe('Helix Config Serializing', () => {
     assert.equal(actual, expected);
   });
 
+  it('can serialize back a modified strain with duplicated strain)', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-local.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+
+    const url = new GitUrl('ssh://git@github.com/adobe/project-helix.io.git#master');
+    const strain = cfg.strains.get('default').clone();
+    strain.name = 'foo';
+    cfg.strains.add(strain);
+    strain.code = url;
+    strain.content = url;
+    strain.static.url = url;
+    strain.package = 'bfbde5fbfbde5fbfbde5f';
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-local-foo.yaml'), 'utf-8');
+    assert.equal(actual, expected);
+  });
+
   it('can serialize back a modified strain with modified package2 (with refs)', async () => {
     const source = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-with-refs-package.yaml'), 'utf-8');
     const cfg = await new HelixConfig()
