@@ -144,7 +144,9 @@ class HelixConfig {
    */
   async saveConfig() {
     const src = this.toYAML();
-    await fs.copy(this.configPath, `${this.configPath}.old`);
+    if (await fs.pathExists(this.configPath)) {
+      await fs.copy(this.configPath, `${this.configPath}.old`);
+    }
     return fs.writeFile(this.configPath, src, 'utf-8');
   }
 
