@@ -98,6 +98,7 @@ describe('Helix Config Loading', () => {
       .withSource(source)
       .init();
     assert.equal(cfg.source, source);
+    assert.equal(cfg.version, 1);
   });
 
   it('loads from string source and reports correct path', async () => {
@@ -140,6 +141,24 @@ describe('Helix Config Serializing', () => {
 
     const actual = cfg.toYAML();
     assert.equal(actual, source);
+  });
+
+  it('can save config', async () => {
+    const testDir = path.resolve(__dirname, 'tmp', `test${Math.random()}`);
+    await fs.ensureDir(testDir);
+    const testCfg = path.resolve(testDir, 'helix-config.yaml');
+    await fs.copy(path.resolve(SPEC_ROOT, 'minimal.yaml'), testCfg);
+    const cfg = await new HelixConfig()
+      .withDirectory(testDir)
+      .init();
+
+    cfg.strains.get('default').package = 'bfbde5fbfbde5fbfbde5f';
+    await cfg.saveConfig();
+
+    const actual = await fs.readFile(testCfg);
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-package.yaml'), 'utf-8');
+
+    assert.equal(actual, expected);
   });
 
   it('can serialize back a new strain', async () => {
