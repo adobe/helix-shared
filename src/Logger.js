@@ -13,9 +13,17 @@
 'use strict';
 
 const path = require('path');
+const stream = require('stream');
+const uuidv4 = require('uuid/v4');
 const winston = require('winston');
 const fs = require('fs-extra');
 const { MESSAGE, LEVEL } = require('triple-beam');
+
+const ANSI_REGEXP = RegExp([
+  '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\\u0007)',
+  '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))',
+].join('|'), 'g');
+
 
 const MY_LEVELS = {
   levels: {
@@ -122,5 +130,56 @@ function getLogger(config) {
   return logger;
 }
 
+/**
+ * Creates a test logger that logs to the console but also to an internal buffer. The contents of
+ * the buffer can be retrieved with {@code Logger#getOutput()} which will flush also close the
+ * logger. Each test logger will be registered with a unique category, so that there is no risk of
+ * reusing a logger in between tests.
+ * @returns {winston.Logger}
+ */
+function getTestLogger(config = {}) {
+  class StringStream extends stream.Writable {
+    constructor() {
+      super();
+      this.data = '';
+    }
+
+    _write(chunk, enc, next) {
+      // add chunk but strip ansi control characters
+      this.data += chunk.toString().replace(ANSI_REGEXP, '');
+      next();
+    }
+  }
+
+  // discard category
+  const cfg = typeof config === 'string' ? {} : config;
+  cfg.category = uuidv4();
+  if (!cfg.logFile) {
+    cfg.logFile = ['-'];
+  }
+  const logger = getLogger(cfg);
+  const s = new StringStream();
+
+  logger.add(new winston.transports.Stream({
+    stream: s,
+    format: winston.format.simple(),
+  }));
+
+  const finishPromise = new Promise((resolve) => {
+    logger.on('finish', () => {
+      resolve(s.data);
+    });
+  });
+
+  logger.getOutput = async () => {
+    logger.end();
+    return finishPromise;
+  };
+  return logger;
+}
+
 // configure with defaults
-module.exports.getLogger = getLogger;
+module.exports = {
+  getLogger,
+  getTestLogger,
+};
