@@ -181,4 +181,28 @@ describe('Logger tests', () => {
       '[hlx] \u001b[32minfo\u001b[39m: progress info\n',
     ]);
   });
+
+  it('test logger works', async () => {
+    const log = Logger.getTestLogger();
+    log.debug('hello, world');
+    log.info('hello, world');
+    log.warn('hello, world');
+    const output = await log.getOutput();
+    assert.equal(output, 'info: hello, world\nwarn: hello, world\n');
+  });
+
+  it('test logger can set log level', async () => {
+    const log = Logger.getTestLogger({ level: 'debug' });
+    log.debug('hello, world');
+    log.info('hello, world');
+    log.warn('hello, world');
+    const output = await log.getOutput();
+    assert.equal(output, 'debug: hello, world\ninfo: hello, world\nwarn: hello, world\n');
+  });
+
+  it('test loggers are not recycled', async () => {
+    const log1 = Logger.getTestLogger();
+    const log2 = Logger.getTestLogger();
+    assert.notStrictEqual(log1, log2);
+  });
 });
