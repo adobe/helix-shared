@@ -29,6 +29,15 @@ module.exports = {
   'rules': {
     'strict': 0,
 
+    // Forbid multiple statements in one line
+    'max-statements-per-line': ["error", { "max": 1 }],
+
+    // Allow for-of loops
+    'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
+
+    // Allow return before else & redundant else statements
+    'no-else-return': 'off',
+
     // allow dangling underscores for 'fields'
     'no-underscore-dangle': ['error', {'allowAfterThis': true}],
 

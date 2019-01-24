@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-restricted-syntax, guard-for-in */
 
 /**
  * Turn any object into an iterator.
@@ -29,16 +28,17 @@
  */
 const iter = (obj) => {
   function* objIter() {
-    for (const key in obj) {
+    for (const key in obj) { // eslint-disable-line guard-for-in, no-restricted-syntax
       yield [key, obj[key]];
     }
   }
   if (obj[Symbol.iterator]) {
     return obj[Symbol.iterator]();
-  } if (obj.constructor === Object) {
+  } else if (obj.constructor === Object) {
     return objIter(obj);
+  } else {
+    throw new TypeError(`The iterator protocol is not implemented for ${obj} of type ${obj.constructor}`);
   }
-  throw new TypeError(`The iterator protocol is not implemented for ${obj} of type ${obj.constructor}`);
 };
 
 /**

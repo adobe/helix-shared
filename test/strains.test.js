@@ -86,7 +86,7 @@ describe('Strains test', () => {
       .withConfigPath(path.resolve(SPEC_ROOT, 'many-code-repos.yaml'))
       .init();
     const names = [];
-    cfg.strains.forEach((s) => { names.push(s.name); });
+    cfg.strains.forEach(s => names.push(s.name));
     assert.deepEqual(names, ['default', 'dev', 'dev2', 'stage', 'proxy']);
   });
 
