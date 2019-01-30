@@ -12,9 +12,9 @@
 
 const URI = require('uri-js');
 const YAML = require('yaml');
-const YAML_MAP = require('yaml/map');
-const YAML_PAIR = require('yaml/pair');
-const YAML_SEQ = require('yaml/seq');
+const YAML_MAP = require('yaml/map').default;
+const YAML_PAIR = require('yaml/pair').default;
+const YAML_SEQ = require('yaml/seq').default;
 
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin.js');
