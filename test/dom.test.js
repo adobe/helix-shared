@@ -15,10 +15,11 @@
 
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
-const { each } = require('../src/index.js').sequence;
+const { each, concat } = require('../src/index.js').sequence;
 const {
   parentNodes, equalizeNode,
   nodeIsEquivalent, assertEquivalentNode,
+  sections, findTitle,
 } = require('../src/index.js').dom;
 
 describe('parentNodes', () => {
@@ -293,4 +294,221 @@ describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode()', () => {
     const preD = new JSDOM('<pre>\n</pre>');
     assertEq(preA.window.document, preD.window.document);
   });
+});
+
+describe('sections()', () => {
+  const ck = (desc, inp, exp) => {
+    it(`works for ${desc}`, () => {
+      // Explicitly wrapping the given html string into <body> tags
+      // in order to prevent jsdom from trimming trailing/leading space
+      const { document } = new JSDOM(`<body>${inp}</body>`).window;
+      assert.strictEqual(sections(document).innerHTML, exp);
+      // Courtesy of very strict coverage checks making our code slower
+      assert.strictEqual(sections(document.documentElement).innerHTML, exp);
+    });
+    it(`works for ${desc} in nested element`, () => {
+      const span = new JSDOM(`<span>${inp}</span>`).window.document.querySelector('span');
+      assert.strictEqual(sections(span).innerHTML, exp);
+    });
+  };
+
+  const ckNop = (desc, inp) => ck(desc, inp, inp);
+
+  assert.throws(() => sections({}));
+  assert.throws(() => sections({ nodeName: '#' }));
+
+  ckNop('empty doc', '');
+  ckNop('empty doc w space', '    ');
+  ckNop('empty doc w space', '   \n ');
+  ckNop('empty doc w comment', '   <!-- Hello --> ');
+  ckNop('empty doc w comment', '   <!-- Hello       -->\t ');
+
+  ckNop('explicit single section', '<section></section>');
+  ckNop('explicit single section w content',
+    '<section>  Hello \n</section>');
+  ckNop('explicit single section w content and gunk',
+    '\n   <!-- foo --> <section>  Hello \n</section>  \n');
+  ckNop('multiple explicit sections w content and gunk',
+    '\n   <!-- foo --> <section>  Hello \n</section>  \n'
+        + '\n   <!-- foo --> <section>  Hello \n</section>  \n');
+  ckNop('multiple explicit sections w decoys',
+    '\n   <!-- foo --> <section>  Hello \n</section>  \n'
+        + '\n <section></section>  \n'
+        + '\n   <!-- foo --> <section>  <hr>Fnord          </section>  \n'
+        + '\n   <!-- foo --> <section>  Hello <section></section> \n</section>  \n');
+
+  ck('single <hr> section',
+    'Helo',
+    '<section>Helo</section>');
+  ck('single <hr> section w space',
+    'Helo  ',
+    '<section>Helo  </section>');
+  ck('single <hr> section w comment',
+    '\nHelo  <!-- foo -->',
+    '<section>\nHelo  <!-- foo --></section>');
+  ck('single <hr> section of tags',
+    '<br>',
+    '<section><br></section>');
+
+  ck('single <hr> being stripped',
+    '  <hr>\n',
+    '  \n');
+  ck('single <hr> being stripped completely empty',
+    '<hr>',
+    '');
+  ck('empty section stripped at start',
+    '  <hr> foo \n',
+    '  <section> foo \n</section>');
+  ck('empty section stripped at end',
+    'foo \n<hr> \n',
+    '<section>foo \n</section> \n');
+  ck('empty section stripped at start and at end',
+    ' foo \n<hr> \n',
+    '<section> foo \n</section> \n');
+  ck('empty section stripped at start and at end',
+    ' \n<hr><hr> \t',
+    ' \n<section></section> \t');
+  ck('empty section stripped at start and at end with content',
+    ' \n<hr>foo \n<hr> \t',
+    ' \n<section>foo \n</section> \t');
+  ck('three <hr> delimited sections; two implicit',
+    ' x\n<hr>foo \n<hr> \tk',
+    '<section> x\n</section><section>foo \n</section><section> \tk</section>');
+  ck('four <hr> delimited sections; two implicit',
+    ' x\n<hr>foo \n<hr><hr> \tk',
+    '<section> x\n</section><section>foo \n</section><section></section><section> \tk</section>');
+
+  ck('visible implicit section at start',
+    'Hello\n  <section> </section>',
+    '<section>Hello\n  </section><section> </section>');
+  ckNop('invisible implicit section at start',
+    '  <section> </section>');
+
+  ck('visible implicit section at end',
+    '<section> </section>\t world',
+    '<section> </section><section>\t world</section>');
+  ckNop('invisible implicit section at end',
+    '<section> </section>\t ');
+
+  ck('visible implicit section between explicit sections',
+    '<section> </section>\t world<section></section>',
+    '<section> </section><section>\t world</section><section></section>');
+  ckNop('invisible implicit section between explicit sections',
+    '<section> </section>\t<section></section>');
+
+  ck('implicit sections due to hr between explicit sections v/v',
+    '<section> </section> Foo <hr> bar   <section></section>',
+    '<section> </section><section> Foo </section><section> bar   </section><section></section>');
+  ck('implicit sections due to hr between explicit sections _/v',
+    '<section> </section> <!-- borg --><hr> bar   <section></section>',
+    '<section> </section> <!-- borg --><section> bar   </section><section></section>');
+  ck('implicit sections due to hr between explicit sections v/_',
+    '<section> </section> xx<hr><!-- borg --><section></section>',
+    '<section> </section><section> xx</section><!-- borg --><section></section>');
+  ck('implicit sections due to hr between explicit sections _/_',
+    '<section> </section> <hr><!-- borg --><section></section>',
+    '<section> </section> <!-- borg --><section></section>');
+
+  ck('implicit <hr> based implicit section between start and explicit _/_',
+    '\t<hr>\n<section></section>',
+    '\t\n<section></section>');
+  ck('implicit <hr> based implicit section between start and explicit v/_',
+    '\tfo<hr>\n<section></section>',
+    '<section>\tfo</section>\n<section></section>');
+  ck('implicit <hr> based implicit section between start and explicit _/v',
+    '\t<hr>\n bar <section></section>',
+    '\t<section>\n bar </section><section></section>');
+  ck('implicit <hr> based implicit section between start and explicit v/v',
+    'x\t<hr>\n bar <section></section>',
+    '<section>x\t</section><section>\n bar </section><section></section>');
+
+  ck('implicit <hr> based implicit section between end and explicit _/_',
+    '<section>xx </section>\t<hr>\n',
+    '<section>xx </section>\t\n');
+  ck('implicit <hr> based implicit section between end and explicit v/_',
+    '<section>xx </section>\tfo<hr>\n',
+    '<section>xx </section><section>\tfo</section>\n');
+  ck('implicit <hr> based implicit section between end and explicit _/v',
+    '<section>xx </section>\t<hr>\n bar ',
+    '<section>xx </section>\t<section>\n bar </section>');
+  ck('implicit <hr> based implicit section between end and explicit v/v',
+    '<section>xx </section>x\t<hr>\n bar ',
+    '<section>xx </section><section>x\t</section><section>\n bar </section>');
+
+  ck('implicit sections due to hr between explicit sections with extra hr in between v/v',
+    '<section> </section> Foo <hr><hr> bar   <section></section>',
+    '<section> </section><section> Foo </section><section></section><section> bar   </section><section></section>');
+  ck('implicit sections due to hr between explicit sections with extra hr in between _/v',
+    '<section> </section> <!-- borg --><hr> <hr> bar   <section></section>',
+    '<section> </section> <!-- borg --><section> </section><section> bar   </section><section></section>');
+  ck('implicit sections due to hr between explicit sections with extra hr in between v/_',
+    '<section> </section> xx<hr>\n<hr><!-- borg --><section></section>',
+    '<section> </section><section> xx</section><section>\n</section><!-- borg --><section></section>');
+  ck('implicit sections due to hr between explicit sections with extra hr in between _/_',
+    '<section> </section> <hr>\t<hr><!-- borg --><section></section>',
+    '<section> </section> <section>\t</section><!-- borg --><section></section>');
+});
+
+describe('findTitle()', () => {
+  const ck = (html, expected, selectors = [], action = 'Finds') => {
+    const doc = new JSDOM(html).window.document;
+
+    it(`${action} the value in the document`, () => {
+      assert.equal(findTitle(doc, null), expected);
+    });
+
+    each(concat(['html', 'body'], selectors), (sel) => {
+      it(`${action} the value in '${sel}'`, () => {
+        assert.equal(findTitle(doc.querySelector(sel), null), expected);
+      });
+    });
+
+    return doc;
+  };
+
+  const ckMissing = (html, selectors = []) => {
+    const doc = ck(html, null, selectors, 'Returns default if it cannot find');
+
+    it('Throws if it cannot find the value in the document', () => {
+      assert.throws(() => findTitle(doc));
+    });
+
+    each(concat(['html', 'body'], selectors), (sel) => {
+      it(`Throws if it cannot find the value in '${sel}'`, () => {
+        assert.throws(() => findTitle(doc.querySelector(sel)));
+      });
+    });
+  };
+
+  assert.throws(() => findTitle({}));
+  assert.throws(() => findTitle({ nodeName: '#' }));
+
+  ck('<h6>', '');
+  ck('<h1>Hello', 'Hello');
+  ck('<h1>  Hello', 'Hello');
+  ck('<h1>  Hello\n', 'Hello');
+  ck('<h2>Hello', 'Hello');
+  ck('<h3>Hello', 'Hello');
+  ck('<h4>Hello', 'Hello');
+  ck('<h5>Hello', 'Hello');
+  ck('<h6>Hello', 'Hello');
+  ck('<h6>Hello</h6><h1>World', 'Hello');
+  ck('<div><h6>Hello</h6><h1>World', 'Hello', ['div']);
+  ck('<em><h6>Hello</h6><h1>World</h1></em>', 'Hello', ['em']);
+  ck('<span><h6>Hello</h6><h1>World', 'Hello', ['span']);
+  ck('<span><pre><h6>Hello</h6><p><h1>World', 'Hello', ['span', 'pre']);
+  ck('<span><pre><h6></h6><p><h1>World', '', ['span', 'pre']);
+
+  ckMissing('');
+  ckMissing('foo');
+  ckMissing('<h7>foo');
+  ckMissing('<h>foo');
+  ckMissing('<header>foo');
+
+  // Here are the more complex examples including
+  // whitespace stripping and subtag stripping
+  ck('<h3>  Hello </h3>', 'Hello');
+  ck('<h3> \n Hello </h3>', 'Hello');
+  ck('<h3> \n Hello <b></b>  </h3>', 'Hello');
+  ck('<h3> \n Hello <b></b> <em>Foo</em> </h3>', 'Hello Foo');
 });

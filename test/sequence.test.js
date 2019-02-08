@@ -13,27 +13,39 @@
 /* global describe, it */
 
 const assert = require('assert');
-const { iter, each, enumerate } = require('../src/index.js').sequence;
+const {
+  iter, each, list, enumerate, map, flat, concat, foldl, all,
+} = require('../src/index.js').sequence;
 
 describe('sequence lib', () => {
   const str = 'Hello World';
   const arr = [42, 23];
   const obj = { foo: 42 };
-  const map = new Map([['tardigrade', 'cute']]);
+  const m = new Map([['tardigrade', 'cute']]);
   const richObj = {
     [Symbol.iterator]: function* generate() {
       yield 42;
       yield 23;
     },
   };
-  function* gen() {
+  function* g() {
     yield null;
     yield undefined;
     yield 42;
   }
 
+  const getExampleGenerators = () => [
+    () => str, () => arr, () => obj, () => m, g, () => iter(str),
+    () => '', () => ({}), () => new Map(),
+  ];
+  const getExamples = () => getExampleGenerators().map(fn => fn());
+
+  const checkEq = (a, b) => {
+    assert.deepStrictEqual(list(a), list(b));
+  };
+
   it('iter() yields iterators ', () => {
-    [str, arr, obj, map, gen(), iter(str), '', {}, new Map()].forEach((seq) => {
+    getExamples().forEach((seq) => {
       const fst = iter(seq).next();
       assert(Object.prototype.hasOwnProperty.call(fst, 'value'));
       assert(Object.prototype.hasOwnProperty.call(fst, 'done'));
@@ -50,23 +62,65 @@ describe('sequence lib', () => {
     const checkEach = (seq, expected) => {
       const actual = [];
       each(seq, v => actual.push(v));
-      assert.deepStrictEqual(actual, expected);
+      checkEq(actual, expected);
     };
-    checkEach(str, Array.from(str));
+    checkEach(str, str);
     checkEach(arr, arr);
     checkEach(obj, [['foo', 42]]);
-    checkEach(map, [['tardigrade', 'cute']]);
+    checkEach(m, [['tardigrade', 'cute']]);
     checkEach(richObj, [42, 23]);
-    checkEach(gen(), [null, undefined, 42]);
+    checkEach(g(), [null, undefined, 42]);
     checkEach('', []);
     checkEach([], []);
     checkEach({}, []);
   });
 
+  it('map()', () => {
+    const ckExample = (seq, expected, fn) => {
+      checkEq(map(seq, fn), expected);
+    };
+
+    // These just test basic transforms
+    ckExample([1, 2, 3, 4], [2, 4, 6, 8], v => v * 2);
+    ckExample([true, 2, 'foo'], [null, null, null], v => v && null);
+
+    // These ensure that arbitrary types are supported
+    each(getExampleGenerators(), (gen) => {
+      const fn = x => ({ foo: x });
+      checkEq(map(gen(), fn), list(gen()).map(fn));
+    });
+  });
+
   it('enumerate()', () => {
-    assert.deepStrictEqual(
-      Array.from(enumerate('abc')),
-      [[0, 'a'], [1, 'b'], [2, 'c']],
+    checkEq(enumerate('abc'), [[0, 'a'], [1, 'b'], [2, 'c']]);
+  });
+
+  it('flat', () => {
+    // Basic examples
+    checkEq(flat(['foo', [1, 2, 3], { foo: 42 }]), ['f', 'o', 'o', 1, 2, 3, ['foo', 42]]);
+    checkEq(
+      flat(concat({ foo: 42, bar: 23 }, new Map([[2, 3]]), enumerate('helo'))),
+      ['foo', 42, 'bar', 23, 2, 3, 0, 'h', 1, 'e', 2, 'l', 3, 'o'],
     );
+
+    // Automatically generated examples over many types
+    const ref = getExamples().reduce((a, b) => a.concat(list(b)), []);
+    checkEq(flat(getExamples()), ref);
+    checkEq(flat(iter(getExamples())), ref);
+  });
+
+  it('foldl', () => {
+    // Basic examples
+    assert(all([true, false, true]) === false);
+    assert(all(iter([1, { foo: 42 }])) === true);
+
+    // Generated examples
+    assert(all(concat([0], flat(getExamples()))) === false);
+    each(getExampleGenerators(), (gen) => {
+      // This pretty much reimplements list more inefficiently
+      // Using this test here, because in contrast to all() this does
+      // not discard information contained in the input sequence...
+      checkEq(foldl(gen(), [], (a, b) => a.concat([b])), list(gen()));
+    });
   });
 });

@@ -13,7 +13,9 @@
 /* eslint-disable no-param-reassign */
 
 const assert = require('assert');
-const { each, enumerate } = require('./sequence.js');
+const {
+  each, enumerate, all, map,
+} = require('./sequence.js');
 
 /**
  * Retrieve all the parent nodes of a dom node
@@ -421,9 +423,312 @@ const assertEquivalentNode = (actual, expected) => {
   }
 };
 
+/**
+ * Divides HTML into sections.
+ * Section boundaries are (1) in top level section tags
+ * and (2) at `<hr>` tags.
+ *
+ * It is suggested that the caller use the result of this
+ * function in the following ways:
+ *
+ * 1. `sections(...).innerHTML` will give you the fully sectionized html
+ *    as a string.
+ * 2. `sections.children` will give you a list of all sections
+ * 3. `sections.childNodes` will give you a list of all sections and extra
+ *   comments/whitespace text nodes between sections; be careful when using
+ *   this, as text & comment nodes do NOT support innerHTML or outerHTML.
+ *   Instead nodeValue has to be used.
+ *
+ * # Section generating rules
+ *
+ * ## Simple case I: Empty documents
+ *
+ * These are documents without sections; they contain comments and white-space
+ * text-nodes. These are emitted precisely as they where passed to sections()
+ *
+ * Note that in this case, the output may yield text-nodes and comment nodes
+ * in the sections().childNodes property and sections().innerHTML. The sections.children
+ * property will be empty in this case.
+ *
+ * Examples:
+ *
+ * `   `
+ * `<!-- Foo -->`
+ *
+ * ## Simple case II: Sections delimited by `<hr/>`
+ *
+ * These are any documents that contain at least one visible element
+ * or <hr/> tag and no <section> tags at the root level.
+ * Empty sections at the start or the end of the document are stripped.
+ *
+ * Have some examples:
+ *
+ * `<hr/>` => ``
+ * `Hello` => `<section>Hello</section>`
+ * `Foo<hr>` => `<section>Foo</section>`
+ * `<hr>Foo` => `<section>Foo</section>`
+ * `Bar<hr>Foo` => `<section>Bar</section><section>Foo</section>`
+ * `Bar<hr><hr>Foo` => `<section>Bar</section><section></section><section>Foo</section>`
+ * `<!-- Foo -->Hello` => `<section><!-- Foo -->Hello</section>`
+ * `<hr/><!-- Bar -->` => `<section></section><section><!-- Bar --></section>`
+ *
+ * ## Simple case III: Explicit sections with `<section>`
+ *
+ * These are documents in which there is only white space text nodes,
+ * comment nodes and `<section>` tags in the root of the document.
+ *
+ * Running `sections()` on those documents is – again – no-op.
+ *
+ * As with case I, there may be comment nodes and text nodes in `sections().childNodes`,
+ * so be careful.
+ *
+ * Examples:
+ *
+ * `<section></section>`
+ * `  <section></section>`
+ * `  <section></section>\n`
+ * `  <section>Hello World</section>\n`
+ * `  <section>Hello World</section>\n<!-- Foobar --> <section></section>`
+ *
+ * ## The hard case IV: Everything else
+ *
+ * Essentially there are two ways of denoting sections this function enables:
+ *
+ * 1. Using <hr/> tags and content at the root of the document
+ * 2. Using explicit sections and no content at the root of the document.
+ *
+ * Mixing those two cases is problematic; specifically any content bordering an
+ * an explicit `<section>` is an edge case.
+ *
+ * ```
+ * <!-- This stuff is weird. -->
+ *
+ * <section>
+ *  Proper section!
+ * </section>
+ *
+ * <!-- This stuff is weird. -->
+ *
+ * <section>
+ *  Proper section!
+ * </section>
+ *
+ * <!-- This stuff is weird. -->
+ * ```
+ *
+ * ```
+ * <!-- This stuff is weird. -->
+ *
+ * <hr/>
+ *
+ * <!-- This stuff is weird. -->
+ *
+ * <section>
+ *  Proper section!
+ * </section>
+ *
+ * <!-- This stuff is weird. -->
+ * <hr/>
+ * <!-- This stuff is weird. -->
+ *
+ * <section>
+ *  Proper section!
+ * </section>
+ *
+ * <!-- This stuff is weird. -->
+ *
+ * <hr/>
+ *
+ * <!-- This stuff is weird. -->
+ * ```
+ *
+ * ```
+ * <!-- This stuff is weird. -->
+ * <hr/>
+ * Proper section!
+ * <hr/>
+ * <!-- This stuff is weird. -->
+ *
+ * <section>
+ *  Proper section!
+ * </section>
+ *
+ * <!-- This stuff is weird. -->
+ * <hr/>
+ * Proper section!
+ * <hr/>
+ * <!-- This stuff is weird. -->
+ *
+ *
+ * <section>
+ *  Proper section!
+ * </section>
+ *
+ * <!-- This stuff is weird. -->
+ *
+ * <hr/>
+ * Proper section!
+ *
+ * <hr/>
+ * <!-- This stuff is weird. -->
+ * ```
+ *
+ * The authors of this function use the following basic design decisions in dealing
+ * with these edge cases:
+ *
+ * 1) There should be no visible content (stuff that is not whitespace
+ *    text or comment nodes) outside of sections
+ * 2) Mixing both ways of declaring sections should not result in superfluous empty sections.
+ *
+ * In order to follow both guidelines, the following rules are used:
+ *
+ * 1) Any visible or invisible content that borders on a section, the beginning
+ *    or the end of the document is considered an implicit section.
+ * 2) Implicit sections are wrapped into a `<section>` tag in the output if and only if
+ *    they have visible content.
+ * 3) Implicit sections that carry no visible content are merged into the top level element
+ *
+ *
+ * Take an example:
+ *
+ * ```
+ * <h1> This is the proper start of our document</h1>
+ * <hr/>
+ * <!-- Just some stuff -->
+ *
+ * <section>
+ *   Our content is the great banana
+ * </section>
+ *
+ * <!-- Just some stuff -->
+ * <hr/>
+ * <p> And this is the end</p>
+ * ```
+ *
+ * would be emitted like this:
+ *
+ * ```
+ * <section>
+ *   <h1> This is the proper start of our document</h1>
+ * </section>
+ * <!-- Just some stuff -->
+ * <section>
+ *   Our content is the great banana
+ * </section>
+ * <!-- Just some stuff -->
+ * <section>
+ *   <p> And this is the end</p>
+ * </section>
+ * ```
+ *
+ * (Note that whitespace would be preserved as well; indentation
+ * in the example above is only for demonstration purposes.)
+ *
+ * @param {DomNode} node The DOM node to divide into sections; note that this
+ *   may be any document node or DOM tag; dom nodes without children (comments; text)
+ *   are invalid input
+ * @returns {DomNode} The node parameter; the node parameter was mutated by this
+ *   Returns a body element containing section elements referencing
+ *   the original elements. The body node is fully virtual (not rendered
+ *   in a document); section nodes we just created are also fully virtual;
+ *   section nodes that where present in the input and the contents of sections
+ *   are references to the input dom tree.
+ */
+const sections = (node) => {
+  if (!node.nodeName) {
+    throw TypeError(`${node} is not a dom node`);
+  } else if (node.nodeName === '#document') {
+    return sections(node.body);
+  } else if (node.nodeName === 'HTML') {
+    return sections(node.querySelector('body'));
+  } else if (node.nodeName.startsWith('#')) {
+    throw TypeError(`Cannot divide ${node.nodeName} dom node into sections`);
+  }
+
+  let previosSectionIsTag = true;
+
+  const doc = node.ownerDocument;
+  const body = doc.createElement('body');
+  let childstack = [];
+
+  const isvoid = n => false
+      || n.nodeName === '#comment'
+      || (n.nodeName === '#text' && n.nodeValue.match(/^\s*$/));
+
+  const mksection = (isImplicit) => {
+    const stackisvoid = all(map(childstack, isvoid));
+    const discard = isImplicit && stackisvoid;
+    let targ = body;
+    if (!discard) {
+      targ = doc.createElement('section');
+      body.appendChild(targ);
+    }
+    each(childstack, child => targ.appendChild(child.cloneNode(true)));
+    childstack = [];
+  };
+
+  each(node.childNodes, (child) => {
+    const name = child.nodeName.toLowerCase();
+    if (name === 'hr') {
+      mksection(previosSectionIsTag);
+      previosSectionIsTag = false;
+    } else if (name === 'section') {
+      mksection(true);
+      body.appendChild(child.cloneNode(true));
+      previosSectionIsTag = true;
+    } else {
+      childstack.push(child);
+    }
+  });
+
+  mksection(true);
+
+  return body;
+};
+
+/**
+ * Tries to determine the title of a dom node.
+ *
+ * The title is the content of the first <h1>..<h6> tag
+ * in the tree.
+ *
+ * @param {DomNode} node The DOM node to determine the title of; note that this
+ *   may be any document node or DOM tag; dom nodes without children (comments; text)
+ *   are invalid input
+ * @param {Any} fallback The value that will be supplied in case no title is found.
+ *   If this value is undefined, an exception will be raised if no title is found.
+ *   This value may specifically be of any type; this serves to facilitate use cases
+ *   like supplying `null` as a value and determining an appropriate default value later.
+ * @returns {String|Any} The title (always a string) or whatever was supplied as default.
+ */
+const findTitle = (node, fallback) => {
+  if (!node.nodeName) {
+    throw TypeError(`${node} is not a dom node`);
+  } else if (node.nodeName === '#document') {
+    return findTitle(node.body, fallback);
+  } else if (node.nodeName.startsWith('#')) {
+    throw TypeError(`Cannot determine the title of ${node.nodeName} dom node.`);
+  }
+
+  const elm = node.querySelector('h1, h2, h3, h4, h5, h6');
+
+  if (elm) {
+    // https://github.com/jsdom/jsdom/issues/1245
+    // innerText is not supported by JSDOM...
+    // This is why sadly we just do some manual stripping here...
+    return elm.textContent.trim().replace(/\s+/g, ' ');
+  } else if (fallback !== undefined) {
+    return fallback;
+  } else {
+    throw ReferenceError('No title found in the dom node');
+  }
+};
+
 module.exports = {
   parentNodes,
   equalizeNode,
   nodeIsEquivalent,
   assertEquivalentNode,
+  sections,
+  findTitle,
 };
