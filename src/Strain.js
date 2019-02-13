@@ -37,6 +37,10 @@ class Strain {
       this._code = new GitUrl(cfg.code);
       // todo: 1. do we still need whilelists?
       this._static = new Static(cfg.static);
+      // detect changes in static URL
+      this._static.on('url-change', () => {
+        this._modified('static', this._static);
+      });
       this._directoryIndex = cfg.directoryIndex;
       this._package = cfg.package || '';
     }
