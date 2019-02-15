@@ -145,6 +145,26 @@ describe('Strains test', () => {
     assert.deepEqual(strain.static.ref, strain.static.url.ref);
   });
 
+  it('urls can be changed after initialization', () => {
+    const gitUrl = 'https://github.com/adobe/helix-shared.git#master';
+    const newGitUrl = new GitUrl('https://github.com/adobe/project-helix.io.git#dev');
+    const newStaticUrl = 'https://github.com/adobe/project-helix.io.git/htdocs#dev';
+    const strain = new Strain('test', {
+      code: gitUrl,
+      content: gitUrl,
+      static: gitUrl,
+    });
+    strain.toYAML(); // build internal _yamlNode with initial urls (see #49)
+    strain.code = newGitUrl;
+    strain.content = newGitUrl;
+    strain.static.url = newGitUrl;
+    const yaml = strain.toYAML();
+    assert.deepEqual(yaml, 'test:\n'
+    + `  code: ${newGitUrl}\n`
+    + `  content: ${newGitUrl}\n`
+    + `  static: ${newStaticUrl}\n`);
+  });
+
   it('strains can be mutated', () => {
     const strain = new Strain('test', {
       code: 'https://github.com/adobe/project-helix.io.git',
