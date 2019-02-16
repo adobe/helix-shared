@@ -12,13 +12,15 @@
 
 const YAML_PAIR = require('yaml/pair');
 
+const EventEmitter = require('events');
 const GitUrl = require('./GitUrl.js');
 const utils = require('./utils.js');
 /**
  * Static content handling
  */
-class Static {
+class Static extends EventEmitter {
   constructor(cfg) {
+    super();
     this.url = cfg;
     this._magic = cfg.magic || false;
     this._allow = cfg.allow || [];
@@ -40,6 +42,7 @@ class Static {
       // eslint-disable-next-line no-underscore-dangle
       this._url._path = '/htdocs';
     }
+    this.emit('url-change', value);
   }
 
   get magic() {
