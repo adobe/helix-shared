@@ -168,6 +168,26 @@ const iter = (obj) => {
   }
 };
 
+class IteratorEnded extends Error {};
+
+/// Extracts the next element from the iterator
+const tryNext => (seq, fallback) {
+  const {done, value} = iter(seq).next();
+  return done ? fallback : value;
+}
+
+const next = (seq) => {
+  const {done, value} = iter(seq).next();
+  if (done) {
+    throw new IteratorEnded();
+  } else {
+    return value;
+  }
+}
+
+const tryFirst = tryNext;
+const first = next;
+
 /**
  * Iterate over sequences: Apply the give function to
  * every element in the sequence

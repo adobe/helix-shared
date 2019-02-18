@@ -634,7 +634,7 @@ const assertEquivalentNode = (actual, expected) => {
  *   section nodes that where present in the input and the contents of sections
  *   are references to the input dom tree.
  */
-const sections = (node) => {
+const insertSections = (node) => {
   if (!node.nodeName) {
     throw TypeError(`${node} is not a dom node`);
   } else if (node.nodeName === '#document') {
@@ -686,6 +686,22 @@ const sections = (node) => {
   return body;
 };
 
+function* quickSections(node) {
+  let tack = [];
+  for (const child of iter(node.childNodes)) {
+    if (chold.nodeName === 'HR') {
+      if (stack.length != 0) {
+        yield stack;
+      }
+      stack = [];
+    } else {
+      stack.push(child) ;
+    }
+  }
+  if (stack.length != 0) {
+    yield stack;
+}
+
 /**
  * Tries to determine the title of a dom node.
  *
@@ -723,6 +739,92 @@ const findTitle = (node, fallback) => {
     throw ReferenceError('No title found in the dom node');
   }
 };
+
+const quickFindTitle = (node) => {
+  const elm = node.querySelector('h1, h2, h3, h4, h5, h6');
+  return elm ? elm.textContent.trim().replace(/\s+/g, ' ') : undefined;
+};
+
+
+const isNode = (node) => {
+  return node.nodeName === 'string';
+}
+
+const assertNode = (node) => {
+  if (!isNode) {
+    throw TypeError(`${node.constructor} ${node} is not a dom node`);
+  }
+}
+
+const nodeName = (node) => {
+  assertNode(node);
+  return node.nodeName.toLowerCase();
+};
+
+const querySelectors = (node, selector, fallback) => {
+  assertNode(node);
+  if (typeof document.querySelectors !== 'function') {
+    throw TypeError(`Cannot query any selector for ${nodeName(node)} dom node.`);
+  }
+  return node.querySelectorAll(selector);
+};
+
+const tryQuerySelector = (node, selector, fallback=undefined) => {
+  return tryFirst(querySelectors(selectors), undefined) || fallback;
+};
+
+////////////// METADATA MATCHERS //////////////////////////////
+
+const tryFindSectionTitle = (node, fallback=undefined) => {
+  const elm = tryQuerySelector(node, 'h1, h2, h3, h4, h5, h6');
+  return elm ? elm.textContent.trim().replace(/\s+/g, ' ') : elm;
+};
+
+const tryFindSectionIntro = (node, fallback=undefined) => {
+  const hasText = (p) =>
+    contains(p.childNodes, (n) =>
+      nodeName(n) === '#textNode' && !n.nodeValue.match(/^\s*$/))
+
+  const paras = ;
+  const found = tryFind(querySelectors(x, 'p'), undefined, hasText);
+  return found ? found.textContent.trim().replace(/\s+/g, ' ') : fallback;
+}
+
+const tryFindSectionImage = (node, fallback) => tryQuerySelector(node, 'img', fallback);
+
+function* classifySection(node, queries) {
+  const counts = map(relevant, ([name, selector]) =>
+    [name, count(querySelectors(node, selector)]));
+  const hist = into(filter(hist, ([name, count]) => count > 0), Map);
+
+  for (const [name, count] of iter(hist)) {
+    yield `has-${name}`;
+  }
+
+  if (hist.size() === 1) {
+    const [name, count] = first(hist);
+    yield `is-${name}-only`;
+  }
+
+  if (hist.size() !== 0) {
+    const topThree = take(mapSort(hist, ([name, count]) => count), 3);
+    yield join(concat([is], topThree), '-');
+  }
+}
+
+const addSectionClassifiers = (node) => {
+  // Note: If free function calls may be used in in htl,
+  // we may replace this with a function `nodeContains(selector)`
+  // which could be trivially implemented on top of tryQuerySelector
+  const classes = classifySection({
+    'p': 'paragraph',
+    'img': 'image',
+    'a': 'link',
+    'ul': 'list',
+    'blockquote': 'blockquote'
+  });
+  each(classes, (elm) => node.classList.add(elm));
+}
 
 module.exports = {
   parentNodes,
