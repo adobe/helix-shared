@@ -4,13 +4,12 @@
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
   "scripts": {
+    "semantic-release": "semantic-release",
+    "commit": "git-cz",
     "docs": "npx jsonschema2md -d src/schemas -o docs",
     "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 97 --statements 97 --lines 97 mocha",
     "lint": "./node_modules/.bin/eslint .",
-    "junit": "mocha --exit -R mocha-junit-reporter",
-    "preversion": "npm run junit",
-    "postversion": "git push origin master --follow-tags",
-    "delete-git-tag": "git tag -d v$npm_package_version && git push origin :v$npm_package_version"
+    "junit": "mocha --exit -R mocha-junit-reporter"
   },
   "repository": {
     "type": "git",
@@ -34,20 +33,39 @@
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^1.1.1-SNAPSHOT.236",
-    "jsdom": "13.0.0",
+    "@semantic-release/changelog": "^3.0.2",
+    "@semantic-release/git": "^7.0.8",
+    "@semantic-release/github": "^5.2.10",
     "codecov": "^3.0.2",
+    "commitizen": "^3.0.7",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.4.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.11.0",
+    "ghooks": "^2.0.4",
     "istanbul": "^1.1.0-alpha.1",
+    "jsdom": "13.0.0",
+    "junit-report-builder": "^1.3.1",
+    "lint-staged": "^8.1.4",
     "mocha": "^6.0.0",
     "mocha-junit-reporter": "^1.17.0",
     "mocha-parallel-tests": "^2.0.3",
     "nyc": "^13.0.1",
-    "junit-report-builder": "^1.3.1"
+    "semantic-release": "^15.13.3"
   },
-  "snyk": true
+  "snyk": true,
+  "lint-staged": {
+    "*.js": "eslint"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    },
+    "ghooks": {
+      "pre-commit": "npx lint-staged"
+    }
+  }
 }
