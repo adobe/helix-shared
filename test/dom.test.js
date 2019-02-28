@@ -19,7 +19,7 @@ const { each } = require('../src/index.js').sequence;
 const {
   ancestryNodes, equalizeNode,
   nodeIsEquivalent, assertEquivalentNode,
-  isNode, assertNode, nodeName,
+  isNode, assertNode, nodeName, nodeMatches,
 } = require('../src/index.js').dom;
 
 describe('isNode, assertNode, nodeName', () => {
@@ -265,7 +265,7 @@ describe('equalizeNode()', () => {
   });
 });
 
-describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode()', () => {
+describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode(), nodeMatches()', () => {
   const docA = new JSDOM('<p b="23" a=42  >Hello World</p>');
   const docB = new JSDOM(' <p a="42" b=23>Hello World</p>');
   const docC = new JSDOM('<body>\n<p a=42 b=23>Hello World</p></body>');
@@ -274,14 +274,17 @@ describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode()', () => {
   const assertEq = (actual, expected) => {
     assertEquivalentNode(actual, expected);
     assert(nodeIsEquivalent(actual, expected));
+    assert(nodeMatches(actual, expected));
   };
   const assertNEq = (actual, expected) => {
     assert.throws(() => assertEquivalentNode(actual, expected));
     assert(!nodeIsEquivalent(actual, expected));
+    assert(!nodeMatches(actual, expected));
   };
   const assertThrows = (actual, expected) => {
     assert.throws(() => assertEquivalentNode(actual, expected));
     assert.throws(() => nodeIsEquivalent(actual, expected));
+    assert.throws(() => nodeMatches(actual, expected));
   };
 
   it('Can compare empty documents', () => {
@@ -322,5 +325,82 @@ describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode()', () => {
     // to be equal <pre>\n<pre>
     const preD = new JSDOM('<pre>\n</pre>');
     assertEq(preA.window.document, preD.window.document);
+  });
+});
+
+describe('nodeMatches()', () => {
+  const ck = (node, pat) => {
+    node = new JSDOM(`<body>${node}</body>`).window.document;
+    pat = new JSDOM(`<body>${pat}</body>`).window.document;
+    assert(nodeMatches(node, pat));
+    assert(nodeMatches(node.documentElement, pat.documentElement));
+    assert(nodeMatches(node.body, pat.body));
+  };
+
+  const ckNot = (node, pat) => {
+    node = new JSDOM(`<body>${node}</body>`).window.document;
+    pat = new JSDOM(`<body>${pat}</body>`).window.document;
+    assert(!nodeMatches(node, pat));
+    assert(!nodeMatches(node.documentElement, pat.documentElement));
+    assert(!nodeMatches(node.body, pat.body));
+  };
+
+  const content = [
+    '<p></p><div></div>', 'Foobar',
+    'Xfoobar <!-- Foo --> <div></div> hello <p></p>',
+  ];
+
+  const wildcard = [
+    '<match:any></match:any>'.repeat(2),
+  ];
+
+  const containers = [x => `<div>${x}</div>`];
+
+  it('Supports multiple wildcards with text and normalized space', () => {
+    ck('  Hello  World Foo  Bar',
+      'Hello<match:any></match:any>\tWorld F'
+       + '<match:any></match:any>oo<match:any></match:any><match:any></match:any>'
+       + '\nBar<match:any></match:any>');
+    ckNot('  Hello  World Foo  Bar',
+      'Hello<match:any></match:any>\tWorld F'
+       + '<match:any></match:any>oXo<match:any></match:any><match:any></match:any>'
+       + '\nBar<match:any></match:any>');
+  });
+
+  it('Supports wildcard at root', () => {
+    each(wildcard, (wild) => {
+      ck('', wild);
+      each(content, cont => ck(cont, wild));
+    });
+  });
+
+  it('Supports wildcard at root plus content', () => {
+    each(content, (extra) => {
+      each(content, (cont) => {
+        each(wildcard, (wild) => {
+          ck(`${cont}${extra}`, `${wild}${extra}`);
+          ck(`${extra}${cont}${extra}`, `${extra}${wild}${extra}`);
+          if (!cont.startsWith(extra)) {
+            ckNot(`${cont}`, `${extra}${wild}`);
+          }
+        });
+      });
+    });
+  });
+
+  it('Supports wildcard in node', () => {
+    each(containers, (contain) => {
+      each(wildcard, (wild) => {
+        each(content, (cont) => {
+          each(content, (extra) => {
+            ck(contain(`${cont}${extra}`), contain(`${wild}${extra}`));
+            ck(contain(`${extra}${cont}${extra}`), contain(`${extra}${wild}${extra}`));
+            if (!cont.endsWith(extra)) {
+              ckNot(contain(`${cont}`), contain(`${wild}${extra}`));
+            }
+          });
+        });
+      });
+    });
   });
 });
