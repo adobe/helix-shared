@@ -49,28 +49,26 @@ We enforce a coding styleguide using `eslint`. As part of your build, run `npm r
 
 You can fix some of the issues automatically by running `npx eslint . --fix`.
 
+## Commit Message Format
+
+This project uses a structured commit changelog format that should be used for every commit. Use `npm run commit` instead of your usual `git commit` to generate commit messages using a wizard.
+
+```bash
+# either add all changed files
+$ git add -A
+# or selectively add files
+$ git add package.json
+# then commit using the wizard
+$ npm run commit
+```
+
 # How Contributions get Reviewed
 
-One of the maintainers will look at the pull request within one week.
-Feedback on the pull request will be given in writing, in GitHub.
+One of the maintainers will look at the pull request within one week. Feedback on the pull request will be given in writing, in GitHub.
 
 # Release Management
 
 The project's committers will release to the [Adobe organization on npmjs.org](https://www.npmjs.com/org/adobe).
 Please contact the [Adobe Open Source Advisory Board](https://git.corp.adobe.com/OpenSourceAdvisoryBoard/discuss/issues) to get access to the npmjs organization.
 
-### Versioning
-
-use `npm version` to set the new package version create the git tag. eg:
-
-```bash
-$ npm version 0.2.1
-$ git push --tags
-```
-
-### Publishing
-
-```bash
-$ npm login
-$ npm publish --tag=latest --access public
-```
+The release process is fully automated using `semantic-release`, increasing the version numbers, etc. based on the contents of the commit messages found.
