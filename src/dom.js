@@ -10,27 +10,54 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-param-reassign */
+// This file contains a lot of complex algorithms...
+// Avoiding continue often would be tedious and slow
+/* eslint-disable no-continue */
 
 const assert = require('assert');
-const { each, enumerate } = require('./sequence.js');
+const {
+  each, enumerate, reverse, takeUntilVal, extend1,
+} = require('./sequence.js');
 
 /**
- * Retrieve all the parent nodes of a dom node
+ * Check whether the given argument is a DOM node.
+ * Note that, in order to support various dom implementations,
+ * this function uses a heuristic and there might be some false
+ * positives.
+ * Since this function is mostly used in assertNode to provide
+ * a decent error messages when a programmer specified an argument
+ * with the incorrect type, the possibility of a false positive is
+ * not a large problem.
+ */
+const isNode = node => node && typeof node.nodeName === 'string';
+
+/** Ensure that the given node is a domNode. Checks with isNode() */
+const assertNode = (node) => {
+  if (!isNode(node)) {
+    throw TypeError(`${node.constructor} ${node} is not a DOM node`);
+  }
+};
+
+/**
+ * Determine the name of a node.
+ * The result is always in lower case.
+ */
+const nodeName = (node) => {
+  assertNode(node);
+  return node.nodeName.toLowerCase();
+};
+
+/**
+ * Retrieve all the parent nodes of a dom node.
  *
  * @param {DomNode} node
- * @returns {DomNode[]}
+ * @returns {DomNode[]} All the ancestor dom nodes to the given
+ *   dom node, starting with the most distant dom node.
  */
-function* parentNodes(node) {
-  if (!node.nodeName) {
-    throw new TypeError(`parentNodes expects a dom node, not ${node}`);
-  }
-  let parent = node.parentNode;
-  while (parent !== null) {
-    yield parent;
-    parent = parent.parentNode;
-  }
-}
+const ancestryNodes = (node) => {
+  assertNode(node);
+  return reverse(takeUntilVal(extend1(node, n => n.parentNode), null));
+};
 
 /**
  * Removes comments and redundant whitespace from dom trees
@@ -140,6 +167,10 @@ function* parentNodes(node) {
  */
 const equalizeNode = node => equalizeNode.impl(node);
 equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
+  // We need to assign to parameters in order to reset inlineTextNodes
+  // without recursing unnecessarily
+  /* eslint-disable no-param-reassign */
+
   // Motivation node: This function was introduced after a long search
   // for a decent html equivalence tester. Unfortunately no dom tree equivalence
   // tester, diff algorithm or minifier I could find on the internet had
@@ -159,11 +190,8 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
   //    This may also contain dom elements; these are used as markers, that space
   //    next to these elements must be collapsed, but not erased.
 
-  if (!node.nodeName) {
-    throw new TypeError(`equalizeNode expects a dom node, not ${node}`);
-  }
-
-  if (node.nodeName === '#document') {
+  assertNode(node);
+  if (nodeName(node) === '#document') {
     return equalizeNode(node.documentElement);
   }
 
@@ -203,7 +231,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
     // space collapsing
     each(enumerate(inlineTextNodes), ([idx, elm]) => {
       const next = inlineTextNodes[idx + 1];
-      const isText = elm.nodeName === '#text';
+      const isText = nodeName(elm) === '#text';
       const val = isText ? elm.nodeValue : undefined;
 
       insertSpace = insertSpace || Boolean(isText && val.match(/^\s/));
@@ -236,8 +264,8 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
       // `Hello <b>World</b>` -> `Hello<b> World</b>`
       // `<b>Hello</b> <em>World</em>` -> `<b>Hello</b><em> World</em>`
       if (insertSpace && prev !== undefined) {
-        const prevParents = Array.from(parentNodes(prev)).reverse();
-        const elmParents = Array.from(parentNodes(elm)).reverse();
+        const prevParents = ancestryNodes(prev);
+        const elmParents = ancestryNodes(elm);
 
         while (prevParents.length > 0 && elmParents.length > 0
                && prevParents[0].isSameNode(elmParents[0])) {
@@ -245,7 +273,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
           elmParents.shift();
         }
 
-        if (prev.nodeName === '#text' && (prevParents.length === 0 || elm.contains(prev))) {
+        if (nodeName(prev) === '#text' && (prevParents.length === 0 || elm.contains(prev))) {
           // Like in `Hello <b>World</b>` or in
           // `<pre><span style='white-space: normal'>hello </span></pre>`
           // (watch for the whitespace character)
@@ -275,7 +303,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
   };
 
   const removeComments = (nod) => {
-    if (nod.nodeName === '#comment') {
+    if (nodeName(nod) === '#comment') {
       nod.parentNode.removeChild(nod);
     } else if (nod.nodeType === 1) {
       // We copy the child nodes object to achieve iterator
@@ -315,7 +343,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
   // We copy the child nodes object to achieve iterator
   // stability since we are deleting elements
   each(Array.from(node.childNodes), (child) => {
-    if (child.nodeName === '#text') {
+    if (nodeName(child) === '#text') {
       if (!preformatted) {
         // Text nodes in preformatted scopes are left alone
         inlineTextNodes.push(child);
@@ -364,16 +392,15 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
  * invoking .isEqualNode.
  * This means the equivalence model described in `equalizeNode()`
  * is employed. Please refer to it's documentation to learn more
+ * @param {DomNode} a
+ * @param {DomNode} b
+ * @returns {Boolean}
  */
 const nodeIsEquivalent = (a, b) => {
   // Work around JSDOM crashing if we call getComputedStyle on a cloned a #document
-  if (!a.nodeName) {
-    throw new TypeError(`nodeIsEquivalent expects two dom nodes, not ${a}`);
-  } else if (!b.nodeName) {
-    throw new TypeError(`nodeIsEquivalent expects two dom nodes, not ${b}`);
-  } else if (a.nodeName !== b.nodeName) {
+  if (nodeName(a) !== nodeName(b)) {
     return false;
-  } else if (a.nodeName === '#document') {
+  } else if (nodeName(a) === '#document') {
     return nodeIsEquivalent(a.documentElement, b.documentElement);
   }
   return equalizeNode(a.cloneNode(true)).isEqualNode(equalizeNode(b.cloneNode(true)));
@@ -395,13 +422,11 @@ const assertEquivalentNode = (actual, expected) => {
     });
   };
 
-  if (!expected.nodeName) {
-    fail('Expected value is not a dom node');
-  } else if (!actual.nodeName) {
-    fail('Actual value is not a dom node');
-  } else if (actual.nodeName !== expected.nodeName) {
+  assertNode(expected);
+  assertNode(actual);
+  if (nodeName(actual) !== nodeName(expected)) {
     fail(`Node names differ; expected '${expected.nodeName}', got '${actual.nodeName}'`);
-  } else if (actual.nodeName === '#document') {
+  } else if (nodeName(actual) === '#document') {
     // We can not print the html on bare document elements
     // and work around JSDOM crashing if we call getComputedStyle on a cloned a #document
     assertEquivalentNode(actual.documentElement, expected.documentElement);
@@ -422,7 +447,10 @@ const assertEquivalentNode = (actual, expected) => {
 };
 
 module.exports = {
-  parentNodes,
+  isNode,
+  assertNode,
+  nodeName,
+  ancestryNodes,
   equalizeNode,
   nodeIsEquivalent,
   assertEquivalentNode,

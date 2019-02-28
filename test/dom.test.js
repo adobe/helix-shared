@@ -11,30 +11,60 @@
  */
 
 /* eslint-env mocha */
-/* eslint-disable max-len,array-callback-return */
+/* eslint-disable max-len,array-callback-return,no-param-reassign */
 
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
 const { each } = require('../src/index.js').sequence;
 const {
-  parentNodes, equalizeNode,
+  ancestryNodes, equalizeNode,
   nodeIsEquivalent, assertEquivalentNode,
+  isNode, assertNode, nodeName,
 } = require('../src/index.js').dom;
 
-describe('parentNodes', () => {
-  const win = new JSDOM('<div><div><span><div><p>foo').window;
+describe('isNode, assertNode, nodeName', () => {
+  const doc = new JSDOM('<foo></foo><div></div>Hello<!-- Fnord -->').window.document;
+  const nope = [undefined, null, 0, '', { nodeName: undefined }, { nodeName: 42 }];
+  const yep = {
+    '': { nodeName: '' },
+    fnord: { nodeName: 'fnord' },
+    '#document': doc,
+    html: doc.documentElement,
+    body: doc.body,
+    foo: doc.body.childNodes[0],
+    div: doc.body.childNodes[1],
+    '#text': doc.body.childNodes[2],
+    '#comment': doc.body.childNodes[3],
+  };
 
-  const children = [win.document.documentElement];
-  let elm = win.document.body;
-  while (elm && elm.nodeName !== '#text') {
-    children.push(elm);
-    elm = elm.firstChild;
-  }
+  each(nope, (ex) => {
+    assert(!isNode(ex));
+    assert.throws(() => assertNode(ex), TypeError);
+    assert.throws(() => nodeName(ex), TypeError);
+  });
+  each(yep, ([name, ex]) => {
+    assert(isNode(ex));
+    assertNode(ex);
+    assert.strictEqual(nodeName(ex), name);
+  });
+});
+
+describe('ancestryNodes', () => {
+  const win = new JSDOM('<div><div><span><div><p>foo').window;
+  const doc = win.document;
+  const { body } = win.document;
+
+  const children = [
+    doc, doc.documentElement, body, body.firstChild,
+    body.firstChild.firstChild,
+    body.firstChild.firstChild.firstChild,
+    body.firstChild.firstChild.firstChild.firstChild,
+    body.firstChild.firstChild.firstChild.firstChild.firstChild,
+  ];
 
   const ck = (element, expected) => {
-    // parentNodes() endswith expected.reverse()
-    const parents = Array.from(parentNodes(element));
-    each(expected.reverse(), (node) => {
+    const parents = ancestryNodes(element);
+    each(expected, (node) => {
       assert(node.isSameNode(parents.shift()));
     });
   };
@@ -43,14 +73,14 @@ describe('parentNodes', () => {
     ck(win.document.querySelectorAll('p')[0].firstChild, children);
     ck(win.document, []);
     ck(win.document.documentElement, []);
-    ck(win.document.body, [win.document.documentElement]);
+    ck(win.document.body, [doc, doc.documentElement]);
     ck(win.document.createElement('div'), []);
   });
 
   it('Rejects invalid inputs', () => {
     const dom = new JSDOM('');
     each([dom.window, dom, '', {}, 22, undefined, null, '<p></p>'], (v) => {
-      assert.throws(() => parentNodes(v).next());
+      assert.throws(() => ancestryNodes(v).next());
     });
   });
 });
