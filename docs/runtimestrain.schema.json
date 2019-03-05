@@ -93,6 +93,13 @@
             "items": {
                 "type": "string"
             }
+        },
+        "redirects": {
+            "type": "array",
+            "description": "The redirect rules that should be applied to this strain",
+            "items": {
+                "$ref": "https://ns.adobe.com/helix/shared/redirectrule"
+            }
         }
     },
     "required": [

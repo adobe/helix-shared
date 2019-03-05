@@ -21,6 +21,7 @@ const schemas = [
   require('./schemas/staticgiturl.schema.json'),
   require('./schemas/origin.schema.json'),
   require('./schemas/performance.schema.json'),
+  require('./schemas/redirectrule.schema.json'),
   /* eslint-enable global-require */
 ];
 

@@ -140,6 +140,12 @@
       "urls": []
     },
     "pipeline": {
+      "redirects": [
+        {
+          "from": "(.*)\\.php",
+          "to": "$1.html"
+        }
+      ],
       "code": {
         "host": "github.com",
         "hostname": "github.com",
@@ -240,7 +246,12 @@
         "location": ""
       },
       "sticky": false,
-
+      "redirects": [
+        {
+          "from": "\\/old",
+          "to": "/new"
+        }
+      ],
       "urls": []
     }
   }

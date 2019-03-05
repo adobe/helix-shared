@@ -54,6 +54,9 @@ strains:
     static:
       <<: *myrepo
       path: /www
+    redirects:
+      - from: (.*)\.php
+        to: $1.html
 
   proxy:
     origin: https://www.adobe.io/
@@ -64,6 +67,9 @@ strains:
     sticky: true
 
   proxy-detailed:
+    redirects:
+      - from: /old
+        to: /new
     origin:
       address: 192.168.0.1
       name: publish

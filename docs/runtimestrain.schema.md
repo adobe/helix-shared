@@ -27,6 +27,7 @@ A runtime strain is a combination of code and content that enables the creation 
 | [package](#package) | `string` | Optional |  | Runtime Strain (this schema) |
 | [params](#params) | `string[]` | Optional |  | Runtime Strain (this schema) |
 | [perf](#perf) | Runtime Strain | Optional |  | Runtime Strain (this schema) |
+| [redirects](#redirects) | Redirect Rule | Optional |  | Runtime Strain (this schema) |
 | [static](#static) | complex | **Required** |  | Runtime Strain (this schema) |
 | [sticky](#sticky) | `boolean` | Optional |  | Runtime Strain (this schema) |
 | [url](#url) | `string` | Optional |  | Runtime Strain (this schema) |
@@ -206,6 +207,31 @@ All items must be of the type:
 
 
 * [Runtime Strain](performance.schema.md) – `https://ns.adobe.com/helix/shared/performance`
+
+
+
+
+
+## redirects
+
+The redirect rules that should be applied to this strain
+
+`redirects`
+
+* is optional
+* type: Redirect Rule
+* defined in this schema
+
+### redirects Type
+
+
+Array type: Redirect Rule
+
+All items must be of the type:
+* [Redirect Rule](redirectrule.schema.md) – `https://ns.adobe.com/helix/shared/redirectrule`
+
+
+
 
 
 
