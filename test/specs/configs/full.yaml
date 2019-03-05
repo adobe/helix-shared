@@ -57,6 +57,8 @@ strains:
     redirects:
       - from: (.*)\.php
         to: $1.html
+      - from: /content/dam/(.*)$
+        to: /htdocs/$1
 
   proxy:
     origin: https://www.adobe.io/

@@ -144,6 +144,10 @@
         {
           "from": "(.*)\\.php",
           "to": "$1.html"
+        },
+        {
+          "from": "\\/content\\/dam\\/(.*)$",
+          "to": "/htdocs/$1"
         }
       ],
       "code": {

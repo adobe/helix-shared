@@ -145,6 +145,27 @@ describe('Strains test', () => {
     assert.deepEqual(strain.static.ref, strain.static.url.ref);
   });
 
+  it('redirects can be read', () => {
+    const strain = new Strain('test', {
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+      redirects: [
+        {
+          from: '/foo',
+          to: '/bar',
+        },
+        {
+          from: '/baz',
+          to: '/qwe',
+        },
+      ],
+    });
+
+    assert.ok(Array.isArray(strain.redirects));
+    assert.equal(strain.redirects.length, 2);
+  });
+
   it('urls can be changed after initialization', () => {
     const gitUrl = 'https://github.com/adobe/helix-shared.git#master';
     const newGitUrl = new GitUrl('https://github.com/adobe/project-helix.io.git#dev');
