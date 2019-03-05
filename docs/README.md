@@ -11,6 +11,7 @@
 * [Git URL](./staticgiturl.schema.md) – `https://ns.adobe.com/helix/shared/staticgiturl` (Stabilizing)
 * [Origin](./origin.schema.md) – `https://ns.adobe.com/helix/shared/origin` (Stabilizing)
 * [Proxy Strain](./proxystrain.schema.md) – `https://ns.adobe.com/helix/shared/proxystrain` (Stabilizing)
+* [Redirect Rule](./redirectrule.schema.md) – `https://ns.adobe.com/helix/shared/redirectrule` (Stabilizing)
 * [Runtime Strain](./performance.schema.md) – `https://ns.adobe.com/helix/shared/performance` (Stabilizing)
 * [Runtime Strain](./runtimestrain.schema.md) – `https://ns.adobe.com/helix/shared/runtimestrain` (Stabilizing)
 * [Strains](./strains.schema.md) – `https://ns.adobe.com/helix/shared/strains` (Stabilizing)

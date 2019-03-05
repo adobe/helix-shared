@@ -20,6 +20,7 @@ const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin.js');
 const Static = require('./Static.js');
 const Performance = require('./Performance.js');
+const Redirect = require('./Redirect.js');
 const utils = require('./utils.js');
 
 /**
@@ -53,6 +54,8 @@ class Strain {
     // assume the strain to be sticky when there is a condition
     this._sticky = cfg.sticky === undefined ? this._condition !== '' : !!cfg.sticky;
 
+    this._redirects = (Array.isArray(cfg.redirects) ? cfg.redirects : []).map(r => new Redirect(r));
+
     // todo: I assume this will go into the new condition language
     // todo: if not, I would only have 1 property `url` that can be single or multi valued
     this._url = cfg.url ? URI.normalize(cfg.url) : '';
@@ -76,6 +79,7 @@ class Strain {
       'url',
       'urls',
       'params',
+      'redirects',
     ]);
   }
 
@@ -197,6 +201,10 @@ class Strain {
     return this._origin !== null;
   }
 
+  get redirects() {
+    return this._redirects;
+  }
+
   /**
    * JSON Serialization of a Strain
    * @typedef Strain~JSON
@@ -226,6 +234,9 @@ class Strain {
     }
     if (this.params.length > 0) {
       json.params = this.params;
+    }
+    if (this.redirects.length > 0) {
+      json.redirects = this.redirects.map(r => r.toJSON());
     }
     if (this.isProxy()) {
       return Object.assign({
