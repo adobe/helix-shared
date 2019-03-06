@@ -11,30 +11,60 @@
  */
 
 /* eslint-env mocha */
-/* eslint-disable max-len,array-callback-return */
+/* eslint-disable max-len,array-callback-return,no-param-reassign */
 
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
 const { each } = require('../src/index.js').sequence;
 const {
-  parentNodes, equalizeNode,
+  ancestryNodes, equalizeNode,
   nodeIsEquivalent, assertEquivalentNode,
+  isNode, assertNode, nodeName, nodeMatches,
 } = require('../src/index.js').dom;
 
-describe('parentNodes', () => {
-  const win = new JSDOM('<div><div><span><div><p>foo').window;
+describe('isNode, assertNode, nodeName', () => {
+  const doc = new JSDOM('<foo></foo><div></div>Hello<!-- Fnord -->').window.document;
+  const nope = [undefined, null, 0, '', { nodeName: undefined }, { nodeName: 42 }];
+  const yep = {
+    '': { nodeName: '' },
+    fnord: { nodeName: 'fnord' },
+    '#document': doc,
+    html: doc.documentElement,
+    body: doc.body,
+    foo: doc.body.childNodes[0],
+    div: doc.body.childNodes[1],
+    '#text': doc.body.childNodes[2],
+    '#comment': doc.body.childNodes[3],
+  };
 
-  const children = [win.document.documentElement];
-  let elm = win.document.body;
-  while (elm && elm.nodeName !== '#text') {
-    children.push(elm);
-    elm = elm.firstChild;
-  }
+  each(nope, (ex) => {
+    assert(!isNode(ex));
+    assert.throws(() => assertNode(ex), TypeError);
+    assert.throws(() => nodeName(ex), TypeError);
+  });
+  each(yep, ([name, ex]) => {
+    assert(isNode(ex));
+    assertNode(ex);
+    assert.strictEqual(nodeName(ex), name);
+  });
+});
+
+describe('ancestryNodes', () => {
+  const win = new JSDOM('<div><div><span><div><p>foo').window;
+  const doc = win.document;
+  const { body } = win.document;
+
+  const children = [
+    doc, doc.documentElement, body, body.firstChild,
+    body.firstChild.firstChild,
+    body.firstChild.firstChild.firstChild,
+    body.firstChild.firstChild.firstChild.firstChild,
+    body.firstChild.firstChild.firstChild.firstChild.firstChild,
+  ];
 
   const ck = (element, expected) => {
-    // parentNodes() endswith expected.reverse()
-    const parents = Array.from(parentNodes(element));
-    each(expected.reverse(), (node) => {
+    const parents = ancestryNodes(element);
+    each(expected, (node) => {
       assert(node.isSameNode(parents.shift()));
     });
   };
@@ -43,14 +73,14 @@ describe('parentNodes', () => {
     ck(win.document.querySelectorAll('p')[0].firstChild, children);
     ck(win.document, []);
     ck(win.document.documentElement, []);
-    ck(win.document.body, [win.document.documentElement]);
+    ck(win.document.body, [doc, doc.documentElement]);
     ck(win.document.createElement('div'), []);
   });
 
   it('Rejects invalid inputs', () => {
     const dom = new JSDOM('');
     each([dom.window, dom, '', {}, 22, undefined, null, '<p></p>'], (v) => {
-      assert.throws(() => parentNodes(v).next());
+      assert.throws(() => ancestryNodes(v).next());
     });
   });
 });
@@ -235,7 +265,7 @@ describe('equalizeNode()', () => {
   });
 });
 
-describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode()', () => {
+describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode(), nodeMatches()', () => {
   const docA = new JSDOM('<p b="23" a=42  >Hello World</p>');
   const docB = new JSDOM(' <p a="42" b=23>Hello World</p>');
   const docC = new JSDOM('<body>\n<p a=42 b=23>Hello World</p></body>');
@@ -244,14 +274,17 @@ describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode()', () => {
   const assertEq = (actual, expected) => {
     assertEquivalentNode(actual, expected);
     assert(nodeIsEquivalent(actual, expected));
+    assert(nodeMatches(actual, expected));
   };
   const assertNEq = (actual, expected) => {
     assert.throws(() => assertEquivalentNode(actual, expected));
     assert(!nodeIsEquivalent(actual, expected));
+    assert(!nodeMatches(actual, expected));
   };
   const assertThrows = (actual, expected) => {
     assert.throws(() => assertEquivalentNode(actual, expected));
     assert.throws(() => nodeIsEquivalent(actual, expected));
+    assert.throws(() => nodeMatches(actual, expected));
   };
 
   it('Can compare empty documents', () => {
@@ -292,5 +325,82 @@ describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode()', () => {
     // to be equal <pre>\n<pre>
     const preD = new JSDOM('<pre>\n</pre>');
     assertEq(preA.window.document, preD.window.document);
+  });
+});
+
+describe('nodeMatches()', () => {
+  const ck = (node, pat) => {
+    node = new JSDOM(`<body>${node}</body>`).window.document;
+    pat = new JSDOM(`<body>${pat}</body>`).window.document;
+    assert(nodeMatches(node, pat));
+    assert(nodeMatches(node.documentElement, pat.documentElement));
+    assert(nodeMatches(node.body, pat.body));
+  };
+
+  const ckNot = (node, pat) => {
+    node = new JSDOM(`<body>${node}</body>`).window.document;
+    pat = new JSDOM(`<body>${pat}</body>`).window.document;
+    assert(!nodeMatches(node, pat));
+    assert(!nodeMatches(node.documentElement, pat.documentElement));
+    assert(!nodeMatches(node.body, pat.body));
+  };
+
+  const content = [
+    '<p></p><div></div>', 'Foobar',
+    'Xfoobar <!-- Foo --> <div></div> hello <p></p>',
+  ];
+
+  const wildcard = [
+    '<match:any></match:any>'.repeat(2),
+  ];
+
+  const containers = [x => `<div>${x}</div>`];
+
+  it('Supports multiple wildcards with text and normalized space', () => {
+    ck('  Hello  World Foo  Bar',
+      'Hello<match:any></match:any>\tWorld F'
+       + '<match:any></match:any>oo<match:any></match:any><match:any></match:any>'
+       + '\nBar<match:any></match:any>');
+    ckNot('  Hello  World Foo  Bar',
+      'Hello<match:any></match:any>\tWorld F'
+       + '<match:any></match:any>oXo<match:any></match:any><match:any></match:any>'
+       + '\nBar<match:any></match:any>');
+  });
+
+  it('Supports wildcard at root', () => {
+    each(wildcard, (wild) => {
+      ck('', wild);
+      each(content, cont => ck(cont, wild));
+    });
+  });
+
+  it('Supports wildcard at root plus content', () => {
+    each(content, (extra) => {
+      each(content, (cont) => {
+        each(wildcard, (wild) => {
+          ck(`${cont}${extra}`, `${wild}${extra}`);
+          ck(`${extra}${cont}${extra}`, `${extra}${wild}${extra}`);
+          if (!cont.startsWith(extra)) {
+            ckNot(`${cont}`, `${extra}${wild}`);
+          }
+        });
+      });
+    });
+  });
+
+  it('Supports wildcard in node', () => {
+    each(containers, (contain) => {
+      each(wildcard, (wild) => {
+        each(content, (cont) => {
+          each(content, (extra) => {
+            ck(contain(`${cont}${extra}`), contain(`${wild}${extra}`));
+            ck(contain(`${extra}${cont}${extra}`), contain(`${extra}${wild}${extra}`));
+            if (!cont.endsWith(extra)) {
+              ckNot(contain(`${cont}`), contain(`${wild}${extra}`));
+            }
+          });
+        });
+      });
+    });
   });
 });

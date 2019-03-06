@@ -10,27 +10,54 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-param-reassign */
+// This file contains a lot of complex algorithms...
+// Avoiding continue often would be tedious and slow
+/* eslint-disable no-continue */
 
 const assert = require('assert');
-const { each, enumerate } = require('./sequence.js');
+const {
+  each, enumerate, reverse, takeUntilVal, extend1, exec, withFunctionName,
+} = require('./sequence.js');
 
 /**
- * Retrieve all the parent nodes of a dom node
+ * Check whether the given argument is a DOM node.
+ * Note that, in order to support various dom implementations,
+ * this function uses a heuristic and there might be some false
+ * positives.
+ * Since this function is mostly used in assertNode to provide
+ * a decent error messages when a programmer specified an argument
+ * with the incorrect type, the possibility of a false positive is
+ * not a large problem.
+ */
+const isNode = node => node && typeof node.nodeName === 'string';
+
+/** Ensure that the given node is a domNode. Checks with isNode() */
+const assertNode = (node) => {
+  if (!isNode(node)) {
+    throw TypeError(`${node.constructor} ${node} is not a DOM node`);
+  }
+};
+
+/**
+ * Determine the name of a node.
+ * The result is always in lower case.
+ */
+const nodeName = (node) => {
+  assertNode(node);
+  return node.nodeName.toLowerCase();
+};
+
+/**
+ * Retrieve all the parent nodes of a dom node.
  *
  * @param {DomNode} node
- * @returns {DomNode[]}
+ * @returns {DomNode[]} All the ancestor dom nodes to the given
+ *   dom node, starting with the most distant dom node.
  */
-function* parentNodes(node) {
-  if (!node.nodeName) {
-    throw new TypeError(`parentNodes expects a dom node, not ${node}`);
-  }
-  let parent = node.parentNode;
-  while (parent !== null) {
-    yield parent;
-    parent = parent.parentNode;
-  }
-}
+const ancestryNodes = (node) => {
+  assertNode(node);
+  return reverse(takeUntilVal(extend1(node, n => n.parentNode), null));
+};
 
 /**
  * Removes comments and redundant whitespace from dom trees
@@ -140,6 +167,10 @@ function* parentNodes(node) {
  */
 const equalizeNode = node => equalizeNode.impl(node);
 equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
+  // We need to assign to parameters in order to reset inlineTextNodes
+  // without recursing unnecessarily
+  /* eslint-disable no-param-reassign */
+
   // Motivation node: This function was introduced after a long search
   // for a decent html equivalence tester. Unfortunately no dom tree equivalence
   // tester, diff algorithm or minifier I could find on the internet had
@@ -159,11 +190,8 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
   //    This may also contain dom elements; these are used as markers, that space
   //    next to these elements must be collapsed, but not erased.
 
-  if (!node.nodeName) {
-    throw new TypeError(`equalizeNode expects a dom node, not ${node}`);
-  }
-
-  if (node.nodeName === '#document') {
+  assertNode(node);
+  if (nodeName(node) === '#document') {
     return equalizeNode(node.documentElement);
   }
 
@@ -203,7 +231,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
     // space collapsing
     each(enumerate(inlineTextNodes), ([idx, elm]) => {
       const next = inlineTextNodes[idx + 1];
-      const isText = elm.nodeName === '#text';
+      const isText = nodeName(elm) === '#text';
       const val = isText ? elm.nodeValue : undefined;
 
       insertSpace = insertSpace || Boolean(isText && val.match(/^\s/));
@@ -236,8 +264,8 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
       // `Hello <b>World</b>` -> `Hello<b> World</b>`
       // `<b>Hello</b> <em>World</em>` -> `<b>Hello</b><em> World</em>`
       if (insertSpace && prev !== undefined) {
-        const prevParents = Array.from(parentNodes(prev)).reverse();
-        const elmParents = Array.from(parentNodes(elm)).reverse();
+        const prevParents = ancestryNodes(prev);
+        const elmParents = ancestryNodes(elm);
 
         while (prevParents.length > 0 && elmParents.length > 0
                && prevParents[0].isSameNode(elmParents[0])) {
@@ -245,7 +273,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
           elmParents.shift();
         }
 
-        if (prev.nodeName === '#text' && (prevParents.length === 0 || elm.contains(prev))) {
+        if (nodeName(prev) === '#text' && (prevParents.length === 0 || elm.contains(prev))) {
           // Like in `Hello <b>World</b>` or in
           // `<pre><span style='white-space: normal'>hello </span></pre>`
           // (watch for the whitespace character)
@@ -275,7 +303,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
   };
 
   const removeComments = (nod) => {
-    if (nod.nodeName === '#comment') {
+    if (nodeName(nod) === '#comment') {
       nod.parentNode.removeChild(nod);
     } else if (nod.nodeType === 1) {
       // We copy the child nodes object to achieve iterator
@@ -315,7 +343,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
   // We copy the child nodes object to achieve iterator
   // stability since we are deleting elements
   each(Array.from(node.childNodes), (child) => {
-    if (child.nodeName === '#text') {
+    if (nodeName(child) === '#text') {
       if (!preformatted) {
         // Text nodes in preformatted scopes are left alone
         inlineTextNodes.push(child);
@@ -364,20 +392,227 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
  * invoking .isEqualNode.
  * This means the equivalence model described in `equalizeNode()`
  * is employed. Please refer to it's documentation to learn more
+ * @param {DomNode} a
+ * @param {DomNode} b
+ * @returns {Boolean}
  */
 const nodeIsEquivalent = (a, b) => {
   // Work around JSDOM crashing if we call getComputedStyle on a cloned a #document
-  if (!a.nodeName) {
-    throw new TypeError(`nodeIsEquivalent expects two dom nodes, not ${a}`);
-  } else if (!b.nodeName) {
-    throw new TypeError(`nodeIsEquivalent expects two dom nodes, not ${b}`);
-  } else if (a.nodeName !== b.nodeName) {
+  if (nodeName(a) !== nodeName(b)) {
     return false;
-  } else if (a.nodeName === '#document') {
+  } else if (nodeName(a) === '#document') {
     return nodeIsEquivalent(a.documentElement, b.documentElement);
   }
   return equalizeNode(a.cloneNode(true)).isEqualNode(equalizeNode(b.cloneNode(true)));
 };
+
+/**
+ * Node equivalence testing with wildcard support.
+ *
+ * This is mostly like nodeIsEquivalent, except that the
+ * pattern may contain wildcard nodes. Wildcard nodes are nodes
+ * with the name `match:any`.
+ *
+ * Wildcards in the pattern will lazily (meaning non greedily)
+ * match zero, one or many dom nodes in the given node to test.
+ *
+ * `<match:any></match:any>` matches anything
+ *   ``
+ *   `foo`
+ *   `<div></div>`
+ *
+ * `<match:any></match:any>Hello<match:any></match:any>`
+ *   matches any node that contains `Hello` as a child:
+ *     `HelloHello`
+ *     `Foo Hello Foo`
+ *     `<div></div> Foo Hello`
+ *   but not this example, because here hello is in a subnode.
+ *     `<div>Hello</div>`
+ *
+ *  `<div class='xxx' id='Borg'><matches:any></matches:any>Foo</div>`
+ *    matches:
+ *      `<div class='xxx' id='Borg'>Foo</div>`
+ *      `<div class='xxx' id='Borg'>Hello Foo</div>`
+ *      `<div id='Borg' class='xxx'>borg Foo</div>`
+ *    but not
+ *      `Foo`
+ *      `<div id='Borg' class='xxx'></div>`
+ *
+ * @param {DomNode} node
+ * @param {DomNode} pattern
+ * @returns {Boolean}
+ */
+const nodeMatches = exec(() => {
+  // We need to assign to parameters in order to avoid tail recursion:
+  /* eslint-disable no-param-reassign */
+
+  const isText = n => n && nodeName(n) === '#text';
+  const isWild = n => n && nodeName(n) === 'match:any';
+
+  // We need to perform partial matching on text nodes, meaning we need
+  // to split some nodes into two, but we want to avoid actually mutating
+  // the dom tree.
+  // For this reason, we use this class as a thin view on a substring of
+  // a text node.
+  class PartialTextNode {
+    // This rule makes sense for classes in the basic sense ("data+methods").
+    // This classes' purpose is to implement a generic interface; holding data
+    // is just a secondary function
+    /* eslint-disable class-methods-use-this */
+    constructor(backer, off) {
+      this.backer = backer;
+      this.off = off;
+    }
+
+    get nodeValue() {
+      return this.backer.nodeValue.slice(this.off);
+    }
+
+    get nodeName() {
+      return '#text';
+    }
+
+    get childNodes() {
+      return [];
+    }
+
+    get nextSibling() {
+      return this.backer.nextSibling;
+    }
+
+    get nextTextSibling() {
+      return new PartialTextNode(this.backer, this.off);
+    }
+
+    cloneNode() {
+      // Not implemented, because in the context of nodeMatechs
+      // clone node is just used to ensure the node being compared
+      // is shallow and text nodes/virtual text nodes never contain children
+      return this;
+    }
+
+    isEqualNode(otr) {
+      return nodeName(otr) === '#text';
+    }
+
+    good() {
+      return this.off !== -1;
+    }
+  }
+
+  // This is the actual recursive dom node matching algorithm
+  const recursiveMatch = (node, pattern) => {
+    // The algorithm used in here is designed to be fully recursive;
+    // unfortunately implementing this as a fully recursive algorithm
+    // gives us in the worst case roughly a number of stack frames
+    // O(n+m+k) where n is the
+    // depth of the dom tree; m is the number of adjacent nodes and k is
+    // the number of wildcards; (the actual stack frame complexity is a bit more complex)
+    //
+    // This is a problem, because most JS engines limit the number of stack frames
+    // to a couple of thousand.
+    // We assume that this is sufficient to cover the number of wildcards
+    // and the depth of the node tree, but we may encounter doms with multiple
+    // thousand sibling elements, so we might run into a stack overflow.
+    //
+    // To remedy this issue and reduce the worst case stack depths to roughly O(n+k)
+    // manual tail recursion is implemented by using this while loop; we
+    // recurse by just assigning to the function parameters and calling continue.
+    while (true) {
+      // We're at the end of both pattern and node! Successfully matched \o/
+      if (!node && !pattern) {
+        return true;
+      }
+
+      // Try matching the rest of the nodes without skipping stuff
+      // due to the wild card
+      if (isWild(pattern) && recursiveMatch(node, pattern.nextSibling)) {
+        return true;
+      }
+
+      // Special case! We must attempt to partially match text nodes;
+      // Wildcards can match text nodes partially
+      if (isWild(pattern) && isText(node) && isText(pattern.nextSibling)) {
+        const expect = pattern.nextSibling.nodeValue;
+        const val = node.nodeValue;
+        const fake = new PartialTextNode(node, val.indexOf(expect));
+
+        // Try starting further matching from the section of text we found
+        // to match the next text node
+        if (fake.good() && recursiveMatch(fake, pattern.nextSibling)) {
+          return true;
+        // OK; so the first match inside the textNode of the expected pattern
+        // did not work out, but maybe the pattern occurs multiple times?
+        // Like with normal nodes we just keep going and see what happens if
+        // we let the wildcard match increasingly large sections of the text node...
+        } else if (fake.good() && recursiveMatch(fake.nextTextSibling, pattern.nextSibling)) {
+          return true;
+        }
+      }
+
+      // Got a wildcard but the rest of the pattern did not match if we include
+      // the current node. Now as a fallback we just assume the wildcard is to
+      // match the current node and we just keep going...
+      if (isWild(pattern) && node) {
+        node = node.nextSibling;
+        continue;
+      }
+
+      // Special case! We have two text nodes; normally this is straightforward
+      // except if the next pattern node is a wild card; in this case - again -
+      // we must attempt partial matching.
+      const successfulLookahead = true
+        && isText(node) && isText(pattern) && isWild(pattern.nextSibling)
+        && node.nodeValue.startsWith(pattern.nodeValue)
+        && recursiveMatch(new PartialTextNode(node, pattern.nodeValue.length), pattern.nextSibling);
+      if (successfulLookahead) {
+        return true;
+      }
+
+      // Either pattern XOR node is at the end. Different length
+      // means a mismatch!
+      // XOR because we checked for the !node && !pattern case above
+      if (!node || !pattern) {
+        return false;
+      // The current nodes are not equal. Terminate early.
+      } else if (!node.cloneNode().isEqualNode(pattern.cloneNode())) {
+        return false;
+      // Compare all the child nodes!
+      } else if (!recursiveMatch(node.childNodes[0], pattern.childNodes[0])) {
+        return false;
+      }
+
+      // All right! Just advance to the next child node.
+      node = node.nextSibling;
+      pattern = pattern.nextSibling;
+      continue;
+    }
+  };
+
+  // The wrapper function; this is the entry point doing argument
+  // checking and preprocessing our nodes for recursive matching
+  const preprocess = (node, pattern) => {
+    const nodeIsDoc = nodeName(node) === '#document';
+    const patIsDoc = nodeName(pattern) === '#document';
+    if (nodeIsDoc && patIsDoc) {
+      return preprocess(node.documentElement, pattern.documentElement);
+    } else if (nodeIsDoc || patIsDoc) {
+      return false;
+    } else {
+      return recursiveMatch(
+        equalizeNode(node.cloneNode(true)),
+        equalizeNode(pattern.cloneNode(true)),
+      );
+    }
+  };
+
+  withFunctionName('nodeMatches', preprocess);
+  preprocess.impl = {
+    isText, isWild, PartialTextNode, recursiveMatch, preprocess,
+  };
+
+  return preprocess;
+});
 
 /**
  * Assert that two dom nodes are equivalent.
@@ -395,13 +630,11 @@ const assertEquivalentNode = (actual, expected) => {
     });
   };
 
-  if (!expected.nodeName) {
-    fail('Expected value is not a dom node');
-  } else if (!actual.nodeName) {
-    fail('Actual value is not a dom node');
-  } else if (actual.nodeName !== expected.nodeName) {
+  assertNode(expected);
+  assertNode(actual);
+  if (nodeName(actual) !== nodeName(expected)) {
     fail(`Node names differ; expected '${expected.nodeName}', got '${actual.nodeName}'`);
-  } else if (actual.nodeName === '#document') {
+  } else if (nodeName(actual) === '#document') {
     // We can not print the html on bare document elements
     // and work around JSDOM crashing if we call getComputedStyle on a cloned a #document
     assertEquivalentNode(actual.documentElement, expected.documentElement);
@@ -422,8 +655,12 @@ const assertEquivalentNode = (actual, expected) => {
 };
 
 module.exports = {
-  parentNodes,
+  isNode,
+  assertNode,
+  nodeName,
+  ancestryNodes,
   equalizeNode,
   nodeIsEquivalent,
+  nodeMatches,
   assertEquivalentNode,
 };

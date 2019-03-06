@@ -29,6 +29,9 @@ module.exports = {
   'rules': {
     'strict': 0,
 
+    // Allow while (true) infinite loops
+    'no-constant-condition': ["error", { "checkLoops": false }],
+
     // Forbid multiple statements in one line
     'max-statements-per-line': ["error", { "max": 1 }],
 
