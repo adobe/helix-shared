@@ -1,54 +1,31 @@
 # Configuration Design Guide
 
-## Current Status
+## Overview
 
-It looks like we need to have another discussion about our configuration format and how configuration behaves. What we have at the moment, looks like this:
+All of a helix project configuration is contained in a single `helix-config.yaml` file. The YAML format is moderately more readable than JSON and almost as widely accepted. YAML benefits from features like comments and references, which are missing in JSON, .
 
-- users create a `helix-config.yaml` which will be loaded and denormalized into `.hlx/strains.json`
-- the `helix-config.yaml` contains a number of top-level (global) definitions and a map of `strains`
-- each defined strain takes default values from:
-  - the global definitions
-  - the command line options
-  - the "default" strain
-  - application defaults
-  - (the exact precedence rules differ from property to property)
+For more stability of the config, the canonical structure of is validated with JSON Schema. This way errors are easily detected. The schemas also allow for a formal way of describing and documenting the configuration format. 
 
-Our developer needs include:
-- the ability to start developing without any configuration file at all
-- the ability to quickly generate testable strains for code or content branches that are under development
-- the ability to quickly and conveniently switch between strains in simulator and production
-- the assurance that none of the above will break a published site
-- the ability to do all of the above in a fully automated fashion on a CI system (e.g. generate and deploy a new strain for a new branch)
+> TODO: 
+> - tooling creates canonical `effective-helix-config.yaml` which contains comments for the source of all values
+> - the effective file will/must not be checked into git
 
-Site administration needs also include:
-- the ability to define content mount points
-- the ability to pass through traffic to another CMS (proxy strains)
+### Project Layout
 
-Furthermore, we should establish:
-- automated validation of configuration files that is independent from loading them
-- detailed and generated documentation for all configuration properties
+- templates and pre functions are located in `./src`
+- client side javascript **must not** go into `./src`. (TODO: we will provide a react example, and put the sources in `./react`)
+- all static files go to `htdocs`
+- all additional cgi-like openwhisk actions will go to `htdocs/cgi-bin`
 
-## Proposal: We keep YAML as the configuration format
-
-While I have a good collection of scars from dealing with YAML (especially in CircleCI), I think the format is moderately more readable than JSON and almost as widely accepted, which makes it worthwhile suffering through it instead of picking something that will feel uncommon or out of the time.
-
-## Proposal: We introduce a JSON Schema for configuration files
-
-This way you can see errors in configuration files while editing them, and we have a formal way of describing and documenting the configuration format. 
-
-> Notes:
-> - The validation is done during `HelixConfig.parse()`. 
-> - Using a IDE plugin, the yaml can also be validated during input.
-
-## Proposal: Strains are the only top-level concept
+### Strains are the only top-level concept
 
 This means that there are no concepts that are orthogonal to strains, but that every other configuration object can be assigned to one or more strains, and that every request can be assigned to one specific strain.
 
 There will be no reconciliation of strains and some other concept at runtime. Every `.hlx/strains.json` will contain a fully deterministic, fully resolved and denormalized representation of all strains.
 
-## Proposal: Other complex configuration objects can be defined in a definitions container and re-used
+### Complex configuration objects can be defined in a definitions container and re-used
 
-In order to make writing configurations easier and to enable re-use of configuration settings, we introduce a definitions container at the top level of the `helix-config.yaml` that can hold re-usable definitions like this:
+In order to make writing configurations easier and to enable re-use of configuration settings, a `definitions` container at the top level of the `helix-config.yaml` is allowed that can hold re-usable definitions like this:
 
 ```yaml
 definitions:
@@ -64,9 +41,7 @@ definitions:
       use_ssl: false
 ```
 
-## Proposal: Configuration objects can be referenced using YAML references
-
-In order to re-use a complex configuration object (like an origin, a mount mapping, or even a strain), use YAML references (`*publish`) or YAML extensions (`<< *basestrain`). This allows us to rely on the behavior of the YAML parser instead of using home-grown inheritance and referencing logic that is likely less robust and certainly less well documented.
+Those definitions can the be reused using YAML references (`*publish`) or YAML extensions (`<< *basestrain`). This allows to rely on the behavior of the YAML parser instead of using home-grown inheritance and referencing logic.
 
 A strain re-using the `*basestrain` above would look like this:
 
@@ -88,87 +63,38 @@ A strain referencing the `*publish` origin would look like this:
     origin: *publish
 ```
 
-## Proposal: The `default` strain serves all traffic in production when no other strain is selected, therefore a `default` strain is mandatory
+### Mandatory `default` strain. 
 
-We need one strain that is serving traffic that no other strain claims. This could be one by:
+The `default` strain serves all traffic in production when no other strain is selected, therefore a `default` strain is mandatory. This is enforced by the JSON schema. Since all inheritance becomes explicit by the use of YAML references, the `default` strain is special only in regards to serving traffic, but does not alter the behavior of any other strain.
 
-1. requiring the existence of a `default` strain
-2. requiring the existence of one and only one strain that has the `default: true` property set
+### The `code` and `package` properties.
 
-Option (1) is easier to validate than option (2) and less error prone (every YAML editor will tell you if you have two keys called `default`), so I'd opt for (1)
+The `code` property of a strain defines which code repository the strain belongs to. This is useful to allocate strains to different environments, eg. testing, staging, production etc.
 
-`hlx publish` should fail when no `default` strain exists.
-`hlx up` can continue without a `default` strain, but should issue a warning
+The `package` properties are usually only modified by the tooling and rarely need to be altered manually. The `package` property records which runtime action package is to be used to handle the requests of this strain.
 
-> Notes:
-> - Option (1) is favoured.
-> - selecting a predefined strain is simple with yaml references, eg: `default: *strains.master`
+### The `url` property
 
-## Proposal: There is no implicit inheritance from `default`
+The `url` property for a strain is currently used as a shorthand for a strain matching condition. it also sets the base url which is used for path rewriting. 
 
-All inheritance becomes explicit, using the mechanism laid out in 
-https://github.com/adobe/helix-shared/issues/11#issuecomment-443122026. This means the `default` strain is special only in regards to serving traffic, but does not alter the behavior of any other strain.
+> TODO: the url property might be replaced by the _condition object_ 
+ 
+ 
+## Tooling Notes
 
-## Proposal: Strains can have a `mount` configuration that maps URL paths to content paths
+### `hlx deploy`
 
-**DECLINED**
+- In order to increase the visibility of changes happening during deployment, `hlx deploy` list all strain names that will be affected by the deployment.
 
-> Notes:
-> We decided during the 4/2018 hackathon not to introduce mount points, so that it will be X strains for X mount points.
+- `hlx deploy` gets the current git-remote `git remote get-url origin` as `$CURRENT_CODE_REPO` and checks all strains for a `code` property that matches the `$CURRENT_CODE_REPO`.
 
-<del>
-Right now, strains can have only one `content` node. With support for `mount`, a strain can have either a `content` or a `mount` property. Each `mount` object is a map between the URL path (key) and a `content` property (either git URL or object).
+- If no strains are affected, `hlx deploy` will print a new strain config to `stdout` that points to the new `code` location (`$CURRENT_CODE_REPO`), copies all other values from `default` except for `url` or `condition`. The new strain will have an auto-generated, hard-to-guess name, so that it cannot unwittingly be accessed.
 
-```yaml
-strains:
-  default:
-    mount:
-      /: https://github.com/adobe/project-helix.io.git
-      /pipeline: https://github.com/adobe/helix-pipeline.git
-      /cli: https://github.com/adobe/helix-cli.git
-```
-</del>
+- When running `hlx deploy --add=foo` the new strain will be added to the configuration file automatically and `hlx deploy` will instead show instructions on accessing the strain.
 
-## Proposal: `mount` points can take Git URLs, `content` objects/references, Backend URLs, `origin` objects/references
+- When running `hlx deploy --add=default` the default strain will be created or updated.
 
-> Notes:
-> We decided during the 4/2018 hackathon not to introduce mount points, so that it will be X strains for X mount points.
-
-<del>
-That way you can have a consistent traffic mapping without having to switch strains.
-</del>
-
-## Discussion: the `code` property
-
-- the `code` property of a strain is either a giturl string or giturl object (but not an action name).
-
-assume a non-dirty checkout, `git@github.com/adobe/helix-io.git#master (923c1e6)`.
-1. the default strain contains a code property: `code: "git@github.com/adobe/helix-io.git#master"`
-2. `hlx deploy` would generate an action `/helix/923c1e6/html`
-3. and `effective-helix-config.yaml` would then have a property: `code: "git@github.com/adobe/helix-io.git#923c1e6"`
-
-assume a dirty checkout, `git@github.com/adobe/helix-io.git#master (a0c96a5)`
-1. the default strain contains a code property: `code: "git@github.com/adobe/helix-io.git#master"`
-2. `hlx deploy --dirty` would generate an action `/helix/a0c96a5-dirty/html`
-3. and `effective-helix-config.yaml` would then have a property: `code: "git@github.com/adobe/helix-io.git#a0c96a50-dirty"`<sup>1</sup>
-
-<sup>1</sup> not sure about the `-dirty` suffix in the ref here. but fastly wouldn't have a way to figure it our
-
-
-## Proposal: `hlx deploy` lists all strains that are affected by the deployment and suggests the creation of a new strain if none are affected
-
-> Notes:
-> - `hlx deploy` would generate a finite amount of deployment packages, and we can find out if there are referenced in the YAML.
-
-In order to increase the visibility of changes happening during deployment, `hlx deploy` will list all strain names that will be affected by the deployment.
-
-`hlx deploy` gets the current git-remote `git remote get-url origin` as `$CURRENT_CODE_REPO` and checks all strains for a `code` property that matches the `$CURRENT_CODE_REPO`.
-
-If no strains are affected, `hlx deploy` will print a new strain config to `stdout` that points to the new `code` location (`$CURRENT_CODE_REPO`), copies all other values from `default` except for `url` or `condition`. The new strain will have an auto-generated, hard-to-guess name, so that it cannot unwittingly be accessed.
-
-When running `hlx deploy --add=foo` the new strain will be added to the configuration file automatically and `hlx deploy` will instead show instructions on accessing the strain.
-
-When running `hlx deploy --add=default` the default strain will be created or updated.
+- `hlx deploy` updates the `package` property of all affected strains with the SHA of the current branch. It will append a `-dirty` accordingly if the current checkout is not clean.
 
 > Notes:
 > - Q: why is it important to have a random name? why not using the branch-name ?
@@ -176,73 +102,28 @@ When running `hlx deploy --add=default` the default strain will be created or up
 >      - to avoid conflicts
 >      - to prevent people from forging the X-Strain cookie and getting access to development- or staging-only strains.
 
-A deployment that does not affect any strains will have a non-zero exit code, so that it can fail in CI.
+- A deployment that does not affect any strains will have a non-zero exit code, so that it can fail in CI.
 
+### `hlx publish`
 
+- `hlx publish` will only update the strains that contain a package property.
 
-## Discussion: files
+### `hlx up`
 
-> Notes from the 4/2018 hackathon:
+During local development, the simulator behaves similar to the edge, and selects the strain based on the `url` property (later  on the condition).
+In order to simulator a specific domain for testing, `hlx up` accepts a `--host` argument, which overrides the `request.host` header in the simulator.
 
-- we will have **one** config helix-config.yaml
-- it will create a canonical `effective-helix-config.yaml` which contains comments for the source of all values
-- the effective file will/must not be checked into git
+`hlx up` also provides a usable default configuration, in case a `helix-config.yaml` is missing. This config can be persisted using the `--save-config` argument.
 
+## Open Discussions
 
-## Discussion: No implicit defaults
-
-I have a hard time reconciling the requirement 
-
-> - the ability to start developing without any configuration file at all
-
-which points at defaults and "magic" values with the kind of predictability and rigidity we need for requirements like
-
-> - the assurance that none of the above will break a published site
-> - the ability to do all of the above in a fully automated fashion on a CI system (e.g. generate and deploy a new strain for a new branch)
-
-### Proposal: No implicit defaults
-
-Therefore, a radical proposal: **we won't have any implicit defaults**. 
-At all. Strains won't magically inherit configuration values from:
-- the global properties in the `helix-config.yaml`
-- the command line
-- application (CLI) provided defaults
-- runtime (Fastly) provided defaults
-
-Unless you configure or reference a configuration value directly, it won't be effective. 
-Unless all required configuration values are set, you won't be able to deploy or publish.
-
-### Proposal: Generate a usable default configuration
-
-The flipside of this is that in order to enable development without any upfront configuration, we need to generate a usable default configuration taking the current context into consideration.
-
-A default configuration should be suggested when:
-- running `hlx deploy`
-- running `hlx publish`
-- running `hlx perf`
-- running `hlx demo`
-- outside of a CI environment
-
-A default configuration should be saved when:
-- running `hlx * --save`
-- running `hlx up`
-
-The default configuration should have two strains:
-- `default` pointing to the git remote
-- `dev` pointing to localhost
-
-
-## Proposal: Move `url` under `condition`
-
-The `url` property for a strain is currently used as a shorthand for a strain matching condition (it also sets the base URL), so it would make sense to move it below `conditions`, especially considering that additional conditions may be added later.
-
-## Discussion: Parallel Deployments in a CI environment
+### Parallel Deployments in a CI environment
 
 Concurrent deployments from a CI environment pose a hard problem at the moment:
 
-1. if the strain configuration cannot be modified by the deployment action, a new strain must be introduced for every new branch, prior to the creation of the branch, so that the branch can be deployed and tested
-2. if the strain configuration can be modified by the deployment action, a new strain can be introduced, but as the `helix-config.yaml` is the single point of synchronization, deployment in one branch will automatically deactivate all strains that refer to concurrent deployments made in different branches. In active development, this will lead to race conditions and intermittent test failures because the strain you just deployed got "undeployed" by a build triggered in another branch.
-3. even within one branch, making two committs in short succession will lead to the second commit tainting the deployment of the first build, with potentially misleading results. For instance a bug fix might get attributed to the first commit because this is where testing first succeeds, although the fix was deployed in the second commit
+1. if the strain configuration cannot be modified by the deployment action, a new strain must be introduced for every new branch, prior to the creation of the branch, so that the branch can be deployed, published and tested
+2. if the strain configuration can be modified by the deployment action, a new strain can be introduced, but as the `helix-config.yaml` is the single point of synchronization, publishing in one branch will automatically deactivate all strains that refer to concurrent deployments made in different branches. In active development, this will lead to race conditions and intermittent test failures because the strain you just published got "un-published" by a build triggered in another branch.
+3. even within one branch, making two commits in short succession will lead to the second commit tainting the deployment of the first build, with potentially misleading results. For instance a bug fix might get attributed to the first commit because this is where testing first succeeds, although the fix was deployed in the second commit
 
 
 ### Proposal: Temporary Strains
@@ -256,38 +137,3 @@ Here, the `-git--([\w]+)--` pattern will be replaced with the `X-Tag` value, eff
 As this will lead to a large number of temporary actions in OpenWhisk, we also introduce a `hlx undeploy` command that clears a temporary deployment made earlier. This can be run at the end of every CI job.
 
 `hlx test` and `hlx perf` should use the new temporary strains when running in CI.
-
-## Discussion: layout
-
-During the 4/2018 hackathon we also discussed the layout of the project. it was decided that:
-
-- templates and pre functions will be in `./src`
-- client side javascript **must not** go into `./src`. 
-- we will provide a react example, and put the sources in `./react`
-- all static files will go to `htdocs`
-- all additional openwhisk actions will go to `htdocs/cgi-bin`
-
-## Discussion: action names
-
-The deployment mechanism changes so that the **sha of the code repository** at deployment time will become the package name. the action name will simply be the script name without any extensions.
- 
-for example: 
-
-legacy name:
-```
-/helix/https---github-com-trieloff-helix-demo-git--master--html
-```
-
-new name:
-
-```
-/helix/dcfee99d45c6a2baed86c8e4921623c48b902522/html
-```
-
-The `--dirty` suffix will move to the package name.
- 
-for example:
-
-```
-/helix/dcfee99d45c6a2baed86c8e4921623c48b902522-dirty/html
-```
