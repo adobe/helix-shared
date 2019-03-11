@@ -66,6 +66,11 @@ data.strains['no-default'] should NOT have additional properties, data.strains['
     config: 'perf.yaml',
     result: 'perf.json',
   },
+  {
+    title: 'loads config with comments',
+    config: 'various_comments.yaml',
+    result: 'comments.json',
+  },
 ];
 
 describe('Helix Config Loading', () => {
