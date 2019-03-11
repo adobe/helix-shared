@@ -1,0 +1,197 @@
+{
+  "strains": {
+    "adhoc": {
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "condition": "",
+      "content": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "directoryIndex": "index.html",
+      "package": "75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty",
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": ""
+      },
+      "static": {
+        "allow": [],
+        "deny": [],
+        "host": "github.com",
+        "hostname": "github.com",
+        "magic": false,
+        "owner": "adobe",
+        "path": "/htdocs",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "sticky": false,
+      "urls": []
+    },
+    "default": {
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "condition": "",
+      "content": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "directoryIndex": "index.html",
+      "package": "",
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": ""
+      },
+      "static": {
+        "allow": [],
+        "deny": [],
+        "host": "github.com",
+        "hostname": "github.com",
+        "magic": false,
+        "owner": "adobe",
+        "path": "/htdocs",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "sticky": false,
+      "urls": []
+    },
+    "pipeline": {
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "condition": "req.http.host == \"pipeline.project-helix.io\"",
+      "content": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "directoryIndex": "index.html",
+      "package": "",
+      "params": [
+        "search",
+        "lang"
+      ],
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": ""
+      },
+      "static": {
+        "allow": [],
+        "deny": [],
+        "host": "github.com",
+        "hostname": "github.com",
+        "magic": false,
+        "owner": "adobe",
+        "path": "/www",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "sticky": true,
+      "urls": []
+    },
+    "proxy": {
+      "condition": "req.http.host == \"proxy.project-helix.io\"",
+      "origin": {
+        "address": "www.adobe.io",
+        "between_bytes_timeout": 10000,
+        "connect_timeout": 1000,
+        "error_threshold": 0,
+        "first_byte_timeout": 15000,
+        "hostname": "www.adobe.io",
+        "max_conn": 200,
+        "name": "Proxywwwadobeio861b",
+        "port": 443,
+        "shield": "iad-va-us",
+        "ssl_cert_hostname": "www.adobe.io",
+        "use_ssl": true,
+        "weight": 100
+      },
+      "params": [
+        "search"
+      ],
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": ""
+      },
+      "sticky": true,
+      "urls": []
+    },
+    "proxy-detailed": {
+      "condition": "",
+      "origin": {
+        "address": "192.168.0.1",
+        "between_bytes_timeout": 10000,
+        "connect_timeout": 1000,
+        "error_threshold": 0,
+        "first_byte_timeout": 0,
+        "hostname": "192.168.0.1",
+        "max_conn": 200,
+        "name": "Proxy1921680132fd",
+        "port": 80,
+        "shield": "iad-va-us",
+        "ssl_cert_hostname": "192.168.0.1",
+        "use_ssl": false,
+        "weight": 100
+      },
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": ""
+      },
+      "sticky": false,
+      "urls": []
+    }
+  },
+  "version": 1
+}
