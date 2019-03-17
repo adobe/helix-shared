@@ -9,20 +9,31 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const GitUrl = require('./GitUrl.js');
-const HelixConfig = require('./HelixConfig.js');
-const Strain = require('./Strain.js');
-const Logger = require('./Logger.js');
-const sequence = require('./sequence.js');
-const string = require('./string.js');
-const dom = require('./dom.js');
 
-module.exports = {
-  GitUrl,
-  HelixConfig,
-  Strain,
-  Logger,
-  sequence,
-  string,
-  dom,
-};
+/* global it */
+
+const assert = require('assert');
+const { multiline } = require('../src/index.js').string;
+
+it('multiline()', () => {
+  const ck = (ref, str) => assert.strictEqual(multiline(str), ref);
+
+  ck('', '');
+  ck('Hello', 'Hello');
+  ck('Hello', `
+    Hello`);
+  ck('Hello', `
+      Hello`);
+  ck('Hello\nWorld', `
+      Hello
+      World`);
+  ck('Hello\nWorld', `
+      Hello
+      World
+  `);
+  ck('Hello\n  Foo\nWorld', `
+      Hello
+        Foo
+      World
+  `);
+});
