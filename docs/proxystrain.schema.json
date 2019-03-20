@@ -49,7 +49,14 @@
         },
         "condition": {
             "description": "VLC condition that controls that can optionally activate this strain.",
-            "type": "string"
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "$ref": "https://ns.adobe.com/helix/shared/conditions"
+                }
+            ]
         },
         "perf": {
             "$ref": "https://ns.adobe.com/helix/shared/performance"

@@ -13,6 +13,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
+const { AssertionError } = require('assert');
 const yaml = require('yaml');
 const path = require('path');
 const fs = require('fs-extra');
@@ -35,18 +36,20 @@ async function assertInvalid(filename) {
     await validate(filename);
     assert.fail(`${filename} should be invalid`);
   } catch (e) {
-    // ok
+    if (e instanceof AssertionError) {
+      throw e;
+    }
   }
 }
 
 describe('Validator Tests', () => {
-  ['empty.yaml', 'no-default.yaml', 'unsupported_version.yaml'].forEach((filename) => {
+  ['empty.yaml', 'no-default.yaml', 'unsupported_version.yaml', 'invalid-conditions.yaml'].forEach((filename) => {
     it(`${filename} is invalid`, async () => {
       await assertInvalid(filename);
     });
   });
 
-  ['valid.yaml', 'full.yaml', 'proxy.yaml'].forEach((filename) => {
+  ['valid.yaml', 'full.yaml', 'proxy.yaml', 'valid-conditions.yaml'].forEach((filename) => {
     it(`${filename} is valid`, async () => {
       await assertValid(filename);
     });
