@@ -1,3 +1,10 @@
+## [0.8.2](https://github.com/adobe/helix-shared/compare/v0.8.1...v0.8.2) (2019-03-20)
+
+
+### Bug Fixes
+
+* **release:** semantic-release should update package.json ([d8831e2](https://github.com/adobe/helix-shared/commit/d8831e2)), closes [#67](https://github.com/adobe/helix-shared/issues/67)
+
 ## [0.8.1](https://github.com/adobe/helix-shared/compare/v0.8.0...v0.8.1) (2019-03-11)
 
 
