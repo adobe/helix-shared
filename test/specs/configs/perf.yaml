@@ -24,3 +24,36 @@ strains:
     perf:
       device: iPhoneX
       connection: LTE
+      asset_count: 1
+      consistently-interactive: 1
+      css_body_size_in_bytes: 1
+      css_size_in_bytes: 1
+      dom-size: 1
+      estimated-input-latency: 1
+      first-contentful-paint: 1
+      first-interactive: 1
+      first-meaningful-paint: 1
+      firstRender: 1
+      font_body_size_in_bytes: 1
+      font_size_in_bytes: 1
+      html_body_size_in_bytes: 1
+      html_size_in_bytes: 1
+      image_body_size_in_bytes: 1
+      image_size_in_bytes: 1
+      js_body_size_in_bytes: 1
+      js_size_in_bytes: 1
+      js-parse-compile: 1
+      lighthouse-accessibility-score: 1
+      lighthouse-best-practices-score: 1
+      lighthouse-performance-score: 1
+      lighthouse-pwa-score: 1
+      lighthouse-seo-score: 1
+      oncontentload: 1
+      onload: 1
+      page_body_size_in_bytes: 1
+      page_size_in_bytes: 1
+      page_wait_timing: 1
+      speed_index: 1
+      time-to-first-byte: 1
+      visually_complete_85: 1
+      visually_complete: 1
