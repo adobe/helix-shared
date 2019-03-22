@@ -1,3 +1,10 @@
+## [0.8.3](https://github.com/adobe/helix-shared/compare/v0.8.2...v0.8.3) (2019-03-22)
+
+
+### Bug Fixes
+
+* **schema:** Add schema for missing performance metrics ([8af463d](https://github.com/adobe/helix-shared/commit/8af463d))
+
 ## [0.8.2](https://github.com/adobe/helix-shared/compare/v0.8.1...v0.8.2) (2019-03-20)
 
 
