@@ -29,6 +29,9 @@ strains:
   adhoc:
     <<: *basestrain
     package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
+    perf:
+      location: London
+      onload: 1000
 
   client:
     code: *myrepo

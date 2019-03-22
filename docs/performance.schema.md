@@ -16,11 +16,11 @@ Performance testing details.
 | Property | Type | Required | Defined by |
 |----------|------|----------|------------|
 | [asset_count](#asset_count) | `number` | Optional | Runtime Strain (this schema) |
-| [connection](#connection) | `string` | Optional | Runtime Strain (this schema) |
+| [connection](#connection) | `enum` | Optional | Runtime Strain (this schema) |
 | [consistently-interactive](#consistently-interactive) | `number` | Optional | Runtime Strain (this schema) |
 | [css_body_size_in_bytes](#css_body_size_in_bytes) | `number` | Optional | Runtime Strain (this schema) |
 | [css_size_in_bytes](#css_size_in_bytes) | `number` | Optional | Runtime Strain (this schema) |
-| [device](#device) | `string` | Optional | Runtime Strain (this schema) |
+| [device](#device) | `enum` | Optional | Runtime Strain (this schema) |
 | [dom-size](#dom-size) | `number` | Optional | Runtime Strain (this schema) |
 | [estimated-input-latency](#estimated-input-latency) | `number` | Optional | Runtime Strain (this schema) |
 | [first-contentful-paint](#first-contentful-paint) | `number` | Optional | Runtime Strain (this schema) |
@@ -41,7 +41,7 @@ Performance testing details.
 | [lighthouse-performance-score](#lighthouse-performance-score) | `number` | Optional | Runtime Strain (this schema) |
 | [lighthouse-pwa-score](#lighthouse-pwa-score) | `number` | Optional | Runtime Strain (this schema) |
 | [lighthouse-seo-score](#lighthouse-seo-score) | `number` | Optional | Runtime Strain (this schema) |
-| [location](#location) | `string` | Optional | Runtime Strain (this schema) |
+| [location](#location) | `enum` | Optional | Runtime Strain (this schema) |
 | [oncontentload](#oncontentload) | `number` | Optional | Runtime Strain (this schema) |
 | [onload](#onload) | `number` | Optional | Runtime Strain (this schema) |
 | [page_body_size_in_bytes](#page_body_size_in_bytes) | `number` | Optional | Runtime Strain (this schema) |
@@ -80,16 +80,26 @@ Testing connection
 `connection`
 
 * is optional
-* type: `string`
+* type: `enum`
 * defined in this schema
 
-### connection Type
+The value of this property **must** be equal to one of the [known values below](#connection-known-values).
 
-
-`string`
-
-
-
+### connection Known Values
+| Value | Description |
+|-------|-------------|
+| `` |  |
+| `regular2G` |  |
+| `good2G` |  |
+| `slow3G` |  |
+| `regular3G` |  |
+| `good3G` |  |
+| `emergingMarkets` |  |
+| `regular4G` |  |
+| `LTE` |  |
+| `dsl` |  |
+| `wifi` |  |
+| `cable` |  |
 
 
 
@@ -164,16 +174,26 @@ Testing device
 `device`
 
 * is optional
-* type: `string`
+* type: `enum`
 * defined in this schema
 
-### device Type
+The value of this property **must** be equal to one of the [known values below](#device-known-values).
 
-
-`string`
-
-
-
+### device Known Values
+| Value | Description |
+|-------|-------------|
+| `` |  |
+| `MotorolaMotoG4` |  |
+| `iPhone5` |  |
+| `iPhone6` |  |
+| `iPhone6Plus` |  |
+| `iPhone7` |  |
+| `iPhone8` |  |
+| `Nexus5X` |  |
+| `Nexus6P` |  |
+| `GalaxyS5` |  |
+| `iPad` |  |
+| `iPadPro` |  |
 
 
 
@@ -605,16 +625,29 @@ Testing location
 `location`
 
 * is optional
-* type: `string`
+* type: `enum`
 * defined in this schema
 
-### location Type
+The value of this property **must** be equal to one of the [known values below](#location-known-values).
 
-
-`string`
-
-
-
+### location Known Values
+| Value | Description |
+|-------|-------------|
+| `` |  |
+| `NorthVirginia` |  |
+| `Frankfurt` |  |
+| `Sydney` |  |
+| `Ohio` |  |
+| `California` |  |
+| `Oregon` |  |
+| `Canada` |  |
+| `Ireland` |  |
+| `Tokyo` |  |
+| `Seoul` |  |
+| `Singapore` |  |
+| `Mumbai` |  |
+| `SaoPaulo` |  |
+| `London` |  |
 
 
 
