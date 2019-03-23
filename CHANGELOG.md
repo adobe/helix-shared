@@ -1,3 +1,10 @@
+## [0.8.4](https://github.com/adobe/helix-shared/compare/v0.8.3...v0.8.4) (2019-03-23)
+
+
+### Bug Fixes
+
+* **config:** Add missing performance threshold properties ([a90a489](https://github.com/adobe/helix-shared/commit/a90a489)), closes [#65](https://github.com/adobe/helix-shared/issues/65)
+
 ## [0.8.3](https://github.com/adobe/helix-shared/compare/v0.8.2...v0.8.3) (2019-03-22)
 
 
