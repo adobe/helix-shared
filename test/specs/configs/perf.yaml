@@ -17,12 +17,12 @@ strains:
   default:
     <<: *default
     perf:
-      location: us-east
+      location: Oregon
 
   client:
     <<: *default
     perf:
-      device: iPhoneX
+      device: iPhone8
       connection: LTE
       asset_count: 1
       consistently-interactive: 1

@@ -27,7 +27,8 @@
       "perf": {
         "connection": "",
         "device": "",
-        "location": ""
+        "location": "London",
+        "onload": 1000
       },
       "static": {
         "allow": [],

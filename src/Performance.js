@@ -21,6 +21,14 @@ class Performance {
     this._device = cfg.device || '';
     this._location = cfg.location || '';
     this._connection = cfg.connection || '';
+    this._thresholds = Object.keys(cfg).reduce((p, k) => {
+      // copy all properties that are numbers
+      if (cfg[k] && typeof cfg[k] === 'number') {
+        // eslint-disable-next-line no-param-reassign
+        p[k] = cfg[k];
+      }
+      return p;
+    }, {});
   }
 
   get device() {
@@ -33,6 +41,10 @@ class Performance {
 
   get connection() {
     return this._connection;
+  }
+
+  get thresholds() {
+    return this._thresholds;
   }
 
   /**
@@ -48,11 +60,11 @@ class Performance {
    * @returns {Performance~JSON}
    */
   toJSON(opts) {
-    const json = {
+    const json = Object.assign({
       device: this.device,
       location: this.location,
       connection: this.connection,
-    };
+    }, this.thresholds);
     if (opts && opts.minimal) {
       return utils.pruneEmptyValues(json);
     }
