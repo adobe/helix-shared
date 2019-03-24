@@ -23,10 +23,34 @@ const {
   uniq, join, into, foldl, foldr, any, all, sum, product, map,
   filter, reverse, enumerate, trySkip, skip, skipWhile, tryTake,
   takeWhile, takeUntilVal, takeDef, flat, concat, prepend,
-  append, mapSort, exec, zipLeast, zip, zipLongest,
+  append, mapSort, exec, zipLeast, zip, zipLongest, IntoNotImplemented
 } = require('../src/index.js').sequence;
 
 const ckThrows = (cls, fn) => assert.throws(fn, cls);
+
+it('isdef()', () => {
+  each([null, undefined], v => assert(!isdef(v)));
+  each([false, [], {}, 0], v => assert(isdef(v)));
+});
+
+it('type()', () => {
+  assert.strictEqual(type(null), null);
+  assert.strictEqual(type(undefined), undefined);
+  assert.strictEqual(type(2), Number);
+  assert.strictEqual(type({}), Object);
+});
+
+it('typename()', () => {
+  const examples = {
+    null: null,
+    undefined,
+    Number: 22,
+    Object: {},
+    Map: new Map(),
+  };
+
+  each(examples, ([k, v]) => assert.strictEqual(typename(type(v)), k));
+});
 
 it('exec()', () => {
   assert.strictEqual(exec(() => 42), 42);
@@ -194,7 +218,8 @@ it('size(), empty(), count()', () => {
   ck(new Baz(), 23);
 
   each([new Foo(), 0, null], (val) => {
-    each([size, count, empty], (fn) => {
+    ckThrows(SequenceNotImplemented, () => count(val));
+    each([size, empty], (fn) => {
       ckThrows(SizeNotImplemented, () => fn(val));
     });
   });
@@ -337,6 +362,7 @@ it('into(), list()', () => {
   each([list, into(Array)], (fn) => {
     assert.deepStrictEqual(fn({ a: 42 }), [['a', 42]]);
   });
+  ckThrows(IntoNotImplemented, () => into([], Number));
 });
 
 it('into(), uniq()', () => {

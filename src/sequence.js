@@ -146,6 +146,28 @@
 // GENERIC FUNCTIONAL PROGRAMMING ////////////////////////////
 
 /**
+ * Checks whether a value is defined.
+ * This function considers all values that are not null
+ * and not undefined to be defined
+ */
+const isdef = v => v !== undefined && v !== null;
+
+/**
+ * Determine type of an object.
+ * Like obj.constructor, but won't fail
+ * for null/undefined and just returns the
+ * value itself for those.
+ */
+const type = v => (isdef(v) ? v.constructor : v);
+
+/**
+ * Given a type, determine it's name.
+ * This is useful as a replacement for val.constructor.name,
+ * since this can deal with null and undefined.
+ */
+const typename = (t) => isdef(t) ? t.name : `${t}`
+
+/**
  * Immediately execute the given function.
  * Mostly used as a way to open a scope.
  */
@@ -351,12 +373,12 @@ const Size = Symbol('Size');
  * @returns {Number}
  */
 const size = (val) => {
-  if (size.impl.has(val.constructor)) {
-    return size.impl.get(val.constructor)(val);
-  } else if (val[Size]) {
+  if (size.impl.has(type(val))) {
+    return size.impl.get(type(val))(val);
+  } else if (isdef(val) && val[Size]) {
     return val[Size]();
   } else {
-    throw new SizeNotImplemented(`No implementation of Size for '${val.toString()}' of type '${val.constructor.name}'`);
+    throw new SizeNotImplemented(`No implementation of Size for '${val}' of type '${typename(type(val))}'`);
   }
 };
 
@@ -395,12 +417,12 @@ const iter = (obj) => {
       yield [key, obj[key]];
     }
   }
-  if (obj[Symbol.iterator]) {
+  if (isdef(obj) && obj[Symbol.iterator]) {
     return obj[Symbol.iterator]();
-  } else if (obj.constructor === Object) {
+  } else if (type(obj) === Object) {
     return objIter(obj);
   } else {
-    throw new SequenceNotImplemented(`The iterator protocol is not implemented for ${obj} of type ${obj.constructor}`);
+    throw new SequenceNotImplemented(`The iterator protocol is not implemented for ${obj} of type ${typename(type(obj))}`);
   }
 };
 
@@ -670,7 +692,14 @@ const join = curry('join', (seq, sep) => list(seq).join(sep));
  * @param {Type} type The type to turn the sequence into
  * @returns {type} The newly constructed value!
  */
-const into = curry('into', (seq, type) => into.impl.get(type)(seq));
+const into = curry('into', (seq, t) => {
+  const impl = into.impl.get(t);
+  if (isdef(impl)) {
+    return impl(seq);
+  } else {
+    throw new IntoNotImplemented(`into() is not implemented for type ${t && t.name}`);
+  }
+});
 into.impl = new Map();
 into.impl.set(Array, list);
 into.impl.set(String, join(''));
@@ -691,6 +720,8 @@ into.impl.set(Object, (seq) => {
   });
   return r;
 });
+
+class IntoNotImplemented extends TraitNotImplemented {}
 
 /**
  * Combine all the values from a sequence into one value.
@@ -1065,6 +1096,8 @@ module.exports = {
   aint,
   plus,
   mul,
+  TraitNotImplemented,
+  SizeNotImplemented,
   Size,
   size,
   empty,
@@ -1087,6 +1120,7 @@ module.exports = {
   uniq,
   join,
   into,
+  IntoNotImplemented,
   foldl,
   foldr,
   any,
