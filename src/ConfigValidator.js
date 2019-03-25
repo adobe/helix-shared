@@ -16,6 +16,8 @@ const schemas = [
   require('./schemas/config.schema.json'),
   require('./schemas/runtimestrain.schema.json'),
   require('./schemas/proxystrain.schema.json'),
+  require('./schemas/namedruntimestrain.schema.json'),
+  require('./schemas/namedproxystrain.schema.json'),
   require('./schemas/strains.schema.json'),
   require('./schemas/giturl.schema.json'),
   require('./schemas/staticgiturl.schema.json'),
