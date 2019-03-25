@@ -24,7 +24,7 @@ definitions:
       static: *myrepo
 
 strains:
-  - 
+  -
     <<: *basestrain
     name: default
 
@@ -32,6 +32,9 @@ strains:
     <<: *basestrain
     name: adhoc
     package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
+    perf:
+      location: London
+      onload: 1000
 
   -
     code: *myrepo
@@ -45,7 +48,7 @@ strains:
       owner: adobe
     directoryIndex: readme.html
 
-  - 
+  -
     <<: *basestrain
     name: pipeline
     condition: req.http.host == "pipeline.project-helix.io"

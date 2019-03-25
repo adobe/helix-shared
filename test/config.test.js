@@ -27,29 +27,27 @@ const tests = [
     config: 'empty.yaml',
     result: null,
     error: `Error: Invalid configuration:
-A set of strains and a default strain are missing.
 
-data should have required property 'strains'`,
+
+A list of strains and a strains with the name "default" is required.`,
   },
   {
     title: 'fails with no default strain',
     config: 'no-default.yaml',
     result: null,
     error: `Error: Invalid configuration:
-Proxy Strain no-default has unknown property 'code'
-Proxy Strain no-default has unknown property 'content'
-Proxy Strain no-default should have required property 'origin'
-Runtime Strain no-default should have required property 'static'
-Invalid Strain no-default must be either a Runtime Strain or a Proxy Strain
-A default strain is missing.
-Invalid Strain .strains should be array: type({"no-default":{"code":"https://github.com/adobe/project-helix.io.git","content":"https://github.com/adobe/project-helix.io.git","directoryIndex":"index.html"}}, {"type":"array"})
-Strains .strains must be either a Runtime Strain or a Proxy Strain
 
-data.strains['no-default'] should NOT have additional properties, data.strains['no-default'] should NOT have additional properties, data.strains['no-default'] should have required property 'origin', data.strains['no-default'] should have required property 'static', data.strains['no-default'] should match exactly one schema in oneOf, data.strains should have required property 'default', data.strains should be array, data.strains should match exactly one schema in oneOf`,
+
+A list of strains and a strains with the name "default" is required.`,
   },
   {
-    title: 'loads a full config',
+    title: 'loads a full config (map style)',
     config: 'full.yaml',
+    result: 'full.json',
+  },
+  {
+    title: 'loads a full config (list style)',
+    config: 'full-list.yaml',
     result: 'full.json',
   },
   {
@@ -174,7 +172,8 @@ describe('Helix Config Serializing', () => {
       .withSource(source)
       .init();
 
-    cfg.strains.add(new Strain('foo', {
+    cfg.strains.add(new Strain({
+      name: 'foo',
       code: {
         owner: 'adobe',
         repo: 'helix-shared',
@@ -194,7 +193,8 @@ describe('Helix Config Serializing', () => {
       .withSource(source)
       .init();
 
-    cfg.strains.add(new Strain('foo', {
+    cfg.strains.add(new Strain({
+      name: 'foo',
       code: {
         owner: 'adobe',
         repo: 'helix-shared',

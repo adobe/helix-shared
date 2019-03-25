@@ -110,7 +110,8 @@ describe('Strains test', () => {
   });
 
   it('urls can be set', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -122,7 +123,8 @@ describe('Strains test', () => {
 
 
   it('urls are normalized', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -133,7 +135,8 @@ describe('Strains test', () => {
   });
 
   it('static can be read', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -146,7 +149,8 @@ describe('Strains test', () => {
   });
 
   it('redirects can be read', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -170,7 +174,8 @@ describe('Strains test', () => {
     const gitUrl = 'https://github.com/adobe/helix-shared.git#master';
     const newGitUrl = new GitUrl('https://github.com/adobe/project-helix.io.git#dev');
     const newStaticUrl = 'https://github.com/adobe/project-helix.io.git/htdocs#dev';
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: gitUrl,
       content: gitUrl,
       static: gitUrl,
@@ -187,7 +192,8 @@ describe('Strains test', () => {
   });
 
   it('strains can be mutated', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -216,7 +222,8 @@ describe('Strains test', () => {
   });
 
   it('proxy static can be read', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       origin: 'https://www.adobe.io',
     });
 
@@ -243,7 +250,8 @@ describe('Strains test', () => {
   });
 
   it('strain.toJSON() minimizes json', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -268,7 +276,8 @@ describe('Strains test', () => {
   });
 
   it('strain.toJSON() keeps format json', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',

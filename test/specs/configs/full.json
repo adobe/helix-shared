@@ -1,7 +1,6 @@
 {
-  "version": 1,
-  "strains": {
-    "adhoc": {
+  "strains": [
+    {
       "code": {
         "host": "github.com",
         "hostname": "github.com",
@@ -24,6 +23,54 @@
         "repo": "project-helix.io"
       },
       "directoryIndex": "index.html",
+      "name": "default",
+      "package": "",
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": ""
+      },
+      "static": {
+        "allow": [],
+        "deny": [],
+        "host": "github.com",
+        "hostname": "github.com",
+        "magic": false,
+        "owner": "adobe",
+        "path": "/htdocs",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "sticky": false,
+      "urls": []
+    },
+    {
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "condition": "",
+      "content": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "master",
+        "repo": "project-helix.io"
+      },
+      "directoryIndex": "index.html",
+      "name": "adhoc",
+      "package": "75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty",
       "perf": {
         "connection": "",
         "device": "",
@@ -44,11 +91,9 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-
-      "urls": [],
-      "package": "75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty"
+      "urls": []
     },
-    "client": {
+    {
       "code": {
         "host": "github.com",
         "hostname": "github.com",
@@ -71,6 +116,7 @@
         "repo": "helix-cli"
       },
       "directoryIndex": "readme.html",
+      "name": "client",
       "package": "",
       "perf": {
         "connection": "",
@@ -91,66 +137,9 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-
       "urls": []
     },
-    "default": {
-      "code": {
-        "host": "github.com",
-        "hostname": "github.com",
-        "owner": "adobe",
-        "path": "",
-        "port": "",
-        "protocol": "https",
-        "ref": "master",
-        "repo": "project-helix.io"
-      },
-      "condition": "",
-      "content": {
-        "host": "github.com",
-        "hostname": "github.com",
-        "owner": "adobe",
-        "path": "",
-        "port": "",
-        "protocol": "https",
-        "ref": "master",
-        "repo": "project-helix.io"
-      },
-      "directoryIndex": "index.html",
-      "package": "",
-      "perf": {
-        "connection": "",
-        "device": "",
-        "location": ""
-      },
-      "static": {
-        "allow": [],
-        "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
-        "magic": false,
-        "owner": "adobe",
-        "path": "/htdocs",
-        "port": "",
-        "protocol": "https",
-        "ref": "master",
-        "repo": "project-helix.io"
-      },
-      "sticky": false,
-
-      "urls": []
-    },
-    "pipeline": {
-      "redirects": [
-        {
-          "from": "(.*)\\.php",
-          "to": "$1.html"
-        },
-        {
-          "from": "\\/content\\/dam\\/(.*)$",
-          "to": "/htdocs/$1"
-        }
-      ],
+    {
       "code": {
         "host": "github.com",
         "hostname": "github.com",
@@ -173,12 +162,27 @@
         "repo": "hypermedia-pipeline"
       },
       "directoryIndex": "index.html",
+      "name": "pipeline",
       "package": "",
+      "params": [
+        "search",
+        "lang"
+      ],
       "perf": {
         "connection": "",
         "device": "",
         "location": ""
       },
+      "redirects": [
+        {
+          "from": "(.*)\\.php",
+          "to": "$1.html"
+        },
+        {
+          "from": "\\/content\\/dam\\/(.*)$",
+          "to": "/htdocs/$1"
+        }
+      ],
       "static": {
         "allow": [],
         "deny": [],
@@ -193,14 +197,11 @@
         "repo": "project-helix.io"
       },
       "sticky": true,
-      "params": [
-        "search",
-        "lang"
-      ],
       "urls": []
     },
-    "proxy": {
+    {
       "condition": "req.http.host == \"proxy.project-helix.io\"",
+      "name": "proxy",
       "origin": {
         "address": "www.adobe.io",
         "between_bytes_timeout": 10000,
@@ -216,20 +217,21 @@
         "use_ssl": true,
         "weight": 100
       },
+      "params": [
+        "search",
+        "api*"
+      ],
       "perf": {
         "connection": "",
         "device": "",
         "location": ""
       },
       "sticky": true,
-      "params": [
-        "search",
-        "api*"
-      ],
       "urls": []
     },
-    "proxy-detailed": {
+    {
       "condition": "",
+      "name": "proxy-detailed",
       "origin": {
         "address": "192.168.0.1",
         "between_bytes_timeout": 10000,
@@ -250,14 +252,15 @@
         "device": "",
         "location": ""
       },
-      "sticky": false,
       "redirects": [
         {
           "from": "\\/old",
           "to": "/new"
         }
       ],
+      "sticky": false,
       "urls": []
     }
-  }
+  ],
+  "version": 1
 }
