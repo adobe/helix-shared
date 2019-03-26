@@ -55,20 +55,6 @@
         {
             "type": "array",
             "minItems": 1,
-            "contains": {
-                "allOf": [
-                    {
-                        "properties": {
-                            "name": {
-                                "const": "default"
-                            }
-                        }
-                    },
-                    {
-                        "$ref": "#/definitions/anynamedstrain"
-                    }
-                ]
-            },
             "description": "A list of strains. Every strain name must be unique for a given config.",
             "items": {
                 "$ref": "#/definitions/anynamedstrain"
