@@ -41,13 +41,13 @@ A list of strains and a strains with the name "default" is required.`,
 A list of strains and a strains with the name "default" is required.`,
   },
   {
-    title: 'loads a full config (map style)',
+    title: 'loads a full config',
     config: 'full.yaml',
     result: 'full.json',
   },
   {
-    title: 'loads a full config (list style)',
-    config: 'full-list.yaml',
+    title: 'loads a full config (map style)',
+    config: 'full-map.yaml',
     result: 'full.json',
   },
   {
@@ -62,13 +62,28 @@ A list of strains and a strains with the name "default" is required.`,
     result: 'urls.json',
   },
   {
+    title: 'loads config with urls (map style)',
+    config: 'urls-map.yaml',
+    result: 'urls.json',
+  },
+  {
     title: 'loads config with performance',
     config: 'perf.yaml',
     result: 'perf.json',
   },
   {
+    title: 'loads config with performance (map style)',
+    config: 'perf-map.yaml',
+    result: 'perf.json',
+  },
+  {
     title: 'loads config with comments',
-    config: 'various_comments.yaml',
+    config: 'comments.yaml',
+    result: 'comments.json',
+  },
+  {
+    title: 'loads config with comments (map style)',
+    config: 'comments-map.yaml',
     result: 'comments.json',
   },
 ];

@@ -9,8 +9,23 @@
 # governing permissions and limitations under the License.
 version: 1
 
+
+definitions:
+  constants:
+    defaultRepo:
+      &myrepo
+      owner: adobe
+      repo: project-helix.io
+      ref: master
+  strains:
+    - &foo
+      name: foo
+      code: *myrepo
+      content: *myrepo
+      static: *myrepo
+
 strains:
-  default:
+  - name: default
     code: https://github.com/adobe/project-helix.io.git#master
     static: https://github.com/adobe/project-helix.io.git#dev
     condition: req.http.host == "client.project-helix.io"
@@ -20,3 +35,5 @@ strains:
       ref: master
       owner: adobe
     directoryIndex: readme.html
+
+  - *foo

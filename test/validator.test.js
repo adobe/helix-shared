@@ -46,7 +46,7 @@ describe('Validator Tests', () => {
     });
   });
 
-  ['valid.yaml', 'full.yaml', 'proxy.yaml', 'perf.yaml', 'full-list.yaml'].forEach((filename) => {
+  ['valid.yaml', 'full.yaml', 'proxy.yaml', 'perf.yaml', 'full.yaml'].forEach((filename) => {
     it(`${filename} is valid`, async () => {
       await assertValid(filename);
     });

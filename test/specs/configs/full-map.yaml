@@ -24,22 +24,18 @@ definitions:
       static: *myrepo
 
 strains:
-  -
-    <<: *basestrain
-    name: default
+  default: *basestrain
 
-  -
+  adhoc:
     <<: *basestrain
-    name: adhoc
     package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
     perf:
       location: London
       onload: 1000
 
-  -
+  client:
     code: *myrepo
     static: *myrepo
-    name: client
     condition: req.http.host == "client.project-helix.io"
     sticky: false
     content:
@@ -48,9 +44,8 @@ strains:
       owner: adobe
     directoryIndex: readme.html
 
-  -
+  pipeline:
     <<: *basestrain
-    name: pipeline
     condition: req.http.host == "pipeline.project-helix.io"
     params:
       - search
@@ -68,8 +63,7 @@ strains:
       - from: /content/dam/(.*)$
         to: /htdocs/$1
 
-  -
-    name: proxy
+  proxy:
     origin: https://www.adobe.io/
     condition: req.http.host == "proxy.project-helix.io"
     params:
@@ -77,8 +71,7 @@ strains:
       - api*
     sticky: true
 
-  -
-    name: proxy-detailed
+  proxy-detailed:
     redirects:
       - from: /old
         to: /new

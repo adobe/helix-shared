@@ -1,6 +1,6 @@
 {
-  "strains": {
-    "client": {
+  "strains": [
+    {
       "code": {
         "host": "github.com",
         "hostname": "github.com",
@@ -23,6 +23,53 @@
         "repo": "project-helix.io"
       },
       "directoryIndex": "index.html",
+      "name": "default",
+      "package": "",
+      "perf": {
+        "connection": "",
+        "device": "",
+        "location": "Oregon"
+      },
+      "static": {
+        "allow": [],
+        "deny": [],
+        "host": "github.com",
+        "hostname": "github.com",
+        "magic": false,
+        "owner": "adobe",
+        "path": "/htdocs",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "sticky": false,
+      "urls": []
+    },
+    {
+      "code": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "condition": "",
+      "content": {
+        "host": "github.com",
+        "hostname": "github.com",
+        "owner": "adobe",
+        "path": "",
+        "port": "",
+        "protocol": "https",
+        "ref": "",
+        "repo": "project-helix.io"
+      },
+      "directoryIndex": "index.html",
+      "name": "client",
       "package": "",
       "perf": {
         "asset_count": 1,
@@ -76,55 +123,8 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-
-      "urls": []
-    },
-    "default": {
-      "code": {
-        "host": "github.com",
-        "hostname": "github.com",
-        "owner": "adobe",
-        "path": "",
-        "port": "",
-        "protocol": "https",
-        "ref": "",
-        "repo": "project-helix.io"
-      },
-      "condition": "",
-      "content": {
-        "host": "github.com",
-        "hostname": "github.com",
-        "owner": "adobe",
-        "path": "",
-        "port": "",
-        "protocol": "https",
-        "ref": "",
-        "repo": "project-helix.io"
-      },
-      "directoryIndex": "index.html",
-      "package": "",
-      "perf": {
-        "location": "Oregon",
-        "connection": "",
-        "device": ""
-      },
-      "static": {
-        "allow": [],
-        "deny": [],
-        "host": "github.com",
-        "hostname": "github.com",
-        "magic": false,
-        "owner": "adobe",
-        "path": "/htdocs",
-        "port": "",
-        "protocol": "https",
-        "ref": "",
-        "repo": "project-helix.io"
-      },
-      "sticky": false,
-
       "urls": []
     }
-  },
+  ],
   "version": 1
 }

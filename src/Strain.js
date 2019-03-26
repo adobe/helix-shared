@@ -68,6 +68,7 @@ class Strain {
     // define them initially, and clear for alias node
     // todo: improve
     this._ownProperties = new Set([
+      'name',
       'origin',
       'code',
       'content',
@@ -263,7 +264,7 @@ class Strain {
         this._ownProperties.add(propertyName);
       }
 
-      let node = this._yamlNode.value;
+      let node = this._yamlNode;
       if (node.type === 'ALIAS') {
         // convert to merge first
         const seq = new YAML_SEQ();
@@ -272,7 +273,7 @@ class Strain {
         merge.type = 'MERGE_PAIR';
         node = new YAML_MAP();
         node.items.push(merge);
-        this._yamlNode.value = node;
+        this._yamlNode = node;
       }
       this._ownProperties.forEach((key) => {
         const idx = node.items.findIndex(i => i.key === key

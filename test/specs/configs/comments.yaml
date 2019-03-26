@@ -24,65 +24,48 @@ definitions:
       static: *myrepo
 
 strains:
-  -
+  - name: default
     <<: *basestrain
-    name: default
 
-  -
+  - name: adhoc
     <<: *basestrain
-    name: adhoc
     package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
-    perf:
-      location: London
-      onload: 1000
 
-  -
-    code: *myrepo
-    static: *myrepo
-    name: client
-    condition: req.http.host == "client.project-helix.io"
-    sticky: false
-    content:
-      repo: helix-cli
-      ref: master
-      owner: adobe
-    directoryIndex: readme.html
+#  client:
+#    code: *myrepo
+#    static: *myrepo
+#    condition: req.http.host == "client.project-helix.io"
+#    sticky: false
+#    content:
+#      repo: helix-cli
+#      ref: master
+#      owner: adobe
+#    directoryIndex: readme.html
 
-  -
+  - name: pipeline
     <<: *basestrain
-    name: pipeline
     condition: req.http.host == "pipeline.project-helix.io"
     params:
       - search
       - lang
-    content:
-      repo: hypermedia-pipeline
-      ref: master
-      owner: adobe
+    #content:
+    #  repo: hypermedia-pipeline
+    #  ref: master
+    #  owner: adobe
     static:
       <<: *myrepo
       path: /www
-    redirects:
-      - from: (.*)\.php
-        to: $1.html
-      - from: /content/dam/(.*)$
-        to: /htdocs/$1
 
-  -
-    name: proxy
+  - name: proxy
     origin: https://www.adobe.io/
     condition: req.http.host == "proxy.project-helix.io"
     params:
       - search
-      - api*
+      #- api*
     sticky: true
 
-  -
-    name: proxy-detailed
-    redirects:
-      - from: /old
-        to: /new
+  - name: proxy-detailed
     origin:
       address: 192.168.0.1
-      name: publish
+#      name: publish
       use_ssl: false
