@@ -63,6 +63,7 @@ describe('Validator Tests', () => {
     'many-code-repos.yaml',
     'urls.yaml',
     'urls-map.yaml',
+    'no-ref.yaml',
   ].forEach((filename) => {
     it(`${filename} is valid`, async () => {
       await assertValid(filename);

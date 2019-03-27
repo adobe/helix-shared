@@ -56,7 +56,6 @@
   },
   "required": [
     "owner",
-    "repo",
-    "ref"
+    "repo"
   ]
 }
