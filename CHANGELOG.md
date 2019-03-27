@@ -1,3 +1,11 @@
+# [0.10.0](https://github.com/adobe/helix-shared/compare/v0.9.0...v0.10.0) (2019-03-27)
+
+
+### Features
+
+* Helpers for implementing improved frontmatter in helix-pipe ([d5544d5](https://github.com/adobe/helix-shared/commit/d5544d5))
+* Improve sequence.js dealing with null values ([f79fa59](https://github.com/adobe/helix-shared/commit/f79fa59))
+
 # [0.9.0](https://github.com/adobe/helix-shared/compare/v0.8.4...v0.9.0) (2019-03-27)
 
 
