@@ -29,9 +29,9 @@ class Strains extends Map {
    * @returns {Strains~JSON}
    */
   toJSON() {
-    const strains = {};
-    this.forEach((strain, name) => {
-      strains[name] = strain.toJSON();
+    const strains = [];
+    this.forEach((strain) => {
+      strains.push(strain.toJSON());
     });
     return strains;
   }
@@ -54,12 +54,12 @@ class Strains extends Map {
 
   /**
    * Creates the strains from a yaml node
-   * @param {YAMLMap} node
+   * @param {YAMLSeq} node
    */
   fromYAML(node) {
     this._yamlNode = node;
-    node.items.forEach((pair) => {
-      const strain = Strain.fromYAMLNode(pair);
+    node.items.forEach((value) => {
+      const strain = Strain.fromYAMLNode(value);
       this.set(strain.name, strain);
     });
   }

@@ -9,17 +9,17 @@
 # governing permissions and limitations under the License.
 definitions:
   default: &default
-    name: default
     code: https://github.com/adobe/project-helix.io.git
     content: https://github.com/adobe/project-helix.io.git
     static: https://github.com/adobe/project-helix.io.git
 
 strains:
-  - <<: *default
+  default:
+    <<: *default
     urls:
       - https://www.project-helix.io/index.html
 
-  - name: client
+  client:
     <<: *default
     url: HTTPs://client.project-helix.io
     urls:
@@ -31,7 +31,7 @@ strains:
       owner: adobe
     directoryIndex: readme.html
 
-  - name: pipeline
+  pipeline:
     <<: *default
     url: https://pipeline.project-helix.io
     content:
@@ -39,11 +39,11 @@ strains:
       ref: master
       owner: adobe
 
-  - name: proxy
+  proxy:
     origin: https://www.adobe.io/
     url: https://proxy.project-helix.io
 
-  - name: proxy-detailed
+  proxy-detailed:
     origin:
       address: 192.168.0.1
       name: publish

@@ -16,6 +16,8 @@ const schemas = [
   require('./schemas/config.schema.json'),
   require('./schemas/runtimestrain.schema.json'),
   require('./schemas/proxystrain.schema.json'),
+  require('./schemas/namedruntimestrain.schema.json'),
+  require('./schemas/namedproxystrain.schema.json'),
   require('./schemas/strains.schema.json'),
   require('./schemas/giturl.schema.json'),
   require('./schemas/staticgiturl.schema.json'),
@@ -79,6 +81,12 @@ class ConfigValidator {
   }
 
   assetValid(config = {}) {
+    // handle simple case for no strains. since the ajv error is a bit cryptic.
+    if (!config.strains
+      || ((config.strains.find && !config.strains.find(s => s.name === 'default'))
+        && !config.strains.default)) {
+      throw new ValidationError('A list of strains and a strain with the name "default" is required.');
+    }
     const valid = this.validate(config);
     if (!valid) {
       throw new ValidationError(this._ajv.errorsText(), this._ajv.errors);

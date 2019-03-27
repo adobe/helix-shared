@@ -95,22 +95,50 @@ describe('Strains test', () => {
       .withConfigPath(path.resolve(SPEC_ROOT, 'clone-tests.yaml'))
       .init();
     const copy = cfg.strains.get('default').clone();
-    assert.deepEqual(copy.toYAML(), 'default:\n'
-      + '  code: https://github.com/adobe/project-helix.io.git#master\n'
-      + '  content:\n'
-      + '    protocol: https\n'
-      + '    host: github.com\n'
-      + '    hostname: github.com\n'
-      + '    owner: adobe\n'
-      + '    repo: helix-cli\n'
-      + '    ref: master\n'
-      + '  static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
-      + '  condition: req.http.host == "client.project-helix.io"\n'
-      + '  directoryIndex: readme.html\n');
+    assert.deepEqual(copy.toYAML(), ''
+      + 'name: default\n'
+      + 'code: https://github.com/adobe/project-helix.io.git#master\n'
+      + 'content:\n'
+      + '  protocol: https\n'
+      + '  host: github.com\n'
+      + '  hostname: github.com\n'
+      + '  owner: adobe\n'
+      + '  repo: helix-cli\n'
+      + '  ref: master\n'
+      + 'static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
+      + 'condition: req.http.host == "client.project-helix.io"\n'
+      + 'directoryIndex: readme.html\n');
+
+    const fooCopy = cfg.strains.get('foo').clone();
+    assert.deepEqual(fooCopy.toYAML(), ''
+      + 'name: foo\n'
+      + 'code:\n'
+      + '  protocol: https\n'
+      + '  host: github.com\n'
+      + '  hostname: github.com\n'
+      + '  owner: adobe\n'
+      + '  repo: project-helix.io\n'
+      + '  ref: master\n'
+      + 'content:\n'
+      + '  protocol: https\n'
+      + '  host: github.com\n'
+      + '  hostname: github.com\n'
+      + '  owner: adobe\n'
+      + '  repo: project-helix.io\n'
+      + '  ref: master\n'
+      + 'static:\n'
+      + '  protocol: https\n'
+      + '  host: github.com\n'
+      + '  hostname: github.com\n'
+      + '  owner: adobe\n'
+      + '  repo: project-helix.io\n'
+      + '  ref: master\n'
+      + '  path: /htdocs\n');
   });
 
   it('urls can be set', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -122,7 +150,8 @@ describe('Strains test', () => {
 
 
   it('urls are normalized', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -133,7 +162,8 @@ describe('Strains test', () => {
   });
 
   it('static can be read', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -146,7 +176,8 @@ describe('Strains test', () => {
   });
 
   it('redirects can be read', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -170,7 +201,8 @@ describe('Strains test', () => {
     const gitUrl = 'https://github.com/adobe/helix-shared.git#master';
     const newGitUrl = new GitUrl('https://github.com/adobe/project-helix.io.git#dev');
     const newStaticUrl = 'https://github.com/adobe/project-helix.io.git/htdocs#dev';
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: gitUrl,
       content: gitUrl,
       static: gitUrl,
@@ -180,14 +212,15 @@ describe('Strains test', () => {
     strain.content = newGitUrl;
     strain.static.url = newGitUrl;
     const yaml = strain.toYAML();
-    assert.deepEqual(yaml, 'test:\n'
-    + `  code: ${newGitUrl}\n`
-    + `  content: ${newGitUrl}\n`
-    + `  static: ${newStaticUrl}\n`);
+    assert.deepEqual(yaml, 'name: test\n'
+    + `code: ${newGitUrl}\n`
+    + `content: ${newGitUrl}\n`
+    + `static: ${newStaticUrl}\n`);
   });
 
   it('strains can be mutated', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
@@ -207,7 +240,6 @@ describe('Strains test', () => {
     strain.package = 'dirty';
     strain.condition = 'req.http.X-Dirty == "true"';
 
-
     assert.notDeepEqual(strain.name, 'test');
     assert.notDeepEqual(strain.content, giturl);
     assert.notDeepEqual(strain.code, giturl);
@@ -216,11 +248,13 @@ describe('Strains test', () => {
   });
 
   it('proxy static can be read', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       origin: 'https://www.adobe.io',
     });
 
     assert.deepEqual(strain.toJSON({ minimal: true }), {
+      name: 'test',
       condition: '',
       origin: {
         address: 'www.adobe.io',
@@ -243,13 +277,15 @@ describe('Strains test', () => {
   });
 
   it('strain.toJSON() minimizes json', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
     });
 
     assert.deepEqual(strain.toJSON({ minimal: true }), {
+      name: 'test',
       code: {
         owner: 'adobe',
         repo: 'project-helix.io',
@@ -268,17 +304,68 @@ describe('Strains test', () => {
   });
 
   it('strain.toJSON() keeps format json', () => {
-    const strain = new Strain('test', {
+    const strain = new Strain({
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
     });
 
     assert.deepEqual(strain.toJSON({ keepFormat: true, minimal: true }), {
+      name: 'test',
       code: 'https://github.com/adobe/project-helix.io.git',
       content: 'https://github.com/adobe/project-helix.io.git',
       directoryIndex: 'index.html',
       static: 'https://github.com/adobe/project-helix.io.git/htdocs',
     });
+  });
+
+  it('Simple strain outputs expected yaml', () => {
+    const strain = new Strain({
+      name: 'test',
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    assert.deepEqual(strain.toYAML(), ''
+      + 'name: test\n'
+      + 'code: https://github.com/adobe/project-helix.io.git\n'
+      + 'content: https://github.com/adobe/project-helix.io.git\n'
+      + 'static: https://github.com/adobe/project-helix.io.git/htdocs\n');
+  });
+
+  it('Complex strain outputs expected yaml', () => {
+    const strain = new Strain({
+      name: 'default',
+      code: 'https://github.com/adobe/project-helix.io.git#master',
+      content: {
+        protocol: 'https',
+        host: 'github.com',
+        hostname: 'github.com',
+        owner: 'adobe',
+        repo: 'helix-cli',
+        ref: 'master',
+      },
+      static: 'https://github.com/adobe/project-helix.io.git#dev',
+      condition: 'req.http.host == "client.project-helix.io"',
+      sticky: false,
+    });
+
+    strain.directoryIndex = 'somepage.html';
+
+    assert.deepEqual(strain.toYAML(), ''
+      + 'name: default\n'
+      + 'code: https://github.com/adobe/project-helix.io.git#master\n'
+      + 'content:\n'
+      + '  protocol: https\n'
+      + '  host: github.com\n'
+      + '  hostname: github.com\n'
+      + '  owner: adobe\n'
+      + '  repo: helix-cli\n'
+      + '  ref: master\n'
+      + 'static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
+      + 'condition: req.http.host == "client.project-helix.io"\n'
+      + 'directoryIndex: somepage.html\n');
   });
 });

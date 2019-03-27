@@ -1,4 +1,4 @@
 version: 1
 strains:
-  default:
+  - name: default
     origin: https://www.example.com

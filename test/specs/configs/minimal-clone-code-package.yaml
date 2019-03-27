@@ -24,9 +24,10 @@ definitions:
       static: *myrepo
 
 strains:
-  default: *basestrain
+  - name: default
+    <<: *basestrain
 
-  clone:
+  - name: clone
     <<: *basestrain
     url: https://www.test.com/
     code: https://github.com/adobe/helix-test.git#master

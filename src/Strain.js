@@ -27,8 +27,8 @@ const utils = require('./utils.js');
  * Strain
  */
 class Strain {
-  constructor(name, cfg) {
-    this._name = name;
+  constructor(cfg) {
+    this._name = cfg.name;
     if (cfg.origin) {
       // proxy
       this._origin = new Origin(cfg.origin);
@@ -68,6 +68,7 @@ class Strain {
     // define them initially, and clear for alias node
     // todo: improve
     this._ownProperties = new Set([
+      'name',
       'origin',
       'code',
       'content',
@@ -84,7 +85,7 @@ class Strain {
   }
 
   clone() {
-    const strain = new Strain(this.name, this.toJSON({ keepFormat: true }));
+    const strain = new Strain(this.toJSON({ keepFormat: true }));
     if (this._directoryIndex) {
       // this is a bit a hack...consider a better binding
       // eslint-disable-next-line no-underscore-dangle
@@ -224,6 +225,7 @@ class Strain {
    */
   toJSON(opts) {
     const json = {
+      name: this.name,
       sticky: this.sticky,
       condition: this.condition,
       perf: this.perf.toJSON(opts),
@@ -257,12 +259,12 @@ class Strain {
   }
 
   _modified(propertyName, propertyValue) {
-    if (this._yamlNode) {
-      if (propertyName && propertyValue) {
-        this._ownProperties.add(propertyName);
-      }
+    if (propertyName && propertyValue) {
+      this._ownProperties.add(propertyName);
+    }
 
-      let node = this._yamlNode.value;
+    if (this._yamlNode) {
+      let node = this._yamlNode;
       if (node.type === 'ALIAS') {
         // convert to merge first
         const seq = new YAML_SEQ();
@@ -271,7 +273,7 @@ class Strain {
         merge.type = 'MERGE_PAIR';
         node = new YAML_MAP();
         node.items.push(merge);
-        this._yamlNode.value = node;
+        this._yamlNode = node;
       }
       this._ownProperties.forEach((key) => {
         const idx = node.items.findIndex(i => i.key === key
@@ -310,13 +312,13 @@ class Strain {
 
   static fromYAMLNode(node) {
     /* eslint-disable no-underscore-dangle */
-    const json = node.value.toJSON();
-    const strain = new Strain(node.key.value, json);
+    const json = node.toJSON();
+    const strain = new Strain(json);
     strain._yamlNode = node;
     strain._ownProperties.clear();
-    if (node.value.type === 'MAP') {
+    if (node.type === 'MAP') {
       // remember our 'own' properties
-      node.value.items.forEach((pair) => {
+      node.items.forEach((pair) => {
         strain._ownProperties.add(pair.key.value);
       });
       strain._ownProperties.delete('<<');
@@ -327,7 +329,7 @@ class Strain {
 
   toYAMLNode() {
     if (!this._yamlNode) {
-      this._yamlNode = new YAML_PAIR(this.name, new YAML_MAP());
+      this._yamlNode = new YAML_MAP();
       this._modified();
     }
     return this._yamlNode;

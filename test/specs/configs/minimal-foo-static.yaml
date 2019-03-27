@@ -24,9 +24,10 @@ definitions:
       static: *myrepo
 
 strains:
-  default: *basestrain
+  - name: default
+    <<: *basestrain
 
-  foo:
+  - name: foo
     code:
       owner: adobe
       repo: helix-shared
