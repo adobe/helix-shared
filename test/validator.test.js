@@ -40,13 +40,30 @@ async function assertInvalid(filename) {
 }
 
 describe('Validator Tests', () => {
-  ['empty.yaml', 'no-default.yaml', 'unsupported_version.yaml'].forEach((filename) => {
+  [
+    'empty.yaml',
+    'no-default.yaml',
+    'unsupported_version.yaml',
+  ].forEach((filename) => {
     it(`${filename} is invalid`, async () => {
       await assertInvalid(filename);
     });
   });
 
-  ['valid.yaml', 'full.yaml', 'proxy.yaml', 'perf.yaml', 'full.yaml'].forEach((filename) => {
+  [
+    'valid.yaml',
+    'full.yaml',
+    'full-map.yaml',
+    'proxy.yaml',
+    'perf.yaml',
+    'perf-map.yaml',
+    'clone-tests.yaml',
+    'comments-map.yaml',
+    'comments.yaml',
+    'many-code-repos.yaml',
+    'urls.yaml',
+    'urls-map.yaml',
+  ].forEach((filename) => {
     it(`${filename} is valid`, async () => {
       await assertValid(filename);
     });
