@@ -175,7 +175,7 @@ describe('Helix Config Serializing', () => {
     cfg.strains.get('default').package = 'bfbde5fbfbde5fbfbde5f';
     await cfg.saveConfig();
 
-    const actual = await fs.readFile(testCfg);
+    const actual = await fs.readFile(testCfg, 'utf-8');
     const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-package.yaml'), 'utf-8');
 
     assert.equal(actual, expected);
