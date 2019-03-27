@@ -259,11 +259,11 @@ class Strain {
   }
 
   _modified(propertyName, propertyValue) {
-    if (this._yamlNode) {
-      if (propertyName && propertyValue) {
-        this._ownProperties.add(propertyName);
-      }
+    if (propertyName && propertyValue) {
+      this._ownProperties.add(propertyName);
+    }
 
+    if (this._yamlNode) {
       let node = this._yamlNode;
       if (node.type === 'ALIAS') {
         // convert to merge first

@@ -319,4 +319,53 @@ describe('Strains test', () => {
       static: 'https://github.com/adobe/project-helix.io.git/htdocs',
     });
   });
+
+  it('Simple strain outputs expected yaml', () => {
+    const strain = new Strain({
+      name: 'test',
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+    });
+
+    assert.deepEqual(strain.toYAML(), ''
+      + 'name: test\n'
+      + 'code: https://github.com/adobe/project-helix.io.git\n'
+      + 'content: https://github.com/adobe/project-helix.io.git\n'
+      + 'static: https://github.com/adobe/project-helix.io.git/htdocs\n');
+  });
+
+  it('Complex strain outputs expected yaml', () => {
+    const strain = new Strain({
+      name: 'default',
+      code: 'https://github.com/adobe/project-helix.io.git#master',
+      content: {
+        protocol: 'https',
+        host: 'github.com',
+        hostname: 'github.com',
+        owner: 'adobe',
+        repo: 'helix-cli',
+        ref: 'master',
+      },
+      static: 'https://github.com/adobe/project-helix.io.git#dev',
+      condition: 'req.http.host == "client.project-helix.io"',
+      sticky: false,
+    });
+
+    strain.directoryIndex = 'somepage.html';
+
+    assert.deepEqual(strain.toYAML(), ''
+      + 'name: default\n'
+      + 'code: https://github.com/adobe/project-helix.io.git#master\n'
+      + 'content:\n'
+      + '  protocol: https\n'
+      + '  host: github.com\n'
+      + '  hostname: github.com\n'
+      + '  owner: adobe\n'
+      + '  repo: helix-cli\n'
+      + '  ref: master\n'
+      + 'static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
+      + 'condition: req.http.host == "client.project-helix.io"\n'
+      + 'directoryIndex: somepage.html\n');
+  });
 });
