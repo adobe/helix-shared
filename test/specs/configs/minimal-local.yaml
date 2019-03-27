@@ -15,12 +15,12 @@ definitions:
     - &remoteRepo "ssh://git@github.com/adobe/project-helix.io.git#master"
 
 strains:
-  dev:
+  - name: dev
     code: *remoteRepo
     content: *localRepo
     static: *localRepo
 
-  default:
+  - name: default
     code: *localRepo
     content: *localRepo
     static: *localRepo

@@ -29,7 +29,7 @@ const tests = [
     error: `Error: Invalid configuration:
 
 
-A list of strains and a strains with the name "default" is required.`,
+A list of strains and a strain with the name "default" is required.`,
   },
   {
     title: 'fails with no default strain',
@@ -38,7 +38,7 @@ A list of strains and a strains with the name "default" is required.`,
     error: `Error: Invalid configuration:
 
 
-A list of strains and a strains with the name "default" is required.`,
+A list of strains and a strain with the name "default" is required.`,
   },
   {
     title: 'loads a full config',
