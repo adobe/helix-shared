@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/adobe/helix-shared/compare/v0.8.4...v0.9.0) (2019-03-27)
+
+
+### Features
+
+* **configuration:** Strains can be and should be specified as an ordered list ([38b5e9d](https://github.com/adobe/helix-shared/commit/38b5e9d)), closes [#71](https://github.com/adobe/helix-shared/issues/71)
+
 ## [0.8.4](https://github.com/adobe/helix-shared/compare/v0.8.3...v0.8.4) (2019-03-23)
 
 
