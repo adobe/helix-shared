@@ -24,40 +24,15 @@
                     "$ref": "https://ns.adobe.com/helix/shared/runtimestrain"
                 }
             ]
-        },
-        "anynamedstrain": {
-            "oneOf": [
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/namedproxystrain"
-                },
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/namedruntimestrain"
-                }
-            ]
         }
     },
     "oneOf": [
-        {
-            "type": "object",
-            "description": "A map of strains. Every strain name must be unique for a given config.",
-            "additionalProperties": {
-                "$ref": "#/definitions/anystrain"
-            },
-            "properties": {
-                "default": {
-                    "$ref": "#/definitions/anystrain"
-                }
-            },
-            "required": [
-                "default"
-            ]
-        },
         {
             "type": "array",
             "minItems": 1,
             "description": "A list of strains. Every strain name must be unique for a given config.",
             "items": {
-                "$ref": "#/definitions/anynamedstrain"
+                "$ref": "#/definitions/anystrain"
             }
         }
     ]

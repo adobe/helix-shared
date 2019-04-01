@@ -18,6 +18,10 @@
     "description": "A strain is a combination of code and content that enables the creation of a digital experience. Strains can be used to create language variants of websites, A/B tests, personalization, or to aggregate content from multiple sources",
     "additionalProperties": false,
     "properties": {
+        "name": {
+            "type": "string",
+            "description": "Name of the strain"
+        },
         "origin": {
             "description": "Origin backend for proxy strains.",
             "anyOf": [
@@ -70,6 +74,7 @@
         }
     },
     "required": [
-        "origin"
+        "origin",
+        "name"
     ]
 }

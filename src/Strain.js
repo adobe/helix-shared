@@ -14,7 +14,6 @@ const URI = require('uri-js');
 const YAML = require('yaml');
 const YAML_MAP = require('yaml/map').default;
 const YAML_PAIR = require('yaml/pair').default;
-const YAML_SEQ = require('yaml/seq').default;
 
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin.js');
@@ -264,17 +263,7 @@ class Strain {
     }
 
     if (this._yamlNode) {
-      let node = this._yamlNode;
-      if (node.type === 'ALIAS') {
-        // convert to merge first
-        const seq = new YAML_SEQ();
-        seq.items.push(node);
-        const merge = new YAML_PAIR('<<', node);
-        merge.type = 'MERGE_PAIR';
-        node = new YAML_MAP();
-        node.items.push(merge);
-        this._yamlNode = node;
-      }
+      const node = this._yamlNode;
       this._ownProperties.forEach((key) => {
         const idx = node.items.findIndex(i => i.key === key
           || (i.key.value && i.key.value === key));

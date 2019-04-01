@@ -18,11 +18,11 @@ A Configuration File for Project Helix.
 
 # Configuration Properties
 
-| Property | Type | Required | Default | Defined by |
-|----------|------|----------|---------|------------|
-| [definitions](#definitions) | `object` | Optional |  | Configuration (this schema) |
-| [strains](#strains) | Strains | **Required** |  | Configuration (this schema) |
-| [version](#version) | `enum` | Optional | `1` | Configuration (this schema) |
+| Property | Type | Required | Nullable | Default | Defined by |
+|----------|------|----------|----------|---------|------------|
+| [definitions](#definitions) | `object` | Optional  | No |  | Configuration (this schema) |
+| [strains](#strains) | Strains | **Required**  | No |  | Configuration (this schema) |
+| [version](#version) | `enum` | Optional  | No | `1` | Configuration (this schema) |
 
 ## definitions
 
