@@ -8,7 +8,7 @@
         "path": "",
         "port": "",
         "protocol": "https",
-        "ref": "",
+        "ref": "master",
         "repo": "project-helix.io"
       },
       "condition": "",
@@ -19,7 +19,7 @@
         "path": "",
         "port": "",
         "protocol": "https",
-        "ref": "",
+        "ref": "master",
         "repo": "project-helix.io"
       },
       "directoryIndex": "index.html",
@@ -40,7 +40,7 @@
         "path": "/htdocs",
         "port": "",
         "protocol": "https",
-        "ref": "",
+        "ref": "master",
         "repo": "project-helix.io"
       },
       "sticky": false,
@@ -56,7 +56,7 @@
         "path": "",
         "port": "",
         "protocol": "https",
-        "ref": "",
+        "ref": "master",
         "repo": "project-helix.io"
       },
       "condition": "",
@@ -88,7 +88,7 @@
         "path": "/htdocs",
         "port": "",
         "protocol": "https",
-        "ref": "",
+        "ref": "master",
         "repo": "project-helix.io"
       },
       "sticky": false,
@@ -107,7 +107,7 @@
         "path": "",
         "port": "",
         "protocol": "https",
-        "ref": "",
+        "ref": "master",
         "repo": "project-helix.io"
       },
       "condition": "",
@@ -139,7 +139,7 @@
         "path": "/htdocs",
         "port": "",
         "protocol": "https",
-        "ref": "",
+        "ref": "master",
         "repo": "project-helix.io"
       },
       "sticky": false,

@@ -34,8 +34,8 @@ class Strain {
       this._origin = new Origin(cfg.origin);
     } else {
       this._origin = null;
-      this._content = new GitUrl(cfg.content);
-      this._code = new GitUrl(cfg.code);
+      this._content = new GitUrl(cfg.content, { ref: 'master' });
+      this._code = new GitUrl(cfg.code, { ref: 'master' });
       // todo: 1. do we still need whilelists?
       this._static = new Static(cfg.static);
       // detect changes in static URL

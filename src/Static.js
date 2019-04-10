@@ -33,14 +33,9 @@ class Static extends EventEmitter {
 
   set url(value) {
     if (value.toJSON) {
-      this._url = new GitUrl(value.toJSON({ minimal: true, keepFormat: true }));
+      this._url = new GitUrl(value.toJSON({ minimal: true, keepFormat: true }), { ref: 'master', path: '/htdocs' });
     } else {
-      this._url = new GitUrl(value);
-    }
-    if (!this._url.path) {
-      // todo: ... this is a by ugly
-      // eslint-disable-next-line no-underscore-dangle
-      this._url._path = '/htdocs';
+      this._url = new GitUrl(value, { ref: 'master', path: '/htdocs' });
     }
     this.emit('url-change', value);
   }
