@@ -1,3 +1,10 @@
+## [0.10.1](https://github.com/adobe/helix-shared/compare/v0.10.0...v0.10.1) (2019-04-10)
+
+
+### Bug Fixes
+
+* **config:** Ensure default ref is added to string giturls ([#87](https://github.com/adobe/helix-shared/issues/87)) ([30d9cc3](https://github.com/adobe/helix-shared/commit/30d9cc3)), closes [#86](https://github.com/adobe/helix-shared/issues/86)
+
 # [0.10.0](https://github.com/adobe/helix-shared/compare/v0.9.0...v0.10.0) (2019-03-27)
 
 
