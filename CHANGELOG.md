@@ -1,3 +1,10 @@
+## [0.10.2](https://github.com/adobe/helix-shared/compare/v0.10.1...v0.10.2) (2019-04-10)
+
+
+### Bug Fixes
+
+* **package:** update yaml to version 1.5.0 ([bf42d94](https://github.com/adobe/helix-shared/commit/bf42d94))
+
 ## [0.10.1](https://github.com/adobe/helix-shared/compare/v0.10.0...v0.10.1) (2019-04-10)
 
 
