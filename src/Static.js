@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const YAML_PAIR = require('yaml/pair');
+const { Pair } = require('yaml/types');
 
 const EventEmitter = require('events');
 const GitUrl = require('./GitUrl.js');
@@ -109,7 +109,7 @@ class Static extends EventEmitter {
     }
     const node = this.url.toYAMLNode(true);
     Object.keys(props).forEach((key) => {
-      node.items.push(new YAML_PAIR(key, props[key]));
+      node.items.push(new Pair(key, props[key]));
     });
     return node;
   }
