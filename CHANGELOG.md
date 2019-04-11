@@ -1,3 +1,10 @@
+## [0.10.3](https://github.com/adobe/helix-shared/compare/v0.10.2...v0.10.3) (2019-04-11)
+
+
+### Bug Fixes
+
+* **yaml:** Avoid deprecation warnings from yaml ([#89](https://github.com/adobe/helix-shared/issues/89)) ([1374cfe](https://github.com/adobe/helix-shared/commit/1374cfe)), closes [#88](https://github.com/adobe/helix-shared/issues/88)
+
 ## [0.10.2](https://github.com/adobe/helix-shared/compare/v0.10.1...v0.10.2) (2019-04-10)
 
 
