@@ -46,7 +46,7 @@ Those definitions can the be reused using YAML references (`*publish`) or YAML e
 A strain re-using the `*basestrain` above would look like this:
 
 ```yaml
-  client:
+  - name: client
     <<: *basestrain
     condition: req.http.host == "client.project-helix.io"
     content:
@@ -58,7 +58,7 @@ A strain re-using the `*basestrain` above would look like this:
 
 A strain referencing the `*publish` origin would look like this:
 ```yaml
-  proxy-detailed:
+  - name: proxy-detailed
     sticky: true
     origin: *publish
 ```

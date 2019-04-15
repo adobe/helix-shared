@@ -1,3 +1,24 @@
+## [0.10.3](https://github.com/adobe/helix-shared/compare/v0.10.2...v0.10.3) (2019-04-11)
+
+
+### Bug Fixes
+
+* **yaml:** Avoid deprecation warnings from yaml ([#89](https://github.com/adobe/helix-shared/issues/89)) ([1374cfe](https://github.com/adobe/helix-shared/commit/1374cfe)), closes [#88](https://github.com/adobe/helix-shared/issues/88)
+
+## [0.10.2](https://github.com/adobe/helix-shared/compare/v0.10.1...v0.10.2) (2019-04-10)
+
+
+### Bug Fixes
+
+* **package:** update yaml to version 1.5.0 ([bf42d94](https://github.com/adobe/helix-shared/commit/bf42d94))
+
+## [0.10.1](https://github.com/adobe/helix-shared/compare/v0.10.0...v0.10.1) (2019-04-10)
+
+
+### Bug Fixes
+
+* **config:** Ensure default ref is added to string giturls ([#87](https://github.com/adobe/helix-shared/issues/87)) ([30d9cc3](https://github.com/adobe/helix-shared/commit/30d9cc3)), closes [#86](https://github.com/adobe/helix-shared/issues/86)
+
 # [0.10.0](https://github.com/adobe/helix-shared/compare/v0.9.0...v0.10.0) (2019-03-27)
 
 

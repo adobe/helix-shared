@@ -289,16 +289,19 @@ describe('Strains test', () => {
       code: {
         owner: 'adobe',
         repo: 'project-helix.io',
+        ref: 'master',
       },
       content: {
         owner: 'adobe',
         repo: 'project-helix.io',
+        ref: 'master',
       },
       directoryIndex: 'index.html',
       static: {
         owner: 'adobe',
         path: '/htdocs',
         repo: 'project-helix.io',
+        ref: 'master',
       },
     });
   });
@@ -313,10 +316,10 @@ describe('Strains test', () => {
 
     assert.deepEqual(strain.toJSON({ keepFormat: true, minimal: true }), {
       name: 'test',
-      code: 'https://github.com/adobe/project-helix.io.git',
-      content: 'https://github.com/adobe/project-helix.io.git',
+      code: 'https://github.com/adobe/project-helix.io.git#master',
+      content: 'https://github.com/adobe/project-helix.io.git#master',
       directoryIndex: 'index.html',
-      static: 'https://github.com/adobe/project-helix.io.git/htdocs',
+      static: 'https://github.com/adobe/project-helix.io.git/htdocs#master',
     });
   });
 
@@ -330,9 +333,9 @@ describe('Strains test', () => {
 
     assert.deepEqual(strain.toYAML(), ''
       + 'name: test\n'
-      + 'code: https://github.com/adobe/project-helix.io.git\n'
-      + 'content: https://github.com/adobe/project-helix.io.git\n'
-      + 'static: https://github.com/adobe/project-helix.io.git/htdocs\n');
+      + 'code: https://github.com/adobe/project-helix.io.git#master\n'
+      + 'content: https://github.com/adobe/project-helix.io.git#master\n'
+      + 'static: https://github.com/adobe/project-helix.io.git/htdocs#master\n');
   });
 
   it('Complex strain outputs expected yaml', () => {

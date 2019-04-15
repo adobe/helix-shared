@@ -12,8 +12,7 @@
 
 const URI = require('uri-js');
 const YAML = require('yaml');
-const YAML_MAP = require('yaml/map').default;
-const YAML_PAIR = require('yaml/pair').default;
+const { YAMLMap, Pair } = require('yaml/types');
 
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin.js');
@@ -33,8 +32,8 @@ class Strain {
       this._origin = new Origin(cfg.origin);
     } else {
       this._origin = null;
-      this._content = new GitUrl(cfg.content);
-      this._code = new GitUrl(cfg.code);
+      this._content = new GitUrl(cfg.content, { ref: 'master' });
+      this._code = new GitUrl(cfg.code, { ref: 'master' });
       // todo: 1. do we still need whilelists?
       this._static = new Static(cfg.static);
       // detect changes in static URL
@@ -282,7 +281,7 @@ class Strain {
               item.value = value;
             }
           } else {
-            node.items.push(new YAML_PAIR(key, value));
+            node.items.push(new Pair(key, value));
           }
         } else if (idx >= 0) {
           node.items.splice(idx, 1);
@@ -318,7 +317,7 @@ class Strain {
 
   toYAMLNode() {
     if (!this._yamlNode) {
-      this._yamlNode = new YAML_MAP();
+      this._yamlNode = new YAMLMap();
       this._modified();
     }
     return this._yamlNode;
