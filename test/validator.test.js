@@ -53,16 +53,12 @@ describe('Validator Tests', () => {
   [
     'valid.yaml',
     'full.yaml',
-    'full-map.yaml',
     'proxy.yaml',
     'perf.yaml',
-    'perf-map.yaml',
     'clone-tests.yaml',
-    'comments-map.yaml',
     'comments.yaml',
     'many-code-repos.yaml',
     'urls.yaml',
-    'urls-map.yaml',
   ].forEach((filename) => {
     it(`${filename} is valid`, async () => {
       await assertValid(filename);

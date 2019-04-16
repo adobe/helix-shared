@@ -13,10 +13,10 @@ A strain is a combination of code and content that enables the creation of a dig
 
 # Redirect Rule Properties
 
-| Property | Type | Required | Defined by |
-|----------|------|----------|------------|
-| [from](#from) | `string` | Optional | Redirect Rule (this schema) |
-| [to](#to) | `string` | Optional | Redirect Rule (this schema) |
+| Property | Type | Required | Nullable | Defined by |
+|----------|------|----------|----------|------------|
+| [from](#from) | `string` | Optional  | No | Redirect Rule (this schema) |
+| [to](#to) | `string` | Optional  | No | Redirect Rule (this schema) |
 
 ## from
 

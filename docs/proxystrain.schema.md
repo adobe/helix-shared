@@ -18,16 +18,17 @@ A strain is a combination of code and content that enables the creation of a dig
 
 # Proxy Strain Properties
 
-| Property | Type | Required | Defined by |
-|----------|------|----------|------------|
-| [condition](#condition) | `string` | Optional | Proxy Strain (this schema) |
-| [origin](#origin) | complex | **Required** | Proxy Strain (this schema) |
-| [params](#params) | `string[]` | Optional | Proxy Strain (this schema) |
-| [perf](#perf) | Runtime Strain | Optional | Proxy Strain (this schema) |
-| [redirects](#redirects) | Redirect Rule | Optional | Proxy Strain (this schema) |
-| [sticky](#sticky) | `boolean` | Optional | Proxy Strain (this schema) |
-| [url](#url) | `string` | Optional | Proxy Strain (this schema) |
-| [urls](#urls) | `string[]` | Optional | Proxy Strain (this schema) |
+| Property | Type | Required | Nullable | Defined by |
+|----------|------|----------|----------|------------|
+| [condition](#condition) | `string` | Optional  | No | Proxy Strain (this schema) |
+| [name](#name) | `string` | **Required**  | No | Proxy Strain (this schema) |
+| [origin](#origin) | complex | **Required**  | No | Proxy Strain (this schema) |
+| [params](#params) | `string[]` | Optional  | No | Proxy Strain (this schema) |
+| [perf](#perf) | Runtime Strain | Optional  | No | Proxy Strain (this schema) |
+| [redirects](#redirects) | Redirect Rule | Optional  | No | Proxy Strain (this schema) |
+| [sticky](#sticky) | `boolean` | Optional  | No | Proxy Strain (this schema) |
+| [url](#url) | `string` | Optional  | No | Proxy Strain (this schema) |
+| [urls](#urls) | `string[]` | Optional  | No | Proxy Strain (this schema) |
 
 ## condition
 
@@ -40,6 +41,27 @@ VLC condition that controls that can optionally activate this strain.
 * defined in this schema
 
 ### condition Type
+
+
+`string`
+
+
+
+
+
+
+
+## name
+
+Name of the strain
+
+`name`
+
+* is **required**
+* type: `string`
+* defined in this schema
+
+### name Type
 
 
 `string`

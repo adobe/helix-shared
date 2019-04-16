@@ -13,21 +13,21 @@ Representation of a origin host
 
 # Origin Properties
 
-| Property | Type | Required | Defined by |
-|----------|------|----------|------------|
-| [address](#address) | `string` | Optional | Origin (this schema) |
-| [between_bytes_timeout](#between_bytes_timeout) | `integer` | Optional | Origin (this schema) |
-| [connect_timeout](#connect_timeout) | `string` | Optional | Origin (this schema) |
-| [error_threshold](#error_threshold) | `integer` | Optional | Origin (this schema) |
-| [first_byte_timeout](#first_byte_timeout) | `integer` | Optional | Origin (this schema) |
-| [hostname](#hostname) | `string` | Optional | Origin (this schema) |
-| [max_conn](#max_conn) | `integer` | Optional | Origin (this schema) |
-| [name](#name) | `string` | Optional | Origin (this schema) |
-| [port](#port) | `integer` | Optional | Origin (this schema) |
-| [shield](#shield) | `string` | Optional | Origin (this schema) |
-| [ssl_cert_hostname](#ssl_cert_hostname) | `string` | Optional | Origin (this schema) |
-| [use_ssl](#use_ssl) | `boolean` | Optional | Origin (this schema) |
-| [weight](#weight) | `integer` | Optional | Origin (this schema) |
+| Property | Type | Required | Nullable | Defined by |
+|----------|------|----------|----------|------------|
+| [address](#address) | `string` | Optional  | No | Origin (this schema) |
+| [between_bytes_timeout](#between_bytes_timeout) | `integer` | Optional  | No | Origin (this schema) |
+| [connect_timeout](#connect_timeout) | `string` | Optional  | No | Origin (this schema) |
+| [error_threshold](#error_threshold) | `integer` | Optional  | No | Origin (this schema) |
+| [first_byte_timeout](#first_byte_timeout) | `integer` | Optional  | No | Origin (this schema) |
+| [hostname](#hostname) | `string` | Optional  | No | Origin (this schema) |
+| [max_conn](#max_conn) | `integer` | Optional  | No | Origin (this schema) |
+| [name](#name) | `string` | Optional  | No | Origin (this schema) |
+| [port](#port) | `integer` | Optional  | No | Origin (this schema) |
+| [shield](#shield) | `string` | Optional  | No | Origin (this schema) |
+| [ssl_cert_hostname](#ssl_cert_hostname) | `string` | Optional  | No | Origin (this schema) |
+| [use_ssl](#use_ssl) | `boolean` | Optional  | No | Origin (this schema) |
+| [weight](#weight) | `integer` | Optional  | No | Origin (this schema) |
 
 ## address
 

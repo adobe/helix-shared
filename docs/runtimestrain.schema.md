@@ -18,20 +18,21 @@ A runtime strain is a combination of code and content that enables the creation 
 
 # Runtime Strain Properties
 
-| Property | Type | Required | Default | Defined by |
-|----------|------|----------|---------|------------|
-| [code](#code) | complex | **Required** |  | Runtime Strain (this schema) |
-| [condition](#condition) | `string` | Optional |  | Runtime Strain (this schema) |
-| [content](#content) | complex | **Required** |  | Runtime Strain (this schema) |
-| [directoryIndex](#directoryindex) | `string` | Optional | `"index.html"` | Runtime Strain (this schema) |
-| [package](#package) | `string` | Optional |  | Runtime Strain (this schema) |
-| [params](#params) | `string[]` | Optional |  | Runtime Strain (this schema) |
-| [perf](#perf) | Runtime Strain | Optional |  | Runtime Strain (this schema) |
-| [redirects](#redirects) | Redirect Rule | Optional |  | Runtime Strain (this schema) |
-| [static](#static) | complex | **Required** |  | Runtime Strain (this schema) |
-| [sticky](#sticky) | `boolean` | Optional |  | Runtime Strain (this schema) |
-| [url](#url) | `string` | Optional |  | Runtime Strain (this schema) |
-| [urls](#urls) | `string[]` | Optional |  | Runtime Strain (this schema) |
+| Property | Type | Required | Nullable | Default | Defined by |
+|----------|------|----------|----------|---------|------------|
+| [code](#code) | complex | **Required**  | No |  | Runtime Strain (this schema) |
+| [condition](#condition) | `string` | Optional  | No |  | Runtime Strain (this schema) |
+| [content](#content) | complex | **Required**  | No |  | Runtime Strain (this schema) |
+| [directoryIndex](#directoryindex) | `string` | Optional  | No | `"index.html"` | Runtime Strain (this schema) |
+| [name](#name) | `string` | **Required**  | No |  | Runtime Strain (this schema) |
+| [package](#package) | `string` | Optional  | No |  | Runtime Strain (this schema) |
+| [params](#params) | `string[]` | Optional  | No |  | Runtime Strain (this schema) |
+| [perf](#perf) | Runtime Strain | Optional  | No |  | Runtime Strain (this schema) |
+| [redirects](#redirects) | Redirect Rule | Optional  | No |  | Runtime Strain (this schema) |
+| [static](#static) | complex | **Required**  | No |  | Runtime Strain (this schema) |
+| [sticky](#sticky) | `boolean` | Optional  | No |  | Runtime Strain (this schema) |
+| [url](#url) | `string` | Optional  | No |  | Runtime Strain (this schema) |
+| [urls](#urls) | `string[]` | Optional  | No |  | Runtime Strain (this schema) |
 
 ## code
 
@@ -136,6 +137,27 @@ Name of the resource to use for requests to directories (no extension).
 * defined in this schema
 
 ### directoryIndex Type
+
+
+`string`
+
+
+
+
+
+
+
+## name
+
+Name of the strain
+
+`name`
+
+* is **required**
+* type: `string`
+* defined in this schema
+
+### name Type
 
 
 `string`
