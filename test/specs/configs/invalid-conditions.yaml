@@ -10,12 +10,14 @@ definitions:
       static: *myrepo
 
 strains:
-  default:
+  -
+    name: default
     <<: *basestrain
     condition:
       url: https://www.example.com
 
-  sticky:
+  -
+    name: sticky
     <<: *basestrain
     sticky: true
     static:
@@ -26,14 +28,16 @@ strains:
       not:
         url: https://www.example.com
   
-  orcondition:
+  -
+    name: orcondition
     <<: *basestrain
     condition:
       or:
         - url: https://www.example.com
         - url: https://www.example.com
 
-  andcondition:
+  -
+    name: andcondition
     <<: *basestrain
     condition:
       and:
@@ -41,7 +45,8 @@ strains:
         url.path: /
         client_lat>: 45
 
-  conditions:
+  - 
+    name: conditions
     <<: *basestrain
     condition:
       and:
