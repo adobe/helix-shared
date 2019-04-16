@@ -12,9 +12,7 @@
 
 const URI = require('uri-js');
 const YAML = require('yaml');
-const YAML_MAP = require('yaml/map').default;
-const YAML_PAIR = require('yaml/pair').default;
-const YAML_SEQ = require('yaml/seq').default;
+const { YAMLMap, Pair } = require('yaml/types');
 
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin.js');
@@ -27,15 +25,15 @@ const utils = require('./utils.js');
  * Strain
  */
 class Strain {
-  constructor(name, cfg) {
-    this._name = name;
+  constructor(cfg) {
+    this._name = cfg.name;
     if (cfg.origin) {
       // proxy
       this._origin = new Origin(cfg.origin);
     } else {
       this._origin = null;
-      this._content = new GitUrl(cfg.content);
-      this._code = new GitUrl(cfg.code);
+      this._content = new GitUrl(cfg.content, { ref: 'master' });
+      this._code = new GitUrl(cfg.code, { ref: 'master' });
       // todo: 1. do we still need whilelists?
       this._static = new Static(cfg.static);
       // detect changes in static URL
@@ -68,6 +66,7 @@ class Strain {
     // define them initially, and clear for alias node
     // todo: improve
     this._ownProperties = new Set([
+      'name',
       'origin',
       'code',
       'content',
@@ -84,7 +83,7 @@ class Strain {
   }
 
   clone() {
-    const strain = new Strain(this.name, this.toJSON({ keepFormat: true }));
+    const strain = new Strain(this.toJSON({ keepFormat: true }));
     if (this._directoryIndex) {
       // this is a bit a hack...consider a better binding
       // eslint-disable-next-line no-underscore-dangle
@@ -224,6 +223,7 @@ class Strain {
    */
   toJSON(opts) {
     const json = {
+      name: this.name,
       sticky: this.sticky,
       condition: this.condition,
       perf: this.perf.toJSON(opts),
@@ -257,22 +257,12 @@ class Strain {
   }
 
   _modified(propertyName, propertyValue) {
-    if (this._yamlNode) {
-      if (propertyName && propertyValue) {
-        this._ownProperties.add(propertyName);
-      }
+    if (propertyName && propertyValue) {
+      this._ownProperties.add(propertyName);
+    }
 
-      let node = this._yamlNode.value;
-      if (node.type === 'ALIAS') {
-        // convert to merge first
-        const seq = new YAML_SEQ();
-        seq.items.push(node);
-        const merge = new YAML_PAIR('<<', node);
-        merge.type = 'MERGE_PAIR';
-        node = new YAML_MAP();
-        node.items.push(merge);
-        this._yamlNode.value = node;
-      }
+    if (this._yamlNode) {
+      const node = this._yamlNode;
       this._ownProperties.forEach((key) => {
         const idx = node.items.findIndex(i => i.key === key
           || (i.key.value && i.key.value === key));
@@ -291,7 +281,7 @@ class Strain {
               item.value = value;
             }
           } else {
-            node.items.push(new YAML_PAIR(key, value));
+            node.items.push(new Pair(key, value));
           }
         } else if (idx >= 0) {
           node.items.splice(idx, 1);
@@ -310,13 +300,13 @@ class Strain {
 
   static fromYAMLNode(node) {
     /* eslint-disable no-underscore-dangle */
-    const json = node.value.toJSON();
-    const strain = new Strain(node.key.value, json);
+    const json = node.toJSON();
+    const strain = new Strain(json);
     strain._yamlNode = node;
     strain._ownProperties.clear();
-    if (node.value.type === 'MAP') {
+    if (node.type === 'MAP') {
       // remember our 'own' properties
-      node.value.items.forEach((pair) => {
+      node.items.forEach((pair) => {
         strain._ownProperties.add(pair.key.value);
       });
       strain._ownProperties.delete('<<');
@@ -327,7 +317,7 @@ class Strain {
 
   toYAMLNode() {
     if (!this._yamlNode) {
-      this._yamlNode = new YAML_PAIR(this.name, new YAML_MAP());
+      this._yamlNode = new YAMLMap();
       this._modified();
     }
     return this._yamlNode;

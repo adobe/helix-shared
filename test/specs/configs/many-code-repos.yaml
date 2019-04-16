@@ -22,21 +22,22 @@ definitions:
       static: *myrepo
 
 strains:
-  default: *basestrain
+  - name: default
+    <<: *basestrain
 
-  dev:
+  - name: dev
     <<: *basestrain
     code: https://github.com/adobe/project-helix.io.git#dev
 
-  dev2:
+  - name: dev2
     <<: *basestrain
     content: https://github.com/adobe/project-helix.io-v2.git
     code: ssh://git@github.com/adobe/project-helix.io.git#dev
 
-  stage:
+  - name: stage
     <<: *basestrain
     code: https://github.com/adobe/project-helix.io.git#stage
 
-  proxy:
+  - name: proxy
     origin: https://www.adobe.io/
     condition: req.http.host == "proxy.project-helix.io"

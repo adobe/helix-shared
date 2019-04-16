@@ -117,6 +117,33 @@ describe('GitUrl from string tests', () => {
     });
   });
 
+  it('ref in defaults', () => {
+    const url = new GitUrl('http://git.example.com:1234/company/repository.git/docs/main', { ref: 'myref' });
+    assert.equal(url.protocol, 'http');
+    assert.equal(url.hostname, 'git.example.com');
+    assert.equal(url.port, '1234');
+    assert.equal(url.host, 'git.example.com:1234');
+    assert.equal(url.owner, 'company');
+    assert.equal(url.repo, 'repository');
+    assert.equal(url.path, '/docs/main');
+    assert.equal(url.ref, 'myref');
+    assert.equal(url.raw, 'http://raw.git.example.com:1234/company/repository/myref');
+    assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
+    assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
+    assert.equal(url.toString(), 'http://git.example.com:1234/company/repository.git/docs/main#myref');
+    assert.equal(url.isLocal, false);
+    assert.deepEqual(url.toJSON(), {
+      protocol: 'http',
+      host: 'git.example.com:1234',
+      hostname: 'git.example.com',
+      owner: 'company',
+      path: '/docs/main',
+      port: '1234',
+      ref: 'myref',
+      repo: 'repository',
+    });
+  });
+
   it('No Path', () => {
     const url = new GitUrl('http://git.example.com:1234/company/repository.git#products/v2');
     assert.equal(url.protocol, 'http');
@@ -138,6 +165,33 @@ describe('GitUrl from string tests', () => {
       hostname: 'git.example.com',
       owner: 'company',
       path: '',
+      port: '1234',
+      ref: 'products/v2',
+      repo: 'repository',
+    });
+  });
+
+  it('path in defaults', () => {
+    const url = new GitUrl('http://git.example.com:1234/company/repository.git#products/v2', { path: '/foo' });
+    assert.equal(url.protocol, 'http');
+    assert.equal(url.hostname, 'git.example.com');
+    assert.equal(url.port, '1234');
+    assert.equal(url.host, 'git.example.com:1234');
+    assert.equal(url.owner, 'company');
+    assert.equal(url.repo, 'repository');
+    assert.equal(url.path, '/foo');
+    assert.equal(url.ref, 'products/v2');
+    assert.equal(url.raw, 'http://raw.git.example.com:1234/company/repository/products/v2');
+    assert.equal(url.rawRoot, 'http://raw.git.example.com:1234');
+    assert.equal(url.apiRoot, 'http://api.git.example.com:1234');
+    assert.equal(url.toString(), 'http://git.example.com:1234/company/repository.git/foo#products/v2');
+    assert.equal(url.isLocal, false);
+    assert.deepEqual(url.toJSON(), {
+      protocol: 'http',
+      host: 'git.example.com:1234',
+      hostname: 'git.example.com',
+      owner: 'company',
+      path: '/foo',
       port: '1234',
       ref: 'products/v2',
       repo: 'repository',

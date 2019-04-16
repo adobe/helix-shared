@@ -18,6 +18,10 @@
   "description": "A runtime strain is a combination of code and content that enables the creation of a digital experience.",
   "additionalProperties": false,
   "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the strain"
+    },
     "code": {
       "description": "Pointer to the code repository",
       "oneOf": [
@@ -104,6 +108,7 @@
   "required": [
     "code",
     "content",
-    "static"
+    "static",
+    "name"
   ]
 }

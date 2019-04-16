@@ -20,15 +20,57 @@
     "properties": {
         "device": {
             "description": "Testing device",
-            "type": "string"
+            "enum": [
+                "",
+                "MotorolaMotoG4",
+                "iPhone5",
+                "iPhone6",
+                "iPhone6Plus",
+                "iPhone7",
+                "iPhone8",
+                "Nexus5X",
+                "Nexus6P",
+                "GalaxyS5",
+                "iPad",
+                "iPadPro"
+            ]
         },
         "location": {
             "description": "Testing location",
-            "type": "string"
+            "enum": [
+                "",
+                "NorthVirginia",
+                "Frankfurt",
+                "Sydney",
+                "Ohio",
+                "California",
+                "Oregon",
+                "Canada",
+                "Ireland",
+                "Tokyo",
+                "Seoul",
+                "Singapore",
+                "Mumbai",
+                "SaoPaulo",
+                "London"
+            ]
         },
         "connection": {
             "description": "Testing connection",
-            "type": "string"
+            "enum": [
+                "",
+                "regular2G",
+                "good2G",
+                "slow3G",
+                "regular3G",
+                "good3G",
+                "emergingMarkets",
+                "regular4G",
+                "LTE",
+                "dsl",
+                "wifi",
+                "cable"
+            ]
         },
         "lighthouse-seo-score": {
             "type": "number",

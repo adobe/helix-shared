@@ -146,6 +146,28 @@
 // GENERIC FUNCTIONAL PROGRAMMING ////////////////////////////
 
 /**
+ * Checks whether a value is defined.
+ * This function considers all values that are not null
+ * and not undefined to be defined
+ */
+const isdef = v => v !== undefined && v !== null;
+
+/**
+ * Determine type of an object.
+ * Like obj.constructor, but won't fail
+ * for null/undefined and just returns the
+ * value itself for those.
+ */
+const type = v => (isdef(v) ? v.constructor : v);
+
+/**
+ * Given a type, determine it's name.
+ * This is useful as a replacement for val.constructor.name,
+ * since this can deal with null and undefined.
+ */
+const typename = t => (isdef(t) ? t.name : `${t}`);
+
+/**
  * Immediately execute the given function.
  * Mostly used as a way to open a scope.
  */
@@ -351,12 +373,12 @@ const Size = Symbol('Size');
  * @returns {Number}
  */
 const size = (val) => {
-  if (size.impl.has(val.constructor)) {
-    return size.impl.get(val.constructor)(val);
-  } else if (val[Size]) {
+  if (size.impl.has(type(val))) {
+    return size.impl.get(type(val))(val);
+  } else if (isdef(val) && val[Size]) {
     return val[Size]();
   } else {
-    throw new SizeNotImplemented(`No implementation of Size for '${val.toString()}' of type '${val.constructor.name}'`);
+    throw new SizeNotImplemented(`No implementation of Size for '${val}' of type '${typename(type(val))}'`);
   }
 };
 
@@ -395,12 +417,12 @@ const iter = (obj) => {
       yield [key, obj[key]];
     }
   }
-  if (obj[Symbol.iterator]) {
+  if (isdef(obj) && obj[Symbol.iterator]) {
     return obj[Symbol.iterator]();
-  } else if (obj.constructor === Object) {
+  } else if (type(obj) === Object) {
     return objIter(obj);
   } else {
-    throw new SequenceNotImplemented(`The iterator protocol is not implemented for ${obj} of type ${obj.constructor}`);
+    throw new SequenceNotImplemented(`The iterator protocol is not implemented for ${obj} of type ${typename(type(obj))}`);
   }
 };
 
@@ -585,6 +607,30 @@ const list = seq => Array.from(iter(seq));
 const uniq = seq => new Set(iter(seq));
 
 /**
+ * Turns any sequence into an es6 map
+ * This is particularly useful for constructing es7 maps from objects...
+ */
+const dict = (seq) => {
+  const r = new Map();
+  each(seq, (pair) => {
+    const [key, value] = iter(pair);
+    r.set(key, value);
+  });
+  return r;
+};
+
+/** Turns any sequence into an object */
+const obj = (seq) => {
+  const r = {};
+  each(seq, (pair) => {
+    const [key, value] = iter(pair);
+    r[key] = value;
+  });
+  return r;
+};
+
+
+/**
  * Convert each element from a sequence into a string
  * and join them with the given separator.
  */
@@ -670,27 +716,22 @@ const join = curry('join', (seq, sep) => list(seq).join(sep));
  * @param {Type} type The type to turn the sequence into
  * @returns {type} The newly constructed value!
  */
-const into = curry('into', (seq, type) => into.impl.get(type)(seq));
+const into = curry('into', (seq, t) => {
+  const impl = into.impl.get(t);
+  if (isdef(impl)) {
+    return impl(seq);
+  } else {
+    throw new IntoNotImplemented(`into() is not implemented for type ${t && t.name}`);
+  }
+});
 into.impl = new Map();
 into.impl.set(Array, list);
 into.impl.set(String, join(''));
 into.impl.set(Set, uniq);
-into.impl.set(Map, (seq) => {
-  const r = new Map();
-  each(seq, (pair) => {
-    const [key, value] = iter(pair);
-    r.set(key, value);
-  });
-  return r;
-});
-into.impl.set(Object, (seq) => {
-  const r = {};
-  each(seq, (pair) => {
-    const [key, value] = iter(pair);
-    r[key] = value;
-  });
-  return r;
-});
+into.impl.set(Map, dict);
+into.impl.set(Object, obj);
+
+class IntoNotImplemented extends TraitNotImplemented {}
 
 /**
  * Combine all the values from a sequence into one value.
@@ -792,6 +833,12 @@ const filter = curry('filter', function* filter(seq, fn) {
 });
 
 /**
+ * Opposite of filter: Removes values from the sequence if the function
+ * returns true.
+ */
+const reject = curry('reject', (seq, fn) => filter(seq, v => !fn(v)));
+
+/**
  * Reverse a given sequence
  * @param {Sequence} seq Any sequence for which iter() is defined
  * @returns {Array}
@@ -828,7 +875,7 @@ function* enumerate(seq) {
  */
 const trySkip = curry('trySkip', (seq, no) => {
   const it = iter(seq);
-  each(range(0, no), () => it.next());
+  each(range0(no), () => it.next());
   return it;
 });
 
@@ -884,6 +931,19 @@ const tryTake = curry('tryTake', function* tryTake(seq, no) {
     }
     yield v;
   }
+});
+
+/**
+ * Version of tryTake that will throw IteratorEnded
+ * if the given iterable is too short.
+ * @returns {Array}
+ */
+const take = curry('take', (seq, no) => {
+  const r = list(tryTake(seq, no));
+  if (size(r) < no) {
+    throw new IteratorEnded();
+  }
+  return r;
 });
 
 /**
@@ -1007,6 +1067,9 @@ const zipLeast = seqs => pipe(
   map(list),
 );
 
+/** Curryable version of zipLeast */
+const zipLeast2 = curry('zipLeast2', (a, b) => zipLeast([a, b]));
+
 /**
  * Zip multiple sequences.
  * Puts all the first values from sequences into one sublist;
@@ -1028,6 +1091,9 @@ function* zip(seqs) {
   }
 }
 
+/** Curryable version of zip */
+const zip2 = curry('zip2', (a, b) => zip([a, b]));
+
 /**
  * Zip multiple sequences.
  * Puts all the first values from sequences into one sublist;
@@ -1046,7 +1112,129 @@ const zipLongest = curry('zipLongest', (seqs, fallback) => pipe(
   map(list),
 ));
 
+/** Curryable version of zipLongest */
+const zipLongest2 = curry('zipLongest2', (a, b, fallback) => zipLongest([a, b], fallback));
+
+/**
+ * Forms a sliding window on the underlying iterator.
+ *
+ * `slidingWindow([1,2,3,4,5], 3)`
+ * yields `[[1,2,3], [2,3,4], [3,4,5]]`
+ *
+ * Will throw IteratorEnded if the sequence is shorter than
+ * the given window.
+ *
+ * @param {Sequence} seq A sequence of sequences
+ * @returns {Iterator} Iterator of lists
+ */
+const slidingWindow = curry('slidingWindow', (seq, no) => {
+  const it = iter(seq);
+  const cache = [];
+  each(range0(no), () => cache.push(next(it)));
+
+  // By making just this part a generator we make
+  // sure that an error while filling the cache
+  // above is thrown early
+  function* slidingWindowImpl() {
+    yield list(cache);
+    for (const v of it) {
+      cache.shift();
+      cache.push(v);
+      yield list(cache);
+    }
+  }
+
+  return slidingWindowImpl();
+});
+
+/**
+ * Like slidingWindow, but returns an empty sequence if the given
+ * sequence is too short.
+ */
+const trySlidingWindow = curry('trySlidingWindow', function* trySlidingWindow(seq, no) {
+  const it = iter(seq);
+  const cache = [];
+  for (let idx = 0; idx < no; idx += 1) {
+    const { value, done } = it.next();
+    if (done) {
+      return;
+    }
+    cache.push(value);
+  }
+
+  yield list(cache);
+  for (const v of it) {
+    cache.shift();
+    cache.push(v);
+    yield list(cache);
+  }
+});
+
+/**
+ * Almost like trySlidingWindow, but makes sure that
+ * every element from the sequence gets it's own subarray,
+ * even the last element. The arrays at the end are filled
+ * with the filler value to make sure they have the correct
+ * length.
+ *
+ * ```
+ * lookahead([], 3, null) # => []
+ * lookahead([42], 3, null) # => [[42, null, null, null]]
+ * lookahead([42, 23], 3, null) # => [[42, 23, null, null], [23, null, null, null]]
+ * lookahead([42, 23], 0, null) # => [[42], [23]]
+ * ```
+ *
+ * Try sliding window would yield an empty array in each of the examples
+ * above.
+ */
+const lookahead = curry('lookahead', (seq, no, filler) => {
+  const filled = concat(seq, take(repeat(filler), no));
+  return trySlidingWindow(filled, no + 1);
+});
+
+// TRANSFORMING NON SEQUENCES ////////////////////////////////
+
+/**
+ * Modify/Transform the given value.
+ *
+ * Applys the given value to the given function; after the return
+ * value is known, that return value is converted into the type
+ * of the given parameter.
+ *
+ * ```
+ * const s = new Set([1,2,3,4]);
+ * const z = mod1(s, map(plus(1))); # => new Set([2,3,4,5]),
+ * assert(z.constructor === Set)
+ * ```
+ *
+ * @param {Any} v The value to transform
+ * @param {Function} Fn The transformation function
+ * @returns {typeof v}
+ */
+const mod = curry('mod', (v, fn) => into(type(v))(fn(v)));
+
+/**
+ * Combine multiple map/set like objects.
+ *
+ * The return type is always the type of the first value.
+ * Internally this just concatenates the values from all
+ * parameters and then uses into to convert the values back
+ * to the original type.
+ *
+ * `union({a: 42, b: 23}, new Map([['b', 99]]))` => `{a: 42, b: 99}`
+ * `union(new Set(1,2,3,4), [4,6,99])` => `new Set([1,2,3,4,6,99])`AA
+ *
+ * Takes any number of values to combine.
+ */
+const union = (fst, ...args) => into(type(fst))(concat(fst, ...args));
+
+/** Curryable version of union */
+const union2 = curry('union2', (a, b) => union(a, b));
+
 module.exports = {
+  isdef,
+  type,
+  typename,
   exec,
   identity,
   compose,
@@ -1065,6 +1253,8 @@ module.exports = {
   aint,
   plus,
   mul,
+  TraitNotImplemented,
+  SizeNotImplemented,
   Size,
   size,
   empty,
@@ -1086,7 +1276,10 @@ module.exports = {
   list,
   uniq,
   join,
+  dict,
+  obj,
   into,
+  IntoNotImplemented,
   foldl,
   foldr,
   any,
@@ -1095,12 +1288,14 @@ module.exports = {
   product,
   map,
   filter,
+  reject,
   reverse,
   enumerate,
   trySkip,
   skip,
   skipWhile,
   tryTake,
+  take,
   takeWhile,
   takeUntilVal,
   takeDef,
@@ -1112,4 +1307,13 @@ module.exports = {
   zipLeast,
   zip,
   zipLongest,
+  zipLeast2,
+  zip2,
+  zipLongest2,
+  slidingWindow,
+  trySlidingWindow,
+  lookahead,
+  mod,
+  union,
+  union2,
 };

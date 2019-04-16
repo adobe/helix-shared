@@ -6,6 +6,9 @@ executors:
     environment:
       NPM_CONFIG_PREFIX: ~/.npm-global
 
+orbs:
+  helix-smoke-tests: adobe/helix-smoke-tests@0.0.7
+
 commands:
   setup:
     steps:
@@ -81,3 +84,8 @@ workflows:
         filters:
           branches:
             only: master
+  smoke:
+    jobs:
+    - helix-smoke-tests/run:
+        token: ${SMOKE_TEST_TOKEN}
+        remote_repo: adobe/helix-continuous

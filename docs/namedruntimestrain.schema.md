@@ -2,37 +2,37 @@
 # Runtime Strain Schema
 
 ```
-https://ns.adobe.com/helix/shared/runtimestrain
+https://ns.adobe.com/helix/shared/namedruntimestrain
 ```
 
 A runtime strain is a combination of code and content that enables the creation of a digital experience.
 
 | Abstract | Extensible | Status | Identifiable | Custom Properties | Additional Properties | Defined In |
 |----------|------------|--------|--------------|-------------------|-----------------------|------------|
-| Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [runtimestrain.schema.json](runtimestrain.schema.json) |
+| Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [namedruntimestrain.schema.json](namedruntimestrain.schema.json) |
 ## Schema Hierarchy
 
-* Runtime Strain `https://ns.adobe.com/helix/shared/runtimestrain`
+* Runtime Strain `https://ns.adobe.com/helix/shared/namedruntimestrain`
   * [Runtime Strain](performance.schema.md) `https://ns.adobe.com/helix/shared/performance`
 
 
 # Runtime Strain Properties
 
-| Property | Type | Required | Nullable | Default | Defined by |
-|----------|------|----------|----------|---------|------------|
-| [code](#code) | complex | **Required**  | No |  | Runtime Strain (this schema) |
-| [condition](#condition) | complex | Optional  | No |  | Runtime Strain (this schema) |
-| [content](#content) | complex | **Required**  | No |  | Runtime Strain (this schema) |
-| [directoryIndex](#directoryindex) | `string` | Optional  | No | `"index.html"` | Runtime Strain (this schema) |
-| [name](#name) | `string` | **Required**  | No |  | Runtime Strain (this schema) |
-| [package](#package) | `string` | Optional  | No |  | Runtime Strain (this schema) |
-| [params](#params) | `string[]` | Optional  | No |  | Runtime Strain (this schema) |
-| [perf](#perf) | Runtime Strain | Optional  | No |  | Runtime Strain (this schema) |
-| [redirects](#redirects) | Redirect Rule | Optional  | No |  | Runtime Strain (this schema) |
-| [static](#static) | complex | **Required**  | No |  | Runtime Strain (this schema) |
-| [sticky](#sticky) | `boolean` | Optional  | No |  | Runtime Strain (this schema) |
-| [url](#url) | `string` | Optional  | No |  | Runtime Strain (this schema) |
-| [urls](#urls) | `string[]` | Optional  | No |  | Runtime Strain (this schema) |
+| Property | Type | Required | Default | Defined by |
+|----------|------|----------|---------|------------|
+| [code](#code) | complex | **Required** |  | Runtime Strain (this schema) |
+| [condition](#condition) | `string` | Optional |  | Runtime Strain (this schema) |
+| [content](#content) | complex | **Required** |  | Runtime Strain (this schema) |
+| [directoryIndex](#directoryindex) | `string` | Optional | `"index.html"` | Runtime Strain (this schema) |
+| [name](#name) | `string` | **Required** |  | Runtime Strain (this schema) |
+| [package](#package) | `string` | Optional |  | Runtime Strain (this schema) |
+| [params](#params) | `string[]` | Optional |  | Runtime Strain (this schema) |
+| [perf](#perf) | Runtime Strain | Optional |  | Runtime Strain (this schema) |
+| [redirects](#redirects) | Redirect Rule | Optional |  | Runtime Strain (this schema) |
+| [static](#static) | complex | **Required** |  | Runtime Strain (this schema) |
+| [sticky](#sticky) | `boolean` | Optional |  | Runtime Strain (this schema) |
+| [url](#url) | `string` | Optional |  | Runtime Strain (this schema) |
+| [urls](#urls) | `string[]` | Optional |  | Runtime Strain (this schema) |
 
 ## code
 
@@ -76,27 +76,14 @@ VLC condition that controls that can optionally activate this strain.
 `condition`
 
 * is optional
-* type: complex
+* type: `string`
 * defined in this schema
 
 ### condition Type
 
 
-**One** of the following *conditions* need to be fulfilled.
-
-
-#### Condition 1
-
-
 `string`
 
-
-
-
-#### Condition 2
-
-
-* []() – `https://ns.adobe.com/helix/shared/conditions`
 
 
 

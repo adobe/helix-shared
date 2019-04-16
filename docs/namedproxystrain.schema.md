@@ -2,33 +2,33 @@
 # Proxy Strain Schema
 
 ```
-https://ns.adobe.com/helix/shared/proxystrain
+https://ns.adobe.com/helix/shared/namedproxystrain
 ```
 
 A strain is a combination of code and content that enables the creation of a digital experience. Strains can be used to create language variants of websites, A/B tests, personalization, or to aggregate content from multiple sources
 
 | Abstract | Extensible | Status | Identifiable | Custom Properties | Additional Properties | Defined In |
 |----------|------------|--------|--------------|-------------------|-----------------------|------------|
-| Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [proxystrain.schema.json](proxystrain.schema.json) |
+| Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [namedproxystrain.schema.json](namedproxystrain.schema.json) |
 ## Schema Hierarchy
 
-* Proxy Strain `https://ns.adobe.com/helix/shared/proxystrain`
+* Proxy Strain `https://ns.adobe.com/helix/shared/namedproxystrain`
   * [Runtime Strain](performance.schema.md) `https://ns.adobe.com/helix/shared/performance`
 
 
 # Proxy Strain Properties
 
-| Property | Type | Required | Nullable | Defined by |
-|----------|------|----------|----------|------------|
-| [condition](#condition) | complex | Optional  | No | Proxy Strain (this schema) |
-| [name](#name) | `string` | **Required**  | No | Proxy Strain (this schema) |
-| [origin](#origin) | complex | **Required**  | No | Proxy Strain (this schema) |
-| [params](#params) | `string[]` | Optional  | No | Proxy Strain (this schema) |
-| [perf](#perf) | Runtime Strain | Optional  | No | Proxy Strain (this schema) |
-| [redirects](#redirects) | Redirect Rule | Optional  | No | Proxy Strain (this schema) |
-| [sticky](#sticky) | `boolean` | Optional  | No | Proxy Strain (this schema) |
-| [url](#url) | `string` | Optional  | No | Proxy Strain (this schema) |
-| [urls](#urls) | `string[]` | Optional  | No | Proxy Strain (this schema) |
+| Property | Type | Required | Defined by |
+|----------|------|----------|------------|
+| [condition](#condition) | `string` | Optional | Proxy Strain (this schema) |
+| [name](#name) | `string` | **Required** | Proxy Strain (this schema) |
+| [origin](#origin) | complex | **Required** | Proxy Strain (this schema) |
+| [params](#params) | `string[]` | Optional | Proxy Strain (this schema) |
+| [perf](#perf) | Runtime Strain | Optional | Proxy Strain (this schema) |
+| [redirects](#redirects) | Redirect Rule | Optional | Proxy Strain (this schema) |
+| [sticky](#sticky) | `boolean` | Optional | Proxy Strain (this schema) |
+| [url](#url) | `string` | Optional | Proxy Strain (this schema) |
+| [urls](#urls) | `string[]` | Optional | Proxy Strain (this schema) |
 
 ## condition
 
@@ -37,27 +37,14 @@ VLC condition that controls that can optionally activate this strain.
 `condition`
 
 * is optional
-* type: complex
+* type: `string`
 * defined in this schema
 
 ### condition Type
 
 
-**One** of the following *conditions* need to be fulfilled.
-
-
-#### Condition 1
-
-
 `string`
 
-
-
-
-#### Condition 2
-
-
-* []() – `https://ns.adobe.com/helix/shared/conditions`
 
 
 

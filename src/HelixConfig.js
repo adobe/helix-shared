@@ -117,6 +117,16 @@ class HelixConfig {
   }
 
   async validate() {
+    // convert strains-map to array if needed (see https://github.com/adobe/helix-shared/issues/71)
+    if (typeof this._cfg.strains === 'object' && !Array.isArray(this._cfg.strains)) {
+      this._cfg.strains = Object.keys(this._cfg.strains).map((name) => {
+        const strain = this._cfg.strains[name];
+        strain.name = name;
+        return strain;
+      });
+      // invalidate yaml document
+      this._document = null;
+    }
     new ConfigValidator().assetValid(this._cfg);
   }
 
@@ -131,8 +141,8 @@ class HelixConfig {
       // strains.length is always > 0, since JSON schema mandates a strains object
       this._strains.fromYAML(strains[0].value);
     } else {
-      Object.keys(this._cfg.strains).forEach((name) => {
-        this._strains.add(new Strain(name, this._cfg.strains[name]));
+      this._cfg.strains.forEach((strain) => {
+        this._strains.add(new Strain(strain));
       });
     }
     return this;

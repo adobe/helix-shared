@@ -24,4 +24,5 @@ definitions:
       static: *myrepo
 
 strains:
-  default: *basestrain
+  - name: default
+    <<: *basestrain

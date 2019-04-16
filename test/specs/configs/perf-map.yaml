@@ -14,12 +14,12 @@ definitions:
     static: https://github.com/adobe/project-helix.io.git
 
 strains:
-  - name: default
+  default:
     <<: *default
     perf:
       location: Oregon
 
-  - name: client
+  client:
     <<: *default
     perf:
       device: iPhone8

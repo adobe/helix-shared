@@ -10,33 +10,66 @@
         "OF ANY KIND, either express or implied. See the License for the specific language",
         "governing permissions and limitations under the License."
     ],
-    "$id": "https://ns.adobe.com/helix/shared/proxystrain",
+    "$id": "https://ns.adobe.com/helix/shared/namedruntimestrain",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Proxy Strain",
+    "title": "Runtime Strain",
     "type": "object",
     "meta:status": "stabilizing",
-    "description": "A strain is a combination of code and content that enables the creation of a digital experience. Strains can be used to create language variants of websites, A/B tests, personalization, or to aggregate content from multiple sources",
+    "description": "A runtime strain is a combination of code and content that enables the creation of a digital experience.",
     "additionalProperties": false,
     "properties": {
         "name": {
             "type": "string",
             "description": "Name of the strain"
         },
-        "origin": {
-            "description": "Origin backend for proxy strains.",
-            "anyOf": [
+        "code": {
+            "description": "Pointer to the code repository",
+            "oneOf": [
                 {
                     "type": "string",
                     "format": "uri"
                 },
                 {
-                    "$ref": "https://ns.adobe.com/helix/shared/origin"
+                    "$ref": "https://ns.adobe.com/helix/shared/giturl"
                 }
             ]
+        },
+        "content": {
+            "description": "Pointer to the content repository",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "format": "uri"
+                },
+                {
+                    "$ref": "https://ns.adobe.com/helix/shared/giturl"
+                }
+            ]
+        },
+        "static": {
+            "description": "Pointer to the repository for static resources",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "format": "uri"
+                },
+                {
+                    "$ref": "https://ns.adobe.com/helix/shared/staticgiturl"
+                }
+            ]
+        },
+        "directoryIndex": {
+            "description": "Name of the resource to use for requests to directories (no extension).",
+            "type": "string",
+            "default": "index.html"
         },
         "sticky": {
             "description": "Sticky strains are not re-evaluated on every request. As soon as a visitor is determined to match a sticky strain, a session cookie will be set to keep the user in the strain.",
             "type": "boolean"
+        },
+        "package": {
+            "description": "Name of the action package that renders this strain.",
+            "type": "string"
         },
         "url": {
             "description": "URL condition (note, this will be merged into a more general condition language)",
@@ -44,7 +77,7 @@
             "format": "uri"
         },
         "urls": {
-            "description": "URL condition (note, this will be merged into a more general condition language)",
+            "description": "List of known URLs for testing this strain",
             "type": "array",
             "items": {
                 "type": "string",
@@ -53,14 +86,7 @@
         },
         "condition": {
             "description": "VLC condition that controls that can optionally activate this strain.",
-            "oneOf": [
-                {
-                    "type": "string"
-                },
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/conditions"
-                }
-            ]
+            "type": "string"
         },
         "perf": {
             "$ref": "https://ns.adobe.com/helix/shared/performance"
@@ -81,7 +107,9 @@
         }
     },
     "required": [
-        "origin",
+        "code",
+        "content",
+        "static",
         "name"
     ]
 }

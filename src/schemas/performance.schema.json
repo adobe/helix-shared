@@ -20,62 +20,110 @@
   "properties": {
     "device": {
       "description": "Testing device",
-      "type": "string"
+      "enum": [
+        "",
+        "MotorolaMotoG4",
+        "iPhone5",
+        "iPhone6",
+        "iPhone6Plus",
+        "iPhone7",
+        "iPhone8",
+        "Nexus5X",
+        "Nexus6P",
+        "GalaxyS5",
+        "iPad",
+        "iPadPro"
+      ]
     },
     "location": {
       "description": "Testing location",
-      "type": "string"
+      "enum": [
+        "",
+        "NorthVirginia",
+        "Frankfurt",
+        "Sydney",
+        "Ohio",
+        "California",
+        "Oregon",
+        "Canada",
+        "Ireland",
+        "Tokyo",
+        "Seoul",
+        "Singapore",
+        "Mumbai",
+        "SaoPaulo",
+        "London"
+      ]
     },
     "connection": {
       "description": "Testing connection",
-      "type": "string"
+      "enum": [
+        "",
+        "regular2G",
+        "good2G",
+        "slow3G",
+        "regular3G",
+        "good3G",
+        "emergingMarkets",
+        "regular4G",
+        "LTE",
+        "dsl",
+        "wifi",
+        "cable"
+      ]
     },
     "lighthouse-seo-score": {
       "type": "number",
       "description": "Lighthouse SEO Score"
     },
-  
+
     "lighthouse-best-practices-score": {
       "type": "number",
       "description": "Lighthouse Best Practices Score"
     },
-  
+
     "lighthouse-accessibility-score": {
       "type": "number",
       "description": "Lighthouse Accessibility Score"
     },
-  
+
     "lighthouse-performance-score": {
       "type": "number",
       "description": "Lighthouse Performance Score"
     },
-  
+
     "lighthouse-pwa-score": {
       "type": "number",
       "description": "Lighthouse Progressive Web App Score"
     },
-  
-    "js-parse-compile": { "type": "number", "description": "JS Parse & Compile" },
+
+    "js-parse-compile": {
+      "type": "number",
+      "description": "JS Parse & Compile"
+    },
     "dom-size": { "type": "number", "description": "DOM Element Count" },
     "visually_complete_85": {
       "type": "number",
       "description": "85% Visually Complete"
     },
-  
-    "visually_complete": { "type": "number", "description": "Visually Complete" },
-  
+
+    "visually_complete": {
+      "type": "number",
+      "description": "Visually Complete"
+    },
+
     "consistently-interactive": {
       "type": "number",
       "description": "Time to Interactive"
     },
-  
+
     "first-interactive": { "type": "number", "description": "First CPU Idle" },
-  
+
     "time-to-first-byte": {
       "type": "number",
       "description": "Time to First Byte"
     },
-  
+
     "estimated-input-latency": {
       "type": "number",
       "description": "Estimated input latency"
@@ -85,7 +133,7 @@
       "type": "number",
       "description": "First Meaningful Paint"
     },
-  
+
     "first-contentful-paint": {
       "type": "number",
       "description": "First Contentful Paint"
@@ -95,68 +143,68 @@
       "type": "number",
       "description": "Total Image size in bytes"
     },
-  
+
     "image_size_in_bytes": {
       "type": "number",
       "description": "Total Image transferred"
     },
-  
+
     "font_body_size_in_bytes": {
       "type": "number",
       "description": "Total Webfont size in bytes"
     },
-  
+
     "font_size_in_bytes": {
       "type": "number",
       "description": "Total Webfont transferred"
     },
-  
+
     "js_body_size_in_bytes": {
       "type": "number",
       "description": "Total JavaScript size in bytes"
     },
-  
+
     "js_size_in_bytes": {
       "type": "number",
       "description": "Total JavaScript Transferred"
     },
-  
+
     "css_body_size_in_bytes": {
       "type": "number",
       "description": "Total CSS size in bytes"
     },
-  
+
     "css_size_in_bytes": {
       "type": "number",
       "description": "Total CSS transferred"
     },
-  
+
     "html_body_size_in_bytes": {
       "type": "number",
       "description": "Total HTML size in bytes"
     },
-  
+
     "html_size_in_bytes": {
       "type": "number",
       "description": "Total HTML transferred"
     },
-  
+
     "page_wait_timing": { "type": "number", "description": "Response time" },
-  
+
     "page_size_in_bytes": {
       "type": "number",
       "description": "Total Page transferred"
     },
-  
+
     "page_body_size_in_bytes": {
       "type": "number",
       "description": "Total Page size in bytes"
     },
-  
+
     "asset_count": { "type": "number", "description": "Number of requests" },
-  
+
     "onload": { "type": "number", "description": "onLoad" },
-  
+
     "oncontentload": { "type": "number", "description": "onContentLoad" }
   }
 }

@@ -27,27 +27,27 @@ const tests = [
     config: 'empty.yaml',
     result: null,
     error: `Error: Invalid configuration:
-A set of strains and a default strain are missing.
 
-data should have required property 'strains'`,
+
+A list of strains and a strain with the name "default" is required.`,
   },
   {
     title: 'fails with no default strain',
     config: 'no-default.yaml',
     result: null,
     error: `Error: Invalid configuration:
-Proxy Strain no-default has unknown property 'code'
-Proxy Strain no-default has unknown property 'content'
-Proxy Strain no-default should have required property 'origin'
-Runtime Strain no-default should have required property 'static'
-Invalid Strain no-default must be either a Runtime Strain or a Proxy Strain
-A default strain is missing.
 
-data.strains['no-default'] should NOT have additional properties, data.strains['no-default'] should NOT have additional properties, data.strains['no-default'] should have required property 'origin', data.strains['no-default'] should have required property 'static', data.strains['no-default'] should match exactly one schema in oneOf, data.strains should have required property 'default'`,
+
+A list of strains and a strain with the name "default" is required.`,
   },
   {
     title: 'loads a full config',
     config: 'full.yaml',
+    result: 'full.json',
+  },
+  {
+    title: 'loads a full config (map style)',
+    config: 'full-map.yaml',
     result: 'full.json',
   },
   {
@@ -62,13 +62,28 @@ data.strains['no-default'] should NOT have additional properties, data.strains['
     result: 'urls.json',
   },
   {
+    title: 'loads config with urls (map style)',
+    config: 'urls-map.yaml',
+    result: 'urls.json',
+  },
+  {
     title: 'loads config with performance',
     config: 'perf.yaml',
     result: 'perf.json',
   },
   {
+    title: 'loads config with performance (map style)',
+    config: 'perf-map.yaml',
+    result: 'perf.json',
+  },
+  {
     title: 'loads config with comments',
-    config: 'various_comments.yaml',
+    config: 'comments.yaml',
+    result: 'comments.json',
+  },
+  {
+    title: 'loads config with comments (map style)',
+    config: 'comments-map.yaml',
     result: 'comments.json',
   },
 ];
@@ -160,7 +175,7 @@ describe('Helix Config Serializing', () => {
     cfg.strains.get('default').package = 'bfbde5fbfbde5fbfbde5f';
     await cfg.saveConfig();
 
-    const actual = await fs.readFile(testCfg);
+    const actual = await fs.readFile(testCfg, 'utf-8');
     const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-package.yaml'), 'utf-8');
 
     assert.equal(actual, expected);
@@ -172,7 +187,8 @@ describe('Helix Config Serializing', () => {
       .withSource(source)
       .init();
 
-    cfg.strains.add(new Strain('foo', {
+    cfg.strains.add(new Strain({
+      name: 'foo',
       code: {
         owner: 'adobe',
         repo: 'helix-shared',
@@ -192,7 +208,8 @@ describe('Helix Config Serializing', () => {
       .withSource(source)
       .init();
 
-    cfg.strains.add(new Strain('foo', {
+    cfg.strains.add(new Strain({
+      name: 'foo',
       code: {
         owner: 'adobe',
         repo: 'helix-shared',

@@ -15,18 +15,44 @@
 
 const assert = require('assert');
 const {
-  identity, compose, composeSeq, pipe, withFunctionName, curry,
+  type, identity, compose, composeSeq, pipe, withFunctionName, curry,
   and, or, not, nand, nor, xor, xnor, is, aint, plus, mul, Size,
   SizeNotImplemented, size, empty, SequenceNotImplemented, iter,
   range, range0, repeat, extend, extend1, flattenTree,
   IteratorEnded, next, nth, first, second, each, count, list,
-  uniq, join, into, foldl, foldr, any, all, sum, product, map,
-  filter, reverse, enumerate, trySkip, skip, skipWhile, tryTake,
+  uniq, dict, obj, join, into, foldl, foldr, any, all, sum, product, map,
+  filter, reverse, enumerate, trySkip, skip, skipWhile, tryTake, take,
   takeWhile, takeUntilVal, takeDef, flat, concat, prepend,
-  append, mapSort, exec, zipLeast, zip, zipLongest,
+  append, mapSort, exec, zipLeast, zip, zipLongest, zipLeast2, zip2,
+  zipLongest2, slidingWindow, trySlidingWindow, mod, union, union2,
+  isdef, typename, lookahead, reject, IntoNotImplemented,
 } = require('../src/index.js').sequence;
 
 const ckThrows = (cls, fn) => assert.throws(fn, cls);
+
+it('isdef()', () => {
+  each([null, undefined], v => assert(!isdef(v)));
+  each([false, [], {}, 0], v => assert(isdef(v)));
+});
+
+it('type()', () => {
+  assert.strictEqual(type(null), null);
+  assert.strictEqual(type(undefined), undefined);
+  assert.strictEqual(type(2), Number);
+  assert.strictEqual(type({}), Object);
+});
+
+it('typename()', () => {
+  const examples = {
+    null: null,
+    undefined,
+    Number: 22,
+    Object: {},
+    Map: new Map(),
+  };
+
+  each(examples, ([k, v]) => assert.strictEqual(typename(type(v)), k));
+});
 
 it('exec()', () => {
   assert.strictEqual(exec(() => 42), 42);
@@ -194,7 +220,8 @@ it('size(), empty(), count()', () => {
   ck(new Baz(), 23);
 
   each([new Foo(), 0, null], (val) => {
-    each([size, count, empty], (fn) => {
+    ckThrows(SequenceNotImplemented, () => count(val));
+    each([size, empty], (fn) => {
       ckThrows(SizeNotImplemented, () => fn(val));
     });
   });
@@ -208,7 +235,7 @@ it('count()', () => {
 
 const str = 'Hello World';
 const arr = [42, 23];
-const obj = { foo: 42 };
+const o = { foo: 42 };
 const m = new Map([['tardigrade', 'cute']]);
 const richObj = {
   [Symbol.iterator]: function* generate() {
@@ -226,7 +253,7 @@ const ckEqSeq = (a, b) => assert.deepStrictEqual(list(a), list(b));
 
 describe('iter()', () => {
   it('yields iterators ', () => {
-    [str, arr, obj, m, gen(), iter(str), '', {}, new Map()].forEach((seq) => {
+    [str, arr, o, m, gen(), iter(str), '', {}, new Map()].forEach((seq) => {
       const fst = iter(seq).next();
       assert(Object.prototype.hasOwnProperty.call(fst, 'value'));
       assert(Object.prototype.hasOwnProperty.call(fst, 'done'));
@@ -248,7 +275,7 @@ it('each() can iterate the sequences', () => {
   };
   checkEach(str, Array.from(str));
   checkEach(arr, arr);
-  checkEach(obj, [['foo', 42]]);
+  checkEach(o, [['foo', 42]]);
   checkEach(m, [['tardigrade', 'cute']]);
   checkEach(richObj, [42, 23]);
   checkEach(gen(), [null, undefined, 42]);
@@ -337,6 +364,7 @@ it('into(), list()', () => {
   each([list, into(Array)], (fn) => {
     assert.deepStrictEqual(fn({ a: 42 }), [['a', 42]]);
   });
+  ckThrows(IntoNotImplemented, () => into([], Number));
 });
 
 it('into(), uniq()', () => {
@@ -353,13 +381,18 @@ it('join()', () => {
 });
 
 it('into()', () => {
-  const o = into(Object)([['foo', 42], ['bar', 23], ['foo', 11]]);
-  assert.strictEqual(o.foo, 11);
-  assert.strictEqual(o.bar, 23);
-  const mo = into(Map)(o);
-  assert.strictEqual(size(mo), 2);
-  assert.strictEqual(mo.get('foo'), 11);
-  assert.strictEqual(mo.get('bar'), 23);
+  each([into(Object), obj], (fn) => {
+    const o2 = fn([['foo', 42], ['bar', 23], ['foo', 11]]);
+    assert.strictEqual(o2.foo, 11);
+    assert.strictEqual(o2.bar, 23);
+
+    each([into(Map), dict], (fn2) => {
+      const mo = fn2(o2);
+      assert.strictEqual(size(mo), 2);
+      assert.strictEqual(mo.get('foo'), 11);
+      assert.strictEqual(mo.get('bar'), 23);
+    });
+  });
 });
 
 it('fold', () => {
@@ -395,8 +428,9 @@ it('map()', () => {
   ckEqSeq(map(first)({ foo: 42 }), ['foo']);
 });
 
-it('filter()', () => {
+it('filter(), reject()', () => {
   ckEqSeq(filter(second)({ foo: false, bar: '42' }), [['bar', '42']]);
+  ckEqSeq(reject(second)({ foo: false, bar: '42' }), [['foo', false]]);
 });
 
 it('reverse()', () => {
@@ -421,9 +455,11 @@ it('skipWhile', () => {
   ckEqSeq(skipWhile(x => x < 4)([]), []);
 });
 
-it('tryTake', () => {
+it('take/tryTake', () => {
   ckEqSeq(tryTake(4)(range0(10)), [0, 1, 2, 3]);
   ckEqSeq(tryTake(4)(range0(2)), [0, 1]);
+  ckEqSeq(take(2)(range0(2)), [0, 1]);
+  ckThrows(IteratorEnded, () => take(4)(range0(2)));
 });
 
 it('takeWhile()', () => {
@@ -468,6 +504,7 @@ it('mapSort()', () => {
 it('zipLeast', () => {
   ckEqSeq(zipLeast([]), []);
   ckEqSeq(zipLeast([['foo', 'bar']]), [['foo'], ['bar']]);
+  ckEqSeq(zipLeast2('asdfg')([1, 2, 3, 4]), [[1, 'a'], [2, 's'], [3, 'd'], [4, 'f']]);
   ckEqSeq(
     zipLeast([[1, 2, 3], ['x', 'y'], [-1, -2, -3, -4]]),
     [[1, 'x', -1], [2, 'y', -2]],
@@ -477,18 +514,93 @@ it('zipLeast', () => {
 it('zip', () => {
   ckEqSeq(zip([]), []);
   ckEqSeq(zip([['foo', 'bar']]), [['foo'], ['bar']]);
+  ckEqSeq(zip2('asdf')([1, 2, 3, 4]), [[1, 'a'], [2, 's'], [3, 'd'], [4, 'f']]);
   ckEqSeq(
     zip([[1, 2], ['x', 'y'], [-1, -2]]),
     [[1, 'x', -1], [2, 'y', -2]],
   );
   ckThrows(IteratorEnded, () => list(zip([[1, 2], [1]])));
+  ckThrows(IteratorEnded, () => list(zip2([1, 2, 3, 4])('asdfg')));
 });
 
 it('zipLongest', () => {
   ckEqSeq(zipLongest(null)([]), []);
   ckEqSeq(zipLongest(null)([['foo', 'bar']]), [['foo'], ['bar']]);
+  ckEqSeq(zipLongest2(null)('asdfg')([1, 2, 3, 4]), [[1, 'a'], [2, 's'], [3, 'd'], [4, 'f'], [null, 'g']]);
   ckEqSeq(
     zipLongest(null)([[1, 2, 3], ['x', 'y'], [-1, -2, -3, -4]]),
     [[1, 'x', -1], [2, 'y', -2], [3, null, -3], [null, null, -4]],
   );
+});
+
+it('slidingWindow', () => {
+  each([slidingWindow, trySlidingWindow], (fn) => {
+    ckEqSeq(fn(1)([1, 2, 3]), [[1], [2], [3]]);
+    ckEqSeq(fn(2)([1, 2, 3]), [[1, 2], [2, 3]]);
+    ckEqSeq(fn(3)([1, 2, 3]), [[1, 2, 3]]);
+  });
+  ckThrows(IteratorEnded, () => slidingWindow(4)([1, 2]));
+  ckEqSeq(trySlidingWindow(4)([1, 2, 3]), []);
+});
+
+it('lookahead', () => {
+  const ck = (seq, no, filler, expect) => {
+    ckEqSeq(lookahead(seq, no, filler), expect);
+  };
+
+  ck([], 3, null, []);
+  ck([42], 3, null, [[42, null, null, null]]);
+  ck([42, 23], 3, null, [[42, 23, null, null], [23, null, null, null]]);
+  ck([42, 23], 0, null, [[42], [23]]);
+});
+
+it('mod', () => {
+  const s = new Set([1, 2, 3, 4]);
+  const t = mod(s, map(mul(2)));
+  assert(s.constructor === Set);
+  ckEqSeq(s, [1, 2, 3, 4]); // no modify
+  ckEqSeq(t, [2, 4, 6, 8]); // no modify
+});
+
+it('union/union2', () => {
+  const o2 = {
+    a: 42, b: 23, c: 1, d: 14,
+  };
+  const m2 = dict({ b: 99, x: 13 });
+  const gen2 = () => iter([['c', 22], ['y', 44]]);
+
+  const a = union2(o2)(m2);
+  assert.strictEqual(a.constructor, Map);
+  assert.strictEqual(size(a), 5);
+  assert.strictEqual(a.get('x'), 13);
+  assert.strictEqual(a.get('b'), 23);
+  assert.strictEqual(a.get('d'), 14);
+
+  const b = union(o2, m2, gen2());
+  assert.strictEqual(b.constructor, Object);
+  assert.strictEqual(size(b), 6);
+  assert.strictEqual(b.a, 42);
+  assert.strictEqual(b.b, 99);
+  assert.strictEqual(b.c, 22);
+  assert.strictEqual(b.x, 13);
+  assert.strictEqual(b.y, 44);
+
+  const c = union2(['a', 2, 13])(new Set([2, 44]));
+  assert.strictEqual(c.constructor, Set);
+  assert.strictEqual(size(c), 4);
+  assert(c.has('a'));
+  assert(c.has(2));
+  assert(c.has(13));
+  assert(c.has(44));
+
+  // o2, m should not have been mutated
+  assert.strictEqual(size(o2), 4);
+  assert.strictEqual(o2.a, 42);
+  assert.strictEqual(o2.b, 23);
+  assert.strictEqual(o2.c, 1);
+  assert.strictEqual(o2.d, 14);
+
+  assert.strictEqual(size(m2), 2);
+  assert.strictEqual(m2.get('b'), 99);
+  assert.strictEqual(m2.get('x'), 13);
 });

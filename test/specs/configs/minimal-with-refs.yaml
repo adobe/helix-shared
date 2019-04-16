@@ -14,7 +14,7 @@ definitions:
     - &myRepo https://github.com/adobe/helix-test.git#master
 
 strains:
-  default:
+  - name: default
     content: *myRepo
     code: *myRepo
     static: *myRepo

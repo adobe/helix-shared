@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const YAML_PAIR = require('yaml/pair');
+const { Pair } = require('yaml/types');
 
 const EventEmitter = require('events');
 const GitUrl = require('./GitUrl.js');
@@ -33,14 +33,9 @@ class Static extends EventEmitter {
 
   set url(value) {
     if (value.toJSON) {
-      this._url = new GitUrl(value.toJSON({ minimal: true, keepFormat: true }));
+      this._url = new GitUrl(value.toJSON({ minimal: true, keepFormat: true }), { ref: 'master', path: '/htdocs' });
     } else {
-      this._url = new GitUrl(value);
-    }
-    if (!this._url.path) {
-      // todo: ... this is a by ugly
-      // eslint-disable-next-line no-underscore-dangle
-      this._url._path = '/htdocs';
+      this._url = new GitUrl(value, { ref: 'master', path: '/htdocs' });
     }
     this.emit('url-change', value);
   }
@@ -114,7 +109,7 @@ class Static extends EventEmitter {
     }
     const node = this.url.toYAMLNode(true);
     Object.keys(props).forEach((key) => {
-      node.items.push(new YAML_PAIR(key, props[key]));
+      node.items.push(new Pair(key, props[key]));
     });
     return node;
   }

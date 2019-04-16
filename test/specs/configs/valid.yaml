@@ -10,10 +10,10 @@ definitions:
       static: *myrepo
 
 strains:
-  default:
+  - name: default
     <<: *basestrain
 
-  sticky:
+  - name: sticky
     <<: *basestrain
     sticky: true
     static:

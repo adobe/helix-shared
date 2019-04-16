@@ -89,6 +89,13 @@ class GitUrl {
       // noinspection JSConsecutiveCommasInArrayLiteral
       [, this._owner, this._repo, this._path] = parts;
       this._ref = this._url.hash.substring(1);
+      // add defaults if missing
+      if (!this._path && 'path' in defaults) {
+        this._path = defaults.path;
+      }
+      if (!this._ref && 'ref' in defaults) {
+        this._ref = defaults.ref;
+      }
     }
 
     // sanitize path

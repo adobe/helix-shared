@@ -18,33 +18,33 @@ A condition expression
 
 # Conditions Properties
 
-| Property | Type | Required | Defined by |
-|----------|------|----------|------------|
-| [and](#and) | complex | Optional | Conditions (this schema) |
-| [not](#not) | Conditions | Optional | Conditions (this schema) |
-| [or](#or) | complex | Optional | Conditions (this schema) |
-| `^url[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^url\.hostname[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^url\.path[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^referer[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^client_name[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^client_city[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^client_country_code[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^user_agent[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^accept_language[=~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^client_lat[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^client_lon[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^client_gmt_offset[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^time[&lt;=&gt;]?$` | `string` | Pattern | Conditions (this schema) |
-| `^time_day[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^time_date[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^time_hours[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^time_minutes[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^time_month[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^time_year[&lt;=&gt;]?$` | `number` | Pattern | Conditions (this schema) |
-| `^url_param\..+[~]?$` | `string` | Pattern | Conditions (this schema) |
-| `^url_param\..+[&lt;&gt;]$` | `number` | Pattern | Conditions (this schema) |
-| `^url_param\..+[=]$` | complex | Pattern | Conditions (this schema) |
+| Property | Type | Required | Nullable | Defined by |
+|----------|------|----------|----------|------------|
+| [and](#and) | complex | Optional  | No | Conditions (this schema) |
+| [not](#not) | Conditions | Optional  | No | Conditions (this schema) |
+| [or](#or) | complex | Optional  | No | Conditions (this schema) |
+| `^url[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^url\.hostname[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^url\.path[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^referer[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^client_name[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^client_city[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^client_country_code[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^user_agent[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^accept_language[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^client_lat[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^client_lon[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^client_gmt_offset[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^time[&lt;=&gt;]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^time_day[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^time_date[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^time_hours[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^time_minutes[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^time_month[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^time_year[&lt;=&gt;]?$` | `number` | Pattern | No | Conditions (this schema) |
+| `^url_param\..+[~]?$` | `string` | Pattern | No | Conditions (this schema) |
+| `^url_param\..+[&lt;&gt;]$` | `number` | Pattern | No | Conditions (this schema) |
+| `^url_param\..+[=]$` | multiple | Pattern | No | Conditions (this schema) |
 
 ## and
 
@@ -633,7 +633,7 @@ Matches a URL parameter's value as a number or string
 `^url_param\..+[=]$`
 
 * is a property pattern
-* type: complex
+* type: multiple
 * defined in this schema
 
 ### Pattern ^url_param\..+[=]$ Type
@@ -647,7 +647,7 @@ Unknown type `number,string`.
     "string"
   ],
   "description": "Matches a URL parameter's value as a number or string",
-  "simpletype": "complex"
+  "simpletype": "multiple"
 }
 ```
 

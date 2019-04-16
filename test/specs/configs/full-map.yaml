@@ -9,7 +9,6 @@
 # governing permissions and limitations under the License.
 version: 1
 
-
 definitions:
   constants:
     defaultRepo:
@@ -18,16 +17,25 @@ definitions:
       repo: project-helix.io
       ref: master
   strains:
-    - &foo
-      name: foo
+    base:
+      &basestrain
       code: *myrepo
       content: *myrepo
       static: *myrepo
 
 strains:
-  - name: default
-    code: https://github.com/adobe/project-helix.io.git#master
-    static: https://github.com/adobe/project-helix.io.git#dev
+  default: *basestrain
+
+  adhoc:
+    <<: *basestrain
+    package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
+    perf:
+      location: London
+      onload: 1000
+
+  client:
+    code: *myrepo
+    static: *myrepo
     condition: req.http.host == "client.project-helix.io"
     sticky: false
     content:
@@ -36,4 +44,38 @@ strains:
       owner: adobe
     directoryIndex: readme.html
 
-  - *foo
+  pipeline:
+    <<: *basestrain
+    condition: req.http.host == "pipeline.project-helix.io"
+    params:
+      - search
+      - lang
+    content:
+      repo: hypermedia-pipeline
+      ref: master
+      owner: adobe
+    static:
+      <<: *myrepo
+      path: /www
+    redirects:
+      - from: (.*)\.php
+        to: $1.html
+      - from: /content/dam/(.*)$
+        to: /htdocs/$1
+
+  proxy:
+    origin: https://www.adobe.io/
+    condition: req.http.host == "proxy.project-helix.io"
+    params:
+      - search
+      - api*
+    sticky: true
+
+  proxy-detailed:
+    redirects:
+      - from: /old
+        to: /new
+    origin:
+      address: 192.168.0.1
+      name: publish
+      use_ssl: false

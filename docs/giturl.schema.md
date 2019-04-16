@@ -13,16 +13,16 @@ Representation of the fragments of a Git URL
 
 # Git URL Properties
 
-| Property | Type | Required | Default | Defined by |
-|----------|------|----------|---------|------------|
-| [host](#host) | `string` | Optional |  | Git URL (this schema) |
-| [hostname](#hostname) | `string` | Optional |  | Git URL (this schema) |
-| [owner](#owner) | `string` | **Required** |  | Git URL (this schema) |
-| [path](#path) | `string` | Optional |  | Git URL (this schema) |
-| [port](#port) | complex | Optional |  | Git URL (this schema) |
-| [protocol](#protocol) | `enum` | Optional |  | Git URL (this schema) |
-| [ref](#ref) | `string` | **Required** | `"master"` | Git URL (this schema) |
-| [repo](#repo) | `string` | **Required** |  | Git URL (this schema) |
+| Property | Type | Required | Nullable | Default | Defined by |
+|----------|------|----------|----------|---------|------------|
+| [host](#host) | `string` | Optional  | No |  | Git URL (this schema) |
+| [hostname](#hostname) | `string` | Optional  | No |  | Git URL (this schema) |
+| [owner](#owner) | `string` | **Required**  | No |  | Git URL (this schema) |
+| [path](#path) | `string` | Optional  | No |  | Git URL (this schema) |
+| [port](#port) | multiple | Optional  | No |  | Git URL (this schema) |
+| [protocol](#protocol) | `enum` | Optional  | No |  | Git URL (this schema) |
+| [ref](#ref) | `string` | **Required**  | No | `"master"` | Git URL (this schema) |
+| [repo](#repo) | `string` | **Required**  | No |  | Git URL (this schema) |
 
 ## host
 
@@ -116,23 +116,15 @@ The port to access the Git Repository
 `port`
 
 * is optional
-* type: complex
+* type: multiple
 * defined in this schema
 
 ### port Type
 
-Unknown type `integer,string`.
 
-```json
-{
-  "description": "The port to access the Git Repository",
-  "type": [
-    "integer",
-    "string"
-  ],
-  "simpletype": "complex"
-}
-```
+Either one of:
+ * `integer`
+ * `string`
 
 
 
