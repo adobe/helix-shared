@@ -21,7 +21,7 @@ A runtime strain is a combination of code and content that enables the creation 
 | Property | Type | Required | Nullable | Default | Defined by |
 |----------|------|----------|----------|---------|------------|
 | [code](#code) | complex | **Required**  | No |  | Runtime Strain (this schema) |
-| [condition](#condition) | `string` | Optional  | No |  | Runtime Strain (this schema) |
+| [condition](#condition) | complex | Optional  | No |  | Runtime Strain (this schema) |
 | [content](#content) | complex | **Required**  | No |  | Runtime Strain (this schema) |
 | [directoryIndex](#directoryindex) | `string` | Optional  | No | `"index.html"` | Runtime Strain (this schema) |
 | [name](#name) | `string` | **Required**  | No |  | Runtime Strain (this schema) |
@@ -76,14 +76,27 @@ VLC condition that controls that can optionally activate this strain.
 `condition`
 
 * is optional
-* type: `string`
+* type: complex
 * defined in this schema
 
 ### condition Type
 
 
+**One** of the following *conditions* need to be fulfilled.
+
+
+#### Condition 1
+
+
 `string`
 
+
+
+
+#### Condition 2
+
+
+* []() – `https://ns.adobe.com/helix/shared/conditions`
 
 
 

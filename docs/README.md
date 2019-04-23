@@ -6,6 +6,7 @@
 
 ## /
 
+* [Conditions](./conditions.schema.md) – `https://ns.adobe.com/helix/shared/conditions` (Stabilizing)
 * [Configuration](./config.schema.md) – `https://ns.adobe.com/helix/shared/config` (Stabilizing)
 * [Git URL](./giturl.schema.md) – `https://ns.adobe.com/helix/shared/giturl` (Stabilizing)
 * [Git URL](./staticgiturl.schema.md) – `https://ns.adobe.com/helix/shared/staticgiturl` (Stabilizing)

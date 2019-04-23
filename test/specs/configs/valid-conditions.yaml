@@ -1,0 +1,71 @@
+version: 1
+
+definitions:
+  constants:
+    - &myrepo https://github.com/adobe/project-helix.io.git
+  strains:
+    base: &basestrain
+      code: *myrepo
+      content: *myrepo
+      static: *myrepo
+
+strains:
+  - 
+    name: default
+    <<: *basestrain
+    condition:
+      url: https://www.example.com
+
+  - 
+    name: sticky
+    <<: *basestrain
+    sticky: true
+    static:
+      owner: adobe
+      repo: project-helix.io
+      ref: master
+    condition:
+      not:
+        url: https://www.example.com
+  
+  - 
+    name: orcondition
+    <<: *basestrain
+    condition:
+      or:
+        - url: https://www.example.com
+        - url: https://www.example.com
+
+  - 
+    name: andcondition
+    <<: *basestrain
+    condition:
+      and:
+        url.hostname: www.example.com
+        url.path: /
+        client_lat>: 45
+
+  - 
+    name: conditions
+    <<: *basestrain
+    condition:
+      and:
+        url.hostname: www.example.com
+        url.path: /
+        client_lat>: 45
+        client_lon<: 0
+        client_gmt_offset<: 0
+        or:
+          referer~: ".*google.*"
+          client_name: Adobe
+          client_city=: San Jose
+          client_country_code: CH
+          not:
+            user_agent~: Mozilla
+          accept_language: fr
+          and:
+            time_day<: 1 # before monday
+            time_day>: 5 # after friday
+          url_param.foo=: bar # the one true answer
+          url_param.bar>: 42
+

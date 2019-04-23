@@ -20,7 +20,7 @@ A strain is a combination of code and content that enables the creation of a dig
 
 | Property | Type | Required | Nullable | Defined by |
 |----------|------|----------|----------|------------|
-| [condition](#condition) | `string` | Optional  | No | Proxy Strain (this schema) |
+| [condition](#condition) | complex | Optional  | No | Proxy Strain (this schema) |
 | [name](#name) | `string` | **Required**  | No | Proxy Strain (this schema) |
 | [origin](#origin) | complex | **Required**  | No | Proxy Strain (this schema) |
 | [params](#params) | `string[]` | Optional  | No | Proxy Strain (this schema) |
@@ -37,14 +37,27 @@ VLC condition that controls that can optionally activate this strain.
 `condition`
 
 * is optional
-* type: `string`
+* type: complex
 * defined in this schema
 
 ### condition Type
 
 
+**One** of the following *conditions* need to be fulfilled.
+
+
+#### Condition 1
+
+
 `string`
 
+
+
+
+#### Condition 2
+
+
+* []() – `https://ns.adobe.com/helix/shared/conditions`
 
 
 

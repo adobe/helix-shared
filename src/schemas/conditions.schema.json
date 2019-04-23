@@ -1,0 +1,136 @@
+{
+  "meta:license": [
+    "Copyright 2018 Adobe. All rights reserved.",
+    "This file is licensed to you under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License. You may obtain a copy",
+    "of the License at http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software distributed under",
+    "the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS",
+    "OF ANY KIND, either express or implied. See the License for the specific language",
+    "governing permissions and limitations under the License."
+  ],
+  "$id": "https://ns.adobe.com/helix/shared/conditions",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Conditions",
+  "type": "object",
+  "meta:status": "stabilizing",
+  "description": "A condition expression",
+  "additionalProperties": false,
+  "properties": {
+    "and": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": { "$ref": "https://ns.adobe.com/helix/shared/conditions" }
+        },
+        { "$ref": "https://ns.adobe.com/helix/shared/conditions" }
+      ],
+      "description": "All conditions in this list must be met"
+    },
+    "or": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": { "$ref": "https://ns.adobe.com/helix/shared/conditions" }
+        },
+        { "$ref": "https://ns.adobe.com/helix/shared/conditions" }
+      ],
+      "description": "Any conditions in this list must be met"
+    },
+    "not": {
+      "$ref": "https://ns.adobe.com/helix/shared/conditions"
+    }
+  },
+  "patternProperties": {
+    "^url[=~]?$": {
+      "type": "string",
+      "description": "Matches the full URL, including request parameters"
+    },
+    "^url\\.hostname[=~]?$": {
+      "type": "string",
+      "description": "Matches the hostname only"
+    },
+    "^url\\.path[=~]?$": {
+      "type": "string",
+      "description": "Matches the path only. Path does not include the query string."
+    },
+    "^referer[=~]?$": {
+      "type": "string",
+      "description": "Matches the Referrer (note the spelling)"
+    },
+    "^client_name[=~]?$": {
+      "type": "string",
+      "description": "Matches the client's company or ISP name"
+    },
+    "^client_city[=~]?$": {
+      "type": "string",
+      "description": "Matches the client's city"
+    },
+    "^client_country_code[=~]?$": {
+      "type": "string",
+      "description": "Matches the ISO 3166-1 country code (two letters)"
+    },
+    "^user_agent[=~]?$": {
+      "type": "string",
+      "description": "Matches the User Agent"
+    },
+    "^accept_language[=~]?$": {
+      "type": "string",
+      "description": "Matches the Accept-Language header"
+    },
+    "^client_lat[<=>]?$": {
+      "type": "number",
+      "description": "Compares the latitude"
+    },
+    "^client_lon[<=>]?$": {
+      "type": "number",
+      "description": "Compares the longitude"
+    },
+    "^client_gmt_offset[<=>]?$": {
+      "type": "number",
+      "description": "UTC offset for the client's time zone. Values look like -100 or 300."
+    },
+    "^time[<=>]?$": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Absolute time of the request, evaluated against UTC"
+    },
+    "^time_day[<=>]?$": {
+      "type": "number",
+      "description": "Day of the week, same as Date.getDay() – adjusted for GMT offset"
+    },
+    "^time_date[<=>]?$": {
+      "type": "number",
+      "description": "Day of the month, same as Date.getDate() – adjusted for GMT offset"
+    },
+    "^time_hours[<=>]?$": {
+      "type": "number",
+      "description": "Hour of the day, same as Date.getHours() – adjusted for GMT offset"
+    },
+    "^time_minutes[<=>]?$": {
+      "type": "number",
+      "description": "Minute of the hour, same as Date.getMinutes() – adjusted for GMT offset"
+    },
+    "^time_month[<=>]?$": {
+      "type": "number",
+      "description": "Month of the year, same as Date.getMonth() – adjusted for GMT offset"
+    },
+    "^time_year[<=>]?$": {
+      "type": "number",
+      "description": "Year, same as Date.getFullYear() – adjusted for GMT offset"
+    },
+    "^url_param\\..+[~]?$": {
+      "type": "string",
+      "description": "Matches a URL parameter's value as a string"
+    },
+    "^url_param\\..+[<>]$": {
+      "type": "number",
+      "description": "Matches a URL parameter's value as a number"
+    },
+    "^url_param\\..+[=]$": {
+      "type": ["number", "string"],
+      "description": "Matches a URL parameter's value as a number or string"
+    }
+  }
+}
