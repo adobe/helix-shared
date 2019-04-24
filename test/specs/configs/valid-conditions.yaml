@@ -41,31 +41,31 @@ strains:
     <<: *basestrain
     condition:
       and:
-        url.hostname: www.example.com
-        url.path: /
-        client_lat>: 45
+        - url.hostname: www.example.com
+        - url.path: /
+        - client_lat>: 45
 
   - 
     name: conditions
     <<: *basestrain
     condition:
       and:
-        url.hostname: www.example.com
-        url.path: /
-        client_lat>: 45
-        client_lon<: 0
-        client_gmt_offset<: 0
-        or:
-          referer~: ".*google.*"
-          client_name: Adobe
-          client_city=: San Jose
-          client_country_code: CH
-          not:
-            user_agent~: Mozilla
-          accept_language: fr
-          and:
-            time_day<: 1 # before monday
-            time_day>: 5 # after friday
-          url_param.foo=: bar # the one true answer
-          url_param.bar>: 42
+        - url.hostname: www.example.com
+        - url.path: /
+        - client_lat>: 45
+        - client_lon<: 0
+        - client_gmt_offset<: 0
+        - or:
+          - referer~: ".*google.*"
+          - client_name: Adobe
+          - client_city=: San Jose
+          - client_country_code: CH
+          - not:
+              user_agent~: Mozilla
+          - accept_language: fr
+          - and:
+            - time_day<: 1 # before monday
+            - time_day>: 5 # after friday
+          - url_param.foo=: bar # the one true answer
+          - url_param.bar>: 42
 

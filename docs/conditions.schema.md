@@ -20,9 +20,9 @@ A condition expression
 
 | Property | Type | Required | Nullable | Defined by |
 |----------|------|----------|----------|------------|
-| [and](#and) | complex | Optional  | No | Conditions (this schema) |
+| [and](#and) | Conditions | Optional  | No | Conditions (this schema) |
 | [not](#not) | Conditions | Optional  | No | Conditions (this schema) |
-| [or](#or) | complex | Optional  | No | Conditions (this schema) |
+| [or](#or) | Conditions | Optional  | No | Conditions (this schema) |
 | `^url[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
 | `^url\.hostname[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
 | `^url\.path[=~]?$` | `string` | Pattern | No | Conditions (this schema) |
@@ -53,31 +53,18 @@ All conditions in this list must be met
 `and`
 
 * is optional
-* type: complex
+* type: Conditions
 * defined in this schema
 
 ### and Type
 
 
-**One** of the following *conditions* need to be fulfilled.
-
-
-#### Condition 1
-
-
-Array type: 
+Array type: Conditions
 
 All items must be of the type:
-* []() – `https://ns.adobe.com/helix/shared/conditions`
+* [Conditions](conditions.schema.md) – `https://ns.adobe.com/helix/shared/conditions`
 
 
-
-
-
-#### Condition 2
-
-
-* []() – `https://ns.adobe.com/helix/shared/conditions`
 
 
 
@@ -109,31 +96,18 @@ Any conditions in this list must be met
 `or`
 
 * is optional
-* type: complex
+* type: Conditions
 * defined in this schema
 
 ### or Type
 
 
-**One** of the following *conditions* need to be fulfilled.
-
-
-#### Condition 1
-
-
-Array type: 
+Array type: Conditions
 
 All items must be of the type:
-* []() – `https://ns.adobe.com/helix/shared/conditions`
+* [Conditions](conditions.schema.md) – `https://ns.adobe.com/helix/shared/conditions`
 
 
-
-
-
-#### Condition 2
-
-
-* []() – `https://ns.adobe.com/helix/shared/conditions`
 
 
 

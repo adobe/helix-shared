@@ -17,33 +17,21 @@
     "meta:status": "stabilizing",
     "description": "A condition expression",
     "additionalProperties": false,
+    "minProperties": 1,
+    "maxProperties": 1,
     "properties": {
         "and": {
-            "oneOf": [
-                {
-                    "type": "array",
-                    "items": {
-                        "$ref": "https://ns.adobe.com/helix/shared/conditions"
-                    }
-                },
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/conditions"
-                }
-            ],
+            "type": "array",
+            "items": {
+                "$ref": "https://ns.adobe.com/helix/shared/conditions"
+            },
             "description": "All conditions in this list must be met"
         },
         "or": {
-            "oneOf": [
-                {
-                    "type": "array",
-                    "items": {
-                        "$ref": "https://ns.adobe.com/helix/shared/conditions"
-                    }
-                },
-                {
-                    "$ref": "https://ns.adobe.com/helix/shared/conditions"
-                }
-            ],
+            "type": "array",
+            "items": {
+                "$ref": "https://ns.adobe.com/helix/shared/conditions"
+            },
             "description": "Any conditions in this list must be met"
         },
         "not": {
