@@ -13,7 +13,7 @@ A runtime strain is a combination of code and content that enables the creation 
 ## Schema Hierarchy
 
 * Runtime Strain `https://ns.adobe.com/helix/shared/runtimestrain`
-  * [Runtime Strain](performance.schema.md) `https://ns.adobe.com/helix/shared/performance`
+  * [Performance](performance.schema.md) `https://ns.adobe.com/helix/shared/performance`
 
 
 # Runtime Strain Properties
@@ -27,7 +27,7 @@ A runtime strain is a combination of code and content that enables the creation 
 | [name](#name) | `string` | **Required**  | No |  | Runtime Strain (this schema) |
 | [package](#package) | `string` | Optional  | No |  | Runtime Strain (this schema) |
 | [params](#params) | `string[]` | Optional  | No |  | Runtime Strain (this schema) |
-| [perf](#perf) | Runtime Strain | Optional  | No |  | Runtime Strain (this schema) |
+| [perf](#perf) | Performance | Optional  | No |  | Runtime Strain (this schema) |
 | [redirects](#redirects) | Redirect Rule | Optional  | No |  | Runtime Strain (this schema) |
 | [static](#static) | complex | **Required**  | No |  | Runtime Strain (this schema) |
 | [sticky](#sticky) | `boolean` | Optional  | No |  | Runtime Strain (this schema) |
@@ -235,13 +235,13 @@ All items must be of the type:
 `perf`
 
 * is optional
-* type: Runtime Strain
+* type: Performance
 * defined in this schema
 
 ### perf Type
 
 
-* [Runtime Strain](performance.schema.md) – `https://ns.adobe.com/helix/shared/performance`
+* [Performance](performance.schema.md) – `https://ns.adobe.com/helix/shared/performance`
 
 
 

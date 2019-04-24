@@ -13,7 +13,7 @@ A strain is a combination of code and content that enables the creation of a dig
 ## Schema Hierarchy
 
 * Proxy Strain `https://ns.adobe.com/helix/shared/proxystrain`
-  * [Runtime Strain](performance.schema.md) `https://ns.adobe.com/helix/shared/performance`
+  * [Performance](performance.schema.md) `https://ns.adobe.com/helix/shared/performance`
 
 
 # Proxy Strain Properties
@@ -24,7 +24,7 @@ A strain is a combination of code and content that enables the creation of a dig
 | [name](#name) | `string` | **Required**  | No | Proxy Strain (this schema) |
 | [origin](#origin) | complex | **Required**  | No | Proxy Strain (this schema) |
 | [params](#params) | `string[]` | Optional  | No | Proxy Strain (this schema) |
-| [perf](#perf) | Runtime Strain | Optional  | No | Proxy Strain (this schema) |
+| [perf](#perf) | Performance | Optional  | No | Proxy Strain (this schema) |
 | [redirects](#redirects) | Redirect Rule | Optional  | No | Proxy Strain (this schema) |
 | [sticky](#sticky) | `boolean` | Optional  | No | Proxy Strain (this schema) |
 | [url](#url) | `string` | Optional  | No | Proxy Strain (this schema) |
@@ -153,13 +153,13 @@ All items must be of the type:
 `perf`
 
 * is optional
-* type: Runtime Strain
+* type: Performance
 * defined in this schema
 
 ### perf Type
 
 
-* [Runtime Strain](performance.schema.md) – `https://ns.adobe.com/helix/shared/performance`
+* [Performance](performance.schema.md) – `https://ns.adobe.com/helix/shared/performance`
 
 
 

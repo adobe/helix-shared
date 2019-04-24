@@ -1,5 +1,5 @@
 
-# Runtime Strain Schema
+# Performance Schema
 
 ```
 https://ns.adobe.com/helix/shared/performance
@@ -11,46 +11,46 @@ Performance testing details.
 |----------|------------|--------|--------------|-------------------|-----------------------|------------|
 | Can be instantiated | No | Stabilizing | No | Forbidden | Forbidden | [performance.schema.json](performance.schema.json) |
 
-# Runtime Strain Properties
+# Performance Properties
 
 | Property | Type | Required | Nullable | Defined by |
 |----------|------|----------|----------|------------|
-| [asset_count](#asset_count) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [connection](#connection) | `enum` | Optional  | No | Runtime Strain (this schema) |
-| [consistently-interactive](#consistently-interactive) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [css_body_size_in_bytes](#css_body_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [css_size_in_bytes](#css_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [device](#device) | `enum` | Optional  | No | Runtime Strain (this schema) |
-| [dom-size](#dom-size) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [estimated-input-latency](#estimated-input-latency) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [first-contentful-paint](#first-contentful-paint) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [first-interactive](#first-interactive) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [first-meaningful-paint](#first-meaningful-paint) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [firstRender](#firstrender) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [font_body_size_in_bytes](#font_body_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [font_size_in_bytes](#font_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [html_body_size_in_bytes](#html_body_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [html_size_in_bytes](#html_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [image_body_size_in_bytes](#image_body_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [image_size_in_bytes](#image_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [js-parse-compile](#js-parse-compile) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [js_body_size_in_bytes](#js_body_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [js_size_in_bytes](#js_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [lighthouse-accessibility-score](#lighthouse-accessibility-score) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [lighthouse-best-practices-score](#lighthouse-best-practices-score) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [lighthouse-performance-score](#lighthouse-performance-score) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [lighthouse-pwa-score](#lighthouse-pwa-score) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [lighthouse-seo-score](#lighthouse-seo-score) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [location](#location) | `enum` | Optional  | No | Runtime Strain (this schema) |
-| [oncontentload](#oncontentload) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [onload](#onload) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [page_body_size_in_bytes](#page_body_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [page_size_in_bytes](#page_size_in_bytes) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [page_wait_timing](#page_wait_timing) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [speed_index](#speed_index) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [time-to-first-byte](#time-to-first-byte) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [visually_complete](#visually_complete) | `number` | Optional  | No | Runtime Strain (this schema) |
-| [visually_complete_85](#visually_complete_85) | `number` | Optional  | No | Runtime Strain (this schema) |
+| [asset_count](#asset_count) | `number` | Optional  | No | Performance (this schema) |
+| [connection](#connection) | `enum` | Optional  | No | Performance (this schema) |
+| [consistently-interactive](#consistently-interactive) | `number` | Optional  | No | Performance (this schema) |
+| [css_body_size_in_bytes](#css_body_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [css_size_in_bytes](#css_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [device](#device) | `enum` | Optional  | No | Performance (this schema) |
+| [dom-size](#dom-size) | `number` | Optional  | No | Performance (this schema) |
+| [estimated-input-latency](#estimated-input-latency) | `number` | Optional  | No | Performance (this schema) |
+| [first-contentful-paint](#first-contentful-paint) | `number` | Optional  | No | Performance (this schema) |
+| [first-interactive](#first-interactive) | `number` | Optional  | No | Performance (this schema) |
+| [first-meaningful-paint](#first-meaningful-paint) | `number` | Optional  | No | Performance (this schema) |
+| [firstRender](#firstrender) | `number` | Optional  | No | Performance (this schema) |
+| [font_body_size_in_bytes](#font_body_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [font_size_in_bytes](#font_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [html_body_size_in_bytes](#html_body_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [html_size_in_bytes](#html_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [image_body_size_in_bytes](#image_body_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [image_size_in_bytes](#image_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [js-parse-compile](#js-parse-compile) | `number` | Optional  | No | Performance (this schema) |
+| [js_body_size_in_bytes](#js_body_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [js_size_in_bytes](#js_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [lighthouse-accessibility-score](#lighthouse-accessibility-score) | `number` | Optional  | No | Performance (this schema) |
+| [lighthouse-best-practices-score](#lighthouse-best-practices-score) | `number` | Optional  | No | Performance (this schema) |
+| [lighthouse-performance-score](#lighthouse-performance-score) | `number` | Optional  | No | Performance (this schema) |
+| [lighthouse-pwa-score](#lighthouse-pwa-score) | `number` | Optional  | No | Performance (this schema) |
+| [lighthouse-seo-score](#lighthouse-seo-score) | `number` | Optional  | No | Performance (this schema) |
+| [location](#location) | `enum` | Optional  | No | Performance (this schema) |
+| [oncontentload](#oncontentload) | `number` | Optional  | No | Performance (this schema) |
+| [onload](#onload) | `number` | Optional  | No | Performance (this schema) |
+| [page_body_size_in_bytes](#page_body_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [page_size_in_bytes](#page_size_in_bytes) | `number` | Optional  | No | Performance (this schema) |
+| [page_wait_timing](#page_wait_timing) | `number` | Optional  | No | Performance (this schema) |
+| [speed_index](#speed_index) | `number` | Optional  | No | Performance (this schema) |
+| [time-to-first-byte](#time-to-first-byte) | `number` | Optional  | No | Performance (this schema) |
+| [visually_complete](#visually_complete) | `number` | Optional  | No | Performance (this schema) |
+| [visually_complete_85](#visually_complete_85) | `number` | Optional  | No | Performance (this schema) |
 
 ## asset_count
 
