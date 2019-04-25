@@ -1,3 +1,10 @@
+## [0.10.4](https://github.com/adobe/helix-shared/compare/v0.10.3...v0.10.4) (2019-04-25)
+
+
+### Bug Fixes
+
+* **conditions:** restrict conditions schema ([55e506c](https://github.com/adobe/helix-shared/commit/55e506c)), closes [#95](https://github.com/adobe/helix-shared/issues/95) [#96](https://github.com/adobe/helix-shared/issues/96)
+
 ## [0.10.3](https://github.com/adobe/helix-shared/compare/v0.10.2...v0.10.3) (2019-04-11)
 
 
