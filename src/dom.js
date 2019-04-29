@@ -16,7 +16,18 @@
 
 const assert = require('assert');
 const {
-  each, enumerate, reverse, takeUntilVal, extend1, exec, withFunctionName,
+  each,
+  enumerate,
+  reverse,
+  takeUntilVal,
+  extend1,
+  exec,
+  withFunctionName,
+  uniq,
+  mapSort,
+  identity,
+  pipe,
+  join,
 } = require('./sequence.js');
 
 /**
@@ -378,6 +389,10 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
   if (!inline || root) {
     // This tag closes a block scope!
     collapseTextAcrossInlineNodes();
+  }
+
+  if (node.className) {
+    node.className = pipe(node.classList, uniq, mapSort(identity), join(' '));
   }
 
   return node;
