@@ -103,6 +103,12 @@ describe('equalizeNode()', () => {
   ck('removes comments',
     '<!-- Hello World -->',
     '');
+  ck('normalizes class names',
+    '<div class="foo bar"></div>',
+    '<div class="bar foo"></div>');
+  ck('normalizes spaces in class names',
+    '<div class="foo  bar"></div>',
+    '<div class="bar foo"></div>');
   ck('removes comments buried deep',
     '<div><span><div><!-- Hello World --></div></span></div>',
     '<div><span><div></div></span></div>');
