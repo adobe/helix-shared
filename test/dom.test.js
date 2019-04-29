@@ -109,6 +109,15 @@ describe('equalizeNode()', () => {
   ck('normalizes spaces in class names',
     '<div class="foo  bar"></div>',
     '<div class="bar foo"></div>');
+  ck('normalizes tabs in class names',
+    '<div class="foo\tbar"></div>',
+    '<div class="bar foo"></div>');
+  ck('normalizes line breaks in class names',
+    '<div class="foo\nbar"></div>',
+    '<div class="bar foo"></div>');
+  ck('normalizes duplicates in class names',
+    '<div class="foo foo foo bar"></div>',
+    '<div class="bar foo"></div>');
   ck('removes comments buried deep',
     '<div><span><div><!-- Hello World --></div></span></div>',
     '<div><span><div></div></span></div>');

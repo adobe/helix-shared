@@ -28,7 +28,6 @@ const {
   identity,
   pipe,
   join,
-  filter,
 } = require('./sequence.js');
 
 /**
@@ -392,8 +391,8 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
     collapseTextAcrossInlineNodes();
   }
 
-  if (node && node.nodeType === node.ELEMENT_NODE && node.className) {
-    node.className = pipe(node.className.split(' '), filter(Boolean), uniq, mapSort(identity), join(' '));
+  if (node.className) {
+    node.className = pipe(node.classList, uniq, mapSort(identity), join(' '));
   }
 
   return node;
