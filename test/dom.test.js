@@ -26,14 +26,12 @@ describe('isNode, assertNode, nodeName', () => {
   const doc = new JSDOM('<foo></foo><div></div>Hello<!-- Fnord -->').window.document;
   const nope = [undefined, null, 0, '', { nodeName: undefined }, { nodeName: 42 }];
   const yep = {
-    '': { nodeName: '' },
-    fnord: { nodeName: 'fnord' },
     '#document': doc,
+    '#text': new nodeMatches.impl.PartialTextNode(doc.body.childNodes[2], 0),
     html: doc.documentElement,
     body: doc.body,
     foo: doc.body.childNodes[0],
     div: doc.body.childNodes[1],
-    '#text': doc.body.childNodes[2],
     '#comment': doc.body.childNodes[3],
   };
 
