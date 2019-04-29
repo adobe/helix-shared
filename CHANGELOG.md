@@ -1,3 +1,10 @@
+## [0.10.5](https://github.com/adobe/helix-shared/compare/v0.10.4...v0.10.5) (2019-04-29)
+
+
+### Bug Fixes
+
+* **dom:** normalize className attributes before comparison ([0e0fbff](https://github.com/adobe/helix-shared/commit/0e0fbff)), closes [#98](https://github.com/adobe/helix-shared/issues/98)
+
 ## [0.10.4](https://github.com/adobe/helix-shared/compare/v0.10.3...v0.10.4) (2019-04-25)
 
 
