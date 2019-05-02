@@ -15,16 +15,17 @@
     "title": "Origin",
     "type": "object",
     "meta:status": "stabilizing",
-    "description": "Representation of a origin host",
+    "description": "Representation of a origin host for a proxy strain.\n\nAs proxy strains deliver content from another web server, the `origin` property can be used to specify the source of this third-party content to be served. In the simplest case, the `origin` property can be a simple URL, but for advanced configuration, all the properties in this schema are available.\n\nThe properties in this schema are largely identical with the properties defined in the [Fastly Backend API](https://docs.fastly.com/api/config#backend).",
     "additionalProperties": false,
     "properties": {
         "hostname": {
             "type": "string",
-            "description": ""
+            "format": "hostname",
+            "description": "The hostname of the backend."
         },
         "port": {
             "type": "integer",
-            "description": ""
+            "description": "The port number."
         },
         "error_threshold": {
             "type": "integer",
@@ -32,43 +33,54 @@
         },
         "first_byte_timeout": {
             "type": "integer",
-            "description": ""
+            "description": "How long to wait for the first bytes in milliseconds."
         },
         "weight": {
             "type": "integer",
-            "description": ""
+            "description": "Weight used to load balance this backend against others."
         },
         "address": {
             "type": "string",
-            "description": ""
+            "format": "hostname",
+            "description": "An hostname, IPv4, or IPv6 address for the backend."
         },
         "connect_timeout": {
             "type": "string",
-            "description": ""
+            "description": "How long to wait for a timeout in milliseconds."
         },
         "name": {
             "type": "string",
-            "description": ""
+            "description": "The name of the backend."
         },
         "between_bytes_timeout": {
             "type": "integer",
-            "description": ""
+            "description": "How long to wait between bytes in milliseconds."
         },
         "shield": {
             "type": "string",
-            "description": ""
+            "description": "The shield POP designated to reduce inbound load on this origin by serving the cached data to the rest of the network."
         },
         "ssl_cert_hostname": {
             "type": "string",
-            "description": ""
+            "format": "hostname",
+            "description": "Overrides ssl_hostname, but only for cert verification. Does not affect SNI at all."
         },
         "max_conn": {
             "type": "integer",
-            "description": ""
+            "description": "Maximum number of connections."
         },
         "use_ssl": {
             "type": "boolean",
-            "description": ""
+            "description": "Whether or not to use SSL to reach the backend."
+        },
+        "path": {
+            "type": "string",
+            "description": "The base path to make requests again. For example, if your `origin` is `http://www.example.com/foo` and a request is made to your site using the URL `/bar`, a backend request to `http://www.example.com/foo/bar` will be made."
+        },
+        "override_host": {
+            "type": "string",
+            "format": "hostname",
+            "description": "The hostname to override the [Host header](https://docs.fastly.com/guides/basic-configuration/specifying-an-override-host)."
         }
     }
 }

@@ -5,7 +5,11 @@
 https://ns.adobe.com/helix/shared/origin
 ```
 
-Representation of a origin host
+Representation of a origin host for a proxy strain.
+
+As proxy strains deliver content from another web server, the `origin` property can be used to specify the source of this third-party content to be served. In the simplest case, the `origin` property can be a simple URL, but for advanced configuration, all the properties in this schema are available.
+
+The properties in this schema are largely identical with the properties defined in the [Fastly Backend API](https://docs.fastly.com/api/config#backend).
 
 | Abstract | Extensible | Status | Identifiable | Custom Properties | Additional Properties | Defined In |
 |----------|------------|--------|--------------|-------------------|-----------------------|------------|
@@ -23,6 +27,8 @@ Representation of a origin host
 | [hostname](#hostname) | `string` | Optional  | No | Origin (this schema) |
 | [max_conn](#max_conn) | `integer` | Optional  | No | Origin (this schema) |
 | [name](#name) | `string` | Optional  | No | Origin (this schema) |
+| [override_host](#override_host) | `string` | Optional  | No | Origin (this schema) |
+| [path](#path) | `string` | Optional  | No | Origin (this schema) |
 | [port](#port) | `integer` | Optional  | No | Origin (this schema) |
 | [shield](#shield) | `string` | Optional  | No | Origin (this schema) |
 | [ssl_cert_hostname](#ssl_cert_hostname) | `string` | Optional  | No | Origin (this schema) |
@@ -31,6 +37,7 @@ Representation of a origin host
 
 ## address
 
+An hostname, IPv4, or IPv6 address for the backend.
 
 `address`
 
@@ -43,6 +50,7 @@ Representation of a origin host
 
 `string`
 
+* format: `hostname` – Domain Name (according to [RFC 1034, section 3.1](https://tools.ietf.org/html/rfc1034))
 
 
 
@@ -51,6 +59,7 @@ Representation of a origin host
 
 ## between_bytes_timeout
 
+How long to wait between bytes in milliseconds.
 
 `between_bytes_timeout`
 
@@ -71,6 +80,7 @@ Representation of a origin host
 
 ## connect_timeout
 
+How long to wait for a timeout in milliseconds.
 
 `connect_timeout`
 
@@ -111,6 +121,7 @@ Representation of a origin host
 
 ## first_byte_timeout
 
+How long to wait for the first bytes in milliseconds.
 
 `first_byte_timeout`
 
@@ -131,6 +142,7 @@ Representation of a origin host
 
 ## hostname
 
+The hostname of the backend.
 
 `hostname`
 
@@ -143,6 +155,7 @@ Representation of a origin host
 
 `string`
 
+* format: `hostname` – Domain Name (according to [RFC 1034, section 3.1](https://tools.ietf.org/html/rfc1034))
 
 
 
@@ -151,6 +164,7 @@ Representation of a origin host
 
 ## max_conn
 
+Maximum number of connections.
 
 `max_conn`
 
@@ -171,6 +185,7 @@ Representation of a origin host
 
 ## name
 
+The name of the backend.
 
 `name`
 
@@ -189,8 +204,52 @@ Representation of a origin host
 
 
 
+## override_host
+
+The hostname to override the [Host header](https://docs.fastly.com/guides/basic-configuration/specifying-an-override-host).
+
+`override_host`
+
+* is optional
+* type: `string`
+* defined in this schema
+
+### override_host Type
+
+
+`string`
+
+* format: `hostname` – Domain Name (according to [RFC 1034, section 3.1](https://tools.ietf.org/html/rfc1034))
+
+
+
+
+
+
+## path
+
+The base path to make requests again. For example, if your `origin` is `http://www.example.com/foo` and a request is made to your site using the URL `/bar`, a backend request to `http://www.example.com/foo/bar` will be made.
+
+`path`
+
+* is optional
+* type: `string`
+* defined in this schema
+
+### path Type
+
+
+`string`
+
+
+
+
+
+
+
 ## port
 
+The port number.
 
 `port`
 
@@ -211,6 +270,7 @@ Representation of a origin host
 
 ## shield
 
+The shield POP designated to reduce inbound load on this origin by serving the cached data to the rest of the network.
 
 `shield`
 
@@ -231,6 +291,7 @@ Representation of a origin host
 
 ## ssl_cert_hostname
 
+Overrides ssl_hostname, but only for cert verification. Does not affect SNI at all.
 
 `ssl_cert_hostname`
 
@@ -243,6 +304,7 @@ Representation of a origin host
 
 `string`
 
+* format: `hostname` – Domain Name (according to [RFC 1034, section 3.1](https://tools.ietf.org/html/rfc1034))
 
 
 
@@ -251,6 +313,7 @@ Representation of a origin host
 
 ## use_ssl
 
+Whether or not to use SSL to reach the backend.
 
 `use_ssl`
 
@@ -269,6 +332,7 @@ Representation of a origin host
 
 ## weight
 
+Weight used to load balance this backend against others.
 
 `weight`
 
