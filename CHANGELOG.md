@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/adobe/helix-shared/compare/v0.10.5...v0.11.0) (2019-05-02)
+
+
+### Features
+
+* **proxystrains:** add support for `path` and `override_host` configuration parameters ([d0c8693](https://github.com/adobe/helix-shared/commit/d0c8693))
+
 ## [0.10.5](https://github.com/adobe/helix-shared/compare/v0.10.4...v0.10.5) (2019-04-29)
 
 
