@@ -16,7 +16,6 @@ let transform;
 const Affix = {
   PREFIX: 1,
   INFIX: 2,
-  SUFFIX: 3,
 };
 
 const booleanConditionMap = {
@@ -42,11 +41,11 @@ class BooleanCondition {
     this._condition = condition;
 
     switch (condition.type) {
-      case Affix.INFIX:
-        this._children = children.map(child => transform(child));
+      case Affix.PREFIX:
+        this._children = transform(children);
         break;
       default:
-        this._children = transform(children);
+        this._children = children.map(child => transform(child));
         break;
     }
   }
@@ -57,13 +56,10 @@ class BooleanCondition {
     switch (this._condition.type) {
       case Affix.PREFIX:
         clause = this._children.toVCL();
-        return `${this._op} (${clause})`;
-      case Affix.INFIX:
+        return `${this._condition.op}(${clause})`;
+      default:
         clause = this._children.map(child => child.toVCL()).join(this._condition.op);
         return `(${clause})`;
-      default:
-        clause = this._children.toVCL();
-        return `(${clause}) ${this._op}`;
     }
   }
 

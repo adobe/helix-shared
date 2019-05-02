@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Adobe. All rights reserved.
+ * Copyright 2019 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,6 +21,11 @@ const Condition = require('../src/Condition.js');
 const SPEC_ROOT = path.resolve(__dirname, 'specs/configs');
 
 describe('Condition test', () => {
+  it('test null condition', async () => {
+    const cond = new Condition();
+    const vcl = cond.toVCL();
+    assert.equal(vcl, '');
+  });
   it('test VCL output for conditions', async () => {
     const filepath = path.resolve(SPEC_ROOT, 'conditions_vcl.yaml');
     const source = await fs.readFile(filepath, 'utf8');

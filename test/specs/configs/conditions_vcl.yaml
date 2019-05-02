@@ -16,3 +16,14 @@ conditions:
       - url: https://www.example.com
       - url~: index.html$
     vcl: '(req.url ~ "^https://www.example.com" && req.url ~ "index.html$")'
+
+  -
+    or:
+      - url: https://www.example.com
+      - url~: index.html$
+    vcl: '(req.url ~ "^https://www.example.com" || req.url ~ "index.html$")'
+
+  -
+    not:
+      url: https://www.example.com
+    vcl: ' !(req.url ~ "^https://www.example.com")'
