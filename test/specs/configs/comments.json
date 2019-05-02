@@ -146,6 +146,7 @@
       "condition": "req.http.host == \"proxy.project-helix.io\"",
       "name": "proxy",
       "origin": {
+        "path": "/",
         "address": "www.adobe.io",
         "between_bytes_timeout": 10000,
         "connect_timeout": 1000,
@@ -175,6 +176,7 @@
       "condition": "",
       "name": "proxy-detailed",
       "origin": {
+        "path": "/",
         "address": "192.168.0.1",
         "between_bytes_timeout": 10000,
         "connect_timeout": 1000,

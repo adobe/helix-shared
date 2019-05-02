@@ -28,6 +28,8 @@ class Origin {
       this._SSLCertHostname = cfg.ssl_cert_hostname || this._hostname;
       this._maxConn = cfg.max_conn || 200;
       this._useSSL = !(cfg.use_ssl === false);
+      this._path = cfg.path || '/';
+      this._overrideHost = cfg.override_host;
       if (cfg.port && Number.parseInt(cfg.port, 10) > 0) {
         this._port = cfg.port;
       } else {
@@ -48,6 +50,7 @@ class Origin {
       this._SSLCertHostname = backenduri.host;
       this._maxConn = 200;
       this._useSSL = backenduri.scheme === 'https';
+      this._path = backenduri.path;
     } else if (cfg) {
       throw new Error('Origin must be an absolute URL or an Object');
     } else {
@@ -107,6 +110,14 @@ class Origin {
     return this._useSSL;
   }
 
+  get path() {
+    return this._path;
+  }
+
+  get overrideHost() {
+    return this._overrideHost;
+  }
+
   toJSON(opts) {
     const json = {
       hostname: this.hostname,
@@ -122,7 +133,11 @@ class Origin {
       ssl_cert_hostname: this.SSLCertHostname,
       max_conn: this.maxConn,
       use_ssl: this.useSSL,
+      path: this.path,
     };
+    if (this.overrideHost) {
+      json.override_host = this.overrideHost;
+    }
     if (opts && opts.minimal) {
       return utils.pruneEmptyValues(json);
     }
