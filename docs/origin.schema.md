@@ -207,6 +207,7 @@ The name of the backend.
 ## override_host
 
 The hostname to override the [Host header](https://docs.fastly.com/guides/basic-configuration/specifying-an-override-host).
+By default, proxy strains use the `Host` header that was used to make the request to Helix's CDN, which is ideal for migration use cases where the existing backend expects to serve traffic to a hostname that has now been taken over by Helix. In cases where Helix is aggregating content from multiple hosts, and the backend won't serve any content to the domain name Helix is using, set the `override_host` property to an accepted `Host` header value.
 
 `override_host`
 
