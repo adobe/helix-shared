@@ -16,6 +16,7 @@ const Logger = require('./Logger.js');
 const sequence = require('./sequence.js');
 const functional = require('./functional.js');
 const op = require('./op.js');
+const op = require('./types.js');
 const string = require('./string.js');
 const dom = require('./dom.js');
 
