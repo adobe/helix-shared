@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/adobe/helix-shared/compare/v1.0.0...v1.0.1) (2019-05-03)
+
+
+### Bug Fixes
+
+* include types.js in index.js ([96725f7](https://github.com/adobe/helix-shared/commit/96725f7))
+
 # [1.0.0](https://github.com/adobe/helix-shared/compare/v0.11.0...v1.0.0) (2019-05-03)
 
 
