@@ -53,4 +53,8 @@ describe('Condition tests', () => {
       }
     });
   });
+  it('Null condition', async () => {
+    const cond = new Condition();
+    assert.equal('', cond.toVCL());
+  });
 });
