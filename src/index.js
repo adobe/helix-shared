@@ -26,6 +26,7 @@ module.exports = {
   Logger,
   functional,
   op,
+  types,
   sequence,
   string,
   dom,
