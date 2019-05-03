@@ -1,0 +1,4 @@
+condition:
+  url~: https?://www.example.com
+
+vcl: 'req.url ~ "https?://www.example.com"'

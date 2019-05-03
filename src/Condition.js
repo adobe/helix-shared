@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+const url = require('url');
+
 // To avoid forward referencing the transformer function
 let transform;
 
@@ -18,6 +20,9 @@ const Affix = {
   INFIX: 2,
 };
 
+/**
+ * Boolean conditions
+ */
 const booleanConditionMap = {
   or: {
     name: 'or',
@@ -68,7 +73,7 @@ class BooleanCondition {
       case 'and':
         return this._children.reduce((result, child) => result && child.evaluate(req), true);
       case 'or':
-        return this._children.reduce((result, child) => child.evaluate(req) || result, false);
+        return this._children.reduce((result, child) => result || child.evaluate(req), false);
       default:
         return !this._children.evaluate(req);
     }
@@ -79,14 +84,17 @@ class BooleanCondition {
  * PropertyCondition
  */
 class PropertyCondition {
-  constructor(property, op, value) {
-    this._property = property;
+  constructor(name, type, op, value, vcl, express) {
+    this._name = name;
+    this._type = type;
     this._op = op;
     this._value = value;
+    this._vcl = vcl;
+    this._express = express;
   }
 
   toVCL() {
-    const quote = this._property.quote || ' ';
+    const quote = this._type === 'string' ? '"' : '';
     let value = this._value;
     let op = this._op;
 
@@ -99,34 +107,54 @@ class PropertyCondition {
       // operand defaults to equal
       op = '==';
     }
-    return `${this._property.vcl_name} ${op} ${quote}${value}${quote}`;
+    return `${this._vcl} ${op} ${quote}${value}${quote}`;
   }
 
   evaluate(req) {
-    const actual = req[this._property.name];
+    const actual = this._express(req, this._name);
     const value = this._value;
+
+    if (!actual) {
+      return false;
+    }
 
     switch (this._op) {
       case '=':
         return actual === value;
       case '~':
-        return value.match(actual);
+        return !!actual.match(value);
       case '<':
         return actual < value;
       case '>':
         return actual > value;
       default:
-        // TODO: substring start
-        return false;
+        return actual.startsWith(value);
     }
   }
 }
 
+/**
+ * Known properties
+ */
 const propertyConditionMap = {
   url: {
-    vcl_name: 'req.url',
-    exp_name: 'url',
-    quote: '"',
+    vcl: 'req.url',
+    express: req => req.path,
+    type: 'string',
+    allowed_ops: '=~',
+  },
+  url_param: {
+    express: (req, name) => {
+      const { query } = url.parse(req.path, true);
+      return query[name];
+    },
+    allowed_ops: '~<=>',
+  },
+  client_lat: {
+    express: req => req.client_lat,
+    vcl: 'client.geo.latitude',
+    type: 'number',
+    allowed_ops: '<=>',
   },
 };
 
@@ -134,7 +162,7 @@ const propertyConditionMap = {
  * Condition class
  */
 class Condition {
-  constructor(cfg = null) {
+  constructor(cfg) {
     this._top = cfg ? transform(cfg) : null;
   }
 
@@ -142,10 +170,12 @@ class Condition {
     return this._top ? this._top.toVCL() : '';
   }
 
+  /* eslint-disable no-underscore-dangle */
   toFunction() {
+    const self = this;
     return (req) => {
-      if (this._top) {
-        return this._top.evaluate(req);
+      if (self._top) {
+        return self._top.evaluate(req);
       }
       return true;
     };
@@ -169,11 +199,19 @@ transform = (cfg) => {
     name = name.slice(0, name.length - 1);
     op = last;
   }
-  const property = propertyConditionMap[name];
-  if (property) {
-    return new PropertyCondition(property, op, value);
+  let property = propertyConditionMap[name];
+  if (!property) {
+    const match = name.match(/^url_param\.(.+)$/);
+    if (!match) {
+      throw new Error(`Unknown property: ${name}`);
+    }
+    [, name] = match;
+    property = propertyConditionMap.url_param;
   }
-  throw new Error(`Unknown property: ${name}`);
+  if (op && (!property.allowed_ops || property.allowed_ops.indexOf(op) === -1)) {
+    throw new Error(`Property ${name} does not support operation: ${op}`);
+  }
+  return new PropertyCondition(name, property.type, op, value, property.vcl, property.express);
 };
 
 module.exports = Condition;

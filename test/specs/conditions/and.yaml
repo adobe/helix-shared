@@ -1,0 +1,6 @@
+condition:
+  and:
+    - url: https://www.example.com
+    - url~: index.html$
+
+vcl: '(req.url ~ "^https://www.example.com" && req.url ~ "index.html$")'

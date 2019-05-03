@@ -1,0 +1,4 @@
+condition:
+  and:
+  - url_param.a>: 5
+  - url_param.a<: 10

@@ -1,0 +1,6 @@
+condition:
+  or:
+    - client_lat<: 37
+    - client_lat>: 38
+
+vcl: '(client.geo.latitude < 37 || client.geo.latitude > 38)'

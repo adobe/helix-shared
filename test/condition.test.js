@@ -14,29 +14,43 @@
 
 const assert = require('assert');
 const fs = require('fs-extra');
+const nock = require('nock');
 const path = require('path');
+const request = require('request-promise');
 const YAML = require('yaml');
 const Condition = require('../src/Condition.js');
 
-const SPEC_ROOT = path.resolve(__dirname, 'specs/configs');
+const SPEC_ROOT = path.resolve(__dirname, 'specs/conditions');
 
-describe('Condition test', () => {
-  it('test null condition', async () => {
-    const cond = new Condition();
-    const vcl = cond.toVCL();
-    assert.equal(vcl, '');
-  });
-  it('test VCL output for conditions', async () => {
-    const filepath = path.resolve(SPEC_ROOT, 'conditions_vcl.yaml');
-    const source = await fs.readFile(filepath, 'utf8');
+describe('Condition tests', () => {
+  fs.readdirSync(SPEC_ROOT).forEach((filename) => {
+    const source = fs.readFileSync(path.resolve(SPEC_ROOT, filename), 'utf8');
     const document = YAML.parseDocument(source, {
       merge: true,
       schema: 'core',
     });
     const cfg = document.toJSON() || {};
-    for (const condition of cfg.conditions) {
-      const vcl = new Condition(condition).toVCL();
-      assert.equal(vcl, condition.vcl);
-    }
+    it(`Testing ${filename}`, async () => {
+      try {
+        const cond = new Condition(cfg.condition);
+        if (cfg.vcl) {
+          const vcl = cond.toVCL();
+          assert.equal(vcl, cfg.vcl);
+          assert.equal(null, cfg.error);
+        }
+        nock('http://www.example.com')
+          .get(() => true)
+          .reply(function intercept() {
+            const fn = cond.toFunction();
+            return [200, `${fn(this.req)}`];
+          });
+        const response = await request('http://www.example.com/index.html?a=7');
+        assert.ok(response);
+      } catch (e) {
+        if (e.message !== cfg.error) {
+          assert.fail(e.message);
+        }
+      }
+    });
   });
 });

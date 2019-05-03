@@ -1,0 +1,4 @@
+condition:
+  foo: bar
+
+error: 'Unknown property: foo'
