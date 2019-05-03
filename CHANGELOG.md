@@ -1,3 +1,35 @@
+# [1.0.0](https://github.com/adobe/helix-shared/compare/v0.11.0...v1.0.0) (2019-05-03)
+
+
+### Features
+
+* More tools for generic programming ([6c074a3](https://github.com/adobe/helix-shared/commit/6c074a3))
+* Use underscore to mark unused variables ([a760881](https://github.com/adobe/helix-shared/commit/a760881))
+
+
+### BREAKING CHANGES
+
+* Because sequence.js was growing very large,
+that file was split up into multiple components.
+
+The real highlights of this change are:
+- The Trait class
+- The Equals trait
+- The cloning traits
+
+feat(types): Trait – New class to facilitate generic programming. Quite complex. See it's api doc.
+feat(types): Immutable – New trait to mark types as immutable
+feat(types): Equals, eq(), assertEq() – New Trait for equality comparing values in an extensible way
+feat(types): Shallowclone – Trait for shallow cloning values
+feat(types): Deepclone – Trait for recursively cloning values
+feat(types): Pairs, keys(), values() – Trait for iterating over any container as a key/value store
+feat(types): Has, Get, Assign, Delete, Setdefault, Replace – Generic traits for accessing containers
+feat(sequence): seqEq() function to compare sequences
+feat(sequence): The Into trait now Supports typed Arrays, WeakMap and WeakSet
+feat(sequence): The Sequence and Size Trait now supports typed arrays
+feat(dom): Dom Nodes now implement the Equals Trait
+feat(dom): Dom Nodes now implement the Deepclone Trait
+
 # [0.11.0](https://github.com/adobe/helix-shared/compare/v0.10.5...v0.11.0) (2019-05-02)
 
 
