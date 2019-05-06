@@ -43,7 +43,7 @@ class Origin {
       this._weight = 100;
       this._address = backenduri.host;
       this._connectTimeout = 1000;
-      this._name = `Proxy${backenduri.host.replace(/[^\w]/g, '')}${hash(backenduri).substr(0, 4)}`;
+      this._name = `Proxy${backenduri.host.replace(/[^\w]/g, '')}${hash(this._hostname).substr(0, 4)}`;
       this._port = backenduri.port || (backenduri.scheme === 'https' ? 443 : 80);
       this._betweenBytesTimeout = 10000;
       this._shield = 'iad-va-us';

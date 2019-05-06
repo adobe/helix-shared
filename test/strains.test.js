@@ -263,7 +263,7 @@ describe('Strains test', () => {
         first_byte_timeout: 15000,
         hostname: 'www.adobe.io',
         max_conn: 200,
-        name: 'Proxywwwadobeioff3d',
+        name: 'Proxywwwadobeio3a0a',
         port: 443,
         shield: 'iad-va-us',
         ssl_cert_hostname: 'www.adobe.io',
