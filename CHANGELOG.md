@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/adobe/helix-shared/compare/v1.0.2...v1.1.0) (2019-05-06)
+
+
+### Bug Fixes
+
+* **proxy:** unify generated names of origins for proxy strains ([5d12ead](https://github.com/adobe/helix-shared/commit/5d12ead))
+
+
+### Features
+
+* **proxy:** enable getting the fastly compatible JSON for an origin ([b1df9d3](https://github.com/adobe/helix-shared/commit/b1df9d3))
+
 ## [1.0.2](https://github.com/adobe/helix-shared/compare/v1.0.1...v1.0.2) (2019-05-06)
 
 
