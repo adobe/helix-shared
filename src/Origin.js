@@ -118,7 +118,10 @@ class Origin {
     return this._overrideHost;
   }
 
-  toJSON(opts) {
+  /**
+   * Returns a limited JSON representation that is compatible with the Fastly API
+   */
+  toFastlyJSON() {
     const json = {
       hostname: this.hostname,
       error_threshold: this.errorThreshold,
@@ -133,11 +136,19 @@ class Origin {
       ssl_cert_hostname: this.SSLCertHostname,
       max_conn: this.maxConn,
       use_ssl: this.useSSL,
-      path: this.path,
     };
     if (this.overrideHost) {
       json.override_host = this.overrideHost;
     }
+    return json;
+  }
+
+  /**
+   * Returns a full, round-trippable JSON representation
+   */
+  toJSON(opts) {
+    const json = this.toFastlyJSON();
+    json.path = this.path;
     if (opts && opts.minimal) {
       return utils.pruneEmptyValues(json);
     }
