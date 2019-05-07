@@ -142,6 +142,29 @@ describe('Helix Config Loading', () => {
   });
 });
 
+describe('Helix Config Merging', () => {
+  it('can merge two configs', async () => {
+    const oldconf = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'minimal.yaml'))
+      .init();
+
+    assert.deepEqual(Array.from(oldconf.strains.keys()), ['default']);
+
+    const newconf = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'minimal-foo.yaml'))
+      .init();
+
+    oldconf.merge(newconf, (left, right) => {
+      if (left && left.name === 'default') {
+        return left;
+      }
+      return right;
+    });
+
+    assert.deepEqual(Array.from(oldconf.strains.keys()), ['default', 'foo']);
+  });
+});
+
 describe('Helix Config Serializing', () => {
   it('can serialize strains as json', async () => {
     const cfg = await new HelixConfig()
