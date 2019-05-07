@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/adobe/helix-shared/compare/v1.1.1...v1.2.0) (2019-05-07)
+
+
+### Features
+
+* **config:** allow merging of configs using a user-defined resolver function ([d61ffa7](https://github.com/adobe/helix-shared/commit/d61ffa7))
+
 ## [1.1.1](https://github.com/adobe/helix-shared/compare/v1.1.0...v1.1.1) (2019-05-07)
 
 
