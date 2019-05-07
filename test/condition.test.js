@@ -16,7 +16,7 @@ const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
 const path = require('path');
-const request = require('request-promise');
+const request = require('request-promise-native');
 const YAML = require('yaml');
 const Condition = require('../src/Condition.js');
 
@@ -56,5 +56,7 @@ describe('Condition tests', () => {
   it('Null condition', async () => {
     const cond = new Condition();
     assert.equal('', cond.toVCL());
+    const fn = cond.toFunction();
+    assert.equal(true, fn());
   });
 });

@@ -1,0 +1,4 @@
+condition:
+  url_param.foo: bar
+
+vcl: 'subfield(req.url.qs, "foo", "&") ~ "^bar"'

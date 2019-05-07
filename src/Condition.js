@@ -107,11 +107,12 @@ class PropertyCondition {
       // operand defaults to equal
       op = '==';
     }
-    return `${this._vcl} ${op} ${quote}${value}${quote}`;
+    const vcl = typeof this._vcl === 'function' ? this._vcl(this) : this._vcl;
+    return `${vcl} ${op} ${quote}${value}${quote}`;
   }
 
   evaluate(req) {
-    const actual = this._express(req, this._name);
+    const actual = this._express(req, this);
     const value = this._value;
 
     if (!actual) {
@@ -131,6 +132,14 @@ class PropertyCondition {
         return actual.startsWith(value);
     }
   }
+
+  get name() {
+    return this._name;
+  }
+
+  get type() {
+    return this._type;
+  }
 }
 
 /**
@@ -144,15 +153,22 @@ const propertyConditionMap = {
     allowed_ops: '=~',
   },
   url_param: {
-    express: (req, name) => {
+    vcl: (property) => {
+      let vcl = `subfield(req.url.qs, "${property.name}", "&")`;
+      if (property.type === 'number') {
+        vcl = `std.atoi(${vcl})`;
+      }
+      return vcl;
+    },
+    express: (req, property) => {
       const { query } = url.parse(req.path, true);
-      return query[name];
+      return query[property.name];
     },
     allowed_ops: '~<=>',
   },
   client_lat: {
-    express: req => req.client_lat,
     vcl: 'client.geo.latitude',
+    express: req => req.client_lat,
     type: 'number',
     allowed_ops: '<=>',
   },
@@ -206,9 +222,9 @@ transform = (cfg) => {
       throw new Error(`Unknown property: ${name}`);
     }
     [, name] = match;
-    property = propertyConditionMap.url_param;
+    property = Object.assign({ type: op === '<' || op === '>' ? 'number' : 'string' }, propertyConditionMap.url_param);
   }
-  if (op && (!property.allowed_ops || property.allowed_ops.indexOf(op) === -1)) {
+  if (op && property.allowed_ops.indexOf(op) === -1) {
     throw new Error(`Property ${name} does not support operation: ${op}`);
   }
   return new PropertyCondition(name, property.type, op, value, property.vcl, property.express);
