@@ -67,6 +67,20 @@ class HelixConfig {
     return this;
   }
 
+  /**
+   * @name ResolveFn
+   * @function
+   * @param {Strain} left the current candidate strain (can be undefined)
+   * @param {Strain} right the alternative candidate strain (can be undefined)
+   */
+
+  /**
+   * Updates the current configuration with the strains of another configuration
+   * object and a user-defined resolver function.
+   * @param {HelixConfig} other another Helix Config to merge
+   * @param {ResolveFn} resolvefn a resolver function that returns either a strain or undefined
+   * @returns {HelixConfig} the merged Helix Config
+   */
   merge(other, resolvefn) {
     const filtered = new Strains();
     pipe(concat(other.strains.keys(), this.strains.keys()), uniq, each((name) => {
