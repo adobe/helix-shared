@@ -16,6 +16,9 @@ const YAML = require('yaml');
 const Strain = require('./Strain.js');
 const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
+const { concat, uniq, each } = require('./sequence.js');
+const { pipe } = require('./functional.js');
+
 
 const HELIX_CONFIG = 'helix-config.yaml';
 
@@ -61,6 +64,19 @@ class HelixConfig {
 
   withDirectory(cwd) {
     this._cwd = cwd;
+    return this;
+  }
+
+  merge(other, resolvefn) {
+    const filtered = new Strains();
+    pipe(concat(other.strains.keys(), this.strains.keys()), uniq, each((name) => {
+      const strain = resolvefn(this.strains.get(name), other.strains.get(name));
+      if (strain) {
+        filtered.add(strain);
+      }
+    }));
+
+    this._strains = filtered;
     return this;
   }
 
