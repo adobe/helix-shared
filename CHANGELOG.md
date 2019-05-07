@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/adobe/helix-shared/compare/v1.1.0...v1.1.1) (2019-05-07)
+
+
+### Bug Fixes
+
+* **config:** disallow / in directoryIndex ([2b7a011](https://github.com/adobe/helix-shared/commit/2b7a011)), closes [#106](https://github.com/adobe/helix-shared/issues/106)
+
 # [1.1.0](https://github.com/adobe/helix-shared/compare/v1.0.2...v1.1.0) (2019-05-06)
 
 
