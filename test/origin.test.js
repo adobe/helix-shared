@@ -43,7 +43,7 @@ describe('Origin Config', () => {
 
   it('Generates a name for unnamed strains', () => {
     const origin = new Origin('http://example.com');
-    assert.equal(origin.name, 'Proxyexamplecombe60');
+    assert.equal(origin.name, 'Proxyexamplecom4e71');
   });
 
   it('Keeps the correct port number', () => {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Adobe. All rights reserved.
+ * Copyright 2019 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,11 +13,20 @@
 // This code contains a lot of functions that call each other;
 // sometimes using mutual recursion and we do not have forward
 // declaraions...
-/* eslint-disable no-use-before-define */
+/* eslint-disable no-use-before-define, no-param-reassign */
+
+const { curry, pipe } = require('./functional');
+const {
+  plus, or, mul, and,
+} = require('./op');
+const {
+  size, type, Trait, Size, pairs, eq, empty, typedArrays,
+} = require('./types');
+
+// ITERATOR GENERATORS ///////////////////////////////////////
 
 /**
- * Generic library for functional programming and advanced utilization
- * of es6 iterators.
+ * Generic library for advanced utilization of es6 iterators.
  *
  * map, fold and so on...
  *
@@ -143,259 +152,6 @@
  * The full behaviour of for each
  */
 
-// GENERIC FUNCTIONAL PROGRAMMING ////////////////////////////
-
-/**
- * Checks whether a value is defined.
- * This function considers all values that are not null
- * and not undefined to be defined
- */
-const isdef = v => v !== undefined && v !== null;
-
-/**
- * Determine type of an object.
- * Like obj.constructor, but won't fail
- * for null/undefined and just returns the
- * value itself for those.
- */
-const type = v => (isdef(v) ? v.constructor : v);
-
-/**
- * Given a type, determine it's name.
- * This is useful as a replacement for val.constructor.name,
- * since this can deal with null and undefined.
- */
-const typename = t => (isdef(t) ? t.name : `${t}`);
-
-/**
- * Immediately execute the given function.
- * Mostly used as a way to open a scope.
- */
-const exec = fn => fn();
-
-/** Just a function that returns it's argument! */
-const identity = a => a;
-
-/**
- * Function composition.
- *
- * ```
- * const fn = compose(
- *   (x) => x+2,
- *   (x) => x*3
- * );
- *
- * console.log(fn(4)); // => 18
- * ```
- *
- * @param {Function} fns Multiple functions
- * @returns {Function} All the functions in the sequence composed into one
- */
-const compose = (...fns) => val => foldl(fns, val, (v, fn) => fn(v));
-
-/** Like compose, but takes a sequence of functions instead of being variadic. */
-const composeSeq = seq => compose(...iter(seq));
-
-/**
- * Pipeline a value through multiple function calls.
- *
- * ```
- * console.log(pipe(
- *   4,
- *   (x) => x+2,
- *   (x) => x*3
- * ));
- * // => 18
- * ```
- *
- * @param {Any} val The value to pipe through the functions
- * @param {Function} fns Multiple functions
- * @returns {Any}
- */
-const pipe = (val, ...fns) => foldl(fns, val, (v, fn) => fn(v));
-
-/**
- * Manually assign a name to a function.
- * @param {String} name The new name of the function.
- * @param {Function} fn The function to assign a name to
- * @param {Function} Just returns `fn` again.
- */
-const withFunctionName = (name, fn) => {
-  Object.defineProperty(fn, 'name', { value: name });
-  return fn;
-};
-
-/**
- * Autocurry a function!
- *
- * https://en.wikipedia.org/wiki/Currying
- *
- * Any function that has a fixed number of parameters may be curried!
- * Curried parameters will be in reverse order. This is useful for
- * functional programming, because it allows us to use function parameters
- * in the suffix position when using no curring:
- *
- * ```
- * const toNumber = (seq) => map(seq, n => Number(n));
- *
- * // is the same as
- *
- * const toNumber = map(n => Number(n))
- *
- * // or even
- *
- * const toNumber = map(Number);
- * ```
- *
- * Note how in the second version we specified the last parameter
- * first due to currying.
- *
- * Reverse order only applies in separate invocations:
- *
- * ```
- * const sum = (seq) => foldl(seq, 0, (a, b) => a+b);
- *
- * // is the same as
- *
- * const sum = foldl(0, (a, b) => a+b);
- *
- * // or even
- *
- * concat = sum = foldl(0, plus);
- * ```
- *
- * Note how in version two, we specify the parameters in order 2, 3, and then 1:
- *
- * `fn(a, b, c) <=> fn(c)(b)(a) <=> fn(b, c)(a)`
- */
-const curry = (name, fn) => curry.impl(name, fn, fn.length, []);
-curry.impl = (name, fn, arity, got) => withFunctionName(`${name} [CURRY]`, (...args) => {
-  args.push(...got);
-  if (size(args) === arity) {
-    return fn(...args);
-  } else if (size(args) < arity) {
-    return curry.impl(name, fn, arity, args);
-  } else {
-    throw new Error(`Too many arguments passed to ${name}; `
-                    + `got ${size(args)}; expected ${arity}`);
-  }
-});
-
-// OPERATORS AS FUNCTIONS ////////////////////////////////////
-
-// Boolean/selection operators ------------
-
-/** The && operator as a function */
-const and = curry('and', (a, b) => a && b);
-/** The|| operator as a function */
-const or = curry('or', (a, b) => a || b);
-
-// Pure boolean operators -----------------
-
-/** ! as a function */
-const not = a => !a;
-
-/**
- * NAND as a function.
- * @returns {Boolean}
- */
-const nand = curry('nand', (a, b) => !(a && b));
-/**
- * NOR as a function.
- * @returns {Boolean}
- */
-const nor = curry('nor', (a, b) => !(a || b));
-/**
- * XOR as a function.
- * @returns {Boolean}
- */
-const xor = curry('xor', (a, b) => Boolean(a) !== Boolean(b));
-/**
- * XNOR as a function.
- * @returns {Boolean}
- */
-const xnor = curry('xnor', (a, b) => Boolean(a) === Boolean(b));
-
-// Comparison operators -------------------
-
-/** === as a function */
-const is = curry('is', (a, b) => a === b);
-/** !== as a function */
-const aint = curry('aint', (a, b) => a !== b);
-
-// Math operators -------------------------
-
-/** The + operator as a function */
-const plus = curry('plus', (a, b) => a + b);
-/** The * operator as a function */
-const mul = curry('mul', (a, b) => a * b);
-
-// GENERIC CONTAINER PROTOCOLS ///////////////////////////////
-
-class TraitNotImplemented extends Error {}
-class SizeNotImplemented extends TraitNotImplemented {}
-
-/**
- * The size symbol can be used to implement the size() functions
- * for arbitrary types.
- *
- * There are multiple ways of achieving this:
- *
- * ```
- * // With a class method:
- * class Foo {
- *   [Size]() { return this.countElements(); }
- * }
- *
- * // For external types:
- * size.impl(Foo, (v) => v.countElements());
- * ```
- *
- * Default implementations are provided for:
- * Object, Array, Set, String, Map
- */
-const Size = Symbol('Size');
-
-/**
- * Determine the size/length of an object polimorphically.
- *
- * This bascally lets you determine the size of any object
- * without knowing what kind of object it is; could be an array
- * or a set or a string or an object; size() will work in any case.
- *
- * This function can be customized using the `Size` symbol. See
- * it's documentation.
- *
- * If no implementation can be found for a particular value, then
- * an error will be thrown.
- *
- * @param {Any} val The value to determine the size of.
- * @returns {Number}
- */
-const size = (val) => {
-  if (size.impl.has(type(val))) {
-    return size.impl.get(type(val))(val);
-  } else if (isdef(val) && val[Size]) {
-    return val[Size]();
-  } else {
-    throw new SizeNotImplemented(`No implementation of Size for '${val}' of type '${typename(type(val))}'`);
-  }
-};
-
-size.impl = new Map();
-size.impl.set(Object, x => foldl(x, 0, v => v + 1));
-size.impl.set(Array, x => x.length);
-size.impl.set(String, x => x.length);
-size.impl.set(Set, x => x.size);
-size.impl.set(Map, x => x.size);
-
-/** Uses size() to test whether the given value is empty. */
-const empty = val => size(val) === 0;
-
-// ITERATOR GENERATORS ///////////////////////////////////////
-
-class SequenceNotImplemented extends TraitNotImplemented {}
-
 /**
  * Turn any object into an iterator.
  * Takes objects that implement the iterator protocol.
@@ -411,20 +167,16 @@ class SequenceNotImplemented extends TraitNotImplemented {}
  * @returns {Iterator}
  * @yields The data from the given elements
  */
-const iter = (obj) => {
-  function* objIter() {
-    for (const key in obj) { // eslint-disable-line guard-for-in, no-restricted-syntax
-      yield [key, obj[key]];
-    }
-  }
-  if (isdef(obj) && obj[Symbol.iterator]) {
-    return obj[Symbol.iterator]();
-  } else if (type(obj) === Object) {
-    return objIter(obj);
-  } else {
-    throw new SequenceNotImplemented(`The iterator protocol is not implemented for ${obj} of type ${typename(type(obj))}`);
-  }
-};
+const iter = v => Sequence.invoke(v);
+
+/**
+ * Trait for any iterable type.
+ *
+ * Uses the `Symbol.iterator` Symbol, so this is implemented for any
+ * type that implements the iterator protocol.
+ */
+const Sequence = new Trait('Sequence', Symbol.iterator);
+Sequence.impl(Object, pairs);
 
 /**
  * Generates an iterator with the numeric range [start; end[
@@ -573,21 +325,21 @@ const each = curry('each', (seq, fn) => {
   }
 });
 
+/** Determine whether the items in two sequences are equal. */
+const seqEq = (a, b) => pipe(
+  zipLongest([a, b], Symbol('EqualToNothing')),
+  map(([x, y]) => eq(x, y)),
+  all,
+);
+
 /**
  * Determine the number of elements in an iterator.
  * This will try using trySize(), but fall back to iterating
  * over the container and counting the elements this way if necessary.
  */
 const count = (val) => {
-  try {
-    return size(val);
-  } catch (er) {
-    if (er instanceof SizeNotImplemented) {
-      return foldl(val, 0, v => v + 1);
-    } else {
-      throw er;
-    }
-  }
+  const impl = Size.lookupValue(val);
+  return impl ? impl(val) : foldl(val, 0, v => v + 1);
 };
 
 /**
@@ -637,25 +389,36 @@ const obj = (seq) => {
 const join = curry('join', (seq, sep) => list(seq).join(sep));
 
 /**
- * into can be used to turn sequences back into other types.
+ * Convert values into a given type using the `Into` trait.
+ * Note that this has inverse parameters compared to the trait
+ * (sequence first, type second) for currying purposes.
+ */
+const into = curry('into', (seq, t) => Into.invoke(t, seq));
+
+/**
+ * Into can be used to turn sequences back into other types.
  *
  * into is the inverse of `iter()`, meaning that taking the result
  * of `iter()` and calling `into()`, yields the original value.
  *
  * So in a purely functional language, `into(iter(v))` would be a
  * no-op; since we are in javascript, this essentially implements
- * a shallow copy:
+ * a poor mans shallow copy for some types
  *
  * ```
  * const shallowcopy = (v) => into(v, v.constructor);
  * ```
  *
- * # Type support
+ * # Interface
  *
- * Into can be implemented for arbitrary types, but it is guaranteed
- * that into is always defined for Array, String, Map, Set and Object.
+ * `(T: Type/Function, v: Sequence) => r: T
  *
- * Array: No caveats here!
+ * # Laws
+ *
+ * * `into(v, type(v)) <=> shallowclone(v)`
+ *
+ * # Specialization notes
+ *
  * String: Uses toString() on each value from the sequence
  *   and concatenates them into one string...
  * Object: Expects key/value pairs; the keys must be strings;
@@ -696,42 +459,14 @@ const join = curry('join', (seq, sep) => list(seq).join(sep));
  * const seq = concat([[99, 42]], new Map(true, 23), {bar: 13});
  * into(seq, Map) # Map( 99 => 42, true => 23, bar => 13 )
  * ```
- *
- * # Implementing into for other types
- *
- * `into()` simply uses a map from type to implementation to enable
- * support for arbitrary types; it is called `into.impl`;
- *
- * This is how support for arrays is provided:
- *
- * ```
- * into.impl.set(Array, (seq) => Array.from(iter(seq)));
- * ```
- *
- * Note that sometimes it is necessary to use `iter()` explicitly
- * to make sure that an implementation for a specific object works
- * with iterables as well as objects; see the example above.
- *
- * @param {Sequence} seq Any sequence for which iter() is defined
- * @param {Type} type The type to turn the sequence into
- * @returns {type} The newly constructed value!
  */
-const into = curry('into', (seq, t) => {
-  const impl = into.impl.get(t);
-  if (isdef(impl)) {
-    return impl(seq);
-  } else {
-    throw new IntoNotImplemented(`into() is not implemented for type ${t && t.name}`);
-  }
+const Into = new Trait('Into');
+Into.implStatic(Array, (t, v) => list(v));
+Into.implStatic(String, (t, v) => join(v, ''));
+Into.implStatic(Object, (t, v) => obj(v));
+each([Set, Map, WeakSet, WeakMap, ...typedArrays], (Typ) => {
+  Into.implStatic(Typ, (t, v) => new Typ(iter(v)));
 });
-into.impl = new Map();
-into.impl.set(Array, list);
-into.impl.set(String, join(''));
-into.impl.set(Set, uniq);
-into.impl.set(Map, dict);
-into.impl.set(Object, obj);
-
-class IntoNotImplemented extends TraitNotImplemented {}
 
 /**
  * Combine all the values from a sequence into one value.
@@ -1031,7 +766,7 @@ const append = curry('prepend', (seq, val) => concat(seq, [val]));
  */
 const mapSort = curry('mapSort', (seq, fn) => {
   const v = list(map(seq, u => [u, fn(u)]));
-  // eslint-disable-next-line no-unused-vars, no-nested-ternary
+  // eslint-disable-next-line no-nested-ternary
   v.sort(([_x, a], [_y, b]) => (a === b ? 0 : (a < b ? -1 : 1)));
   for (const idx of range0(size(v))) {
     v[idx] = first(v[idx]);
@@ -1232,33 +967,6 @@ const union = (fst, ...args) => into(type(fst))(concat(fst, ...args));
 const union2 = curry('union2', (a, b) => union(a, b));
 
 module.exports = {
-  isdef,
-  type,
-  typename,
-  exec,
-  identity,
-  compose,
-  composeSeq,
-  pipe,
-  withFunctionName,
-  curry,
-  and,
-  or,
-  not,
-  nand,
-  nor,
-  xor,
-  xnor,
-  is,
-  aint,
-  plus,
-  mul,
-  TraitNotImplemented,
-  SizeNotImplemented,
-  Size,
-  size,
-  empty,
-  SequenceNotImplemented,
   iter,
   range,
   range0,
@@ -1271,6 +979,7 @@ module.exports = {
   nth,
   first,
   second,
+  seqEq,
   each,
   count,
   list,
@@ -1279,7 +988,6 @@ module.exports = {
   dict,
   obj,
   into,
-  IntoNotImplemented,
   foldl,
   foldr,
   any,

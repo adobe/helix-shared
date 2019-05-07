@@ -48,6 +48,7 @@ describe('Validator Tests', () => {
     'no-default.yaml',
     'unsupported_version.yaml',
     'invalid-conditions.yaml',
+    'invalid-dirindex.yaml',
   ].forEach((filename) => {
     it(`${filename} is invalid`, async () => {
       await assertInvalid(filename);

@@ -28,6 +28,8 @@ class Origin {
       this._SSLCertHostname = cfg.ssl_cert_hostname || this._hostname;
       this._maxConn = cfg.max_conn || 200;
       this._useSSL = !(cfg.use_ssl === false);
+      this._path = cfg.path || '/';
+      this._overrideHost = cfg.override_host;
       if (cfg.port && Number.parseInt(cfg.port, 10) > 0) {
         this._port = cfg.port;
       } else {
@@ -41,13 +43,14 @@ class Origin {
       this._weight = 100;
       this._address = backenduri.host;
       this._connectTimeout = 1000;
-      this._name = `Proxy${backenduri.host.replace(/[^\w]/g, '')}${hash(backenduri).substr(0, 4)}`;
+      this._name = `Proxy${backenduri.host.replace(/[^\w]/g, '')}${hash(this._hostname).substr(0, 4)}`;
       this._port = backenduri.port || (backenduri.scheme === 'https' ? 443 : 80);
       this._betweenBytesTimeout = 10000;
       this._shield = 'iad-va-us';
       this._SSLCertHostname = backenduri.host;
       this._maxConn = 200;
       this._useSSL = backenduri.scheme === 'https';
+      this._path = backenduri.path;
     } else if (cfg) {
       throw new Error('Origin must be an absolute URL or an Object');
     } else {
@@ -107,7 +110,18 @@ class Origin {
     return this._useSSL;
   }
 
-  toJSON(opts) {
+  get path() {
+    return this._path;
+  }
+
+  get overrideHost() {
+    return this._overrideHost;
+  }
+
+  /**
+   * Returns a limited JSON representation that is compatible with the Fastly API
+   */
+  toFastlyJSON() {
     const json = {
       hostname: this.hostname,
       error_threshold: this.errorThreshold,
@@ -123,6 +137,18 @@ class Origin {
       max_conn: this.maxConn,
       use_ssl: this.useSSL,
     };
+    if (this.overrideHost) {
+      json.override_host = this.overrideHost;
+    }
+    return json;
+  }
+
+  /**
+   * Returns a full, round-trippable JSON representation
+   */
+  toJSON(opts) {
+    const json = this.toFastlyJSON();
+    json.path = this.path;
     if (opts && opts.minimal) {
       return utils.pruneEmptyValues(json);
     }

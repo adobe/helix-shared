@@ -141,6 +141,7 @@ Pointer to the content repository
 ## directoryIndex
 
 Name of the resource to use for requests to directories (no extension).
+When a request is made by the browser to `/help` and `directoryIndex=README.html`, then the request will be treated as if it was made to `/help/README.html`. Slashes (`/`) are not allowed in the directory index.
 
 `directoryIndex`
 
@@ -154,6 +155,13 @@ Name of the resource to use for requests to directories (no extension).
 
 `string`
 
+
+
+All instances must conform to this regular expression 
+(test examples [here](https://regexr.com/?expression=%5E%5B%5E%2F%5D%2B%24)):
+```regex
+^[^/]+$
+```
 
 
 
