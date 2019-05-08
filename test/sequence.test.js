@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Adobe. All rights reserved.
+ * Copyright 2019 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,222 +15,31 @@
 
 const assert = require('assert');
 const {
-  type, identity, compose, composeSeq, pipe, withFunctionName, curry,
-  and, or, not, nand, nor, xor, xnor, is, aint, plus, mul, Size,
-  SizeNotImplemented, size, empty, SequenceNotImplemented, iter,
-  range, range0, repeat, extend, extend1, flattenTree,
-  IteratorEnded, next, nth, first, second, each, count, list,
-  uniq, dict, obj, join, into, foldl, foldr, any, all, sum, product, map,
-  filter, reverse, enumerate, trySkip, skip, skipWhile, tryTake, take,
-  takeWhile, takeUntilVal, takeDef, flat, concat, prepend,
-  append, mapSort, exec, zipLeast, zip, zipLongest, zipLeast2, zip2,
-  zipLongest2, slidingWindow, trySlidingWindow, mod, union, union2,
-  isdef, typename, lookahead, reject, IntoNotImplemented,
-} = require('../src/index.js').sequence;
-
-const ckThrows = (cls, fn) => assert.throws(fn, cls);
-
-it('isdef()', () => {
-  each([null, undefined], v => assert(!isdef(v)));
-  each([false, [], {}, 0], v => assert(isdef(v)));
-});
-
-it('type()', () => {
-  assert.strictEqual(type(null), null);
-  assert.strictEqual(type(undefined), undefined);
-  assert.strictEqual(type(2), Number);
-  assert.strictEqual(type({}), Object);
-});
-
-it('typename()', () => {
-  const examples = {
-    null: null,
-    undefined,
-    Number: 22,
-    Object: {},
-    Map: new Map(),
-  };
-
-  each(examples, ([k, v]) => assert.strictEqual(typename(type(v)), k));
-});
-
-it('exec()', () => {
-  assert.strictEqual(exec(() => 42), 42);
-});
-
-it('identity()', () => {
-  assert.deepStrictEqual(identity(2), 2);
-});
-
-it('withFunctionName()', () => {
-  const fn = withFunctionName('ford prefect!', () => null);
-  assert.strictEqual(fn.name, 'ford prefect!');
-});
-
-it('compose(), compseSeq(), pipe()', () => {
-  const ck = (ini, fns, expect) => {
-    assert.strictEqual(compose(...fns)(ini), expect);
-    assert.strictEqual(composeSeq(fns)(ini), expect);
-    assert.strictEqual(pipe(ini, ...fns), expect);
-  };
-  ck(2, [], 2);
-  ck(null, [], null);
-  ck(3, [mul(2)], 6);
-  ck(3, [mul(2), plus(1)], 7);
-  ck(3, [plus(1), mul(3)], 12);
-});
-
-it('curry()', () => {
-  const fn = curry('foobar', (a, b, c, d) => (a + b * c) * d);
-  const ck = (res) => {
-    assert.deepStrictEqual(res, 28);
-  };
-
-  ck(fn(1, 2, 3, 4));
-  ck(fn()(1, 2, 3, 4));
-
-  ck(fn(4)(1, 2, 3));
-  ck(fn(4)()(1, 2, 3));
-  ck(fn(2, 3, 4)(1));
-  ck(fn()(2, 3, 4)()(1));
-
-  ck(fn(3, 4)(1, 2));
-  ck(fn(4)(3)(1, 2));
-  ck(fn(4)(2, 3)(1));
-
-  ck(fn(4)()(3)(2)()(1));
-
-  assert(fn.name.match(/foobar/));
-
-  assert.throws(() => fn(1, 2, 3, 4, 5));
-});
-
-const ckCurry = (fn, ...args) => {
-  const a = fn(...args);
-  const b = foldr(args, fn, (f, v) => f(v));
-  assert.deepStrictEqual(a, b);
-  return a;
-};
-
-it('and()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(and, ...args), expect);
-  ck(null, null, null);
-  ck(null, true, null);
-  ck(0, 0, true);
-  ck(true, 1, true);
-});
-
-it('or()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(or, ...args), expect);
-  ck(null, null, null);
-  ck(true, true, true);
-  ck(1, 0, 1);
-  ck(true, 0, true);
-});
-
-it('not()', () => {
-  assert.strictEqual(not(1), false);
-  assert.strictEqual(not(null), true);
-});
-
-it('nand()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(nand, ...args), expect);
-  ck(true, null, null);
-  ck(true, true, null);
-  ck(true, 0, 1);
-  ck(false, 1, true);
-});
-
-it('nor()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(nor, ...args), expect);
-  ck(true, null, null);
-  ck(false, true, null);
-  ck(false, 0, 1);
-  ck(false, 1, true);
-});
-
-it('xor()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(xor, ...args), expect);
-  ck(false, null, null);
-  ck(true, true, null);
-  ck(true, 0, 1);
-  ck(false, 1, true);
-});
-
-it('xnor()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(xnor, ...args), expect);
-  ck(true, null, null);
-  ck(false, true, null);
-  ck(false, 0, 1);
-  ck(true, 1, true);
-});
-
-it('is()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(is, ...args), expect);
-  ck(true, null, null);
-  ck(false, true, null);
-  ck(false, 0, 1);
-  ck(false, 1, true);
-});
-
-it('aint()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(aint, ...args), expect);
-  ck(false, null, null);
-  ck(true, true, null);
-  ck(true, 0, 1);
-  ck(true, 1, true);
-});
-
-it('plus()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(plus, ...args), expect);
-  ck(5, 2, 3);
-  ck(0, 1, -1);
-});
-
-it('mul()', () => {
-  const ck = (expect, ...args) => assert.strictEqual(ckCurry(mul, ...args), expect);
-  ck(-2, 2, -1);
-  ck(0, 17, 0);
-});
-
-it('size(), empty(), count()', () => {
-  const ck = (arg, expect) => {
-    assert.strictEqual(size(arg), expect);
-    assert.strictEqual(count(arg), expect);
-    assert.strictEqual(empty(arg), expect === 0);
-  };
-  class Foo {}
-  class Bar {
-    [Size]() { return 42; }
-  }
-  class Bang extends Bar {}
-  class Baz {}
-  size.impl.set(Baz, () => 23);
-
-  ck([1, 2, 3], 3);
-  ck([], 0);
-  ck({}, 0);
-  ck({ foo: 42 }, 1);
-  ck(new Set([1, 2, 3]), 3);
-  ck(new Map(), 0);
-  ck(new Map([[1, 2]]), 1);
-  ck('assd', 4);
-  ck(new Bar(), 42);
-  ck(new Bang(), 42);
-  ck(new Baz(), 23);
-
-  each([new Foo(), 0, null], (val) => {
-    ckThrows(SequenceNotImplemented, () => count(val));
-    each([size, empty], (fn) => {
-      ckThrows(SizeNotImplemented, () => fn(val));
-    });
-  });
-});
+  and, plus, or, mul,
+} = require('../src/op');
+const {
+  size, TraitNotImplemented, typedArrays, assertEquals,
+} = require('../src/types');
+const {
+  iter, range, range0, repeat, extend, extend1, flattenTree,
+  IteratorEnded, next, nth, first, second, seqEq, each, count, list, uniq,
+  join, dict, obj, into, foldl, foldr, any, all, sum, product, map,
+  filter, reject, reverse, enumerate, trySkip, skip, skipWhile, tryTake,
+  take, takeWhile, takeUntilVal, takeDef, flat, concat, prepend, append,
+  mapSort, zipLeast, zip, zipLongest, zipLeast2, zip2, zipLongest2,
+  slidingWindow, trySlidingWindow, lookahead, mod, union, union2,
+} = require('../src/sequence');
+const { ckEqSeq, ckThrows } = require('./util');
 
 it('count()', () => {
-  const ck = (seq, expect) => assert.strictEqual(count(seq), expect);
-  ck(iter({}), 0);
-  ck(iter([1, 2, 3]), 3);
+  const ck = (seq, expect) => {
+    assert.strictEqual(count(seq), expect);
+    assert.strictEqual(count(iter(seq)), expect);
+  };
+  ck({}, 0);
+  ck({ foo: 42, bar: 23 }, 2);
+  ck(new Map([[23, 42]]), 1);
+  ck([1, 2, 3], 3);
 });
 
 const str = 'Hello World';
@@ -249,11 +58,9 @@ function* gen() {
   yield 42;
 }
 
-const ckEqSeq = (a, b) => assert.deepStrictEqual(list(a), list(b));
-
 describe('iter()', () => {
   it('yields iterators ', () => {
-    [str, arr, o, m, gen(), iter(str), '', {}, new Map()].forEach((seq) => {
+    [str, arr, o, m, gen(), iter(str), '', {}, new Map(), new Int32Array()].forEach((seq) => {
       const fst = iter(seq).next();
       assert(Object.prototype.hasOwnProperty.call(fst, 'value'));
       assert(Object.prototype.hasOwnProperty.call(fst, 'done'));
@@ -263,7 +70,7 @@ describe('iter()', () => {
 
   it('iter() fails for types lacking iteration', () => {
     class Foo {}
-    ckThrows(SequenceNotImplemented, () => iter(new Foo()));
+    ckThrows(TraitNotImplemented, () => iter(new Foo()));
   });
 });
 
@@ -271,7 +78,7 @@ it('each() can iterate the sequences', () => {
   const checkEach = (seq, expected) => {
     const actual = [];
     each(seq, v => actual.push(v));
-    assert.deepStrictEqual(actual, expected);
+    ckEqSeq(actual, expected);
   };
   checkEach(str, Array.from(str));
   checkEach(arr, arr);
@@ -282,6 +89,9 @@ it('each() can iterate the sequences', () => {
   checkEach('', []);
   checkEach([], []);
   checkEach({}, []);
+  each(typedArrays, (Typ) => {
+    checkEach(new Typ([42, 23]), [42, 23]);
+  });
 });
 
 it('enumerate()', () => {
@@ -311,8 +121,8 @@ it('extend(), extend1()', () => {
 
 it('flattenTree()', () => {
   class Node {
-    constructor(values, ...children) {
-      this.values = values;
+    constructor(vals, ...children) {
+      this.values = vals;
       this.children = children;
     }
   }
@@ -364,7 +174,7 @@ it('into(), list()', () => {
   each([list, into(Array)], (fn) => {
     assert.deepStrictEqual(fn({ a: 42 }), [['a', 42]]);
   });
-  ckThrows(IntoNotImplemented, () => into([], Number));
+  ckThrows(TraitNotImplemented, () => into([], Number));
 });
 
 it('into(), uniq()', () => {
@@ -392,6 +202,11 @@ it('into()', () => {
       assert.strictEqual(mo.get('foo'), 11);
       assert.strictEqual(mo.get('bar'), 23);
     });
+  });
+
+  each(typedArrays, (Typ) => {
+    const fn = into(Typ);
+    assertEquals(fn(iter([1, 2])), new Typ([1, 2]));
   });
 });
 
@@ -422,6 +237,12 @@ it('fold', () => {
     foldr(['foo', 'bar'], 'Helo', (a, b) => `${a} ${b}`),
     'Helo bar foo',
   );
+});
+
+it('seqEq', () => {
+  assert(seqEq([], {}));
+  assert(seqEq(new Map([['foo', 42]]), { foo: 42 }));
+  assert(seqEq(new Map([['foo', [1, 2, 3]]]), { foo: [1, 2, 3] }));
 });
 
 it('map()', () => {
@@ -495,8 +316,8 @@ it('mapSort()', () => {
   const b = { id: 23 };
   const c = { id: 11 };
 
-  const v = mapSort(({ id }) => id)([a, b, c]);
-  ckEqSeq(v, [c, b, a]);
+  const v = mapSort(({ id }) => id)([b, a, b, c, b]);
+  ckEqSeq(v, [c, b, b, b, a]);
   const u = mapSort([a, c, b], ({ id }) => -id);
   ckEqSeq(u, [a, b, c]);
 });

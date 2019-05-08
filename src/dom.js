@@ -10,37 +10,44 @@
  * governing permissions and limitations under the License.
  */
 
+/**
+ * Generic library for programming with the HTML DOM.
+ *
+ * Provides implementations for Deepclone and Equals for dom nodes.
+ */
+
 // This file contains a lot of complex algorithms...
 // Avoiding continue often would be tedious and slow
 /* eslint-disable no-continue */
-
 const assert = require('assert');
 const {
-  each,
-  enumerate,
-  reverse,
-  takeUntilVal,
-  extend1,
-  exec,
-  withFunctionName,
-  uniq,
-  mapSort,
-  identity,
-  pipe,
-  join,
+  withFunctionName, exec, pipe, identity,
+} = require('./functional');
+const {
+  Deepclone, deepclone, Equals, type,
+} = require('./types');
+const {
+  each, enumerate, reverse, takeUntilVal, extend1,
+  uniq, mapSort, join, map, all,
 } = require('./sequence.js');
 
-/**
- * Check whether the given argument is a DOM node.
+/** Check whether the given type is the type of a dom node.  Note that, in
+ * order to support various dom implementations, this function uses a heuristic
+ * and there might be some false positives.
+ */
+const isNodeType = typ => typ && typ.prototype && pipe(
+  ['nodeName', 'nodeValue', 'cloneNode', 'childNodes'],
+  map(prop => prop in typ.prototype),
+  all,
+);
+
+/*
+ * Check whether the given type is the type of a dom node.
  * Note that, in order to support various dom implementations,
  * this function uses a heuristic and there might be some false
  * positives.
- * Since this function is mostly used in assertNode to provide
- * a decent error messages when a programmer specified an argument
- * with the incorrect type, the possibility of a false positive is
- * not a large problem.
  */
-const isNode = node => node && typeof node.nodeName === 'string';
+const isNode = node => isNodeType(type(node));
 
 /** Ensure that the given node is a domNode. Checks with isNode() */
 const assertNode = (node) => {
@@ -401,7 +408,7 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
 /**
  * Test whether two nodes are equivalent.
  *
- * This
+ * `equals()` over two dom nodes is an alias for this.
  *
  * Invokes equalizeNode() on both given elements before
  * invoking .isEqualNode.
@@ -418,7 +425,7 @@ const nodeIsEquivalent = (a, b) => {
   } else if (nodeName(a) === '#document') {
     return nodeIsEquivalent(a.documentElement, b.documentElement);
   }
-  return equalizeNode(a.cloneNode(true)).isEqualNode(equalizeNode(b.cloneNode(true)));
+  return equalizeNode(deepclone(a)).isEqualNode(equalizeNode(deepclone(b)));
 };
 
 /**
@@ -615,8 +622,8 @@ const nodeMatches = exec(() => {
       return false;
     } else {
       return recursiveMatch(
-        equalizeNode(node.cloneNode(true)),
-        equalizeNode(pattern.cloneNode(true)),
+        equalizeNode(deepclone(node)),
+        equalizeNode(deepclone(pattern)),
       );
     }
   };
@@ -656,8 +663,8 @@ const assertEquivalentNode = (actual, expected) => {
     return;
   }
 
-  const a2 = equalizeNode(actual.cloneNode(true));
-  const e2 = equalizeNode(expected.cloneNode(true));
+  const a2 = equalizeNode(deepclone(actual));
+  const e2 = equalizeNode(deepclone(expected));
   if (!a2.isEqualNode(e2)) {
     throw new assert.AssertionError({
       message: 'The DOM nodes are not equal.',
@@ -669,8 +676,14 @@ const assertEquivalentNode = (actual, expected) => {
   }
 };
 
+
+// Provide traits for nodes
+Deepclone.implWild(Typ => (isNodeType(Typ) ? (x => x.cloneNode(true)) : undefined));
+Equals.implWild(Typ => (isNodeType(Typ) ? ((a, b) => nodeIsEquivalent(a, b)) : undefined));
+
 module.exports = {
   isNode,
+  isNodeType,
   assertNode,
   nodeName,
   ancestryNodes,

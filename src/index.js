@@ -14,6 +14,9 @@ const HelixConfig = require('./HelixConfig.js');
 const Strain = require('./Strain.js');
 const Logger = require('./Logger.js');
 const sequence = require('./sequence.js');
+const functional = require('./functional.js');
+const op = require('./op.js');
+const types = require('./types.js');
 const string = require('./string.js');
 const dom = require('./dom.js');
 
@@ -22,6 +25,9 @@ module.exports = {
   HelixConfig,
   Strain,
   Logger,
+  functional,
+  op,
+  types,
   sequence,
   string,
   dom,
