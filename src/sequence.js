@@ -944,7 +944,7 @@ const lookahead = curry('lookahead', (seq, no, filler) => {
  *
  * @param {Any} v The value to transform
  * @param {Function} Fn The transformation function
- * @returns {typeof v}
+ * @returns {Any} same type as `v`
  */
 const mod = curry('mod', (v, fn) => into(type(v))(fn(v)));
 
