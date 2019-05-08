@@ -1,0 +1,4 @@
+condition:
+  accept_language=: en
+
+vcl: 'req.http.Accept-Language == "en"'

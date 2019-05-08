@@ -17,20 +17,22 @@ const fs = require('fs-extra');
 const nock = require('nock');
 const path = require('path');
 const request = require('request-promise-native');
+const url = require('url');
 const YAML = require('yaml');
+
 const Condition = require('../src/Condition.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/conditions');
 
 /**
- * Adorn our mock up request with a 'get' to retrieve headers if not present.
+ * Adorn our mock up request with fields/methods exposed by an express-style request.
  *
- * @param {*} req request
+ * @param {Object} req request
  */
 function expressify(req) {
-  if (!req.get) {
-    req.get = name => req.headers[name];
-  }
+  req.get = name => req.headers[name];
+  req.params = url.parse(req.path, true).query;
+  req.originalUrl = req.path;
   return req;
 }
 

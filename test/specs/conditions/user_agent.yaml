@@ -1,0 +1,4 @@
+condition:
+  user_agent: Mozilla/5.0
+
+vcl: 'req.http.User-Agent ~ "^Mozilla/5.0"'

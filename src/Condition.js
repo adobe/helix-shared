@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-const url = require('url');
-
 // To avoid forward referencing the transformer function
 let transform;
 
@@ -101,12 +99,16 @@ class PropertyCondition {
   }
 
   evaluate(req) {
+    if (!this._prop.express) {
+      return true;
+    }
     const actual = this._prop.express(req, this);
-    const value = this._value;
-
     if (!actual) {
       return false;
     }
+
+    const value = this._value;
+    const { type } = this._prop;
 
     switch (this._op) {
       case '=':
@@ -118,7 +120,7 @@ class PropertyCondition {
       case '>':
         return actual > value;
       default:
-        return actual.startsWith(value);
+        return type === 'string' ? actual.startsWith(value) : actual === value;
     }
   }
 
@@ -137,7 +139,7 @@ class PropertyCondition {
 const propertyMap = {
   url: {
     vcl: 'req.http.X-Full-URL',
-    express: req => `${req.protocol}://${req.hostname}/${req.originalUrl}`,
+    express: req => `${req.protocol}://${req.headers.host}/${req.originalUrl}`,
     type: 'string',
     allowed_ops: '=~',
   },
@@ -159,6 +161,43 @@ const propertyMap = {
     type: 'string',
     allowed_ops: '=~',
   },
+  client_city: {
+    vcl: 'client.geo.city',
+    type: 'string',
+    allowed_ops: '=~',
+  },
+  client_country_code: {
+    vcl: 'client.geo.country_code',
+    type: 'string',
+    allowed_ops: '=~',
+  },
+  user_agent: {
+    vcl: 'req.http.User-Agent',
+    express: req => req.get('user-agent'),
+    type: 'string',
+    allowed_ops: '=~',
+  },
+  accept_language: {
+    vcl: 'req.http.Accept-Language',
+    express: req => req.get('accept-language'),
+    type: 'string',
+    allowed_ops: '=~',
+  },
+  client_lat: {
+    vcl: 'client.geo.latitude',
+    type: 'number',
+    allowed_ops: '<=>',
+  },
+  client_lon: {
+    vcl: 'client.geo.longitude',
+    type: 'number',
+    allowed_ops: '<=>',
+  },
+  client_gmt_offset: {
+    vcl: 'client.geo.gmt_offset',
+    type: 'number',
+    allowed_ops: '<=>',
+  },
   url_param: {
     vcl: (property) => {
       const vcl = `subfield(req.url.qs, "${property.name}", "&")`;
@@ -167,17 +206,8 @@ const propertyMap = {
       }
       return vcl;
     },
-    express: (req, property) => {
-      const { query } = url.parse(req.path, true);
-      return query[property.name];
-    },
+    express: (req, property) => req.params[property.name],
     allowed_ops: '~<=>',
-  },
-  client_lat: {
-    vcl: 'client.geo.latitude',
-    express: () => true,
-    type: 'number',
-    allowed_ops: '<=>',
   },
 };
 
