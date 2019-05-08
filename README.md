@@ -14,6 +14,9 @@
 
 ## Usage
 
+* [API Documentation](docs/API.md)
+* [Configuration File Schema](docs/README.md)
+
 ### Using `HelixConfig` to read Helix configuration files
 
 Helix is using YAML files for configuration management, but with the `HelixConfig` class, exported from `@adobe/helix-shared`, you can read, validate, and access configuration files with ease:
