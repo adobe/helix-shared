@@ -22,6 +22,18 @@ const Condition = require('../src/Condition.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/conditions');
 
+/**
+ * Adorn our mock up request with a 'get' to retrieve headers if not present.
+ *
+ * @param {*} req request
+ */
+function expressify(req) {
+  if (!req.get) {
+    req.get = name => req.headers[name];
+  }
+  return req;
+}
+
 describe('Condition tests', () => {
   fs.readdirSync(SPEC_ROOT).forEach((filename) => {
     const source = fs.readFileSync(path.resolve(SPEC_ROOT, filename), 'utf8');
@@ -42,7 +54,8 @@ describe('Condition tests', () => {
           .get(() => true)
           .reply(function intercept() {
             const fn = cond.toFunction();
-            return [200, `${fn(this.req)}`];
+            const value = fn(expressify(this.req));
+            return [200, `${value}`];
           });
         const response = await request('http://www.example.com/index.html?a=7');
         assert.ok(response);
@@ -53,7 +66,7 @@ describe('Condition tests', () => {
       }
     });
   });
-  it('Null condition', async () => {
+  it('Null condition', () => {
     const cond = new Condition();
     assert.equal('', cond.toVCL());
     const fn = cond.toFunction();

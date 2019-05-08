@@ -1,0 +1,4 @@
+condition:
+  url.hostname=: www.example.com
+
+vcl: 'req.http.host == "www.example.com"'

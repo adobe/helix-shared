@@ -15,68 +15,58 @@ const url = require('url');
 // To avoid forward referencing the transformer function
 let transform;
 
-const Affix = {
-  PREFIX: 1,
-  INFIX: 2,
+/**
+ * Determines how to transform children configuration based on the affix type.
+ */
+const configMapper = {
+  prefix: cfg => transform(cfg),
+  infix: cfg => cfg.map(child => transform(child)),
+};
+
+/**
+ * Determines how to compose VCL based on the affix type.
+ */
+const vclComposer = {
+  prefix: (item, op) => `${op}(${item.toVCL()})`,
+  infix: (items, op) => `(${items.map(item => item.toVCL()).join(op)})`,
 };
 
 /**
  * Boolean conditions
  */
-const booleanConditionMap = {
+const booleanMap = {
   or: {
-    name: 'or',
-    type: Affix.INFIX,
+    mapper: configMapper.infix,
     op: ' || ',
+    vcl: vclComposer.infix,
+    express: (items, req) => items.reduce((result, item) => result || item.evaluate(req), false),
   },
   and: {
-    name: 'and',
-    type: Affix.INFIX,
+    mapper: configMapper.infix,
     op: ' && ',
+    vcl: vclComposer.infix,
+    express: (items, req) => items.reduce((result, item) => result && item.evaluate(req), true),
   },
   not: {
-    name: 'not',
-    type: Affix.PREFIX,
+    mapper: configMapper.prefix,
     op: ' !',
+    vcl: vclComposer.prefix,
+    express: (item, req) => !item.evaluate(req),
   },
 };
 
 class BooleanCondition {
-  constructor(condition, children) {
-    this._condition = condition;
-
-    switch (condition.type) {
-      case Affix.PREFIX:
-        this._children = transform(children);
-        break;
-      default:
-        this._children = children.map(child => transform(child));
-        break;
-    }
+  constructor(entry, cfg) {
+    this._entry = entry;
+    this._items = this._entry.mapper(cfg);
   }
 
   toVCL() {
-    let clause;
-
-    switch (this._condition.type) {
-      case Affix.PREFIX:
-        clause = this._children.toVCL();
-        return `${this._condition.op}(${clause})`;
-      default:
-        clause = this._children.map(child => child.toVCL()).join(this._condition.op);
-        return `(${clause})`;
-    }
+    return this._entry.vcl(this._items, this._entry.op);
   }
 
   evaluate(req) {
-    switch (this._condition.name) {
-      case 'and':
-        return this._children.reduce((result, child) => result && child.evaluate(req), true);
-      case 'or':
-        return this._children.reduce((result, child) => result || child.evaluate(req), false);
-      default:
-        return !this._children.evaluate(req);
-    }
+    return this._entry.express(this._items, req);
   }
 }
 
@@ -84,17 +74,19 @@ class BooleanCondition {
  * PropertyCondition
  */
 class PropertyCondition {
-  constructor(name, type, op, value, vcl, express) {
-    this._name = name;
-    this._type = type;
+  constructor(prop, op, value, name) {
+    if (op && prop.allowed_ops.indexOf(op) === -1) {
+      throw new Error(`Property ${name} does not support operation: ${op}`);
+    }
+
+    this._prop = prop;
     this._op = op;
     this._value = value;
-    this._vcl = vcl;
-    this._express = express;
+    this._name = name;
   }
 
   toVCL() {
-    const quote = this._type === 'string' ? '"' : '';
+    const quote = this._prop.type === 'string' ? '"' : '';
     let value = this._value;
     let op = this._op;
 
@@ -107,12 +99,12 @@ class PropertyCondition {
       // operand defaults to equal
       op = '==';
     }
-    const vcl = typeof this._vcl === 'function' ? this._vcl(this) : this._vcl;
+    const vcl = typeof this._prop.vcl === 'function' ? this._prop.vcl(this) : this._prop.vcl;
     return `${vcl} ${op} ${quote}${value}${quote}`;
   }
 
   evaluate(req) {
-    const actual = this._express(req, this);
+    const actual = this._prop.express(req, this);
     const value = this._value;
 
     if (!actual) {
@@ -138,25 +130,43 @@ class PropertyCondition {
   }
 
   get type() {
-    return this._type;
+    return this._prop.type;
   }
 }
 
 /**
  * Known properties
  */
-const propertyConditionMap = {
+const propertyMap = {
   url: {
+    vcl: 'req.http.X-Full-URL',
+    express: req => `${req.protocol}://${req.hostname}/${req.path}`,
+    type: 'string',
+    allowed_ops: '=~',
+  },
+  'url.hostname': {
+    vcl: 'req.http.host',
+    express: req => req.hostname,
+    type: 'string',
+    allowed_ops: '=~',
+  },
+  'url.path': {
     vcl: 'req.url',
     express: req => req.path,
     type: 'string',
     allowed_ops: '=~',
   },
+  referer: {
+    vcl: 'req.http.referer',
+    express: req => req.get('referer'),
+    type: 'string',
+    allowed_ops: '=~',
+  },
   url_param: {
     vcl: (property) => {
-      let vcl = `subfield(req.url.qs, "${property.name}", "&")`;
+      const vcl = `subfield(req.url.qs, "${property.name}", "&")`;
       if (property.type === 'number') {
-        vcl = `std.atoi(${vcl})`;
+        return `std.atoi(${vcl})`;
       }
       return vcl;
     },
@@ -168,7 +178,7 @@ const propertyConditionMap = {
   },
   client_lat: {
     vcl: 'client.geo.latitude',
-    express: req => req.client_lat,
+    express: () => true,
     type: 'number',
     allowed_ops: '<=>',
   },
@@ -204,7 +214,7 @@ transform = (cfg) => {
   let name = Object.keys(cfg)[0];
   const value = cfg[name];
 
-  const condition = booleanConditionMap[name];
+  const condition = booleanMap[name];
   if (condition) {
     return new BooleanCondition(condition, value);
   }
@@ -215,19 +225,16 @@ transform = (cfg) => {
     name = name.slice(0, name.length - 1);
     op = last;
   }
-  let property = propertyConditionMap[name];
-  if (!property) {
-    const match = name.match(/^url_param\.(.+)$/);
-    if (!match) {
-      throw new Error(`Unknown property: ${name}`);
-    }
-    [, name] = match;
-    property = Object.assign({ type: op === '<' || op === '>' ? 'number' : 'string' }, propertyConditionMap.url_param);
+  let prop = propertyMap[name];
+  if (prop) {
+    return new PropertyCondition(prop, op, value, name);
   }
-  if (op && property.allowed_ops.indexOf(op) === -1) {
-    throw new Error(`Property ${name} does not support operation: ${op}`);
+  const match = name.match(/^url_param\.(.+)$/);
+  if (match) {
+    prop = Object.assign({ type: op === '<' || op === '>' ? 'number' : 'string' }, propertyMap.url_param);
+    return new PropertyCondition(prop, op, value, match[1]);
   }
-  return new PropertyCondition(name, property.type, op, value, property.vcl, property.express);
+  throw new Error(`Unknown property: ${name}`);
 };
 
 module.exports = Condition;

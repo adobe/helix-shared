@@ -1,0 +1,4 @@
+condition:
+  referer=: https://www.example.com
+
+vcl: 'req.http.referer == "https://www.example.com"'

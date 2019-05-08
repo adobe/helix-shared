@@ -1,0 +1,4 @@
+condition:
+  url.path=: /index.html
+
+vcl: 'req.url == "/index.html"'

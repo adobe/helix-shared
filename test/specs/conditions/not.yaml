@@ -2,4 +2,4 @@ condition:
   not:
     url: https://www.example.com
 
-vcl: ' !(req.url ~ "^https://www.example.com")'
+vcl: ' !(req.http.X-Full-URL ~ "^https://www.example.com")'

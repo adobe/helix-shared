@@ -3,4 +3,4 @@ condition:
     - url: https://www.example.com
     - url~: index.html$
 
-vcl: '(req.url ~ "^https://www.example.com" && req.url ~ "index.html$")'
+vcl: '(req.http.X-Full-URL ~ "^https://www.example.com" && req.http.X-Full-URL ~ "index.html$")'
