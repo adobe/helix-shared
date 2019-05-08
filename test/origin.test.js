@@ -46,6 +46,13 @@ describe('Origin Config', () => {
     assert.equal(origin.name, 'Proxyexamplecom4e71');
   });
 
+  it('Generates a correct name in object form', () => {
+    const origin = new Origin({
+      hostname: 'example.com',
+    });
+    assert.equal(origin.name, 'Proxyexamplecom4e71');
+  });
+
   it('Keeps the correct port number', () => {
     const origin = new Origin('http://example.com:4503');
     assert.equal(origin.port, 4503);
