@@ -83,12 +83,19 @@ class HelixConfig {
    */
   merge(other, resolvefn) {
     const filtered = new Strains();
-    pipe(concat(other.strains.keys(), this.strains.keys()), uniq, each((name) => {
-      const strain = resolvefn(this.strains.get(name), other.strains.get(name));
-      if (strain) {
-        filtered.add(strain);
-      }
-    }));
+    pipe( // in the following order:
+      concat(other.strains.keys(), this.strains.keys()), // create a full list of strain names
+      uniq, // remove duplicates
+      each((name) => { // for each name
+        const strain = resolvefn(
+          this.strains.get(name),
+          other.strains.get(name),
+        ); // resolve conflict
+        if (strain) {
+          filtered.add(strain); // add the strain to the new list of strains
+        }
+      }),
+    );
 
     this._strains = filtered;
     return this;
