@@ -79,7 +79,7 @@ class HelixConfig {
    * object and a user-defined resolver function.
    * @param {HelixConfig} other another Helix Config to merge
    * @param {ResolveFn} resolvefn a resolver function that returns either a strain or undefined
-   * @returns {HelixConfig} the merged Helix Config
+   * @returns {HelixConfig} the merged Helix Config, i.e. `this`.
    */
   merge(other, resolvefn) {
     const filtered = new Strains();
