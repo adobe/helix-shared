@@ -137,13 +137,13 @@ class PropertyCondition {
 const propertyMap = {
   url: {
     vcl: 'req.http.X-Full-URL',
-    express: req => `${req.protocol}://${req.hostname}/${req.path}`,
+    express: req => `${req.protocol}://${req.hostname}/${req.originalUrl}`,
     type: 'string',
     allowed_ops: '=~',
   },
   'url.hostname': {
     vcl: 'req.http.host',
-    express: req => req.hostname,
+    express: req => req.headers.host,
     type: 'string',
     allowed_ops: '=~',
   },
