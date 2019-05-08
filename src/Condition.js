@@ -27,8 +27,8 @@ const configMapper = {
  * Determines how to compose VCL based on the affix type.
  */
 const vclComposer = {
-  prefix: (item, op) => `${op}(${item.toVCL()})`,
-  infix: (items, op) => `(${items.map(item => item.toVCL()).join(op)})`,
+  prefix: op => item => `${op}(${item.toVCL()})`,
+  infix: op => items => `(${items.map(item => item.toVCL()).join(op)})`,
 };
 
 /**
@@ -37,20 +37,17 @@ const vclComposer = {
 const booleanMap = {
   or: {
     mapper: configMapper.infix,
-    op: ' || ',
-    vcl: vclComposer.infix,
+    vcl: vclComposer.infix(' || '),
     express: (items, req) => items.reduce((result, item) => result || item.evaluate(req), false),
   },
   and: {
     mapper: configMapper.infix,
-    op: ' && ',
-    vcl: vclComposer.infix,
+    vcl: vclComposer.infix(' && '),
     express: (items, req) => items.reduce((result, item) => result && item.evaluate(req), true),
   },
   not: {
     mapper: configMapper.prefix,
-    op: ' !',
-    vcl: vclComposer.prefix,
+    vcl: vclComposer.prefix(' !'),
     express: (item, req) => !item.evaluate(req),
   },
 };
