@@ -145,7 +145,7 @@ const propertyMap = {
   },
   'url.hostname': {
     vcl: 'req.http.host',
-    express: req => req.headers.host,
+    express: req => req.hostname,
     type: 'string',
     allowed_ops: '=~',
   },
@@ -195,6 +195,42 @@ const propertyMap = {
   },
   client_gmt_offset: {
     vcl: 'client.geo.gmt_offset',
+    type: 'number',
+    allowed_ops: '<=>',
+  },
+  time_day: {
+    vcl: 'std.atoi(strftime({"%w"}, time.start))',
+    express: () => new Date().getDay(),
+    type: 'number',
+    allowed_ops: '<=>',
+  },
+  time_date: {
+    vcl: 'std.atoi(strftime({"%d"}, time.start))',
+    express: () => new Date().getDate(),
+    type: 'number',
+    allowed_ops: '<=>',
+  },
+  time_hours: {
+    vcl: 'std.atoi(strftime({"%H"}, time.start))',
+    express: () => new Date().getHours(),
+    type: 'number',
+    allowed_ops: '<=>',
+  },
+  time_minutes: {
+    vcl: 'std.atoi(strftime({"%M"}, time.start))',
+    express: () => new Date().getMinutes(),
+    type: 'number',
+    allowed_ops: '<=>',
+  },
+  time_month: {
+    vcl: 'std.atoi(strftime({"%m"}, time.start))',
+    express: () => new Date().getMonth(),
+    type: 'number',
+    allowed_ops: '<=>',
+  },
+  time_year: {
+    vcl: 'std.atoi(strftime({"%Y"}, time.start))',
+    express: () => new Date().getFullYear(),
     type: 'number',
     allowed_ops: '<=>',
   },

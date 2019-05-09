@@ -1,0 +1,4 @@
+condition:
+  time_date=: 9
+
+vcl: 'std.atoi(strftime({"%d"}, time.start)) == 9'
