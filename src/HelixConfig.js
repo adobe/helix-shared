@@ -16,6 +16,9 @@ const YAML = require('yaml');
 const Strain = require('./Strain.js');
 const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
+const { concat, uniq, foldl } = require('./sequence.js');
+const { pipe } = require('./functional.js');
+
 
 const HELIX_CONFIG = 'helix-config.yaml';
 
@@ -61,6 +64,40 @@ class HelixConfig {
 
   withDirectory(cwd) {
     this._cwd = cwd;
+    return this;
+  }
+
+  /**
+   * @name ResolveFn
+   * @function
+   * @param {Strain} left the current candidate strain (can be undefined)
+   * @param {Strain} right the alternative candidate strain (can be undefined)
+   */
+
+  /**
+   * Updates the current configuration with the strains of another configuration
+   * object and a user-defined resolver function.
+   * @param {HelixConfig} other another Helix Config to merge
+   * @param {ResolveFn} resolvefn a resolver function that returns either a strain or undefined
+   * @returns {HelixConfig} the merged Helix Config, i.e. `this`.
+   */
+  merge(other, resolvefn) {
+    const accept = (acceptedstrains, strainname) => {
+      const strain = resolvefn(
+        this.strains.get(strainname),
+        other.strains.get(strainname),
+      ); // resolve conflict with the resolverfn
+      if (strain) {
+        acceptedstrains.add(strain); // add the strain (if existing) to the new list of strains
+      }
+      return acceptedstrains;
+    };
+
+    this._strains = pipe( // in the following order:
+      concat(other.strains.keys(), this.strains.keys()), // create a full list of strain names
+      uniq, // remove duplicates
+      foldl(new Strains(), accept), // use the accept function above to fill the new strain list
+    );
     return this;
   }
 
