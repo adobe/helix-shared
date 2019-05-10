@@ -1,4 +1,12 @@
 condition:
-  referer=: https://www.example.com
+  referer=: www.example.com
 
-vcl: 'req.http.referer == "https://www.example.com"'
+vcl: 'req.http.referer == "www.example.com"'
+
+samples:
+  - headers:
+      referer: www.example.com
+    match: true
+  - headers:
+      referer: www.othersite.com
+    match: false

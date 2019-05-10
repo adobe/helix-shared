@@ -23,6 +23,7 @@ const YAML = require('yaml');
 const Condition = require('../src/Condition.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/conditions');
+const DEFAULT_SERVER = 'https://www.example.com';
 
 /**
  * Adorn our mock up request with fields/methods exposed by an express-style request.
@@ -30,10 +31,55 @@ const SPEC_ROOT = path.resolve(__dirname, 'specs/conditions');
  * @param {Object} req request
  */
 function expressify(req) {
-  req.get = name => req.headers[name];
-  req.params = url.parse(req.path, true).query;
-  req.originalUrl = req.path;
-  return req;
+  return Object.assign({
+    get: name => req.headers[name],
+    hostname: req.headers.host,
+    params: url.parse(req.path, true).query,
+    protocol: 'https',
+    originalUrl: req.path,
+  }, req);
+}
+
+/**
+ * Creates one mock request for a condition and evaluates
+ * the response without verifying. Needed for testing
+ * validity of time based conditions.
+ *
+ * @param {Object} cond condition
+ */
+async function evaluate(cond) {
+  nock(DEFAULT_SERVER)
+    .get(() => true)
+    .reply(function intercept() {
+      const fn = cond.toFunction();
+      const value = fn(expressify(this.req));
+      return [200, `${value}`];
+    });
+  const response = await request(`${DEFAULT_SERVER}/index.html`);
+  assert.ok(response);
+}
+
+/**
+ * Creates mock requests for every sample definition found
+ * and verifies the expected match
+ *
+ * @param {Object} cond condition
+ * @param {Array} samples array of samples to verify
+ */
+async function assertMatch(cond, samples) {
+  await Promise.all(samples.map(async (sample) => {
+    nock(DEFAULT_SERVER)
+      .get(() => true)
+      .reply(function intercept() {
+        const fn = cond.toFunction();
+        const value = fn(expressify(this.req));
+        return [200, `${value}`];
+      });
+    const stdopts = { uri: `${DEFAULT_SERVER}/index.html` };
+    const opts = Object.assign({}, stdopts, sample);
+    const response = await request(opts);
+    assert.equal(response === 'true', opts.match);
+  }));
 }
 
 describe('Condition tests', () => {
@@ -52,15 +98,11 @@ describe('Condition tests', () => {
           assert.equal(vcl, cfg.vcl);
           assert.equal(null, cfg.error);
         }
-        nock('http://www.example.com')
-          .get(() => true)
-          .reply(function intercept() {
-            const fn = cond.toFunction();
-            const value = fn(expressify(this.req));
-            return [200, `${value}`];
-          });
-        const response = await request('http://www.example.com/index.html?a=7');
-        assert.ok(response);
+        if (cfg.samples) {
+          await assertMatch(cond, cfg.samples);
+        } else {
+          await evaluate(cond);
+        }
       } catch (e) {
         if (e.message !== cfg.error) {
           assert.fail(e.message);

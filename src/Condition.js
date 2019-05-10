@@ -120,7 +120,11 @@ class PropertyCondition {
       case '>':
         return actual > value;
       default:
-        return type === 'string' ? actual.startsWith(value) : actual === value;
+        if (type === 'string') {
+          const { prefix } = this._prop;
+          return prefix ? prefix(actual, value) : actual.startsWith(value);
+        }
+        return actual === value;
     }
   }
 
@@ -134,6 +138,17 @@ class PropertyCondition {
 }
 
 /**
+ * For URLs and URL paths, a substring match of '/foo' should actually
+ * match '/foo' or '/foo/index.html' but not '/fooby'.
+ *
+ * @param {String} actual actual value
+ * @param {String} value configured value
+ */
+function parentDirectoryMatch(actual, value) {
+  return actual === value || actual.startsWith(`${value}/`);
+}
+
+/**
  * Known properties
  */
 const propertyMap = {
@@ -142,6 +157,7 @@ const propertyMap = {
     express: req => `${req.protocol}://${req.headers.host}/${req.originalUrl}`,
     type: 'string',
     allowed_ops: '=~',
+    prefix: parentDirectoryMatch,
   },
   'url.hostname': {
     vcl: 'req.http.host',
@@ -150,10 +166,11 @@ const propertyMap = {
     allowed_ops: '=~',
   },
   'url.path': {
-    vcl: 'req.url',
+    vcl: 'req.url.path',
     express: req => req.path,
     type: 'string',
     allowed_ops: '=~',
+    prefix: parentDirectoryMatch,
   },
   referer: {
     vcl: 'req.http.referer',

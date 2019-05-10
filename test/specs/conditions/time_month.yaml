@@ -1,4 +1,4 @@
 condition:
-  time_month=: 5
+  time_month: 5
 
 vcl: 'std.atoi(strftime({"%m"}, time.start)) == 5'

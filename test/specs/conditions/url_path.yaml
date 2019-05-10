@@ -1,4 +1,12 @@
 condition:
-  url.path=: /index.html
+  url.path: /foo
 
-vcl: 'req.url == "/index.html"'
+# vcl: 'req.url.path ~ "^/foo/^" || req.url.path == "/foo"'
+
+samples:
+  - uri: https://www.example.com/foo/
+    match: true
+  - uri: https://www.example.com/foo
+    match: true
+  - uri: https://www.example.com/fooby
+    match: false

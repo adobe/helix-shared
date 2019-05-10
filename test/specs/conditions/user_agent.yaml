@@ -2,3 +2,13 @@ condition:
   user_agent: Mozilla/5.0
 
 vcl: 'req.http.User-Agent ~ "^Mozilla/5.0"'
+
+samples:
+  - headers:
+      user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4)
+    match: true
+  - headers:
+      user-agent: Dark Secret Ninja/1.0
+    match: false
+  - headers:
+    match: false

@@ -2,3 +2,7 @@ condition:
   url.hostname=: www.example.com
 
 vcl: 'req.http.host == "www.example.com"'
+
+samples:
+  - uri: https://www.example.com/index.html
+    match: true

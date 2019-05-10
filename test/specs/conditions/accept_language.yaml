@@ -2,3 +2,11 @@ condition:
   accept_language=: en
 
 vcl: 'req.http.Accept-Language == "en"'
+
+samples:
+  - headers:
+      accept-language: en
+    match: true
+  - headers:
+      accept-language: de
+    match: false

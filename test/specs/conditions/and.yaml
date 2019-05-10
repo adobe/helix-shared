@@ -4,3 +4,7 @@ condition:
     - url~: index.html$
 
 vcl: '(req.http.X-Full-URL ~ "^https://www.example.com" && req.http.X-Full-URL ~ "index.html$")'
+
+samples:
+  - uri: https://www.example.com/index.html
+    match: true
