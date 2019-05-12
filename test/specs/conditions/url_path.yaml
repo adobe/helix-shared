@@ -1,7 +1,7 @@
 condition:
   url.path: /foo
 
-# vcl: 'req.url.path ~ "^/foo/^" || req.url.path == "/foo"'
+vcl: '(req.url.path ~ "^/foo/" || req.url.path == "/foo")'
 
 samples:
   - uri: https://www.example.com/foo/

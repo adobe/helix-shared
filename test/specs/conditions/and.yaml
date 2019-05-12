@@ -1,10 +1,12 @@
 condition:
   and:
-    - url: https://www.example.com
-    - url~: index.html$
+    - url: https://www.example.com/doc
+    - url.path~: index.html$
 
-vcl: '(req.http.X-Full-URL ~ "^https://www.example.com" && req.http.X-Full-URL ~ "index.html$")'
+vcl: '((req.http.X-Full-URL ~ "^https://www.example.com/doc/" || req.http.X-Full-URL == "https://www.example.com/doc") && req.url.path ~ "index.html$")'
 
 samples:
-  - uri: https://www.example.com/index.html
+  - uri: https://www.example.com/doc/index.html
     match: true
+  - uri: https://www.example.com/docindex.html
+    match: false

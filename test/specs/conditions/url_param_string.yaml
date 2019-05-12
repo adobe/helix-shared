@@ -8,3 +8,5 @@ samples:
     match: true
   - uri: https://www.example.com/index.html?foo=baz
     match: false
+  - uri: https://www.example.com/index.html
+    match: false

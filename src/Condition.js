@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+const url = require('url');
+
 // To avoid forward referencing the transformer function
 let transform;
 
@@ -81,12 +83,17 @@ class PropertyCondition {
   }
 
   toVCL() {
+    const { vcl, prefixCompose } = this._prop;
+    const name = typeof vcl === 'function' ? vcl(this) : vcl;
     const quote = this._prop.type === 'string' ? '"' : '';
     let value = this._value;
     let op = this._op;
 
     if (quote === '"' && !op) {
       // substring-start
+      if (prefixCompose) {
+        return prefixCompose(name, value);
+      }
       value = `^${value}`;
       op = '~';
     }
@@ -94,8 +101,7 @@ class PropertyCondition {
       // operand defaults to equal
       op = '==';
     }
-    const vcl = typeof this._prop.vcl === 'function' ? this._prop.vcl(this) : this._prop.vcl;
-    return `${vcl} ${op} ${quote}${value}${quote}`;
+    return `${name} ${op} ${quote}${value}${quote}`;
   }
 
   evaluate(req) {
@@ -121,8 +127,8 @@ class PropertyCondition {
         return actual > value;
       default:
         if (type === 'string') {
-          const { prefix } = this._prop;
-          return prefix ? prefix(actual, value) : actual.startsWith(value);
+          const { prefixMatch } = this._prop;
+          return prefixMatch ? prefixMatch(actual, value) : actual.startsWith(value);
         }
         return actual === value;
     }
@@ -141,10 +147,14 @@ class PropertyCondition {
  * For URLs and URL paths, a substring match of '/foo' should actually
  * match '/foo' or '/foo/index.html' but not '/fooby'.
  *
- * @param {String} actual actual value
- * @param {String} value configured value
+ * We therefore add extra clauses in VCL or evaluate an extra condition.
  */
-function parentDirectoryMatch(actual, value) {
+
+function urlPrefixCompose(name, value) {
+  return `(${name} ~ "^${value}/" || ${name} == "${value}")`;
+}
+
+function urlPrefixMatch(actual, value) {
   return actual === value || actual.startsWith(`${value}/`);
 }
 
@@ -154,10 +164,18 @@ function parentDirectoryMatch(actual, value) {
 const propertyMap = {
   url: {
     vcl: 'req.http.X-Full-URL',
-    express: req => `${req.protocol}://${req.headers.host}/${req.originalUrl}`,
+    prefixCompose: (name, value) => {
+      const uri = url.parse(value);
+      if (uri.path === '/') {
+        // root path, no composition necessary
+        return `${name} ~ "^${value}"`;
+      }
+      return urlPrefixCompose(name, value);
+    },
+    express: req => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+    prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
-    prefix: parentDirectoryMatch,
   },
   'url.hostname': {
     vcl: 'req.http.host',
@@ -167,10 +185,11 @@ const propertyMap = {
   },
   'url.path': {
     vcl: 'req.url.path',
+    prefixCompose: urlPrefixCompose,
     express: req => req.path,
+    prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
-    prefix: parentDirectoryMatch,
   },
   referer: {
     vcl: 'req.http.referer',
