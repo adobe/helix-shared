@@ -1,0 +1,14 @@
+condition:
+  url: https://www.example.com/doc
+
+vcl: (req.http.X-Full-URL ~ "^https://www.example.com/doc/" || req.http.X-Full-URL == "https://www.example.com/doc")
+
+samples:
+  - uri: https://www.example.com/doc
+    match: true
+  - uri: https://www.example.com/doc/
+    match: true
+  - uri: https://www.example.com/doc/index.html
+    match: true
+  - uri: https://www.example.com/documentation/index.html
+    match: false

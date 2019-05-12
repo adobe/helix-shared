@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/adobe/helix-shared/compare/v1.2.0...v1.3.0) (2019-05-12)
+
+
+### Features
+
+* **strains:** Conditions Language ([b0c46c4](https://github.com/adobe/helix-shared/commit/b0c46c4)), closes [#20](https://github.com/adobe/helix-shared/issues/20)
+
 # [1.2.0](https://github.com/adobe/helix-shared/compare/v1.1.1...v1.2.0) (2019-05-07)
 
 
