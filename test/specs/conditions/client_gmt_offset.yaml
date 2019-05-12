@@ -1,0 +1,4 @@
+condition:
+  client_gmt_offset: -700
+
+vcl: 'client.geo.gmt_offset == -700'
