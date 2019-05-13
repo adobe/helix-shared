@@ -1,0 +1,12 @@
+condition:
+  url_param.foo: bar
+
+vcl: 'subfield(req.url.qs, "foo", "&") ~ "^bar"'
+
+samples:
+  - uri: https://www.example.com/index.html?foo=bar
+    match: true
+  - uri: https://www.example.com/index.html?foo=baz
+    match: false
+  - uri: https://www.example.com/index.html
+    match: false

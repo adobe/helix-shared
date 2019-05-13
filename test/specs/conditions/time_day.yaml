@@ -1,0 +1,4 @@
+condition:
+  time_day=: 4
+
+vcl: 'std.atoi(strftime({"%w"}, time.start)) == 4'
