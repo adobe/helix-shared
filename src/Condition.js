@@ -38,12 +38,22 @@ const booleanMap = {
   or: {
     mapper: configMapper.infix,
     vcl: vclComposer.infix(' || '),
-    express: (items, req) => items.reduce((result, item) => result || item.evaluate(req), false),
+    express: (items, req) => items.reduce((prev, item) => prev || item.evaluate(req), false),
   },
   and: {
     mapper: configMapper.infix,
     vcl: vclComposer.infix(' && '),
-    express: (items, req) => items.reduce((result, item) => result && item.evaluate(req), true),
+    express: (items, req) => items.reduce((prev, item) => {
+      if (!prev) {
+        return false;
+      }
+      const result = item.evaluate(req);
+      if (!result) {
+        return false;
+      }
+      // preserve the term that has a baseURL
+      return prev.baseURL ? prev : result;
+    }, true),
   },
   not: {
     mapper: configMapper.prefix,
@@ -155,7 +165,11 @@ function urlPrefixCompose(name, value) {
 }
 
 function urlPrefixMatch(actual, value) {
-  return actual === value || actual.startsWith(`${value}/`);
+  if (actual === value || actual.startsWith(`${value}/`)) {
+    const baseURL = url.parse(value).path;
+    return baseURL !== '/' ? { baseURL } : true;
+  }
+  return false;
 }
 
 /**

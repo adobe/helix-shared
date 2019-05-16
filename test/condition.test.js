@@ -47,13 +47,13 @@ function expressify(req) {
  *
  * @param {Object} cond condition
  */
-async function evaluate(cond) {
+async function assertOK(cond) {
   nock(DEFAULT_SERVER)
     .get(() => true)
     .reply(function intercept() {
       const fn = cond.toFunction();
-      const value = fn(expressify(this.req));
-      return [200, `${value}`];
+      const result = fn(expressify(this.req));
+      return [200, `${JSON.stringify(result)}`];
     });
   const response = await request(`${DEFAULT_SERVER}/index.html`);
   assert.ok(response);
@@ -72,13 +72,13 @@ async function assertMatch(cond, samples) {
       .get(() => true)
       .reply(function intercept() {
         const fn = cond.toFunction();
-        const value = fn(expressify(this.req));
-        return [200, `${value}`];
+        const result = fn(expressify(this.req));
+        return [200, `${JSON.stringify(result)}`];
       });
     const stdopts = { uri: `${DEFAULT_SERVER}/index.html` };
     const opts = Object.assign({}, stdopts, sample);
     const response = await request(opts);
-    assert.equal(response === 'true', opts.match);
+    assert.deepEqual(JSON.parse(response), opts.match);
   }));
 }
 
@@ -101,7 +101,7 @@ describe('Condition tests', () => {
         if (cfg.samples) {
           await assertMatch(cond, cfg.samples);
         } else {
-          await evaluate(cond);
+          await assertOK(cond);
         }
       } catch (e) {
         if (e.message !== cfg.error) {

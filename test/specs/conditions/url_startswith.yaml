@@ -5,10 +5,13 @@ vcl: (req.http.X-Full-URL ~ "^https://www.example.com/doc/" || req.http.X-Full-U
 
 samples:
   - uri: https://www.example.com/doc
-    match: true
+    match:
+      baseURL: /doc
   - uri: https://www.example.com/doc/
-    match: true
+    match:
+      baseURL: /doc
   - uri: https://www.example.com/doc/index.html
-    match: true
+    match:
+      baseURL: /doc
   - uri: https://www.example.com/documentation/index.html
     match: false

@@ -5,8 +5,10 @@ vcl: '(req.url.path ~ "^/foo/" || req.url.path == "/foo")'
 
 samples:
   - uri: https://www.example.com/foo/
-    match: true
+    match:
+      baseURL: /foo
   - uri: https://www.example.com/foo
-    match: true
+    match:
+      baseURL: /foo
   - uri: https://www.example.com/fooby
     match: false

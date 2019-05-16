@@ -1,0 +1,16 @@
+condition:
+  or:
+    - url.path: /foo
+    - url.path: /bar
+
+vcl: '((req.url.path ~ "^/foo/" || req.url.path == "/foo") || (req.url.path ~ "^/bar/" || req.url.path == "/bar"))'
+
+samples:
+  - uri: https://www.example.com/foo
+    match:
+      baseURL: /foo
+  - uri: https://www.example.com/bar/index.html
+    match:
+      baseURL: /bar
+  - uri: https://www.example.com/doc
+    match: false
