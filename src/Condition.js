@@ -39,7 +39,7 @@ const booleanMap = {
     mapper: configMapper.infix,
     vcl: vclComposer.infix(' || '),
     express: (items, req) => items.reduce((prev, item) => prev || item.evaluate(req), false),
-    vcl_path: (_, items, paramName) => items.reduce((prev, item) => {
+    vcl_path: (items, paramName) => items.reduce((prev, item) => {
       const clause = item.toVCLPath(paramName);
       if (clause) {
         prev.push(clause);
@@ -61,10 +61,10 @@ const booleanMap = {
       // preserve the term that has a baseURL
       return prev.baseURL ? prev : result;
     }, true),
-    vcl_path: (vcl, items, paramName) => {
+    vcl_path: (items, paramName, vcl) => {
       const subpathItem = items.find(item => item.getSubPath && item.getSubPath(paramName));
       if (subpathItem) {
-        return `if ${vcl} {
+        return `if ${vcl()} {
   set req.http.${paramName} = "${subpathItem.getSubPath(paramName)}";
   return;
 }
@@ -97,7 +97,8 @@ class BooleanCondition {
    * @param {String} paramName request parameter name to assign the base path to
    */
   toVCLPath(paramName = 'X-Base') {
-    return this._entry.vcl_path ? this._entry.vcl_path(this.toVCL(), this._items, paramName) : '';
+    const vcl = this.toVCL.bind(this);
+    return this._entry.vcl_path ? this._entry.vcl_path(this._items, paramName, vcl) : '';
   }
 
   evaluate(req) {
