@@ -98,6 +98,10 @@ describe('Condition tests', () => {
           assert.equal(vcl, cfg.vcl);
           assert.equal(null, cfg.error);
         }
+        if (cfg.vcl_path !== undefined) {
+          const vclPath = cond.toVCLPath();
+          assert.equal(vclPath, cfg.vcl_path);
+        }
         if (cfg.samples) {
           await assertMatch(cond, cfg.samples);
         } else {
@@ -113,6 +117,7 @@ describe('Condition tests', () => {
   it('Null condition', () => {
     const cond = new Condition();
     assert.equal('', cond.toVCL());
+    assert.equal('', cond.toVCLPath());
     const fn = cond.toFunction();
     assert.equal(true, fn());
   });

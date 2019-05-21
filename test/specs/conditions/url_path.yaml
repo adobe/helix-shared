@@ -2,6 +2,11 @@ condition:
   url.path: /foo
 
 vcl: '(req.url.path ~ "^/foo/" || req.url.path == "/foo")'
+vcl_path: |  
+  if (req.url.path ~ "^/foo/" || req.url.path == "/foo") {
+    set req.http.X-Base = "/foo";
+    return;
+  }
 
 samples:
   - uri: https://www.example.com/foo/

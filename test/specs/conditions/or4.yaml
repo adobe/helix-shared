@@ -1,0 +1,10 @@
+condition:
+  or:
+    - url.path: /foo
+    - url.hostname: www.example.com
+
+vcl_path: |
+  if (req.url.path ~ "^/foo/" || req.url.path == "/foo") {
+    set req.http.X-Base = "/foo";
+    return;
+  }
