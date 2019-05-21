@@ -93,7 +93,7 @@ describe('Condition tests', () => {
     it(`Testing ${filename}`, async () => {
       try {
         const cond = new Condition(cfg.condition);
-        if (cfg.vcl) {
+        if (cfg.vcl !== undefined) {
           const vcl = cond.toVCL();
           assert.equal(vcl, cfg.vcl);
           assert.equal(null, cfg.error);
@@ -102,7 +102,7 @@ describe('Condition tests', () => {
           const vclPath = cond.toVCLPath();
           assert.equal(vclPath, cfg.vcl_path);
         }
-        if (cfg.samples) {
+        if (cfg.samples !== undefined) {
           await assertMatch(cond, cfg.samples);
         } else {
           await assertOK(cond);
@@ -113,12 +113,5 @@ describe('Condition tests', () => {
         }
       }
     });
-  });
-  it('Null condition', () => {
-    const cond = new Condition();
-    assert.equal('', cond.toVCL());
-    assert.equal('', cond.toVCLPath());
-    const fn = cond.toFunction();
-    assert.equal(true, fn());
   });
 });
