@@ -96,7 +96,7 @@ class BooleanCondition {
    *
    * @param {String} paramName request parameter name to assign the base path to
    */
-  toVCLPath(paramName = 'X-Base') {
+  toVCLPath(paramName) {
     const vcl = this.toVCL.bind(this);
     return this._entry.vcl_path ? this._entry.vcl_path(this._items, paramName, vcl) : '';
   }
@@ -161,7 +161,7 @@ class PropertyCondition {
    *
    * @param {String} paramName request parameter name to assign the base path to
    */
-  toVCLPath(paramName = 'X-Base') {
+  toVCLPath(paramName) {
     const subPath = this.getSubPath();
     if (subPath) {
       return `if ${this.toVCL()} {
@@ -376,8 +376,8 @@ class Condition {
     return this._top ? this._top.toVCL() : '';
   }
 
-  toVCLPath() {
-    return this._top ? this._top.toVCLPath() : '';
+  toVCLPath(paramName = 'X-Base') {
+    return this._top ? this._top.toVCLPath(paramName) : '';
   }
 
   /* eslint-disable no-underscore-dangle */

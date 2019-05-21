@@ -99,7 +99,7 @@ describe('Condition tests', () => {
           assert.equal(null, cfg.error);
         }
         if (cfg.vcl_path !== undefined) {
-          const vclPath = cond.toVCLPath();
+          const vclPath = cond.toVCLPath(cfg.param_name);
           assert.equal(vclPath, cfg.vcl_path);
         }
         if (cfg.samples !== undefined) {

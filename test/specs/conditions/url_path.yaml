@@ -2,9 +2,11 @@ condition:
   url.path: /foo
 
 vcl: '(req.url.path ~ "^/foo/" || req.url.path == "/foo")'
+
+param_name: 'X-BasePath'
 vcl_path: |  
   if (req.url.path ~ "^/foo/" || req.url.path == "/foo") {
-    set req.http.X-Base = "/foo";
+    set req.http.X-BasePath = "/foo";
     return;
   }
 
