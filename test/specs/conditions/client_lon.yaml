@@ -4,3 +4,4 @@ condition:
     - client_lon<: -121
 
 vcl: '(client.geo.longitude > -122 && client.geo.longitude < -121)'
+vcl_path: ''

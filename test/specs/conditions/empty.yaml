@@ -1,0 +1,7 @@
+condition:
+
+vcl: ''
+vcl_path: ''
+
+samples:
+  - match: true

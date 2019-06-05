@@ -38,12 +38,40 @@ const booleanMap = {
   or: {
     mapper: configMapper.infix,
     vcl: vclComposer.infix(' || '),
-    express: (items, req) => items.reduce((result, item) => result || item.evaluate(req), false),
+    express: (items, req) => items.reduce((prev, item) => prev || item.evaluate(req), false),
+    vcl_path: (items, paramName) => items.reduce((prev, item) => {
+      const clause = item.toVCLPath(paramName);
+      if (clause) {
+        prev.push(clause);
+      }
+      return prev;
+    }, []).join(''),
   },
   and: {
     mapper: configMapper.infix,
     vcl: vclComposer.infix(' && '),
-    express: (items, req) => items.reduce((result, item) => result && item.evaluate(req), true),
+    express: (items, req) => items.reduce((prev, item) => {
+      if (!prev) {
+        return false;
+      }
+      const result = item.evaluate(req);
+      if (!result) {
+        return false;
+      }
+      // preserve the term that has a baseURL
+      return prev.baseURL ? prev : result;
+    }, true),
+    vcl_path: (items, paramName, vcl) => {
+      const subpathItem = items.find(item => item.getSubPath && item.getSubPath(paramName));
+      if (subpathItem) {
+        return `if ${vcl()} {
+  set req.http.${paramName} = "${subpathItem.getSubPath(paramName)}";
+  return;
+}
+`;
+      }
+      return '';
+    },
   },
   not: {
     mapper: configMapper.prefix,
@@ -60,6 +88,17 @@ class BooleanCondition {
 
   toVCL() {
     return this._entry.vcl(this._items, this._entry.op);
+  }
+
+  /**
+   * Return a VCL conditional clause that will assign the calculated base path
+   * to a request parameter.
+   *
+   * @param {String} paramName request parameter name to assign the base path to
+   */
+  toVCLPath(paramName) {
+    const vcl = this.toVCL.bind(this);
+    return this._entry.vcl_path ? this._entry.vcl_path(this._items, paramName, vcl) : '';
   }
 
   evaluate(req) {
@@ -102,6 +141,36 @@ class PropertyCondition {
       op = '==';
     }
     return `${name} ${op} ${quote}${value}${quote}`;
+  }
+
+  getSubPath() {
+    const quote = this._prop.type === 'string' ? '"' : '';
+    if (quote === '"' && !this._op) {
+      // substring-start
+      const { getSubPath } = this._prop;
+      if (getSubPath) {
+        return getSubPath(this._value);
+      }
+    }
+    return '';
+  }
+
+  /**
+   * Return a VCL conditional clause that will assign the calculated base path
+   * to a request parameter.
+   *
+   * @param {String} paramName request parameter name to assign the base path to
+   */
+  toVCLPath(paramName) {
+    const subPath = this.getSubPath();
+    if (subPath) {
+      return `if ${this.toVCL()} {
+  set req.http.${paramName} = "${subPath}";
+  return;
+}
+`;
+    }
+    return '';
   }
 
   evaluate(req) {
@@ -155,7 +224,11 @@ function urlPrefixCompose(name, value) {
 }
 
 function urlPrefixMatch(actual, value) {
-  return actual === value || actual.startsWith(`${value}/`);
+  if (actual === value || actual.startsWith(`${value}/`)) {
+    const baseURL = url.parse(value).path;
+    return baseURL !== '/' ? { baseURL } : true;
+  }
+  return false;
 }
 
 /**
@@ -172,6 +245,13 @@ const propertyMap = {
       }
       return urlPrefixCompose(name, value);
     },
+    getSubPath: (value) => {
+      const uri = url.parse(value);
+      if (uri.path !== '/') {
+        return uri.path;
+      }
+      return '';
+    },
     express: req => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
     prefixMatch: urlPrefixMatch,
     type: 'string',
@@ -186,6 +266,7 @@ const propertyMap = {
   'url.path': {
     vcl: 'req.url.path',
     prefixCompose: urlPrefixCompose,
+    getSubPath: value => value,
     express: req => req.path,
     prefixMatch: urlPrefixMatch,
     type: 'string',
@@ -295,6 +376,10 @@ class Condition {
     return this._top ? this._top.toVCL() : '';
   }
 
+  toVCLPath(paramName = 'X-Base') {
+    return this._top ? this._top.toVCLPath(paramName) : '';
+  }
+
   /* eslint-disable no-underscore-dangle */
   toFunction() {
     const self = this;
@@ -330,7 +415,9 @@ transform = (cfg) => {
   }
   const match = name.match(/^url_param\.(.+)$/);
   if (match) {
-    prop = Object.assign({ type: op === '<' || op === '>' ? 'number' : 'string' }, propertyMap.url_param);
+    prop = Object.assign({
+      type: op === '<' || op === '>' ? 'number' : 'string',
+    }, propertyMap.url_param);
     return new PropertyCondition(prop, op, value, match[1]);
   }
   throw new Error(`Unknown property: ${name}`);

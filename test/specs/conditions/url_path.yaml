@@ -3,10 +3,19 @@ condition:
 
 vcl: '(req.url.path ~ "^/foo/" || req.url.path == "/foo")'
 
+param_name: 'X-BasePath'
+vcl_path: |  
+  if (req.url.path ~ "^/foo/" || req.url.path == "/foo") {
+    set req.http.X-BasePath = "/foo";
+    return;
+  }
+
 samples:
   - uri: https://www.example.com/foo/
-    match: true
+    match:
+      baseURL: /foo
   - uri: https://www.example.com/foo
-    match: true
+    match:
+      baseURL: /foo
   - uri: https://www.example.com/fooby
     match: false
