@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/adobe/helix-shared/compare/v1.3.2...v1.4.0) (2019-06-05)
+
+
+### Features
+
+* **conditions:** Support to calculate base-url ([ccc1d74](https://github.com/adobe/helix-shared/commit/ccc1d74)), closes [#110](https://github.com/adobe/helix-shared/issues/110)
+
 ## [1.3.2](https://github.com/adobe/helix-shared/compare/v1.3.1...v1.3.2) (2019-05-24)
 
 
