@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/adobe/helix-shared/compare/v1.4.0...v1.5.0) (2019-06-20)
+
+
+### Features
+
+* **utils:** Add function to calculate surrogate key ([d4aae86](https://github.com/adobe/helix-shared/commit/d4aae86)), closes [#123](https://github.com/adobe/helix-shared/issues/123)
+
 # [1.4.0](https://github.com/adobe/helix-shared/compare/v1.3.2...v1.4.0) (2019-06-05)
 
 
