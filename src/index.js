@@ -13,6 +13,7 @@ const GitUrl = require('./GitUrl.js');
 const HelixConfig = require('./HelixConfig.js');
 const Strain = require('./Strain.js');
 const Logger = require('./Logger.js');
+const utils = require('./utils.js');
 const sequence = require('./sequence.js');
 const functional = require('./functional.js');
 const op = require('./op.js');
@@ -31,4 +32,5 @@ module.exports = {
   sequence,
   string,
   dom,
+  utils,
 };
