@@ -9,7 +9,9 @@
     "docs": "npx jsonschema2md -d src/schemas -o docs &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
     "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 96 --statements 97 --lines 97 mocha",
     "lint": "./node_modules/.bin/eslint .",
-    "junit": "mocha --exit -R mocha-junit-reporter"
+    "junit": "mocha --exit -R mocha-junit-reporter",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -30,7 +32,8 @@
     "uri-js": "^4.2.2",
     "uuid": "^3.3.2",
     "winston": "^3.1.0",
-    "yaml": "1.6.0"
+    "yaml": "1.6.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^2.0.0",
