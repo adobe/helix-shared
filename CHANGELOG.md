@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/adobe/helix-shared/compare/v1.5.0...v1.5.1) (2019-07-08)
+
+
+### Bug Fixes
+
+* .snyk, package.json & package-lock.json to reduce vulnerabilities ([078fea7](https://github.com/adobe/helix-shared/commit/078fea7))
+
 # [1.5.0](https://github.com/adobe/helix-shared/compare/v1.4.0...v1.5.0) (2019-06-20)
 
 
