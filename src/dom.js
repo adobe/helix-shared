@@ -21,15 +21,9 @@
 /* eslint-disable no-continue */
 const assert = require('assert');
 const {
-  withFunctionName, exec, pipe, identity,
-} = require('./functional');
-const {
-  Deepclone, deepclone, Equals, type,
-} = require('./types');
-const {
-  each, enumerate, reverse, takeUntilVal, extend1,
-  uniq, mapSort, join, map, all,
-} = require('./sequence.js');
+  withFunctionName, exec, pipe, identity, Deepclone, deepclone, Equals, type,
+  each, enumerate, reverse, takeUntilVal, extend1, uniq, mapSort, join, map, all,
+} = require('ferrum');
 
 /** Check whether the given type is the type of a dom node.  Note that, in
  * order to support various dom implementations, this function uses a heuristic
