@@ -9,22 +9,26 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const GitUrl = require('./GitUrl.js');
-const HelixConfig = require('./HelixConfig.js');
-const Strain = require('./Strain.js');
-const utils = require('./utils.js');
-const string = require('./string.js');
-const dom = require('./dom.js');
-const log = require('./log.js');
-const async_ = require('./async.js');
 
-module.exports = {
-  GitUrl,
-  HelixConfig,
-  Strain,
-  string,
-  dom,
-  utils,
-  log,
-  async: async_,
-};
+/* eslint-env mocha */
+
+const assert = require('assert');
+const { exec } = require('ferrum');
+const { nextTick, sleep } = require('../src/async');
+
+it('sleep', async () => {
+  const t0 = new Date().getTime();
+  await sleep(20);
+  const t = new Date().getTime() - t0;
+  assert(t >= 20 && t <= 40);
+});
+
+it('nextTick', async () => {
+  let x = 42;
+  const p = exec(async () => {
+    await nextTick();
+    assert.strictEqual(x, 23);
+  });
+  x = 23;
+  await p;
+});
