@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/adobe/helix-shared#readme",
   "dependencies": {
-    "ajv": "6.10.1",
+    "ajv": "6.10.2",
     "fs-extra": "^8.1.0",
     "lodash": "^4.17.14",
     "object-hash": "^1.3.1",
