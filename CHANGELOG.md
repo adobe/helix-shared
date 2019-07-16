@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/adobe/helix-shared/compare/v1.5.1...v2.0.0) (2019-07-16)
+
+
+### Code Refactoring
+
+* **ferrum:** Migrate to ferrum ([#132](https://github.com/adobe/helix-shared/issues/132)) ([cc64bb6](https://github.com/adobe/helix-shared/commit/cc64bb6)), closes [#124](https://github.com/adobe/helix-shared/issues/124)
+
+
+### BREAKING CHANGES
+
+* **ferrum:** the following modules are no longer exports: functional, op, types, sequence
+
 ## [1.5.1](https://github.com/adobe/helix-shared/compare/v1.5.0...v1.5.1) (2019-07-08)
 
 
