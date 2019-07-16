@@ -13,11 +13,12 @@
 const fs = require('fs-extra');
 const path = require('path');
 const YAML = require('yaml');
+const {
+  concat, uniq, foldl, pipe,
+} = require('ferrum');
 const Strain = require('./Strain.js');
 const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
-const { concat, uniq, foldl } = require('./sequence.js');
-const { pipe } = require('./functional.js');
 
 
 const HELIX_CONFIG = 'helix-config.yaml';

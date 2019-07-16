@@ -14,8 +14,8 @@
 /* eslint-disable max-len,array-callback-return,no-param-reassign */
 
 const assert = require('assert');
+const { each } = require('ferrum');
 const { JSDOM } = require('jsdom');
-const { each } = require('../src/index.js').sequence;
 const {
   ancestryNodes, equalizeNode,
   nodeIsEquivalent, assertEquivalentNode,

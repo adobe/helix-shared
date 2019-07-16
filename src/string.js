@@ -10,11 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-const { pipe } = require('./functional.js');
-const { size } = require('./types.js');
 const {
-  filter, map, count, foldl, join,
-} = require('./sequence.js');
+  filter, map, count, foldl, join, pipe, size,
+} = require('ferrum');
 
 /**
  * Helpers for working with strings.
