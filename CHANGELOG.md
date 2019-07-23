@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/adobe/helix-shared/compare/v2.0.0...v2.1.0) (2019-07-23)
+
+
+### Features
+
+* **logging:** Simplify the logger interface ([b1b4ac2](https://github.com/adobe/helix-shared/commit/b1b4ac2))
+
 # [2.0.0](https://github.com/adobe/helix-shared/compare/v1.5.1...v2.0.0) (2019-07-16)
 
 
