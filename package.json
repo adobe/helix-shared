@@ -6,7 +6,7 @@
   "scripts": {
     "semantic-release": "semantic-release",
     "docs": "npx jsonschema2md -d src/schemas -o docs &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
-    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 96 --statements 97 --lines 97 mocha",
+    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 95 --statements 98 --lines 99 mocha",
     "lint": "./node_modules/.bin/eslint .",
     "junit": "mocha --exit -R mocha-junit-reporter",
     "snyk-protect": "snyk protect",

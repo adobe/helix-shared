@@ -15,7 +15,8 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const { HelixConfig } = require('../src/index.js');
+const { HelixConfig, Logger } = require('../src/index.js');
+
 const Strain = require('../src/Strain.js');
 const GitUrl = require('../src/GitUrl.js');
 
@@ -140,6 +141,36 @@ describe('Helix Config Loading', () => {
       .init();
     assert.deepEqual(cfg1.toJSON(), cfg2.toJSON());
   });
+
+  it('sets logger', async () => {
+    const logger = Logger.getTestLogger();
+    const cfg = await new HelixConfig()
+      .withLogger(logger)
+      .withConfigPath(path.resolve(SPEC_ROOT, 'minimal.yaml'))
+      .init();
+    cfg.log.info('Hello, world.');
+    assert.ok((await logger.getOutput()).indexOf('Hello, world.') > 0);
+  });
+
+  it('sets directory', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'full.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withDirectory(SPEC_ROOT)
+      .withSource(source)
+      .init();
+    assert.equal(cfg.directory, SPEC_ROOT);
+  });
+
+  it('fails with corrupt file path', async () => {
+    try {
+      await new HelixConfig()
+        .withConfigPath('no-such-file.yaml')
+        .init();
+      assert.fail('should fail.');
+    } catch (e) {
+      assert.equal(e.toString(), 'Error: Invalid configuration:\n\n\nA list of strains and a strain with the name "default" is required.');
+    }
+  });
 });
 
 describe('Helix Config Merging', () => {
@@ -184,6 +215,18 @@ describe('Helix Config Serializing', () => {
 
     const actual = cfg.toYAML();
     assert.equal(actual, source);
+  });
+
+  it('can serialize to canonical form with missing document', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'full.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+    delete cfg._document;
+
+    const actual = cfg.toYAML();
+    const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'full-canonical.yaml'), 'utf-8');
+    assert.equal(actual, expected);
   });
 
   it('can save config', async () => {
