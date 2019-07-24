@@ -38,6 +38,7 @@ class HelixConfig {
     this._source = '';
     this._cfg = null;
     this._document = null;
+    this._logger = console;
     this._version = '';
     this._strains = new Strains();
   }
@@ -54,6 +55,11 @@ class HelixConfig {
 
   withConfigPath(cfgPath) {
     this._cfgPath = cfgPath;
+    return this;
+  }
+
+  withLogger(logger) {
+    this._logger = logger;
     return this;
   }
 
@@ -118,6 +124,10 @@ class HelixConfig {
    */
   get strains() {
     return this._strains;
+  }
+
+  get log() {
+    return this._logger;
   }
 
   async hasFile() {

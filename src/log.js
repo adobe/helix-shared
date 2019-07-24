@@ -313,7 +313,7 @@ class StreamLogger {
   }
 
   log(msg, opts = {}) {
-    const { level = 'info' } = opts || {};
+    const { level = 'info' } = opts;
     if (numericLogLevel(level) > numericLogLevel(this.level)) {
       return;
     }
@@ -376,7 +376,7 @@ class MemLogger {
   }
 
   log(msg, opts = {}) {
-    const { level = 'info' } = opts || {};
+    const { level = 'info' } = opts;
     if (numericLogLevel(level) <= numericLogLevel(this.level)) {
       this.buf.push(`[${level.toUpperCase()}] ${serializeMessage(msg, this.serializeOpts)}`);
     }

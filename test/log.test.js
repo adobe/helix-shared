@@ -171,6 +171,14 @@ const logOutputDebug = multiline(`
   [DEBUG] Nooo\n
 `);
 
+const logOutputInfo = multiline(`
+  [ERROR] { foo: 23 }
+  [FATAL] 
+  [ERROR] 42
+  [WARN] Hello 42 World
+  [INFO] { foo: 42 }\n
+`);
+
 const logOutputWarn = multiline(`
   [ERROR] { foo: 23 }
   [FATAL] 
@@ -207,6 +215,9 @@ it('ConsoleLogger', async () => {
 it('StreamLogger', () => {
   const ss = new StringStream();
 
+  testLogger(new StreamLogger(ss));
+  assert.strictEqual(ss.extract(), logOutputInfo);
+
   testLogger(new StreamLogger(ss, { level: 'debug' }));
   assert.strictEqual(ss.extract(), logOutputDebug);
 
@@ -237,13 +248,23 @@ it('FileLogger', async () => {
     testLogger(logger);
     await endStreamAndSync(logger.stream);
     assert.strictEqual(await readFile(tmpfile, { encoding: 'utf-8' }), `${logOutputDebug}${logOutputWarn}`);
+
+    // Tests that append mode is properly used
+    logger = new FileLogger(tmpfile);
+    testLogger(logger);
+    await endStreamAndSync(logger.stream);
+    assert.strictEqual(await readFile(tmpfile, { encoding: 'utf-8' }), `${logOutputDebug}${logOutputWarn}${logOutputInfo}`);
   } finally {
     await unlink(tmpfile);
   }
 });
 
 it('MemLogger', () => {
-  let logger = new MemLogger({ level: 'debug' });
+  let logger = new MemLogger();
+  testLogger(logger);
+  assert.strictEqual(`${join(logger.buf, '\n')}\n`, logOutputInfo);
+
+  logger = new MemLogger({ level: 'debug' });
   testLogger(logger);
   assert.strictEqual(`${join(logger.buf, '\n')}\n`, logOutputDebug);
 

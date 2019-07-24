@@ -16,6 +16,7 @@ const utils = require('./utils.js');
 const string = require('./string.js');
 const dom = require('./dom.js');
 const log = require('./log.js');
+const Logger = require('./Logger.js');
 const async_ = require('./async.js');
 
 module.exports = {
@@ -26,5 +27,6 @@ module.exports = {
   dom,
   utils,
   log,
+  Logger,
   async: async_,
 };
