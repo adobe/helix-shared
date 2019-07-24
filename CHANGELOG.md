@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/adobe/helix-shared/compare/v2.1.0...v2.1.1) (2019-07-24)
+
+
+### Bug Fixes
+
+* **logger:** export Logger again to keep module backward compatible ([#138](https://github.com/adobe/helix-shared/issues/138)) ([697260a](https://github.com/adobe/helix-shared/commit/697260a))
+
 # [2.1.0](https://github.com/adobe/helix-shared/compare/v2.0.0...v2.1.0) (2019-07-23)
 
 
