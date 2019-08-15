@@ -60,11 +60,12 @@ class Performance {
    * @returns {Performance~JSON}
    */
   toJSON(opts) {
-    const json = Object.assign({
+    const json = {
       device: this.device,
       location: this.location,
       connection: this.connection,
-    }, this.thresholds);
+      ...this.thresholds,
+    };
     if (opts && opts.minimal) {
       return utils.pruneEmptyValues(json);
     }

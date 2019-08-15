@@ -96,7 +96,7 @@ function getLogger(config) {
         formats.push(commandLineFormat());
       } else {
         formats.push(winston.format.colorize());
-        formats.push(winston.format.printf(info => `[${categ}] ${info.level}: ${info.message}`));
+        formats.push(winston.format.printf((info) => `[${categ}] ${info.level}: ${info.message}`));
       }
       transports.push(new winston.transports.Console({
         level,
@@ -109,7 +109,7 @@ function getLogger(config) {
       if (/\.json/.test(logFile)) {
         formats.push(winston.format.logstash());
       } else {
-        formats.push(winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`));
+        formats.push(winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`));
       }
 
       transports.push(new winston.transports.File({

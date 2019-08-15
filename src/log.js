@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-console, no-param-reassign, no-use-before-define, consistent-return */
+// eslint-disable-next-line max-len
+/* eslint-disable no-console, no-param-reassign, no-use-before-define, consistent-return,no-underscore-dangle,max-classes-per-file */
 
 const assert = require('assert');
 const { createWriteStream } = require('fs');
@@ -109,7 +110,7 @@ const tryInspect = (what, opts) => {
  *   By default `{depth: null, breakLength: Infinity, colors: false}` is used.
  * @returns {string}
  */
-const serializeMessage = (msg, opts) => msg.map(v => (typeof (v) === 'string' ? v : tryInspect(v, opts))).join(' ');
+const serializeMessage = (msg, opts) => msg.map((v) => (typeof (v) === 'string' ? v : tryInspect(v, opts))).join(' ');
 
 /**
  * Can be used to encode a message as json.
@@ -254,7 +255,7 @@ class MultiLogger {
 
   log(msg, opts = undefined) {
     const exceptions = [];
-    for (const [_, sub] of this.loggers) {
+    for (const [, sub] of this.loggers) {
       // We wrap each logging in separate try/catch blocks so exceptions
       // on one logger are isolated from jumping over to other loggers
       try {
@@ -338,7 +339,7 @@ class StreamLogger {
 class FileLogger extends StreamLogger {
   constructor(name, opts = {}) {
     super(createWriteStream(name, { flags: 'a' }), opts);
-    this.stream.on('error', e => err(`Error writing to file ${name}:`, e));
+    this.stream.on('error', (e) => err(`Error writing to file ${name}:`, e));
   }
 }
 /**

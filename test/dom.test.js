@@ -332,7 +332,7 @@ describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode(), nodeMatche
     const preA = new JSDOM('<pre></pre>');
     const preB = new JSDOM('<pre> </pre>');
     const preC = new JSDOM('<pre>\t</pre>');
-    each([preB, preC], v => assertNEq(v.window.document, preA.window.document));
+    each([preB, preC], (v) => assertNEq(v.window.document, preA.window.document));
 
     // Firefox, JSDOM and Chromium consider <pre></pre>
     // to be equal <pre>\n<pre>
@@ -367,7 +367,7 @@ describe('nodeMatches()', () => {
     '<match:any></match:any>'.repeat(2),
   ];
 
-  const containers = [x => `<div>${x}</div>`];
+  const containers = [(x) => `<div>${x}</div>`];
 
   it('Supports multiple wildcards with text and normalized space', () => {
     ck('  Hello  World Foo  Bar',
@@ -383,7 +383,7 @@ describe('nodeMatches()', () => {
   it('Supports wildcard at root', () => {
     each(wildcard, (wild) => {
       ck('', wild);
-      each(content, cont => ck(cont, wild));
+      each(content, (cont) => ck(cont, wild));
     });
   });
 

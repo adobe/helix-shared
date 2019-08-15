@@ -31,13 +31,14 @@ const DEFAULT_SERVER = 'https://www.example.com';
  * @param {Object} req request
  */
 function expressify(req) {
-  return Object.assign({
-    get: name => req.headers[name],
+  return {
+    get: (name) => req.headers[name],
     hostname: req.headers.host,
     params: url.parse(req.path, true).query,
     protocol: 'https',
     originalUrl: req.path,
-  }, req);
+    ...req,
+  };
 }
 
 /**
@@ -76,7 +77,7 @@ async function assertMatch(cond, samples) {
         return [200, `${JSON.stringify(result)}`];
       });
     const stdopts = { uri: `${DEFAULT_SERVER}/index.html` };
-    const opts = Object.assign({}, stdopts, sample);
+    const opts = { ...stdopts, ...sample };
     const response = await request(opts);
     assert.deepEqual(JSON.parse(response), opts.match);
   }));

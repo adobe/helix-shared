@@ -37,7 +37,7 @@ class Strains extends Map {
   }
 
   filterByCode(code) {
-    return this.getByFilter(strain => code.equalsIgnoreTransport(strain.code));
+    return this.getByFilter((strain) => code.equalsIgnoreTransport(strain.code));
   }
 
   getByFilter(filterfn) {
@@ -45,11 +45,11 @@ class Strains extends Map {
   }
 
   getRuntimeStrains() {
-    return this.getByFilter(strain => !strain.isProxy());
+    return this.getByFilter((strain) => !strain.isProxy());
   }
 
   getProxyStrains() {
-    return this.getByFilter(strain => strain.isProxy());
+    return this.getByFilter((strain) => strain.isProxy());
   }
 
   /**

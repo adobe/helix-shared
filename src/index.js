@@ -17,7 +17,7 @@ const string = require('./string.js');
 const dom = require('./dom.js');
 const log = require('./log.js');
 const Logger = require('./Logger.js');
-const async_ = require('./async.js');
+const Async = require('./async.js');
 
 module.exports = {
   GitUrl,
@@ -28,5 +28,5 @@ module.exports = {
   utils,
   log,
   Logger,
-  async: async_,
+  async: Async,
 };

@@ -11,7 +11,8 @@
  */
 
 /* eslint-env mocha */
-/* eslint-disable no-console, class-methods-use-this, no-await-in-loop */
+// eslint-disable-next-line max-len
+/* eslint-disable no-console, class-methods-use-this, no-await-in-loop,max-classes-per-file,no-underscore-dangle */
 
 const assert = require('assert');
 const stream = require('stream');
@@ -72,7 +73,7 @@ it('tryInspect', async () => {
 
   const filteredLogs = pipe(
     logs.split('\n'),
-    filter(line => line.startsWith('[ERROR]')),
+    filter((line) => line.startsWith('[ERROR]')),
     join('\n'),
   );
 
@@ -226,7 +227,7 @@ it('StreamLogger', () => {
 });
 
 const endStreamAndSync = (str) => {
-  const r = new Promise(res => str.on('finish', () => res()));
+  const r = new Promise((res) => str.on('finish', () => res()));
   // It's important here that end is called after the promise is
   // installed since otherwise the finish event may be called before
   // the promise is setup => the promise is never resolved => infinite wait
@@ -294,8 +295,8 @@ it('MultiLogger', async () => {
 
   const logs = pipe(
     (`${join(bar.buf, '\n')}\n`).split('\n'),
-    reject(line => line.match(/^\s/)),
-    map(line => `${line}\n`),
+    reject((line) => line.match(/^\s/)),
+    map((line) => `${line}\n`),
     join(''),
   );
 

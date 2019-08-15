@@ -93,7 +93,7 @@ class Static extends EventEmitter {
     if (!json) {
       return this.url.toJSON(opts);
     }
-    const myOpts = Object.assign({}, opts);
+    const myOpts = { ...opts };
     delete myOpts.keepFormat;
     return Object.assign(json, this.url.toJSON(myOpts));
   }

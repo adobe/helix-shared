@@ -56,15 +56,15 @@ const multiline = (str) => {
   // Find the prefix length
   const prefixLen = pipe(
     lines,
-    filter(l => !l.match(/^\s*$/)), // Disregarding empty lines
-    map(l => l.match(/^ */)[0]), // Extract prefixes
+    filter((l) => !l.match(/^\s*$/)), // Disregarding empty lines
+    map((l) => l.match(/^ */)[0]), // Extract prefixes
     map(count), // calculate length
     foldl(Infinity, (a, b) => Math.min(a, b)),
   ); // minimum
 
   return pipe(
     lines,
-    map(l => l.slice(prefixLen)), // discard prefixes
+    map((l) => l.slice(prefixLen)), // discard prefixes
     join('\n'),
   );
 };
