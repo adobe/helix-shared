@@ -222,6 +222,7 @@ describe('Helix Config Serializing', () => {
     const cfg = await new HelixConfig()
       .withSource(source)
       .init();
+    // eslint-disable-next-line no-underscore-dangle
     delete cfg._document;
 
     const actual = cfg.toYAML();

@@ -29,9 +29,9 @@ const {
  * order to support various dom implementations, this function uses a heuristic
  * and there might be some false positives.
  */
-const isNodeType = typ => typ && typ.prototype && pipe(
+const isNodeType = (typ) => typ && typ.prototype && pipe(
   ['nodeName', 'nodeValue', 'cloneNode', 'childNodes'],
-  map(prop => prop in typ.prototype),
+  map((prop) => prop in typ.prototype),
   all,
 );
 
@@ -41,7 +41,7 @@ const isNodeType = typ => typ && typ.prototype && pipe(
  * this function uses a heuristic and there might be some false
  * positives.
  */
-const isNode = node => isNodeType(type(node));
+const isNode = (node) => isNodeType(type(node));
 
 /** Ensure that the given node is a domNode. Checks with isNode() */
 const assertNode = (node) => {
@@ -68,7 +68,7 @@ const nodeName = (node) => {
  */
 const ancestryNodes = (node) => {
   assertNode(node);
-  return reverse(takeUntilVal(extend1(node, n => n.parentNode), null));
+  return reverse(takeUntilVal(extend1(node, (n) => n.parentNode), null));
 };
 
 /**
@@ -177,7 +177,7 @@ const ancestryNodes = (node) => {
  * @returns {DomNode} The node parameter; the node parameter was mutated by this
  *   function; a reference to it is returned in order to facilitate function chaining.
  */
-const equalizeNode = node => equalizeNode.impl(node);
+const equalizeNode = (node) => equalizeNode.impl(node);
 equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
   // We need to assign to parameters in order to reset inlineTextNodes
   // without recursing unnecessarily
@@ -462,8 +462,8 @@ const nodeMatches = exec(() => {
   // We need to assign to parameters in order to avoid tail recursion:
   /* eslint-disable no-param-reassign */
 
-  const isText = n => n && nodeName(n) === '#text';
-  const isWild = n => n && nodeName(n) === 'match:any';
+  const isText = (n) => n && nodeName(n) === '#text';
+  const isWild = (n) => n && nodeName(n) === 'match:any';
 
   // We need to perform partial matching on text nodes, meaning we need
   // to split some nodes into two, but we want to avoid actually mutating
@@ -672,8 +672,8 @@ const assertEquivalentNode = (actual, expected) => {
 
 
 // Provide traits for nodes
-Deepclone.implWild(Typ => (isNodeType(Typ) ? (x => x.cloneNode(true)) : undefined));
-Equals.implWild(Typ => (isNodeType(Typ) ? ((a, b) => nodeIsEquivalent(a, b)) : undefined));
+Deepclone.implWild((Typ) => (isNodeType(Typ) ? ((x) => x.cloneNode(true)) : undefined));
+Equals.implWild((Typ) => (isNodeType(Typ) ? ((a, b) => nodeIsEquivalent(a, b)) : undefined));
 
 module.exports = {
   isNode,

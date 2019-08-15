@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+/* eslint-disable max-classes-per-file */
 const url = require('url');
 
 // To avoid forward referencing the transformer function
@@ -19,16 +20,16 @@ let transform;
  * Determines how to transform children configuration based on the affix type.
  */
 const configMapper = {
-  prefix: cfg => transform(cfg),
-  infix: cfg => cfg.map(child => transform(child)),
+  prefix: (cfg) => transform(cfg),
+  infix: (cfg) => cfg.map((child) => transform(child)),
 };
 
 /**
  * Determines how to compose VCL based on the affix type.
  */
 const vclComposer = {
-  prefix: op => item => `${op}(${item.toVCL()})`,
-  infix: op => items => `(${items.map(item => item.toVCL()).join(op)})`,
+  prefix: (op) => (item) => `${op}(${item.toVCL()})`,
+  infix: (op) => (items) => `(${items.map((item) => item.toVCL()).join(op)})`,
 };
 
 /**
@@ -62,7 +63,7 @@ const booleanMap = {
       return prev.baseURL ? prev : result;
     }, true),
     vcl_path: (items, paramName, vcl) => {
-      const subpathItem = items.find(item => item.getSubPath && item.getSubPath(paramName));
+      const subpathItem = items.find((item) => item.getSubPath && item.getSubPath(paramName));
       if (subpathItem) {
         return `if ${vcl()} {
   set req.http.${paramName} = "${subpathItem.getSubPath(paramName)}";
@@ -252,29 +253,29 @@ const propertyMap = {
       }
       return '';
     },
-    express: req => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+    express: (req) => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
     prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
   },
   'url.hostname': {
     vcl: 'req.http.host',
-    express: req => req.hostname,
+    express: (req) => req.hostname,
     type: 'string',
     allowed_ops: '=~',
   },
   'url.path': {
     vcl: 'req.url.path',
     prefixCompose: urlPrefixCompose,
-    getSubPath: value => value,
-    express: req => req.path,
+    getSubPath: (value) => value,
+    express: (req) => req.path,
     prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
   },
   referer: {
     vcl: 'req.http.referer',
-    express: req => req.get('referer'),
+    express: (req) => req.get('referer'),
     type: 'string',
     allowed_ops: '=~',
   },
@@ -290,13 +291,13 @@ const propertyMap = {
   },
   user_agent: {
     vcl: 'req.http.User-Agent',
-    express: req => req.get('user-agent'),
+    express: (req) => req.get('user-agent'),
     type: 'string',
     allowed_ops: '=~',
   },
   accept_language: {
     vcl: 'req.http.Accept-Language',
-    express: req => req.get('accept-language'),
+    express: (req) => req.get('accept-language'),
     type: 'string',
     allowed_ops: '=~',
   },
@@ -415,9 +416,7 @@ transform = (cfg) => {
   }
   const match = name.match(/^url_param\.(.+)$/);
   if (match) {
-    prop = Object.assign({
-      type: op === '<' || op === '>' ? 'number' : 'string',
-    }, propertyMap.url_param);
+    prop = { type: op === '<' || op === '>' ? 'number' : 'string', ...propertyMap.url_param };
     return new PropertyCondition(prop, op, value, match[1]);
   }
   throw new Error(`Unknown property: ${name}`);

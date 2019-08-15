@@ -76,7 +76,7 @@ describe('Logger tests', () => {
     log.end();
 
     // maybe not the best condition to wait for the streams to close
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     const f1 = await fs.readFile(file1, 'utf-8');
     const f2 = await fs.readFile(file2, 'utf-8');
     const f3 = await fs.readFile(file3, 'utf-8');
@@ -117,7 +117,7 @@ describe('Logger tests', () => {
     log.close();
 
     // maybe not the best condition to wait for the streams to close
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     const f1 = await fs.readFile(file1, 'utf-8');
     assert.ok(/.*progress info.*/.test(f1));
 
@@ -144,7 +144,7 @@ describe('Logger tests', () => {
     log.close();
 
     // maybe not the best condition to wait for the streams to close
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     const f1 = await fs.readFile(file1, 'utf-8');
     assert.ok(/.*progress info.*/.test(f1));
 
@@ -171,7 +171,7 @@ describe('Logger tests', () => {
     log.close();
 
     // maybe not the best condition to wait for the streams to close
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     const f1 = await fs.readFile(file1, 'utf-8');
     assert.ok(/.*progress info.*/.test(f1));
 

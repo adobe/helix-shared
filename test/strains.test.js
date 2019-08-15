@@ -25,7 +25,7 @@ describe('Strains test', () => {
       .withConfigPath(path.resolve(SPEC_ROOT, 'many-code-repos.yaml'))
       .init();
     const strains = cfg.strains.filterByCode(new GitUrl('https://github.com/adobe/project-helix.io.git#master'));
-    assert.deepEqual(strains.map(s => s.name), ['default']);
+    assert.deepEqual(strains.map((s) => s.name), ['default']);
   });
 
   it('finds strains match dev repository', async () => {
@@ -33,7 +33,7 @@ describe('Strains test', () => {
       .withConfigPath(path.resolve(SPEC_ROOT, 'many-code-repos.yaml'))
       .init();
     const strains = cfg.strains.filterByCode(new GitUrl('https://github.com/adobe/project-helix.io.git#dev'));
-    assert.deepEqual(strains.map(s => s.name), ['dev', 'dev2']);
+    assert.deepEqual(strains.map((s) => s.name), ['dev', 'dev2']);
   });
 
   it('finds no strains match foo repository', async () => {
@@ -86,7 +86,7 @@ describe('Strains test', () => {
       .withConfigPath(path.resolve(SPEC_ROOT, 'many-code-repos.yaml'))
       .init();
     const names = [];
-    cfg.strains.forEach(s => names.push(s.name));
+    cfg.strains.forEach((s) => names.push(s.name));
     assert.deepEqual(names, ['default', 'dev', 'dev2', 'stage', 'proxy']);
   });
 

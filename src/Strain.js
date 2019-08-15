@@ -52,7 +52,8 @@ class Strain {
     // assume the strain to be sticky when there is a condition
     this._sticky = cfg.sticky === undefined ? this._condition !== '' : !!cfg.sticky;
 
-    this._redirects = (Array.isArray(cfg.redirects) ? cfg.redirects : []).map(r => new Redirect(r));
+    this._redirects = (Array.isArray(cfg.redirects) ? cfg.redirects : [])
+      .map((r) => new Redirect(r));
 
     // todo: I assume this will go into the new condition language
     // todo: if not, I would only have 1 property `url` that can be single or multi valued
@@ -236,20 +237,19 @@ class Strain {
       json.params = this.params;
     }
     if (this.redirects.length > 0) {
-      json.redirects = this.redirects.map(r => r.toJSON());
+      json.redirects = this.redirects.map((r) => r.toJSON());
     }
     if (this.isProxy()) {
-      return Object.assign({
-        origin: this.origin.toJSON(opts),
-      }, json);
+      return { origin: this.origin.toJSON(opts), ...json };
     }
-    const ret = Object.assign({
+    const ret = {
       code: this.code.toJSON(opts),
       content: this.content.toJSON(opts),
       static: this.static.toJSON(opts),
       directoryIndex: this.directoryIndex,
       package: this.package,
-    }, json);
+      ...json,
+    };
     if (opts && opts.minimal) {
       return utils.pruneEmptyValues(ret);
     }
@@ -264,7 +264,7 @@ class Strain {
     if (this._yamlNode) {
       const node = this._yamlNode;
       this._ownProperties.forEach((key) => {
-        const idx = node.items.findIndex(i => i.key === key
+        const idx = node.items.findIndex((i) => i.key === key
           || (i.key.value && i.key.value === key));
         let value = this[key];
         if (value && value.toYAMLNode) {
