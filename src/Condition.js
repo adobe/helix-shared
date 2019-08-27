@@ -33,11 +33,32 @@ const vclComposer = {
 };
 
 /**
+ * Determines how to output JSON based on the affix type.
+ */
+const jsonGenarator = {
+  prefix: (op) => (item) => {
+    const json = {};
+    json[op] = item.toJSON();
+    return json;
+  },
+  infix: (op) => (items) => {
+    const subs = [];
+    items.forEach((item) => {
+      subs.push(item.toJSON());
+    });
+    const json = {};
+    json[op] = subs;
+    return json;
+  },
+};
+
+/**
  * Boolean conditions
  */
 const booleanMap = {
   or: {
     mapper: configMapper.infix,
+    jsonGen: jsonGenarator.infix('or'),
     vcl: vclComposer.infix(' || '),
     express: (items, req) => items.reduce((prev, item) => prev || item.evaluate(req), false),
     vcl_path: (items, paramName) => items.reduce((prev, item) => {
@@ -50,6 +71,7 @@ const booleanMap = {
   },
   and: {
     mapper: configMapper.infix,
+    jsonGen: jsonGenarator.infix('and'),
     vcl: vclComposer.infix(' && '),
     express: (items, req) => items.reduce((prev, item) => {
       if (!prev) {
@@ -76,6 +98,7 @@ const booleanMap = {
   },
   not: {
     mapper: configMapper.prefix,
+    jsonGen: jsonGenarator.prefix('not'),
     vcl: vclComposer.prefix(' !'),
     express: (item, req) => !item.evaluate(req),
   },
@@ -88,7 +111,7 @@ class BooleanCondition {
   }
 
   toVCL() {
-    return this._entry.vcl(this._items, this._entry.op);
+    return this._entry.vcl(this._items);
   }
 
   /**
@@ -105,13 +128,17 @@ class BooleanCondition {
   evaluate(req) {
     return this._entry.express(this._items, req);
   }
+
+  toJSON() {
+    return this._entry.jsonGen(this._items);
+  }
 }
 
 /**
  * PropertyCondition
  */
 class PropertyCondition {
-  constructor(prop, op, value, name) {
+  constructor(prop, op, value, name, label) {
     if (op && prop.allowed_ops.indexOf(op) === -1) {
       throw new Error(`Property ${name} does not support operation: ${op}`);
     }
@@ -120,6 +147,7 @@ class PropertyCondition {
     this._op = op;
     this._value = value;
     this._name = name;
+    this._label = label || name;
   }
 
   toVCL() {
@@ -172,6 +200,13 @@ class PropertyCondition {
 `;
     }
     return '';
+  }
+
+  toJSON() {
+    const json = {};
+    const name = `${this._label}${this._op}`;
+    json[name] = this._value;
+    return json;
   }
 
   evaluate(req) {
@@ -391,6 +426,10 @@ class Condition {
       return true;
     };
   }
+
+  toJSON() {
+    return this._top ? this._top.toJSON() : null;
+  }
 }
 
 // Now define our transformer
@@ -399,13 +438,13 @@ transform = (cfg) => {
   let name = Object.keys(cfg)[0];
   const value = cfg[name];
 
-  const condition = booleanMap[name];
-  if (condition) {
-    return new BooleanCondition(condition, value);
+  const entry = booleanMap[name];
+  if (entry) {
+    return new BooleanCondition(entry, value);
   }
 
   const last = name.substr(-1);
-  let op = null;
+  let op = '';
   if (last.match(/[<=>~]/)) {
     name = name.slice(0, name.length - 1);
     op = last;
@@ -417,7 +456,7 @@ transform = (cfg) => {
   const match = name.match(/^url_param\.(.+)$/);
   if (match) {
     prop = { type: op === '<' || op === '>' ? 'number' : 'string', ...propertyMap.url_param };
-    return new PropertyCondition(prop, op, value, match[1]);
+    return new PropertyCondition(prop, op, value, match[1], name);
   }
   throw new Error(`Unknown property: ${name}`);
 };

@@ -108,6 +108,9 @@ describe('Condition tests', () => {
         } else {
           await assertOK(cond);
         }
+        const actual = cond.toJSON();
+        const expected = cfg.condition;
+        assert.deepEqual(actual, expected);
       } catch (e) {
         if (e.message !== cfg.error) {
           assert.fail(e.message);
