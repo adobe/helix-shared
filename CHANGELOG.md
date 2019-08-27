@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/adobe/helix-shared/compare/v2.1.1...v2.2.0) (2019-08-27)
+
+
+### Features
+
+* Conditions should be serialisable to JSON ([ca66e11](https://github.com/adobe/helix-shared/commit/ca66e11))
+
 ## [2.1.1](https://github.com/adobe/helix-shared/compare/v2.1.0...v2.1.1) (2019-07-24)
 
 
