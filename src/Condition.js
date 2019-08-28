@@ -403,37 +403,78 @@ const propertyMap = {
 };
 
 /**
+ * StringCondition class
+ */
+class StringCondition {
+  constructor(s) {
+    this._s = s;
+  }
+
+  toVCL() {
+    return this._s;
+  }
+
+  toJSON() {
+    return this._s;
+  }
+
+  isEmpty() {
+    return this._s === '';
+  }
+}
+
+/**
  * Condition class
  */
 class Condition {
   constructor(cfg) {
-    this._top = transform(cfg);
+    if (typeof cfg === 'string') {
+      this._top = new StringCondition(cfg);
+    } else {
+      this._top = cfg ? transform(cfg) : null;
+    }
   }
 
   toVCL() {
-    return this._top.toVCL();
+    return this._top ? this._top.toVCL() : '';
   }
 
-  toVCLPath(paramName) {
-    return this._top.toVCLPath(paramName);
+  toVCLPath(paramName = 'X-Base') {
+    if (this._top && this._top.toVCLPath) {
+      return this._top.toVCLPath(paramName);
+    }
+    return '';
   }
 
   /* eslint-disable no-underscore-dangle */
   toFunction() {
     const self = this;
-    return (req) => self._top.evaluate(req);
+    return (req) => {
+      if (self._top && self._top.evaluate) {
+        return self._top.evaluate(req);
+      }
+      return true;
+    };
   }
 
   toJSON(opts) {
-    const json = this._top.toJSON();
-    if (opts && opts.minimal) {
+    const json = this._top ? this._top.toJSON() : null;
+    if (json && opts && opts.minimal) {
       return utils.pruneEmptyValues(json);
     }
     return json;
   }
 
   toYAMLNode() {
-    return YAML.createNode(this.toJSON({ minimal: true }));
+    const json = this.toJSON({ minimal: true });
+    return json ? YAML.createNode(json) : null;
+  }
+
+  isEmpty() {
+    if (this._top && this._top.isEmpty) {
+      return this._top.isEmpty();
+    }
+    return this._top !== null;
   }
 }
 
@@ -466,54 +507,4 @@ transform = (cfg) => {
   throw new Error(`Unknown property: ${name}`);
 };
 
-function create(cfg) {
-  if (typeof cfg === 'string') {
-    return cfg;
-  }
-  if (cfg === null) {
-    return null;
-  }
-  return new Condition(cfg);
-}
-
-function toVCL(cond) {
-  if (typeof cond === 'string') {
-    return cond;
-  }
-  if (cond === null) {
-    return '';
-  }
-  return cond.toVCL();
-}
-
-function toVCLPath(cond, paramName = 'X-Base') {
-  if (cond === null || typeof cond === 'string') {
-    return '';
-  }
-  return cond.toVCLPath(paramName);
-}
-
-function toFunction(cond) {
-  if (cond === null || typeof cond === 'string') {
-    return () => true;
-  }
-  return cond.toFunction();
-}
-
-function toJSON(cond, opts) {
-  if (typeof cond === 'string') {
-    return cond;
-  }
-  if (cond === null) {
-    return null;
-  }
-  return cond.toJSON(opts);
-}
-
-module.exports = {
-  create,
-  toVCL,
-  toVCLPath,
-  toFunction,
-  toJSON,
-};
+module.exports = Condition;

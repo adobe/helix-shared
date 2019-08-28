@@ -52,7 +52,7 @@ async function assertOK(cond) {
   nock(DEFAULT_SERVER)
     .get(() => true)
     .reply(function intercept() {
-      const fn = Condition.toFunction(cond);
+      const fn = cond.toFunction();
       const result = fn(expressify(this.req));
       return [200, `${JSON.stringify(result)}`];
     });
@@ -72,7 +72,7 @@ async function assertMatch(cond, samples) {
     nock(DEFAULT_SERVER)
       .get(() => true)
       .reply(function intercept() {
-        const fn = Condition.toFunction(cond);
+        const fn = cond.toFunction();
         const result = fn(expressify(this.req));
         return [200, `${JSON.stringify(result)}`];
       });
@@ -93,14 +93,14 @@ describe('Condition tests', () => {
     const cfg = document.toJSON() || {};
     it(`Testing ${filename}`, async () => {
       try {
-        const cond = Condition.create(cfg.condition);
+        const cond = new Condition(cfg.condition);
         if (cfg.vcl !== undefined) {
-          const vcl = Condition.toVCL(cond);
+          const vcl = cond.toVCL();
           assert.equal(vcl, cfg.vcl);
           assert.equal(null, cfg.error);
         }
         if (cfg.vcl_path !== undefined) {
-          const vclPath = Condition.toVCLPath(cond, cfg.param_name);
+          const vclPath = cond.toVCLPath(cfg.param_name);
           assert.equal(vclPath, cfg.vcl_path);
         }
         if (cfg.samples !== undefined) {
@@ -108,7 +108,7 @@ describe('Condition tests', () => {
         } else {
           await assertOK(cond);
         }
-        const actual = Condition.toJSON(cond);
+        const actual = cond.toJSON();
         const expected = cfg.condition;
         assert.deepEqual(actual, expected);
       } catch (e) {
