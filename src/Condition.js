@@ -12,6 +12,8 @@
 
 /* eslint-disable max-classes-per-file */
 const url = require('url');
+const YAML = require('yaml');
+const utils = require('./utils.js');
 
 // To avoid forward referencing the transformer function
 let transform;
@@ -405,30 +407,33 @@ const propertyMap = {
  */
 class Condition {
   constructor(cfg) {
-    this._top = cfg ? transform(cfg) : null;
+    this._top = transform(cfg);
   }
 
   toVCL() {
-    return this._top ? this._top.toVCL() : '';
+    return this._top.toVCL();
   }
 
-  toVCLPath(paramName = 'X-Base') {
-    return this._top ? this._top.toVCLPath(paramName) : '';
+  toVCLPath(paramName) {
+    return this._top.toVCLPath(paramName);
   }
 
   /* eslint-disable no-underscore-dangle */
   toFunction() {
     const self = this;
-    return (req) => {
-      if (self._top) {
-        return self._top.evaluate(req);
-      }
-      return true;
-    };
+    return (req) => self._top.evaluate(req);
   }
 
-  toJSON() {
-    return this._top ? this._top.toJSON() : null;
+  toJSON(opts) {
+    const json = this._top.toJSON();
+    if (opts && opts.minimal) {
+      return utils.pruneEmptyValues(json);
+    }
+    return json;
+  }
+
+  toYAMLNode() {
+    return YAML.createNode(this.toJSON({ minimal: true }));
   }
 }
 
@@ -461,4 +466,54 @@ transform = (cfg) => {
   throw new Error(`Unknown property: ${name}`);
 };
 
-module.exports = Condition;
+function create(cfg) {
+  if (typeof cfg === 'string') {
+    return cfg;
+  }
+  if (cfg === null) {
+    return null;
+  }
+  return new Condition(cfg);
+}
+
+function toVCL(cond) {
+  if (typeof cond === 'string') {
+    return cond;
+  }
+  if (cond === null) {
+    return '';
+  }
+  return cond.toVCL();
+}
+
+function toVCLPath(cond, paramName = 'X-Base') {
+  if (cond === null || typeof cond === 'string') {
+    return '';
+  }
+  return cond.toVCLPath(paramName);
+}
+
+function toFunction(cond) {
+  if (cond === null || typeof cond === 'string') {
+    return () => true;
+  }
+  return cond.toFunction();
+}
+
+function toJSON(cond, opts) {
+  if (typeof cond === 'string') {
+    return cond;
+  }
+  if (cond === null) {
+    return null;
+  }
+  return cond.toJSON(opts);
+}
+
+module.exports = {
+  create,
+  toVCL,
+  toVCLPath,
+  toFunction,
+  toJSON,
+};

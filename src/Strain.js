@@ -19,6 +19,7 @@ const Origin = require('./Origin.js');
 const Static = require('./Static.js');
 const Performance = require('./Performance.js');
 const Redirect = require('./Redirect.js');
+const Condition = require('../src/Condition.js');
 const utils = require('./utils.js');
 
 /**
@@ -46,7 +47,7 @@ class Strain {
 
     // todo: schema for perf
     this._perf = new Performance(cfg.perf);
-    this._condition = cfg.condition || '';
+    this._condition = Condition.create(cfg.condition || '');
 
     // when `sticky` is not set
     // assume the strain to be sticky when there is a condition
@@ -226,7 +227,7 @@ class Strain {
     const json = {
       name: this.name,
       sticky: this.sticky,
-      condition: this.condition,
+      condition: Condition.toJSON(this.condition, opts),
       perf: this.perf.toJSON(opts),
       urls: this.urls,
     };

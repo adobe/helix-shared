@@ -106,7 +106,8 @@ describe('Strains test', () => {
       + '  repo: helix-cli\n'
       + '  ref: master\n'
       + 'static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
-      + 'condition: req.http.host == "client.project-helix.io"\n'
+      + 'condition:\n'
+      + '  url.hostname=: client.project-helix.io\n'
       + 'directoryIndex: readme.html\n');
 
     const fooCopy = cfg.strains.get('foo').clone();
