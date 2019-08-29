@@ -379,7 +379,7 @@ describe('Strains test', () => {
       content: 'https://github.com/adobe/project-helix.io.git',
       static: 'https://github.com/adobe/project-helix.io.git',
       url: 'http://www.example.com',
-      condition: 'http://www.example.com',
+      condition: 'req.http.host == "www.example.com"',
     });
     assert.notEqual(strain.url, undefined);
     assert.notEqual(strain.condition, undefined);
