@@ -371,4 +371,17 @@ describe('Strains test', () => {
       + 'condition: req.http.host == "client.project-helix.io"\n'
       + 'directoryIndex: somepage.html\n');
   });
+
+  it('Strain with both url and condition', async () => {
+    const strain = new Strain({
+      name: 'test',
+      code: 'https://github.com/adobe/project-helix.io.git',
+      content: 'https://github.com/adobe/project-helix.io.git',
+      static: 'https://github.com/adobe/project-helix.io.git',
+      url: 'http://www.example.com',
+      condition: 'http://www.example.com',
+    });
+    assert.notEqual(strain.url, undefined);
+    assert.notEqual(strain.condition, undefined);
+  });
 });
