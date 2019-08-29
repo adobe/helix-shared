@@ -39,10 +39,13 @@
     "url": {
       "description": "URL condition (note, this will be merged into a more general condition language)",
       "type": "string",
-      "format": "uri"
+      "format": "uri",
+      "deprecated": {
+        "description": "This property has been deprecated in favour of adding the url to the condition property."
+      }
     },
     "urls": {
-      "description": "URL condition (note, this will be merged into a more general condition language)",
+      "description": "List of known URLs for testing this strain",
       "type": "array",
       "items": {
         "type": "string",
