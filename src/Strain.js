@@ -20,6 +20,7 @@ const Static = require('./Static.js');
 const Performance = require('./Performance.js');
 const Redirect = require('./Redirect.js');
 const utils = require('./utils.js');
+const log = require('./log.js');
 
 /**
  * Strain
@@ -47,6 +48,14 @@ class Strain {
     // todo: schema for perf
     this._perf = new Performance(cfg.perf);
     this._condition = cfg.condition || '';
+
+    if (cfg.url) {
+      if (cfg.condition) {
+        log.warn('Property url overrides property condition, use just a condition instead.');
+      } else {
+        log.info('Property url is deprecated, use a condition instead.');
+      }
+    }
 
     // when `sticky` is not set
     // assume the strain to be sticky when there is a condition
