@@ -1,3 +1,13 @@
+## [2.2.1](https://github.com/adobe/helix-shared/compare/v2.2.0...v2.2.1) (2019-09-02)
+
+
+### Bug Fixes
+
+* Deprecate url in the strain schema ([3afd2b0](https://github.com/adobe/helix-shared/commit/3afd2b0))
+* Deprecate url in the strain schema ([fa77a57](https://github.com/adobe/helix-shared/commit/fa77a57))
+* Deprecate url in the strain schema ([46fc995](https://github.com/adobe/helix-shared/commit/46fc995))
+* **schemas:** use XDM meta:status for deprecation notice ([c62b019](https://github.com/adobe/helix-shared/commit/c62b019))
+
 # [2.2.0](https://github.com/adobe/helix-shared/compare/v2.1.1...v2.2.0) (2019-08-27)
 
 
