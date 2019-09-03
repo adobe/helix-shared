@@ -474,7 +474,7 @@ class Condition {
     if (this._top && this._top.isEmpty) {
       return this._top.isEmpty();
     }
-    return this._top !== null;
+    return this._top === null;
   }
 }
 
