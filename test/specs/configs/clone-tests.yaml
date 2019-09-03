@@ -28,7 +28,8 @@ strains:
   - name: default
     code: https://github.com/adobe/project-helix.io.git#master
     static: https://github.com/adobe/project-helix.io.git#dev
-    condition: req.http.host == "client.project-helix.io"
+    condition:
+      url.hostname=: client.project-helix.io
     sticky: false
     content:
       repo: helix-cli

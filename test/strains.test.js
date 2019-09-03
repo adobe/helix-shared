@@ -15,6 +15,7 @@
 const assert = require('assert');
 const path = require('path');
 const GitUrl = require('../src/GitUrl.js');
+const Condition = require('../src/Condition.js');
 const { HelixConfig, Strain } = require('../src/index.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/configs');
@@ -106,7 +107,8 @@ describe('Strains test', () => {
       + '  repo: helix-cli\n'
       + '  ref: master\n'
       + 'static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
-      + 'condition: req.http.host == "client.project-helix.io"\n'
+      + 'condition:\n'
+      + '  url.hostname=: client.project-helix.io\n'
       + 'directoryIndex: readme.html\n');
 
     const fooCopy = cfg.strains.get('foo').clone();
@@ -232,19 +234,19 @@ describe('Strains test', () => {
     assert.deepEqual(strain.content, giturl);
     assert.deepEqual(strain.code, giturl);
     assert.deepEqual(strain.package, '');
-    assert.deepEqual(strain.condition, '');
+    assert.equal(strain.condition.isEmpty(), true);
 
     strain.name = 'dirty';
     strain.content = 'https://github.com/adobe/project-helix.io.git#develop';
     strain.code = 'https://github.com/adobe/project-helix.io.git#develop';
     strain.package = 'dirty';
-    strain.condition = 'req.http.X-Dirty == "true"';
+    strain.condition = new Condition('req.http.X-Dirty == "true"');
 
     assert.notDeepEqual(strain.name, 'test');
     assert.notDeepEqual(strain.content, giturl);
     assert.notDeepEqual(strain.code, giturl);
     assert.notDeepEqual(strain.package, '');
-    assert.notDeepEqual(strain.condition, '');
+    assert.equal(strain.condition.isEmpty(), false);
   });
 
   it('proxy static can be read', () => {

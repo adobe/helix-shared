@@ -19,6 +19,7 @@ const Origin = require('./Origin.js');
 const Static = require('./Static.js');
 const Performance = require('./Performance.js');
 const Redirect = require('./Redirect.js');
+const Condition = require('../src/Condition.js');
 const utils = require('./utils.js');
 const log = require('./log.js');
 
@@ -47,7 +48,7 @@ class Strain {
 
     // todo: schema for perf
     this._perf = new Performance(cfg.perf);
-    this._condition = cfg.condition || '';
+    this._condition = new Condition(cfg.condition || '');
 
     if (cfg.url) {
       if (cfg.condition) {
@@ -59,7 +60,7 @@ class Strain {
 
     // when `sticky` is not set
     // assume the strain to be sticky when there is a condition
-    this._sticky = cfg.sticky === undefined ? this._condition !== '' : !!cfg.sticky;
+    this._sticky = cfg.sticky === undefined ? !this._condition.isEmpty() : !!cfg.sticky;
 
     this._redirects = (Array.isArray(cfg.redirects) ? cfg.redirects : [])
       .map((r) => new Redirect(r));
@@ -235,7 +236,7 @@ class Strain {
     const json = {
       name: this.name,
       sticky: this.sticky,
-      condition: this.condition,
+      condition: this.condition.toJSON(opts),
       perf: this.perf.toJSON(opts),
       urls: this.urls,
     };

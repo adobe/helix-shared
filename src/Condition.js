@@ -12,6 +12,8 @@
 
 /* eslint-disable max-classes-per-file */
 const url = require('url');
+const YAML = require('yaml');
+const utils = require('./utils.js');
 
 // To avoid forward referencing the transformer function
 let transform;
@@ -401,11 +403,36 @@ const propertyMap = {
 };
 
 /**
+ * StringCondition class
+ */
+class StringCondition {
+  constructor(s) {
+    this._s = s;
+  }
+
+  toVCL() {
+    return this._s;
+  }
+
+  toJSON() {
+    return this._s;
+  }
+
+  isEmpty() {
+    return this._s === '';
+  }
+}
+
+/**
  * Condition class
  */
 class Condition {
   constructor(cfg) {
-    this._top = cfg ? transform(cfg) : null;
+    if (typeof cfg === 'string') {
+      this._top = new StringCondition(cfg);
+    } else {
+      this._top = cfg ? transform(cfg) : null;
+    }
   }
 
   toVCL() {
@@ -413,22 +440,41 @@ class Condition {
   }
 
   toVCLPath(paramName = 'X-Base') {
-    return this._top ? this._top.toVCLPath(paramName) : '';
+    if (this._top && this._top.toVCLPath) {
+      return this._top.toVCLPath(paramName);
+    }
+    return '';
   }
 
   /* eslint-disable no-underscore-dangle */
   toFunction() {
     const self = this;
     return (req) => {
-      if (self._top) {
+      if (self._top && self._top.evaluate) {
         return self._top.evaluate(req);
       }
       return true;
     };
   }
 
-  toJSON() {
-    return this._top ? this._top.toJSON() : null;
+  toJSON(opts) {
+    const json = this._top ? this._top.toJSON() : null;
+    if (json && opts && opts.minimal) {
+      return utils.pruneEmptyValues(json);
+    }
+    return json;
+  }
+
+  toYAMLNode() {
+    const json = this.toJSON({ minimal: true });
+    return json ? YAML.createNode(json) : null;
+  }
+
+  isEmpty() {
+    if (this._top && this._top.isEmpty) {
+      return this._top.isEmpty();
+    }
+    return this._top === null;
   }
 }
 
