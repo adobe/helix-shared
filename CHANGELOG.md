@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/adobe/helix-shared/compare/v2.3.0...v3.0.0) (2019-09-05)
+
+
+### Bug Fixes
+
+* 🐛 Bump version number because of incompatible change ([2c4a45b](https://github.com/adobe/helix-shared/commit/2c4a45b))
+
+
+### BREAKING CHANGES
+
+* Strain.condition is no longer a string but an object
+
 # [2.3.0](https://github.com/adobe/helix-shared/compare/v2.2.1...v2.3.0) (2019-09-03)
 
 
