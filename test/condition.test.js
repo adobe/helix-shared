@@ -111,9 +111,6 @@ describe('Condition tests', () => {
         if (cfg.empty !== undefined) {
           assert.equal(cfg.empty, cond.isEmpty());
         }
-        if (cfg.json !== undefined) {
-          assert.equal(cfg.json, cond.toJSON());
-        }
         const actual = cond.toJSON();
         const expected = cfg.condition;
         assert.deepEqual(actual, expected);
