@@ -84,6 +84,12 @@ async function assertMatch(cond, samples) {
 }
 
 describe('Condition tests', () => {
+  afterEach(() => {
+    nock.restore();
+    nock.cleanAll();
+    nock.activate();
+  });
+
   fs.readdirSync(SPEC_ROOT).forEach((filename) => {
     const source = fs.readFileSync(path.resolve(SPEC_ROOT, filename), 'utf8');
     const document = YAML.parseDocument(source, {
