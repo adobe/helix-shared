@@ -24,6 +24,12 @@ const utils = require('./utils.js');
 const log = require('./log.js');
 
 /**
+ * Flags indicating whether deprecation warning were shown.
+ */
+let urlOverridesCondition;
+let urlIsDeprecated;
+
+/**
  * Strain
  */
 class Strain {
@@ -51,10 +57,12 @@ class Strain {
     this._condition = new Condition(cfg.condition || '');
 
     if (cfg.url) {
-      if (cfg.condition) {
+      if (cfg.condition && !urlOverridesCondition) {
         log.warn('Property url overrides property condition, use just a condition instead.');
-      } else {
+        urlOverridesCondition = 1;
+      } else if (!urlIsDeprecated) {
         log.info('Property url is deprecated, use a condition instead.');
+        urlIsDeprecated = 1;
       }
     }
 
