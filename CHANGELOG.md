@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/adobe/helix-shared/compare/v3.0.0...v3.0.1) (2019-10-01)
+
+
+### Bug Fixes
+
+* Deprecation warnings should be shown just once per run ([#159](https://github.com/adobe/helix-shared/issues/159)) ([3f21b52](https://github.com/adobe/helix-shared/commit/3f21b52))
+
 # [3.0.0](https://github.com/adobe/helix-shared/compare/v2.3.0...v3.0.0) (2019-09-05)
 
 
