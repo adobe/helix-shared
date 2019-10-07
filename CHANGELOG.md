@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/adobe/helix-shared/compare/v3.0.1...v3.0.2) (2019-10-07)
+
+
+### Bug Fixes
+
+* **package:** update yaml to version 1.7.1 ([5d70d56](https://github.com/adobe/helix-shared/commit/5d70d56))
+
 ## [3.0.1](https://github.com/adobe/helix-shared/compare/v3.0.0...v3.0.1) (2019-10-01)
 
 
