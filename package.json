@@ -34,7 +34,7 @@
     "uri-js": "^4.2.2",
     "uuid": "^3.3.2",
     "winston": "^3.2.1",
-    "yaml": "1.7.0"
+    "yaml": "1.7.1"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
