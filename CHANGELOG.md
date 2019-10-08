@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/adobe/helix-shared/compare/v3.0.2...v3.0.3) (2019-10-08)
+
+
+### Bug Fixes
+
+* **package:** update ferrum to version 1.4.1 ([9d7eedd](https://github.com/adobe/helix-shared/commit/9d7eedd))
+
 ## [3.0.2](https://github.com/adobe/helix-shared/compare/v3.0.1...v3.0.2) (2019-10-07)
 
 
