@@ -1,3 +1,10 @@
+## [3.0.4](https://github.com/adobe/helix-shared/compare/v3.0.3...v3.0.4) (2019-10-16)
+
+
+### Bug Fixes
+
+* **package:** update snyk to the version 1.235.0. ([#182](https://github.com/adobe/helix-shared/issues/182)) ([311b8b3](https://github.com/adobe/helix-shared/commit/311b8b3))
+
 ## [3.0.3](https://github.com/adobe/helix-shared/compare/v3.0.2...v3.0.3) (2019-10-08)
 
 
