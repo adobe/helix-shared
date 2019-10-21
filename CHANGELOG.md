@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/adobe/helix-shared/compare/v3.0.4...v3.1.0) (2019-10-21)
+
+
+### Features
+
+* **strain:** add url deprecation example ([f7dd2ee](https://github.com/adobe/helix-shared/commit/f7dd2ee2f2310b03df994a92fb59b8da420aaec7))
+
 ## [3.0.4](https://github.com/adobe/helix-shared/compare/v3.0.3...v3.0.4) (2019-10-16)
 
 
