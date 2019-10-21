@@ -61,7 +61,7 @@ class Strain {
         log.warn('Property url overrides property condition, use just a condition instead.');
         urlOverridesCondition = 1;
       } else if (!urlIsDeprecated) {
-        log.info('Property url is deprecated, use a condition instead.');
+        log.info(`Property url is deprecated, use a condition instead:\ncondition:\n  url: ${cfg.url}`);
         urlIsDeprecated = 1;
       }
     }
