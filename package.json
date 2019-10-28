@@ -36,13 +36,13 @@
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
     "@adobe/jsonschema2md": "3.3.1",
-    "@semantic-release/changelog": "3.0.4",
-    "@semantic-release/git": "7.0.16",
-    "@semantic-release/github": "5.5.4",
+    "@semantic-release/changelog": "3.0.5",
+    "@semantic-release/git": "7.0.17",
+    "@semantic-release/github": "5.5.5",
     "codecov": "3.6.1",
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "3.0.2",
-    "eslint": "6.5.1",
+    "eslint": "6.6.0",
     "eslint-plugin-header": "3.0.0",
     "eslint-plugin-import": "2.18.2",
     "ghooks": "2.0.4",
@@ -55,10 +55,10 @@
     "mocha": "6.2.2",
     "mocha-junit-reporter": "1.23.1",
     "mocha-parallel-tests": "2.2.2",
-    "nock": "11.4.0",
+    "nock": "11.6.0",
     "nyc": "14.1.1",
     "request-promise-native": "1.0.7",
-    "semantic-release": "15.13.27"
+    "semantic-release": "15.13.28"
   },
   "lint-staged": {
     "*.js": "eslint"
