@@ -54,7 +54,7 @@ jobs:
     - store_artifacts:
         path: junit
 
-  publish-pre-release:
+  release:
     executor: node8
 
     steps:
@@ -62,10 +62,6 @@ jobs:
     - run:
         name: revert changes to package-lock.json
         command: git checkout -- package-lock.json
-
-    - run:
-        name: configure npm registry
-        command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
     - run:
         name: Semantic Release
@@ -76,9 +72,7 @@ workflows:
   build:
     jobs:
     - build
-    # the publish-pre-release jobs needs a $NPM_TOKEN environment to be setup and also have a
-    # valid SSH_KEY added for the `github.com` host.
-    - publish-pre-release:
+    - release:
         requires:
         - build
         filters:
