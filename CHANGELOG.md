@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/adobe/helix-shared/compare/v3.1.0...v3.1.1) (2019-10-29)
+
+
+### Bug Fixes
+
+* **ci:** use NPM_TOKEN env var for semantic-release ([545d9e3](https://github.com/adobe/helix-shared/commit/545d9e358a326a1fe16e8b76d509729154cbe708))
+
 # [3.1.0](https://github.com/adobe/helix-shared/compare/v3.0.4...v3.1.0) (2019-10-21)
 
 
