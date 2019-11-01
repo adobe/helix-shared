@@ -114,9 +114,6 @@ describe('Condition tests', () => {
         } else {
           await assertOK(cond);
         }
-        if (cfg.empty !== undefined) {
-          assert.equal(cfg.empty, cond.isEmpty());
-        }
         if (cfg.json !== undefined) {
           assert.equal(cfg.json, cond.toJSON());
         }

@@ -290,7 +290,12 @@ const propertyMap = {
       }
       return '';
     },
-    express: (req) => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+    express: (req) => {
+      if (req.headers && req.headers.host) {
+        return `${req.protocol || 'http'}://${req.headers.host}${req.path || '/'}`;
+      }
+      return '';
+    },
     prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
@@ -417,10 +422,6 @@ class StringCondition {
   toJSON() {
     return this._s;
   }
-
-  isEmpty() {
-    return this._s === '';
-  }
 }
 
 /**
@@ -468,13 +469,6 @@ class Condition {
   toYAMLNode() {
     const json = this.toJSON({ minimal: true });
     return json ? YAML.createNode(json) : null;
-  }
-
-  isEmpty() {
-    if (this._top && this._top.isEmpty) {
-      return this._top.isEmpty();
-    }
-    return this._top === null;
   }
 }
 
