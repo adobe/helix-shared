@@ -25,6 +25,8 @@ const schemas = [
   require('./schemas/performance.schema.json'),
   require('./schemas/redirectrule.schema.json'),
   require('./schemas/conditions.schema.json'),
+  require('./schemas/markup.schema.json'),
+  require('./schemas/markupmapping.schema.json'),
   /* eslint-enable global-require */
 ];
 
