@@ -26,11 +26,7 @@ const tests = [
   {
     title: 'fails with an empty config',
     config: 'empty.yaml',
-    result: null,
-    error: `Error: Invalid configuration:
-
-
-A list of strains and a strain with the name "default" is required.`,
+    result: 'real-empty.json',
   },
   {
     title: 'fails with no default strain',
@@ -177,7 +173,7 @@ describe('Helix Config Loading', () => {
         .init();
       assert.fail('should fail.');
     } catch (e) {
-      assert.equal(e.toString(), 'Error: Invalid configuration:\n\n\nA list of strains and a strain with the name "default" is required.');
+      assert.equal(e.toString(), 'Error: config file no-such-file.yaml does not exist');
     }
   });
 });
