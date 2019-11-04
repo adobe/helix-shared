@@ -1,0 +1,16 @@
+#
+# markup configuration for theblog
+#
+version: 1
+
+markup:
+  images-in-gallery:
+    match: section.is-gallery image
+    wrap: <div class="gallery-image">
+  external-links:
+    match: link[href!="https://"]
+    class: external
+  last-section:
+    match: section:last-of-type
+    attribute:
+      data-type: footer

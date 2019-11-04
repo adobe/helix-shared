@@ -9,6 +9,11 @@
 # governing permissions and limitations under the License.
 version: 1
 
+markup:
+  images-in-gallery:
+    match: section.is-gallery image
+    wrap: <div class="gallery-image">
+
 definitions:
   constants:
     defaultRepo:

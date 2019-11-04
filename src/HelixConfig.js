@@ -177,7 +177,9 @@ class HelixConfig {
       // create strains from document
       const strains = this._document.contents.items.filter((item) => item.key.value === 'strains');
       // strains.length is always > 0, since JSON schema mandates a strains object
-      this._strains.fromYAML(strains[0].value);
+      if (strains[0]) {
+        this._strains.fromYAML(strains[0].value);
+      }
     } else {
       this._cfg.strains.forEach((strain) => {
         this._strains.add(new Strain(strain));

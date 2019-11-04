@@ -122,6 +122,15 @@ describe('Helix Config Loading', () => {
     assert.equal(cfg.version, 1);
   });
 
+  it('loads markup congig from string source', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, '..', 'markup', 'sample.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+    assert.equal(cfg.source, source);
+    assert.equal(cfg.version, 1);
+  });
+
   it('loads from string source and reports correct path', async () => {
     const source = await fs.readFile(path.resolve(SPEC_ROOT, 'full.yaml'), 'utf-8');
     const cfg = await new HelixConfig()
