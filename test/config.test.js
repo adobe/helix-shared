@@ -116,15 +116,34 @@ describe('Helix Config Loading', () => {
       .init();
     assert.equal(cfg.source, source);
     assert.equal(cfg.version, 1);
+
+    assert.equal(cfg.markup.length, 1);
   });
 
-  it('loads markup congig from string source', async () => {
+  it('loads markup config from string source', async () => {
     const source = await fs.readFile(path.resolve(SPEC_ROOT, '..', 'markup', 'sample.yaml'), 'utf-8');
     const cfg = await new HelixConfig()
       .withSource(source)
       .init();
     assert.equal(cfg.source, source);
     assert.equal(cfg.version, 1);
+
+    assert.equal(cfg.markup.length, 3);
+    assert.equal(cfg.markup[4], undefined);
+    assert.equal(cfg.markup[0].name, 'images-in-gallery');
+    assert.equal(cfg.markup[0].match, 'section.is-gallery image');
+    assert.equal(Object.keys(cfg.markup.toJSON()).length, 3);
+  });
+
+  it('loads empty markup config from string source', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'valid.yaml'), 'utf-8');
+    const cfg = await new HelixConfig()
+      .withSource(source)
+      .init();
+    assert.equal(cfg.source, source);
+    assert.equal(cfg.version, 1);
+
+    assert.equal(cfg.markup.length, 0);
   });
 
   it('loads from string source and reports correct path', async () => {
