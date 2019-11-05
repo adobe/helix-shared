@@ -19,7 +19,8 @@ const {
 const Strain = require('./Strain.js');
 const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
-const MarkupProxy = require('./NamedMapProxy.js');
+const NamedMapProxy = require('./NamedMapProxy.js');
+const MarkupMappingSchema = require('./schemas/markupmapping.schema.json');
 
 
 const HELIX_CONFIG = 'helix-config.yaml';
@@ -190,7 +191,7 @@ class HelixConfig {
           this._strains.fromYAML(strains[0].value);
         }
       }
-      this._markup = MarkupProxy(this._document, 'markup');
+      this._markup = NamedMapProxy(this._document, 'markup', MarkupMappingSchema);
     } else {
       this._cfg.strains.forEach((strain) => {
         this._strains.add(new Strain(strain));

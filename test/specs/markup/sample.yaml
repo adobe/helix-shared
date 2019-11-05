@@ -7,6 +7,7 @@ markup:
   images-in-gallery:
     match: section.is-gallery image
     wrap: <div class="gallery-image">
+    type: markdown
   external-links:
     match: link[href!="https://"]
     class: external

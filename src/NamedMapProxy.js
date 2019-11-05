@@ -9,7 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-function NamedMapProxy(document, rootprop) {
+const Ajv = require('ajv');
+
+function NamedMapProxy(document, rootprop, itemschema) {
+  const ajv = new Ajv({ useDefaults: true });
+  const validate = ajv.compile(itemschema);
+  const data = Symbol('data');
+
   function getRootNode(target) {
     return target.contents.items.filter(({ key }) => key.value === rootprop)[0];
   }
@@ -20,8 +26,13 @@ function NamedMapProxy(document, rootprop) {
       if (prop === 'name') {
         return target.key.value;
       }
+      if (!target[data]) {
+        // eslint-disable-next-line no-param-reassign
+        target[data] = target.value.toJSON();
+        validate(target[data]);
+      }
       // our YAML always uses lowercase keys
-      return target.value.toJSON()[prop.toLowerCase()];
+      return target[data][prop.toLowerCase()];
     },
   };
 
