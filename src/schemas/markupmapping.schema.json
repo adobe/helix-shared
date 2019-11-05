@@ -28,7 +28,7 @@
     "type": {
       "type": "string",
       "enum": ["html", "markdown"],
-      "default": "markdown"
+      "default": "html"
     },
     "wrap": {
       "type": "string",
