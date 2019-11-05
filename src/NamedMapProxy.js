@@ -11,6 +11,37 @@
  */
 const Ajv = require('ajv');
 
+/**
+ * Turns a YAML data structure into a JS data structure, with
+ * enforcement of schema-defined defaults.
+ * Given a YAML structure in `document` like this (expecting parsed YAML):
+ * ```yaml
+ * some-key:
+ *   foo:
+ *     baz: 1
+ *   bar:
+ *     baz: 2
+ * ```
+ * the `NamedMapProxy` will return a JavaScript data structure that looks like
+ * this:
+ * ```javascript
+ * [
+ *  {
+ *    name: 'foo',
+ *    baz: 1
+ *  },
+ *  {
+ *    name: 'bar',
+ *    baz: 2
+ *  }
+ * ]
+ * ```
+ * by providing an appropriate JSON Schema in `itemschema` you can also enforce
+ * default values for certain properties.
+ * @param {YAML} document a YAML document
+ * @param {*} rootprop the root property to wrap
+ * @param {*} itemschema the schema for items
+ */
 function NamedMapProxy(document, rootprop, itemschema) {
   const ajv = new Ajv({ useDefaults: true });
   const validate = ajv.compile(itemschema);
