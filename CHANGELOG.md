@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/adobe/helix-shared/compare/v3.1.1...v3.1.2) (2019-11-06)
+
+
+### Bug Fixes
+
+* **giturl:** use githubusercontent for raw url ([#194](https://github.com/adobe/helix-shared/issues/194)) ([01da4b1](https://github.com/adobe/helix-shared/commit/01da4b1c222cdcc1cfe27226b20603c3ad85e2c6)), closes [#193](https://github.com/adobe/helix-shared/issues/193)
+
 ## [3.1.1](https://github.com/adobe/helix-shared/compare/v3.1.0...v3.1.1) (2019-10-29)
 
 
