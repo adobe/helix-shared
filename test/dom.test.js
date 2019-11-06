@@ -399,7 +399,7 @@ describe('nodeMatches()', () => {
         });
       });
     });
-  });
+  }).timeout(5000);
 
   it('Supports wildcard in node', () => {
     each(containers, (contain) => {
@@ -415,5 +415,5 @@ describe('nodeMatches()', () => {
         });
       });
     });
-  });
+  }).timeout(5000);
 });
