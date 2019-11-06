@@ -119,6 +119,9 @@ class GitUrl {
     if (MATCH_IP.test(this.hostname)) {
       return `${protocol}://${this.host}/${type}`;
     }
+    if (type === 'raw' && this.host === 'github.com') {
+      return `${protocol}://raw.githubusercontent.com`;
+    }
     return `${protocol}://${type}.${this.host}`;
   }
 
