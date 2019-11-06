@@ -10,30 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-/* global it */
+/* eslint-env mocha */
 
 const assert = require('assert');
 const { multiline } = require('../src/index.js').string;
 
-it('multiline()', () => {
-  const ck = (ref, str) => assert.strictEqual(multiline(str), ref);
+describe('String tests', () => {
+  it('multiline()', () => {
+    const ck = (ref, str) => assert.strictEqual(multiline(str), ref);
 
-  ck('', '');
-  ck('Hello', 'Hello');
-  ck('Hello', `
+    ck('', '');
+    ck('Hello', 'Hello');
+    ck('Hello', `
     Hello`);
-  ck('Hello', `
+    ck('Hello', `
       Hello`);
-  ck('Hello\nWorld', `
+    ck('Hello\nWorld', `
       Hello
       World`);
-  ck('Hello\nWorld', `
+    ck('Hello\nWorld', `
       Hello
       World
   `);
-  ck('Hello\n  Foo\nWorld', `
+    ck('Hello\n  Foo\nWorld', `
       Hello
         Foo
       World
   `);
+  });
 });

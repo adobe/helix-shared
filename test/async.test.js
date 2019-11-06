@@ -16,19 +16,21 @@ const assert = require('assert');
 const { exec } = require('ferrum');
 const { nextTick, sleep } = require('../src/async');
 
-it('sleep', async () => {
-  const t0 = new Date().getTime();
-  await sleep(20);
-  const t = new Date().getTime() - t0;
-  assert(t >= 20 && t <= 40);
-});
-
-it('nextTick', async () => {
-  let x = 42;
-  const p = exec(async () => {
-    await nextTick();
-    assert.strictEqual(x, 23);
+describe('Async Tests', () => {
+  it('sleep', async () => {
+    const t0 = new Date().getTime();
+    await sleep(20);
+    const t = new Date().getTime() - t0;
+    assert(t >= 20 && t <= 40);
   });
-  x = 23;
-  await p;
+
+  it('nextTick', async () => {
+    let x = 42;
+    const p = exec(async () => {
+      await nextTick();
+      assert.strictEqual(x, 23);
+    });
+    x = 23;
+    await p;
+  });
 });
