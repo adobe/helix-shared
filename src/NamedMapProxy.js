@@ -43,7 +43,7 @@ const Ajv = require('ajv');
  * @param {*} itemschema the schema for items
  */
 function NamedMapProxy(document, rootprop, itemschema) {
-  const ajv = new Ajv({ useDefaults: true });
+  const ajv = new Ajv({ useDefaults: true, coerceTypes: 'array' });
   const validate = ajv.compile(itemschema);
   const data = Symbol('data');
 

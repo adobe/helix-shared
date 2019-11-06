@@ -73,7 +73,7 @@ class ConfigValidator {
       allErrors: true,
       verbose: true,
       useDefaults: true,
-      coerceTypes: true,
+      coerceTypes: 'array',
     });
     this._ajv.addSchema(schemas);
   }

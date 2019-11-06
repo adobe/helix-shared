@@ -134,6 +134,7 @@ describe('Helix Config Loading', () => {
     assert.equal(cfg.markup[0].match, 'section.is-gallery image');
     assert.equal(cfg.markup[0].type, 'markdown');
     assert.equal(cfg.markup[1].type, 'html'); // this is a coerced default
+    assert.equal(Array.isArray(cfg.markup[1].class), true); // this is a coerced array
     assert.equal(Object.keys(cfg.markup.toJSON()).length, 3);
   });
 

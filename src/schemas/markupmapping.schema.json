@@ -35,19 +35,11 @@
       "description": "Add the following HTML tags before the generated HTML"
     },
     "class": {
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "Add the following class name to the `class` attribute of the generated HTML"          
-        },
-        {
-          "type": "array",
-          "description": "Add the following class names to the `class` attribute of the generated HTML",
-          "items": {
-            "type": "string"
-          }
-        }
-      ]
+      "type": "array",
+      "description": "Add the following class names to the `class` attribute of the generated HTML",
+      "items": {
+        "type": "string"
+      }
     },
     "attribute": {
       "type": "object",
