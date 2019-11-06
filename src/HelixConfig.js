@@ -147,7 +147,7 @@ class HelixConfig {
     }
 
     if (!this._source) {
-      if (await this.hasFile() && this.configPath) {
+      if (await this.hasFile()) {
         this._source = await fs.readFile(this.configPath, 'utf8');
       } else {
         throw new Error(`config file ${this.configPath} does not exist`);
