@@ -16,7 +16,7 @@ const assert = require('assert');
 const YAML = require('yaml');
 const NamedMapProxy = require('../src/NamedMapProxy');
 
-describe.only('NamedMapProxy Tests', () => {
+describe('NamedMapProxy Tests', () => {
   const yaml = YAML.parseDocument(`
 basic:
   named1:

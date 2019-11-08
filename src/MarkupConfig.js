@@ -12,12 +12,14 @@
 const YAML = require('yaml');
 const NamedMapProxy = require('./NamedMapProxy.js');
 const MarkupMappingSchema = require('./schemas/markupmapping.schema.json');
+const MarkupConfigValidator = require('./MarkupConfigValidator');
 
 class MarkupConfig {
   constructor() {
     this._source = '';
     this._document = null;
     this._markup = null;
+    this._cfg = {};
   }
 
   get markup() {
@@ -29,6 +31,10 @@ class MarkupConfig {
     return this;
   }
 
+  async validate() {
+    new MarkupConfigValidator().validate(this._cfg);
+  }
+
   async loadConfig() {
     if (this._source.indexOf('\t') >= 0) {
       throw Error('Tabs not allowed in markup.yaml');
@@ -37,9 +43,13 @@ class MarkupConfig {
       merge: true,
       schema: 'core',
     });
+    this._cfg = this._document.toJSON() || {};
   }
 
-  init() {
+  async init() {
+    await this.loadConfig();
+    await this.validate();
+
     this._markup = NamedMapProxy(this._document, 'markup', MarkupMappingSchema);
   }
 }
