@@ -51,6 +51,7 @@ class MarkupConfig {
     await this.validate();
 
     this._markup = NamedMapProxy(this._document, 'markup', MarkupMappingSchema);
+    return this;
   }
 }
 

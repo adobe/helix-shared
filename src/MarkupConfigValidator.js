@@ -34,7 +34,11 @@ class MarkupConfigValidator {
 
   validate(config = {}) {
     this._ajv.errors = [];
-    return this._ajv.validate('https://ns.adobe.com/helix/shared/markupconfig', config);
+    const res = this._ajv.validate('https://ns.adobe.com/helix/shared/markupconfig', config);
+    if (res) {
+      return res;
+    }
+    throw new Error(this._ajv.errorsText());
   }
 }
 
