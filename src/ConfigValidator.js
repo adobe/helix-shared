@@ -25,8 +25,6 @@ const schemas = [
   require('./schemas/performance.schema.json'),
   require('./schemas/redirectrule.schema.json'),
   require('./schemas/conditions.schema.json'),
-  require('./schemas/markup.schema.json'),
-  require('./schemas/markupmapping.schema.json'),
   /* eslint-enable global-require */
 ];
 
@@ -73,7 +71,7 @@ class ConfigValidator {
       allErrors: true,
       verbose: true,
       useDefaults: true,
-      coerceTypes: 'array',
+      coerceTypes: true,
     });
     this._ajv.addSchema(schemas);
   }
@@ -85,9 +83,9 @@ class ConfigValidator {
 
   assetValid(config = {}) {
     // handle simple case for no strains. since the ajv error is a bit cryptic.
-    if (config.strains
-      && !((config.strains.find && config.strains.find((s) => s.name === 'default'))
-        || config.strains.default)) {
+    if (!config.strains
+      || ((config.strains.find && !config.strains.find((s) => s.name === 'default'))
+        && !config.strains.default)) {
       throw new ValidationError('A list of strains and a strain with the name "default" is required.');
     }
     const valid = this.validate(config);

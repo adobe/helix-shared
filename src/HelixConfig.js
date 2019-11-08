@@ -142,8 +142,6 @@ class HelixConfig {
     if (!this._source) {
       if (await this.hasFile()) {
         this._source = await fs.readFile(this.configPath, 'utf8');
-      } else {
-        throw new Error(`config file ${this.configPath} does not exist`);
       }
     }
     if (this._source.indexOf('\t') >= 0) {
@@ -177,13 +175,9 @@ class HelixConfig {
     this._version = this._cfg.version;
     if (this._document) {
       // create strains from document
-      if (this._document && this._document.contents && this._document.contents.items) {
-        const strains = this._document.contents.items.filter((item) => item.key.value === 'strains');
-        // strains.length is always > 0, since JSON schema mandates a strains object
-        if (strains[0]) {
-          this._strains.fromYAML(strains[0].value);
-        }
-      }
+      const strains = this._document.contents.items.filter((item) => item.key.value === 'strains');
+      // strains.length is always > 0, since JSON schema mandates a strains object
+      this._strains.fromYAML(strains[0].value);
     } else {
       this._cfg.strains.forEach((strain) => {
         this._strains.add(new Strain(strain));
