@@ -5,5 +5,5 @@ A configuration consits of a mandatory `match` expression, which is a CSS select
 Furthermore, a configuration can have any number of actions (including none at all), for example:
 
 - `wrap`: adds more HTML elements around the generated HTML
-- `inject` adds `class` attribute values into the generated HTML element
-- `add` adds other attributes and values into the generated HTML element
+- `class` adds `class` attribute values into the generated HTML element
+- `attribute` adds other attributes and values into the generated HTML element

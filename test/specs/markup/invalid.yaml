@@ -6,7 +6,7 @@ version: 1
 markup:
   images-in-gallery:
     # missing match
-    wrap: <div class="gallery-image">
+    wrap: .gallery-image
   external-links:
     # ok.
     match: link[href!="https://"]

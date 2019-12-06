@@ -29,6 +29,16 @@ describe('Markup Config Loading', () => {
     assert.ok(cfg);
     assert.ok(cfg.markup);
     assert.equal(cfg.markup.length, 3);
+
+    assert.equal(cfg.markup[0].match, 'section.is-gallery image');
+    assert.equal(cfg.markup[0].wrap, '.gallery-image');
+    assert.equal(cfg.markup[0].type, 'markdown');
+
+    assert.equal(cfg.markup[1].match, 'link[href!="https://"]');
+    assert.equal(cfg.markup[1].class, 'external');
+
+    assert.equal(cfg.markup[2].match, 'section:last-of-type');
+    assert.equal(cfg.markup[2].attribute['data-type'], 'footer');
   });
 
   it('rejects tabs', async () => {
