@@ -127,4 +127,31 @@ describe('Condition tests', () => {
       }
     });
   });
+
+  it('covering url expression evaluation with no request', () => {
+    try {
+      const cond = new Condition({ url: '/test' });
+      assert.equal(cond.toFunction()({}), false);
+    } catch (e) {
+      assert.fail(e.message);
+    }
+  });
+
+  it('covering url expression evaluation with no protocol', () => {
+    try {
+      const cond = new Condition({ url: '/test' });
+      assert.equal(cond.toFunction()({ headers: { host: 'myhost' } }), false);
+    } catch (e) {
+      assert.fail(e.message);
+    }
+  });
+
+  it('toYAMLNode() of an empty condition should return null', () => {
+    try {
+      const cond = new Condition();
+      assert.equal(cond.toYAMLNode(), null);
+    } catch (e) {
+      assert.fail(e.message);
+    }
+  });
 });

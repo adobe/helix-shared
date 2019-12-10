@@ -18,6 +18,7 @@ const dom = require('./dom.js');
 const log = require('./log.js');
 const Logger = require('./Logger.js');
 const Async = require('./async.js');
+const Condition = require('./Condition.js');
 
 module.exports = {
   GitUrl,
@@ -29,4 +30,5 @@ module.exports = {
   log,
   Logger,
   async: Async,
+  Condition,
 };
