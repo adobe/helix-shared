@@ -7,7 +7,7 @@ executors:
       NPM_CONFIG_PREFIX: ~/.npm-global
 
 orbs:
-  helix-smoke-tests: adobe/helix-smoke-tests@0.0.10
+  helix-smoke-tests: adobe/helix-smoke-tests@0.0.11
 
 commands:
   setup:
