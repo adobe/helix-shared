@@ -125,13 +125,6 @@ class BaseConfig {
     }
     return YAML.stringify(this.toJSON());
   }
-
-  toJSON() {
-    return {
-      version: this._version,
-      strains: this._strains.toJSON(),
-    };
-  }
 }
 
 module.exports = BaseConfig;

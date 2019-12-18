@@ -100,6 +100,13 @@ class HelixConfig extends BaseConfig {
     }
     return this;
   }
+
+  toJSON() {
+    return {
+      version: this._version,
+      strains: this._strains.toJSON(),
+    };
+  }
 }
 
 module.exports = HelixConfig;

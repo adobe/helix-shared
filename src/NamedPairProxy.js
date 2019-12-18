@@ -17,22 +17,20 @@ const Ajv = require('ajv');
  * Given a YAML structure in `document` like this (expecting parsed YAML):
  * ```yaml
  * some-key:
- *   foo:
- *     baz: 1
- *   bar:
- *     baz: 2
+ *   foo: 1
+ *   bar: 2
  * ```
  * the `NamedMapProxy` will return a JavaScript data structure that looks like
- * this:
+ * this (assuming keyname=hello and valuename=world):
  * ```javascript
  * [
  *  {
- *    name: 'foo',
- *    baz: 1
+ *    hello: 'foo',
+ *    world: 1
  *  },
  *  {
- *    name: 'bar',
- *    baz: 2
+ *    hello: 'bar',
+ *    world: 2
  *  }
  * ]
  * ```
@@ -41,10 +39,10 @@ const Ajv = require('ajv');
  * @param {YAML} document a YAML document
  * @param {*} rootprop the root property to wrap
  * @param {*} itemschema the schema for items
- * @param {string} name the JSON key of the item will be made available under
+ * @param {string} keyname the JSON key of the item will be made available under
  * this property name. Default is `name`.
  */
-function NamedMapProxy(document, rootprop, itemschema, name = 'name') {
+function NamedPairProxy(document, rootprop, itemschema, keyname = 'name', valuename = 'value') {
   const ajv = new Ajv({ useDefaults: true, coerceTypes: 'array' });
   const validate = ajv.compile(itemschema);
   const data = Symbol('data');
@@ -56,7 +54,7 @@ function NamedMapProxy(document, rootprop, itemschema, name = 'name') {
   // a proxy handler that treats a YAML node as a named JS object
   const namedItemHandler = {
     get: (target, prop) => {
-      if (prop === name) {
+      if (prop === keyname) {
         return target.key.value;
       }
       if (!target[data]) {
@@ -64,8 +62,10 @@ function NamedMapProxy(document, rootprop, itemschema, name = 'name') {
         target[data] = target.value.toJSON();
         validate(target[data]);
       }
-      // our YAML always uses lowercase keys
-      return target[data][prop.toLowerCase()];
+      if (prop === valuename) {
+        return target[data];
+      }
+      return undefined;
     },
   };
 
@@ -79,6 +79,7 @@ function NamedMapProxy(document, rootprop, itemschema, name = 'name') {
         }
         return 0;
       };
+
       if (prop === 'length') {
         return getlength();
       }
@@ -96,4 +97,4 @@ function NamedMapProxy(document, rootprop, itemschema, name = 'name') {
   return new Proxy(document, mapToListHandler);
 }
 
-module.exports = NamedMapProxy;
+module.exports = NamedPairProxy;
