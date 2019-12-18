@@ -10,62 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const YAML = require('yaml');
 const {
   concat, uniq, foldl, pipe,
 } = require('ferrum');
 const Strain = require('./Strain.js');
 const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
+const BaseConfig = require('./BaseConfig.js');
 
 
 const HELIX_CONFIG = 'helix-config.yaml';
 
-async function isFile(filePath) {
-  try {
-    return (await fs.stat(filePath)).isFile();
-  } catch (e) {
-    return false;
-  }
-}
-
-class HelixConfig {
+class HelixConfig extends BaseConfig {
   constructor() {
-    this._cwd = process.cwd();
-    this._cfgPath = '';
-    this._source = '';
-    this._cfg = null;
-    this._document = null;
-    this._logger = console;
-    this._version = '';
+    super(HELIX_CONFIG);
     this._strains = new Strains();
-  }
-
-  withJSON(obj) {
-    this._cfg = obj;
-    return this;
-  }
-
-  withSource(value) {
-    this._source = value;
-    return this;
-  }
-
-  withConfigPath(cfgPath) {
-    this._cfgPath = cfgPath;
-    return this;
-  }
-
-  withLogger(logger) {
-    this._logger = logger;
-    return this;
-  }
-
-  withDirectory(cwd) {
-    this._cwd = cwd;
-    return this;
   }
 
   /**
@@ -102,56 +61,12 @@ class HelixConfig {
     return this;
   }
 
-  get directory() {
-    return this._cwd;
-  }
-
-  get version() {
-    return this._version;
-  }
-
-  get configPath() {
-    return this._cfgPath || path.resolve(this._cwd, HELIX_CONFIG);
-  }
-
-  get source() {
-    return this._source;
-  }
-
   /**
    * Strains of this config.
    * @returns {Strains}
    */
   get strains() {
     return this._strains;
-  }
-
-  get log() {
-    return this._logger;
-  }
-
-  async hasFile() {
-    return isFile(this.configPath);
-  }
-
-  async loadConfig() {
-    if (this._cfg) {
-      return;
-    }
-
-    if (!this._source) {
-      if (await this.hasFile()) {
-        this._source = await fs.readFile(this.configPath, 'utf8');
-      }
-    }
-    if (this._source.indexOf('\t') >= 0) {
-      throw Error('Tabs not allowed in helix-config.yaml');
-    }
-    this._document = YAML.parseDocument(this._source, {
-      merge: true,
-      schema: 'core',
-    });
-    this._cfg = this._document.toJSON() || {};
   }
 
   async validate() {
@@ -184,32 +99,6 @@ class HelixConfig {
       });
     }
     return this;
-  }
-
-  /**
-   * Saves this config to {@link #configPath}
-   * @returns {Promise<void>}
-   */
-  async saveConfig() {
-    const src = this.toYAML();
-    if (await fs.pathExists(this.configPath)) {
-      await fs.copy(this.configPath, `${this.configPath}.old`);
-    }
-    return fs.writeFile(this.configPath, src, 'utf-8');
-  }
-
-  toYAML() {
-    if (this._document) {
-      return this._document.toString();
-    }
-    return YAML.stringify(this.toJSON());
-  }
-
-  toJSON() {
-    return {
-      version: this._version,
-      strains: this._strains.toJSON(),
-    };
   }
 }
 
