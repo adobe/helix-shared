@@ -12,7 +12,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 const Ajv = require('ajv');
-const { match } = require('@adobe/helix-vulcain-filters');
 const BaseConfig = require('./BaseConfig.js');
 
 class SchemaDerivedConfig extends BaseConfig {
@@ -36,7 +35,7 @@ class SchemaDerivedConfig extends BaseConfig {
       coerceTypes: 'array',
     });
 
-    for (const [_, value] of Object.entries(this._schemas || {})) {
+    for (const value of Object.values(this._schemas || {})) {
       ajv.addSchema(value);
     }
 
@@ -47,47 +46,53 @@ class SchemaDerivedConfig extends BaseConfig {
     throw new Error(ajv.errorsText());
   }
 
-  static matches(path) {
-    return (pattern) => new RegExp(pattern).test(path);
+  static matches(propertypath) {
+    return (pattern) => new RegExp(pattern).test(propertypath);
   }
 
-  defaultHandler(root = '/') {
+  defaultHandler(root = '') {
     return {
-      get: (target, prop, receiver) => {
+      get: (target, prop) => {
         if (prop === 'then') {
           return target[prop];
         }
         if (prop === 'toJSON') {
           return () => this._cfg;
         }
-        const handler = this.getHandler(root + prop);
+        const handler = this.getHandler(`${root}/${prop}`);
+        const handled = handler ? new Proxy(target[prop], handler) : target[prop];
 
-        return new Proxy(target[prop], handler);
+        if (typeof handled === 'object') {
+          // we are getting an object, so better wrap it again to
+          // intercept property access
+          return new Proxy(handled, this.defaultHandler(`${root}/${prop}`));
+        }
+        // this is a plain value
+        return handled;
       },
     };
   }
 
-  getHandler(path) {
-    const matching = Object.keys(this._handlers).filter(SchemaDerivedConfig.matches(path));
+  getHandler(propertypath) {
+    const matching = Object.keys(this._handlers).filter(SchemaDerivedConfig.matches(propertypath));
     if (matching.length > 0) {
       const [firstmatch] = matching;
-      console.log('custom handler for ', path);
       return this._handlers[firstmatch];
     }
-    return this.defaultHandler(path);
+    return undefined;
   }
 
   async init() {
     await this.loadConfig();
 
     for (const [key, value] of Object.entries(this._schemas || {})) {
-      const schema = await fs.readJson(path.resolve(__dirname, 'schemas', value));
+      const schema = fs.readJsonSync(path.resolve(__dirname, 'schemas', value));
       this._schemas[key] = schema;
     }
 
     await this.validate();
 
-    this._content = new Proxy(this._cfg, this.getHandler('/'));
+    this._content = new Proxy(this._cfg, this.defaultHandler(''));
 
     return this._content;
   }

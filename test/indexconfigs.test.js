@@ -57,6 +57,7 @@ describe('Index Config Loading', () => {
       .init();
     assert.equal(cfg.indices.length, 1);
     assert.equal(cfg.indices[0].name, 'blog-posts');
+    // eslint-disable-next-line no-template-curly-in-string
     assert.equal(cfg.indices[0].fetch, 'https://${repo}-${owner}.project-helix.page/${path}');
   });
 });

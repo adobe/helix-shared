@@ -13,7 +13,6 @@ const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
 
 const NamedMapHandler = (keyname = 'name') => ({
   get: (target, prop) => {
-    console.log('named map: get', prop, target);
     if (prop === 'length') {
       return Object.keys(target).length;
     }

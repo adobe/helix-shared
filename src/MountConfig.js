@@ -12,8 +12,7 @@
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
 
 const NamedPairHandler = (keyname, valuename) => ({
-  get: (target, prop, receiver) => {
-    console.log('named pairs: get', prop, target);
+  get: (target, prop) => {
     if (prop === 'length') {
       return Object.keys(target).length;
     }
