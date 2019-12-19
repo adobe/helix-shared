@@ -36,7 +36,7 @@ class SchemaDerivedConfig extends BaseConfig {
       coerceTypes: 'array',
     });
 
-    for (let [_, value] of Object.entries(this._schemas || {})) {
+    for (const [_, value] of Object.entries(this._schemas || {})) {
       ajv.addSchema(value);
     }
 
@@ -51,7 +51,7 @@ class SchemaDerivedConfig extends BaseConfig {
     return (pattern) => {
       console.log('matching?', path, pattern);
       return new RegExp(pattern).test(path);
-    }
+    };
   }
 
   defaultHandler() {
@@ -64,18 +64,18 @@ class SchemaDerivedConfig extends BaseConfig {
           return () => this._cfg;
         }
         console.log('get', prop);
-        const handler = this.getHandler('/' + prop);
+        const handler = this.getHandler(`/${prop}`);
         console.log('getting handler', target, target[prop], handler);
         return new Proxy(target[prop], handler);
-      }
+      },
     };
   }
 
   getHandler(path) {
     console.log('gethandler', path, this._handlers);
     const matching = Object.keys(this._handlers).filter(SchemaDerivedConfig.matches(path));
-    if (matching.length>0) {
-      const [ firstmatch ] = matching;
+    if (matching.length > 0) {
+      const [firstmatch] = matching;
       return this._handlers[firstmatch];
     }
     console.log('using default handler for', path);
@@ -85,7 +85,7 @@ class SchemaDerivedConfig extends BaseConfig {
   async init() {
     await this.loadConfig();
 
-    for (let [key, value] of Object.entries(this._schemas || {})) {
+    for (const [key, value] of Object.entries(this._schemas || {})) {
       const schema = await fs.readJson(path.resolve(__dirname, 'schemas', value));
       this._schemas[key] = schema;
     }
