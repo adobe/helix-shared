@@ -12,28 +12,20 @@
 const fs = require('fs-extra');
 const path = require('path');
 const Ajv = require('ajv');
+const { match } = require('@adobe/helix-vulcain-filters');
 const BaseConfig = require('./BaseConfig.js');
 
 class SchemaDerivedConfig extends BaseConfig {
   constructor({
     filename,
-    rootschema,
-    itemschema,
-    proxy,
-    rootprop,
-    keyname = 'name',
-    valuename,
-  }) {
+    schemas = {},
+    handlers = {},
+  } = {}) {
     super(filename);
 
-    this._proxy = proxy;
-    this._rootprop = rootprop;
-    this._itemschema = null;
-    this._itemschema = itemschema;
-    this._rootschema = rootschema;
-    this._keyname = keyname;
-    this._valuename = valuename;
     this._content = null;
+    this._schemas = schemas;
+    this._handlers = handlers;
   }
 
   async validate() {
@@ -43,46 +35,70 @@ class SchemaDerivedConfig extends BaseConfig {
       useDefaults: true,
       coerceTypes: 'array',
     });
-    ajv.addSchema(this._itemschema);
-    const res = ajv.validate(this._rootschema, this._cfg);
+
+    for (let [_, value] of Object.entries(this._schemas || {})) {
+      ajv.addSchema(value);
+    }
+
+    const res = ajv.validate(this._schemas['^/$'], this._cfg);
     if (res) {
       return res;
     }
-    throw new Error(this._ajv.errorsText());
+    throw new Error(ajv.errorsText());
+  }
+
+  static matches(path) {
+    return (pattern) => {
+      console.log('matching?', path, pattern);
+      return new RegExp(pattern).test(path);
+    }
+  }
+
+  defaultHandler() {
+    return {
+      get: (target, prop, receiver) => {
+        if (prop === 'then') {
+          return target[prop];
+        }
+        if (prop === 'toJSON') {
+          return () => this._cfg;
+        }
+        console.log('get', prop);
+        const handler = this.getHandler('/' + prop);
+        console.log('getting handler', target, target[prop], handler);
+        return new Proxy(target[prop], handler);
+      }
+    };
+  }
+
+  getHandler(path) {
+    console.log('gethandler', path, this._handlers);
+    const matching = Object.keys(this._handlers).filter(SchemaDerivedConfig.matches(path));
+    if (matching.length>0) {
+      const [ firstmatch ] = matching;
+      return this._handlers[firstmatch];
+    }
+    console.log('using default handler for', path);
+    return this.defaultHandler();
   }
 
   async init() {
     await this.loadConfig();
 
-    this._rootschema = await fs.readJson(path.resolve(__dirname, 'schemas', this._rootschema));
-    this._itemschema = await fs.readJson(path.resolve(__dirname, 'schemas', this._itemschema));
+    for (let [key, value] of Object.entries(this._schemas || {})) {
+      const schema = await fs.readJson(path.resolve(__dirname, 'schemas', value));
+      this._schemas[key] = schema;
+    }
 
     await this.validate();
 
-    // load the YAML and turn it into objects
-    this._content = this._proxy(
-      this._document,
-      this._rootprop,
-      this._itemschema,
-      this._keyname,
-      this._valuename,
-    );
+    this._content = new Proxy(this._cfg, this.getHandler('/'));
 
-    const content = this._content;
-
-    // define the getter
-    Object.defineProperty(this, this._rootprop, {
-      get: () => content,
-    });
-
-    return this;
+    return this._content;
   }
 
   toJSON() {
-    const obj = {};
-    obj[this._rootprop] = this._content.toJSON();
-
-    return obj;
+    return this._cfg;
   }
 }
 
