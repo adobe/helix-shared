@@ -9,22 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { NamedPairHandler } = require('./NamedPairHandler');
-
-class MountConfig extends SchemaDerivedConfig {
-  constructor() {
-    super({
-      filename: 'fstab.yaml',
-      schemas: {
-        '^/$': 'fstab.schema.json',
-        '^/mountpoints/.*$': 'mountpoint.schema.json',
-      },
-      handlers: {
-        '^/mountpoints$': NamedPairHandler('path', 'url'),
-      },
-    });
-  }
-}
-
-module.exports = MountConfig;
+const NamedMapHandler = (keyname = 'name') => ({
+  get: (target, prop) => {
+    if (prop === 'length') {
+      return Object.keys(target).length;
+    }
+    const index = Number.parseInt(prop, 10);
+    if (!Number.isNaN(index) && index >= 0) {
+      const [key, value] = Object.entries(target)[index];
+      const obj = value;
+      obj[keyname] = key;
+      return obj;
+    }
+    return target[prop];
+  },
+});
+exports.NamedMapHandler = NamedMapHandler;

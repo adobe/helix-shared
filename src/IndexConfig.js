@@ -10,22 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-
-const NamedMapHandler = (keyname = 'name') => ({
-  get: (target, prop) => {
-    if (prop === 'length') {
-      return Object.keys(target).length;
-    }
-    const index = Number.parseInt(prop, 10);
-    if (!Number.isNaN(index) && index >= 0) {
-      const [key, value] = Object.entries(target)[index];
-      const obj = value;
-      obj[keyname] = key;
-      return obj;
-    }
-    return target[prop];
-  },
-});
+const { NamedMapHandler } = require('./NamedMapHandler');
 
 class IndexConfig extends SchemaDerivedConfig {
   constructor() {
