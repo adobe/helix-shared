@@ -14,7 +14,17 @@ const path = require('path');
 const Ajv = require('ajv');
 const BaseConfig = require('./BaseConfig.js');
 
+/**
+ * A Helix Config that is based on a (number of) JSON Schema(s).
+ */
 class SchemaDerivedConfig extends BaseConfig {
+  /**
+   *
+   * @param {object} opts
+   * @param {string} opts.filename - the source file when loading the config from disk
+   * @param {object} opts.schema - a mapping between JSON paths (regex) and schema file names
+   * @param {object} opts.handlers - a mapping between JSON paths (regex) and proxy handlers
+   */
   constructor({
     filename,
     schemas,
@@ -27,6 +37,9 @@ class SchemaDerivedConfig extends BaseConfig {
     this._handlers = handlers;
   }
 
+  /**
+   * Validates the loaded configuration and coerces types and sets defaulst
+   */
   async validate() {
     const ajv = new Ajv({
       allErrors: true,
@@ -46,10 +59,21 @@ class SchemaDerivedConfig extends BaseConfig {
     throw new Error(ajv.errorsText());
   }
 
+  /**
+   * Creates a matcher function that determines if a given property path
+   * pattern matches the provided property path
+   * @param {string} propertypath - the JSON Pointer path of the property
+   */
   static matches(propertypath) {
     return (pattern) => new RegExp(pattern).test(propertypath);
   }
 
+  /**
+   * Creates a default proxy handler that looks up the correct handler
+   * for the current property path and then wraps the corresponding
+   * config object with it as a handler.
+   * @param {string} root - the JSON Pointer path of the root property
+   */
   defaultHandler(root) {
     return {
       get: (target, prop) => {
@@ -73,6 +97,10 @@ class SchemaDerivedConfig extends BaseConfig {
     };
   }
 
+  /**
+   * Looks up the handler registered to the current property path (if any)
+   * @param {string} propertypath - the JSON Pointer path of the current property
+   */
   getHandler(propertypath) {
     const matching = Object.keys(this._handlers).filter(SchemaDerivedConfig.matches(propertypath));
     if (matching.length > 0) {
@@ -82,6 +110,9 @@ class SchemaDerivedConfig extends BaseConfig {
     return undefined;
   }
 
+  /**
+   * Initialize the configuration
+   */
   async init() {
     await this.loadConfig();
 
