@@ -96,10 +96,6 @@ class SchemaDerivedConfig extends BaseConfig {
 
     return this._content;
   }
-
-  toJSON() {
-    return this._cfg;
-  }
 }
 
 module.exports = SchemaDerivedConfig;

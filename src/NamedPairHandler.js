@@ -11,9 +11,6 @@
  */
 const NamedPairHandler = (keyname, valuename) => ({
   get: (target, prop) => {
-    if (prop === 'length') {
-      return Object.keys(target).length;
-    }
     const index = Number.parseInt(prop, 10);
     if (!Number.isNaN(index) && index >= 0) {
       const [key, value] = Object.entries(target)[index];
@@ -22,7 +19,7 @@ const NamedPairHandler = (keyname, valuename) => ({
       obj[valuename] = value;
       return obj;
     }
-    return target[prop];
+    return prop === 'length' ? Object.keys(target).length : target[prop];
   },
 });
 exports.NamedPairHandler = NamedPairHandler;

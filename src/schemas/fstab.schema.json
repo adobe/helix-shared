@@ -15,9 +15,16 @@
   "type": "object",
   "title": "FSTab (Mount Points)",
   "description": "Defines a mapping between mount points and source URLs. Mount points **must** start with a slash (`/`) but may not end with one.",
-  "patternProperties": {
-    "^/.*[^/]$": {
-      "$ref": "https://ns.adobe.com/helix/shared/mountpoint"
+  "properties": {
+    "mountpoints": {
+      "type": "object",
+      "patternProperties": {
+        "^/.*[^/]$": {
+          "$ref": "https://ns.adobe.com/helix/shared/mountpoint"
+        }
+      }
     }
-  }
+  },
+  "additionalProperties": false,
+  "required": ["mountpoints"]
 }

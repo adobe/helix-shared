@@ -21,6 +21,12 @@ const SPEC_ROOT = path.resolve(__dirname, 'specs/mountconfigs');
 
 const tests = [
   {
+    title: 'fails with a broken config',
+    config: 'broken.yaml',
+    result: null,
+    error: 'Error: data should NOT have additional properties, data should have required property \'mountpoints\'',
+  },
+  {
     title: 'loads a theblog example',
     config: 'fstab.yaml',
     result: 'fstab.json',
