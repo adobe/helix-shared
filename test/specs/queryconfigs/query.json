@@ -34,6 +34,7 @@
           "cache": 600,
           "hitsPerPage": 25,
           "query": "*",
+          "parameters": [],
           "select": "*"
         },
         "by-author": {

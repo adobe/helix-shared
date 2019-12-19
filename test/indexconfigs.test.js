@@ -59,5 +59,11 @@ describe('Index Config Loading', () => {
     assert.equal(cfg.indices[0].name, 'blog-posts');
     // eslint-disable-next-line no-template-curly-in-string
     assert.equal(cfg.indices[0].fetch, 'https://${repo}-${owner}.project-helix.page/${path}');
+    assert.equal(cfg.indices[0].properties.length, 5);
+    assert.equal(cfg.indices[0].queries.length, 2);
+    assert.equal(cfg.indices[0].queries[1].cache, 300); // coerced from string to int
+    assert.equal(cfg.indices[0].queries[1].hitsPerPage, 25); // injected default value
+    assert.ok(Array.isArray(cfg.indices[0].queries[1].parameters));
+    assert.ok(Array.isArray(cfg.indices[0].queries[0].parameters));
   });
 });

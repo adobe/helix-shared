@@ -34,6 +34,7 @@
     },
     "parameters": {
       "type": "array",
+      "default": [],
       "items": {
         "type": "string",
         "minLength": 1

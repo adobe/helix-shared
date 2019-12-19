@@ -32,10 +32,9 @@ indices:
         hitsPerPage: 25
         cache: 600
       by-author:
-        parameters:
-          - author
+        parameters: author
         query: "*"
         filters: |
           author:${author}
-        cache: 300
+        cache: "300"
 
