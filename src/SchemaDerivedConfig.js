@@ -17,9 +17,9 @@ const BaseConfig = require('./BaseConfig.js');
 class SchemaDerivedConfig extends BaseConfig {
   constructor({
     filename,
-    schemas = {},
-    handlers = {},
-  } = {}) {
+    schemas,
+    handlers,
+  }) {
     super(filename);
 
     this._content = null;
@@ -35,7 +35,7 @@ class SchemaDerivedConfig extends BaseConfig {
       coerceTypes: 'array',
     });
 
-    for (const value of Object.values(this._schemas || {})) {
+    for (const value of Object.values(this._schemas)) {
       ajv.addSchema(value);
     }
 
@@ -50,7 +50,7 @@ class SchemaDerivedConfig extends BaseConfig {
     return (pattern) => new RegExp(pattern).test(propertypath);
   }
 
-  defaultHandler(root = '') {
+  defaultHandler(root) {
     return {
       get: (target, prop) => {
         if (prop === 'then') {
@@ -85,7 +85,7 @@ class SchemaDerivedConfig extends BaseConfig {
   async init() {
     await this.loadConfig();
 
-    for (const [key, value] of Object.entries(this._schemas || {})) {
+    for (const [key, value] of Object.entries(this._schemas)) {
       const schema = fs.readJsonSync(path.resolve(__dirname, 'schemas', value));
       this._schemas[key] = schema;
     }
