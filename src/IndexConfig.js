@@ -10,16 +10,39 @@
  * governing permissions and limitations under the License.
  */
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const NamedMapProxy = require('./NamedMapProxy');
+
+const NamedMapHandler = (keyname = 'name') => ({
+  get: (target, prop) => {
+    console.log('named map: get', prop, target);
+    if (prop === 'length') {
+      return Object.keys(target).length;
+    }
+    const index = Number.parseInt(prop, 10);
+    if (!Number.isNaN(index) && index >= 0) {
+      const [key, value] = Object.entries(target)[index];
+      const obj = value;
+      obj[keyname] = key;
+      return obj;
+    }
+    return target[prop];
+  },
+});
 
 class IndexConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'helix-query.yaml',
-      rootschema: 'queryconfig.schema.json',
-      itemschema: 'index.schema.json',
-      proxy: NamedMapProxy,
-      rootprop: 'indices',
+      schemas: {
+        '^/$': 'indexconfig.schema.json',
+        '^/indices/.*$': 'index.schema.json',
+        '^/indices/.*/properties/.*$': 'property.schema.json',
+        '^/indices/.*/queries/.*$': 'query.schema.json',
+      },
+      handlers: {
+        '^/indices$': NamedMapHandler(),
+        '^/indices/.*/properties$': NamedMapHandler(),
+        '^/indices/.*/queries$': NamedMapHandler(),
+      },
     });
   }
 }

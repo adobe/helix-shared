@@ -10,18 +10,36 @@
  * governing permissions and limitations under the License.
  */
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const NamedPairProxy = require('./NamedPairProxy');
+
+const NamedPairHandler = (keyname, valuename) => ({
+  get: (target, prop, receiver) => {
+    console.log('named pairs: get', prop, target);
+    if (prop === 'length') {
+      return Object.keys(target).length;
+    }
+    const index = Number.parseInt(prop, 10);
+    if (!Number.isNaN(index) && index >= 0) {
+      const [key, value] = Object.entries(target)[index];
+      const obj = {};
+      obj[keyname] = key;
+      obj[valuename] = value;
+      return obj;
+    }
+    return target[prop];
+  },
+});
 
 class MountConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'fstab.yaml',
-      rootschema: 'fstab.schema.json',
-      itemschema: 'mountpoint.schema.json',
-      proxy: NamedPairProxy,
-      rootprop: 'mountpoints',
-      keyname: 'path',
-      valuename: 'url',
+      schemas: {
+        '^/$': 'fstab.schema.json',
+        '^/mountpoints/.*$': 'mountpoint.schema.json',
+      },
+      handlers: {
+        '^/mountpoints$': NamedPairHandler('path', 'url'),
+      },
     });
   }
 }

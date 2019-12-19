@@ -48,13 +48,10 @@ class SchemaDerivedConfig extends BaseConfig {
   }
 
   static matches(path) {
-    return (pattern) => {
-      console.log('matching?', path, pattern);
-      return new RegExp(pattern).test(path);
-    };
+    return (pattern) => new RegExp(pattern).test(path);
   }
 
-  defaultHandler() {
+  defaultHandler(root = '/') {
     return {
       get: (target, prop, receiver) => {
         if (prop === 'then') {
@@ -63,23 +60,21 @@ class SchemaDerivedConfig extends BaseConfig {
         if (prop === 'toJSON') {
           return () => this._cfg;
         }
-        console.log('get', prop);
-        const handler = this.getHandler(`/${prop}`);
-        console.log('getting handler', target, target[prop], handler);
+        const handler = this.getHandler(root + prop);
+
         return new Proxy(target[prop], handler);
       },
     };
   }
 
   getHandler(path) {
-    console.log('gethandler', path, this._handlers);
     const matching = Object.keys(this._handlers).filter(SchemaDerivedConfig.matches(path));
     if (matching.length > 0) {
       const [firstmatch] = matching;
+      console.log('custom handler for ', path);
       return this._handlers[firstmatch];
     }
-    console.log('using default handler for', path);
-    return this.defaultHandler();
+    return this.defaultHandler(path);
   }
 
   async init() {
