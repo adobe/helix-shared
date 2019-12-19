@@ -15,7 +15,7 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const { MountConfig } = require('../src/index.js');
+const MountConfig = require('../src/MountConfig');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/mountconfigs');
 
