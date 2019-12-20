@@ -98,7 +98,7 @@ class BaseConfig {
       }
     }
     if (this._source.indexOf('\t') >= 0) {
-      throw Error('Tabs not allowed in helix-config.yaml');
+      throw Error('Tabs not allowed in YAML');
     }
     this._document = YAML.parseDocument(this._source, {
       merge: true,

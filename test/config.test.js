@@ -55,7 +55,7 @@ A list of strains and a strain with the name "default" is required.`,
     title: 'fails if config contains tabs',
     config: 'config_with_tabs.yaml',
     result: null,
-    error: 'Error: Tabs not allowed in helix-config.yaml',
+    error: 'Error: Tabs not allowed in YAML',
   },
   {
     title: 'loads config with urls',
