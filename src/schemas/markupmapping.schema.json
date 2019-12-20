@@ -32,9 +32,14 @@
     },
     "wrap": {
       "type": "string",
-      "description": "Add the following HTML tags before the generated HTML"
+      "description": "Add the following HTML tags before the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.",
+      "examples": [
+        "div>ul>li",
+        "div+p+bq",
+        "div+div>p>span+em "
+      ]
     },
-    "class": {
+    "classnames": {
       "type": "array",
       "description": "Add the following class names to the `class` attribute of the generated HTML",
       "items": {

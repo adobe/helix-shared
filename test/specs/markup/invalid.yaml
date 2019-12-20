@@ -10,7 +10,7 @@ markup:
   external-links:
     # ok.
     match: link[href!="https://"]
-    class: external
+    classnames: external
   last-section:
     match: section:last-of-type
     # invalid operation
