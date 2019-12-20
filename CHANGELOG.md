@@ -1,3 +1,22 @@
+# [3.3.0](https://github.com/adobe/helix-shared/compare/v3.2.0...v3.3.0) (2019-12-20)
+
+
+### Bug Fixes
+
+* **config:** fix tests for optional strains list ([c1617a6](https://github.com/adobe/helix-shared/commit/c1617a6c0b91cd723734bcd521fc4f3813ae3cab))
+* update copyright ([a004174](https://github.com/adobe/helix-shared/commit/a004174f0fb94e8c32db44d2722098ad974c5f25))
+* **config:** generalize error message for YAML with tabs ([3bc63b5](https://github.com/adobe/helix-shared/commit/3bc63b5de38c891f6ba093fd147aea50da6b590d))
+* **markup:** change default to `html` ([eb3d314](https://github.com/adobe/helix-shared/commit/eb3d314d429796b87ca0c22f4b55862fb4c6a5ff)), closes [/github.com/adobe/helix-pipeline/issues/516#issuecomment-549650766](https://github.com//github.com/adobe/helix-pipeline/issues/516/issues/issuecomment-549650766)
+
+
+### Features
+
+* **markup:** coerce array properties into arrays ([8d91304](https://github.com/adobe/helix-shared/commit/8d9130447f4900acd401d7d7cad9f0d40b65a3d8))
+* **markup:** coerce the default value for type ([7c3333c](https://github.com/adobe/helix-shared/commit/7c3333c19416d13f578b77fcb0e624f00e8a3092))
+* **markup:** define schema for markup configurations ([a73bb42](https://github.com/adobe/helix-shared/commit/a73bb4236e5b2ceaf3800e8b254bd8c14695f539))
+* **markup:** expose new `markup` config property in `HelixConfig` ([5cf1e0c](https://github.com/adobe/helix-shared/commit/5cf1e0c218433341a84cb241ca1bd9d638adf49e))
+* **markup:** validate markup config independently from strains config ([c20eea3](https://github.com/adobe/helix-shared/commit/c20eea3934a2a50c677309136ca5fa3188a97471))
+
 # [3.2.0](https://github.com/adobe/helix-shared/compare/v3.1.2...v3.2.0) (2019-12-20)
 
 
