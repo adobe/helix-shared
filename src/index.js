@@ -11,6 +11,8 @@
  */
 const GitUrl = require('./GitUrl.js');
 const HelixConfig = require('./HelixConfig.js');
+const IndexConfig = require('./IndexConfig');
+const MountConfig = require('./MountConfig');
 const Strain = require('./Strain.js');
 const utils = require('./utils.js');
 const string = require('./string.js');
@@ -22,6 +24,8 @@ const Async = require('./async.js');
 module.exports = {
   GitUrl,
   HelixConfig,
+  IndexConfig,
+  MountConfig,
   Strain,
   string,
   dom,
