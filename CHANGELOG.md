@@ -1,3 +1,22 @@
+# [3.2.0](https://github.com/adobe/helix-shared/compare/v3.1.2...v3.2.0) (2019-12-20)
+
+
+### Bug Fixes
+
+* **config:** bring up test coverage ([61e0134](https://github.com/adobe/helix-shared/commit/61e01340bc5c0f8db0c747d910e7628c3e124540))
+* **config:** fix (and test) default value coercion ([67511d0](https://github.com/adobe/helix-shared/commit/67511d0860c99239af601b5c70bc9dc397829f8f))
+* **config:** make recusive access work in schema-derived config ([d267e40](https://github.com/adobe/helix-shared/commit/d267e40a6c0045b45bd0424cd8e5093819f0b4de))
+* **schema:** fix query schema id ([2128767](https://github.com/adobe/helix-shared/commit/2128767e813a8d5ed4e445426a2f97cd6d79af46))
+* **schema:** fix query schema id ([1d45c3d](https://github.com/adobe/helix-shared/commit/1d45c3d8e1cd607d392c3594cd05742d940d97a7))
+* **validate:** use correct ajv instance ([4340d63](https://github.com/adobe/helix-shared/commit/4340d6398e547ee7827dfe93aea1f4e47ce632e0))
+
+
+### Features
+
+* **config:** add (basic) support for `fstab.yaml` ([e0c5516](https://github.com/adobe/helix-shared/commit/e0c5516dba28467d4391f67065e7420ae7219ff1)), closes [#190](https://github.com/adobe/helix-shared/issues/190)
+* **config:** NamedMapProxy allows turning a JSON Schema into a config class ([e1744d7](https://github.com/adobe/helix-shared/commit/e1744d77c457fc8e5a5b1f99232666f14b1dd16f)), closes [#195](https://github.com/adobe/helix-shared/issues/195)
+* **query:** add schemas and config class for index and query configs ([ece8df4](https://github.com/adobe/helix-shared/commit/ece8df4e0aa3eed2a19e8c41164e2fcdf67a991d)), closes [#190](https://github.com/adobe/helix-shared/issues/190)
+
 ## [3.1.2](https://github.com/adobe/helix-shared/compare/v3.1.1...v3.1.2) (2019-11-06)
 
 
