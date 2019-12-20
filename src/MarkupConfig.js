@@ -9,49 +9,22 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const YAML = require('yaml');
-const NamedMapProxy = require('./NamedMapProxy.js');
-const MarkupMappingSchema = require('./schemas/markupmapping.schema.json');
-const MarkupConfigValidator = require('./MarkupConfigValidator');
+const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
+const { NamedMapHandler } = require('./NamedMapHandler');
 
-class MarkupConfig {
+class MarkupConfig extends SchemaDerivedConfig {
   constructor() {
-    this._source = '';
-    this._document = null;
-    this._markup = null;
-    this._cfg = {};
-  }
-
-  get markup() {
-    return this._markup;
-  }
-
-  withSource(value) {
-    this._source = value;
-    return this;
-  }
-
-  async validate() {
-    new MarkupConfigValidator().validate(this._cfg);
-  }
-
-  async loadConfig() {
-    if (this._source.indexOf('\t') >= 0) {
-      throw Error('Tabs not allowed in markup.yaml');
-    }
-    this._document = YAML.parseDocument(this._source, {
-      merge: true,
-      schema: 'core',
+    super({
+      filename: 'helix-markup.yaml',
+      schemas: {
+        '^/$': 'markupconfig.schema.json',
+        '^/markup$': 'markup.schema.json',
+        '^/markup/.*$': 'markupmapping.schema.json',
+      },
+      handlers: {
+        '^/markup$': NamedMapHandler(),
+      },
     });
-    this._cfg = this._document.toJSON() || {};
-  }
-
-  async init() {
-    await this.loadConfig();
-    await this.validate();
-
-    this._markup = NamedMapProxy(this._document, 'markup', MarkupMappingSchema);
-    return this;
   }
 }
 

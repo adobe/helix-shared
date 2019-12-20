@@ -35,7 +35,7 @@ describe('Markup Config Loading', () => {
     assert.equal(cfg.markup[0].type, 'markdown');
 
     assert.equal(cfg.markup[1].match, 'link[href!="https://"]');
-    assert.equal(cfg.markup[1].class, 'external');
+    assert.equal(cfg.markup[1].classnames[0], 'external');
 
     assert.equal(cfg.markup[2].match, 'section:last-of-type');
     assert.equal(cfg.markup[2].attribute['data-type'], 'footer');
@@ -52,7 +52,7 @@ describe('Markup Config Loading', () => {
       if (e instanceof AssertionError) {
         throw e;
       }
-      assert.equal(e.message, 'Tabs not allowed in markup.yaml');
+      assert.equal(e.message, 'Tabs not allowed in YAML');
     }
   });
 
