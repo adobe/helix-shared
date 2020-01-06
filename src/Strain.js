@@ -13,6 +13,7 @@
 const URI = require('uri-js');
 const YAML = require('yaml');
 const { YAMLMap, Pair } = require('yaml/types');
+const log = require('@adobe/helix-log');
 
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin.js');
@@ -21,7 +22,6 @@ const Performance = require('./Performance.js');
 const Redirect = require('./Redirect.js');
 const Condition = require('../src/Condition.js');
 const utils = require('./utils.js');
-const log = require('./log.js');
 
 /**
  * Flags indicating whether deprecation warning were shown.
