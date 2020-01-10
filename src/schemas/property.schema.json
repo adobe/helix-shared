@@ -12,6 +12,8 @@
   ],
   "$id": "https://ns.adobe.com/helix/shared/property",
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Property",
   "oneOf": [
     {
       "title": "Single-Value Property",
