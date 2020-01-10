@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
-    "@adobe/jsonschema2md": "4.0.2",
+    "@adobe/jsonschema2md": "4.0.3",
     "@semantic-release/changelog": "3.0.6",
     "@semantic-release/git": "7.0.18",
     "@semantic-release/github": "5.5.5",
