@@ -1,0 +1,42 @@
+# Untitled object in FSTab (Mount Points) Schema
+
+```txt
+https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints
+```
+
+
+
+
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                      |
+| :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | --------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [fstab.schema.json\*](fstab.schema.json "open original schema") |
+
+## mountpoints Type
+
+`object` ([Details](fstab-properties-mountpoints.md))
+
+# undefined Properties
+
+| Property    | Type     | Required | Nullable       | Defined by                                                                                                                                                                                      |
+| :---------- | -------- | -------- | -------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `^/.*[^/]$` | `string` | Optional | cannot be null | [FSTab (Mount Points)](fstab-properties-mountpoints-patternproperties-mount-point.md "https&#x3A;//ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/patternProperties/^/.\*\[^/]$") |
+
+## Pattern: `^/.*[^/]$`
+
+Defines the target URL where content should be retrieved from.
+
+
+`^/.*[^/]$`
+
+-   is optional
+-   Type: `string` ([Mount Point](fstab-properties-mountpoints-patternproperties-mount-point.md))
+-   cannot be null
+-   defined in: [FSTab (Mount Points)](fstab-properties-mountpoints-patternproperties-mount-point.md "https&#x3A;//ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/patternProperties/^/.\*\[^/]$")
+
+### ]$ Type
+
+`string` ([Mount Point](fstab-properties-mountpoints-patternproperties-mount-point.md))
+
+### ]$ Constraints
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc4291 "check the specification")

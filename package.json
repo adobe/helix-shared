@@ -6,7 +6,7 @@
   "scripts": {
     "semantic-release": "semantic-release",
     "commit": "git-cz",
-    "docs": "npx jsonschema2md -d src/schemas -o docs &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
+    "docs": "npx jsonschema2md -d src/schemas -o docs -x docs &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
     "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 95 --statements 98 --lines 99 mocha",
     "lint": "./node_modules/.bin/eslint .",
     "junit": "mocha --exit -R mocha-junit-reporter"
@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
-    "@adobe/jsonschema2md": "4.0.3",
+    "@adobe/jsonschema2md": "4.0.4",
     "@semantic-release/changelog": "3.0.6",
     "@semantic-release/git": "7.0.18",
     "@semantic-release/github": "5.5.5",
