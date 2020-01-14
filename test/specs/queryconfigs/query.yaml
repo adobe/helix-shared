@@ -19,7 +19,7 @@ indices:
           ${parseTimestamp('[POSTED ON] MM-DD-YYYY')}
       topics:
         select: main > div:last-of-type > p:first-of-type
-        value: |
+        values: |
           ${match('(Topics: )? ([^,]+)')}
         faceted: true
       hero:
