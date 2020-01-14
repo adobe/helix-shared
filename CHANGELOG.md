@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/adobe/helix-shared/compare/v3.3.0...v4.0.0) (2020-01-14)
+
+
+### Features
+
+* **schema:** add support for multi-value properties ([fdb643c](https://github.com/adobe/helix-shared/commit/fdb643ca497a9b7e44bc098d46708a518202283b)), closes [#212](https://github.com/adobe/helix-shared/issues/212)
+
+
+### BREAKING CHANGES
+
+* **schema:** this is applying @tripodsan's changes from https://github.com/adobe/helix-index-pipelines/pull/38 to the Index Config schema. In particular it requires each property to have either one `value` or one `values` properties, but neve both. As this changes the behavior of `value`, it is a breaking change.
+
 # [3.3.0](https://github.com/adobe/helix-shared/compare/v3.2.0...v3.3.0) (2019-12-20)
 
 
