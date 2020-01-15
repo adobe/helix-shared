@@ -17,6 +17,7 @@
   "properties": {
     "indices": {
       "type": "object",
+      "default": {},
       "additionalProperties": {
         "$ref": "https://ns.adobe.com/helix/shared/index"
       }

@@ -25,6 +25,11 @@ const tests = [
     config: 'query.yaml',
     result: 'query.json',
   },
+  {
+    title: 'loads an empty query config',
+    config: 'empty-query.yaml',
+    result: 'empty-query.json',
+  },
 ];
 
 describe('Index Config Loading', () => {

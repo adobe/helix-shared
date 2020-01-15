@@ -36,3 +36,11 @@ https://ns.adobe.com/helix/shared/indexconfig
 ### indices Type
 
 `object` ([Details](indexconfig-properties-indices.md))
+
+### indices Default Value
+
+The default value is:
+
+```json
+{}
+```
