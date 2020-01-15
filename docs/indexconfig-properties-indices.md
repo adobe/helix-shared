@@ -15,6 +15,14 @@ https://ns.adobe.com/helix/shared/indexconfig#/properties/indices
 
 `object` ([Details](indexconfig-properties-indices.md))
 
+## indices Default Value
+
+The default value is:
+
+```json
+{}
+```
+
 # undefined Properties
 
 | Property              | Type     | Required | Nullable       | Defined by                                                                                                                                             |
