@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/adobe/helix-shared/compare/v4.0.0...v4.0.1) (2020-01-15)
+
+
+### Bug Fixes
+
+* **index:** guard against empty index config ([ebbe6a0](https://github.com/adobe/helix-shared/commit/ebbe6a0ac4f09da765d45d048910ac12c15f5d41))
+
 # [4.0.0](https://github.com/adobe/helix-shared/compare/v3.3.0...v4.0.0) (2020-01-14)
 
 
