@@ -33,44 +33,6 @@
 <dt><a href="#Strains">Strains</a></dt>
 <dd><p>Strains</p>
 </dd>
-<dt><a href="#ConsoleLogger">ConsoleLogger</a></dt>
-<dd><p>Logger that is especially designed to be used in node.js
-Print&#39;s to stderr; Marks errors, warns &amp; debug messages
-with a colored <code>[ERROR]</code>/... prefix. Uses <code>inspect</code> to display
-all non-strings.</p>
-</dd>
-<dt><a href="#MultiLogger">MultiLogger</a></dt>
-<dd><p>Simple logger that forwards all messages to the underlying loggers.</p>
-<p>This maintains an es6 map called loggers. Consumers of this API are
-explicitly permitted to mutate this map or replace it all together in
-order to add, remove or alter logger.</p>
-<pre><code class="language-js">const { rootLogger } = require(&#39;@adobe/helix-shared&#39;).log;
-
-// Changing the log level of the default logger:
-rootLogger.loggers.get(&#39;default&#39;).level = &#39;info&#39;;
-
-// Adding a named logger
-rootLogger.loggers.set(&#39;logfile&#39;, new FileLogger(&#39;...&#39;));
-
-// Adding an anonymous logger (you can add an arbitrary number of these)
-const name = `logfile-${uuidgen()}`;
-rootLogger.loggers.set(name, new FileLogger(&#39;...&#39;));
-
-// Deleting a logger
-rootLogger.loggers.delete(name);
-
-// Replacing all loggers
-rootLogger.loggers = new Map([[&#39;default&#39;, new ConsoleLogger({level: &#39;debug&#39;})]]);</code></pre>
-</dd>
-<dt><a href="#StreamLogger">StreamLogger</a></dt>
-<dd><p>Logs to any writable node.js stream</p>
-</dd>
-<dt><a href="#FileLogger">FileLogger</a> ⇐ <code><a href="#StreamLogger">StreamLogger</a></code></dt>
-<dd><p>Log to a file.</p>
-</dd>
-<dt><a href="#MemLogger">MemLogger</a></dt>
-<dd><p>Logs messages to an in-memory buffer.</p>
-</dd>
 </dl>
 
 ## Members
@@ -78,35 +40,6 @@ rootLogger.loggers = new Map([[&#39;default&#39;, new ConsoleLogger({level: &#39
 <dl>
 <dt><a href="#urlOverridesCondition">urlOverridesCondition</a></dt>
 <dd><p>Flags indicating whether deprecation warning were shown.</p>
-</dd>
-<dt><a href="#serializeOpts">serializeOpts</a> : <code>object</code></dt>
-<dd><p>Options that will be passed to <code>serializeMessage()</code>;
-Feel free to mutate or exchange.</p>
-</dd>
-<dt><a href="#stream">stream</a> : <code>Object</code></dt>
-<dd><p>The stream this logs to.</p>
-</dd>
-<dt><a href="#level">level</a> : <code>string</code></dt>
-<dd><p>The minimum log level for messages to be printed.
-Feel free to change to one of the levels described in the Logger
-interface.</p>
-</dd>
-<dt><a href="#serializeOpts">serializeOpts</a> : <code>object</code></dt>
-<dd><p>Options that will be passed to <code>serializeMessage()</code>;
-Feel free to mutate or exchange.</p>
-</dd>
-<dt><a href="#buf">buf</a> : <code>Array.&lt;String&gt;</code></dt>
-<dd><p>The buffer this records to.
-Each element is a message, without the newline at the end.</p>
-</dd>
-<dt><a href="#level">level</a> : <code>string</code></dt>
-<dd><p>The minimum log level for messages to be printed.
-Feel free to change to one of the levels described in the Logger
-interface.</p>
-</dd>
-<dt><a href="#serializeOpts">serializeOpts</a> : <code>object</code></dt>
-<dd><p>Options that will be passed to <code>serializeMessage()</code>;
-Feel free to mutate or exchange.</p>
 </dd>
 </dl>
 
@@ -127,14 +60,6 @@ Feel free to mutate or exchange.</p>
 </dd>
 <dt><a href="#propertyMap">propertyMap</a></dt>
 <dd><p>Known properties</p>
-</dd>
-<dt><a href="#progressFormat">progressFormat</a></dt>
-<dd><p>Winston format that suppresses messages when the <code>info.progress</code> is <code>true</code> and console._stdout
-is a TTY. This is used to log steps during a progress meter.</p>
-</dd>
-<dt><a href="#commandLineFormat">commandLineFormat</a></dt>
-<dd><p>Winston format that is used for a command line application where <code>info</code> messages are rendered
-without level.</p>
 </dd>
 <dt><a href="#nodeMatches">nodeMatches</a> ⇒ <code>Boolean</code></dt>
 <dd><p>Node equivalence testing with wildcard support.</p>
@@ -163,17 +88,6 @@ match zero, one or many dom nodes in the given node to test.</p>
      <code>Foo</code>
      <code>&lt;div id=&#39;Borg&#39; class=&#39;xxx&#39;&gt;&lt;/div&gt;</code></p>
 </dd>
-<dt><a href="#rootLogger">rootLogger</a></dt>
-<dd><p>The logger all other loggers attach to.</p>
-<p>Must always contain a logger named &#39;default&#39;; it is very much reccomended
-that the default logger always be a console logger; this can serve as a good
-fallback in case other loggers fail.</p>
-<pre><code class="language-js">// Change the default logger
-rootLogger.loggers.set(&#39;default&#39;, new ConsoleLogger({level: &#39;debug&#39;}));</code></pre>
-<p>You should not log to the root logger directly; instead use one of the
-wrapper functions <code>log, fatal, err, warn, info, verbose, debug</code>; they
-perform some additional</p>
-</dd>
 </dl>
 
 ## Functions
@@ -186,12 +100,6 @@ match &#39;/foo&#39; or &#39;/foo/index.html&#39; but not &#39;/fooby&#39;.</p>
 </dd>
 <dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
 <dd></dd>
-<dt><a href="#getTestLogger">getTestLogger()</a> ⇒ <code>winston.Logger</code></dt>
-<dd><p>Creates a test logger that logs to the console but also to an internal buffer. The contents of
-the buffer can be retrieved with {@code Logger#getOutput()} which will flush also close the
-logger. Each test logger will be registered with a unique category, so that there is no risk of
-reusing a logger in between tests.</p>
-</dd>
 <dt><a href="#nextTick">nextTick()</a> ⇒ <code>promise</code></dt>
 <dd><p>Await the next tick;</p>
 <p>NOTE: Internally this uses setImmediate, not process.nextTick.
@@ -308,113 +216,6 @@ is employed. Please refer to it&#39;s documentation to learn more</p>
 The implementation mostly defers to .isEqualNode,
 but provides better error messages.</p>
 </dd>
-<dt><a href="#numericLogLevel">numericLogLevel(name)</a> ⇒ <code>Number</code></dt>
-<dd><p>This can be used to convert a string log level into it&#39;s
-numeric equivalent. More pressing log levels have lower numbers.</p>
-</dd>
-<dt><a href="#tryInspect">tryInspect(what, opts)</a></dt>
-<dd><p>Wrapper around inspect that is extremely robust against errors
-during inspection.</p>
-<p>Specifically designed to handle errors in toString() functions
-and custom inspect functions.</p>
-<p>If any error is encountered a less informative string than a full
-inspect is returned and the error is logged using <code>err()</code>.</p>
-</dd>
-<dt><a href="#serializeMessage">serializeMessage(msg, opts)</a> ⇒ <code>string</code></dt>
-<dd><p>This is a useful helper function that turns a message containing
-arbitrary objects (like you would hand to console.log) into a string.</p>
-<p>Leaves strings as is; uses <code>require(&#39;util&#39;).inspect(...)</code> on all other
-types and joins the parameters using space:</p>
-<p>Loggers writing to raw streams or to strings usually use this, however
-not all loggers require this; e.g. in a browser environment
-console.warn/log/error should be used as these enable the use of the
-visual object inspectors, at least in chrome and firefox.</p>
-</dd>
-<dt><a href="#jsonEncodeMessage">jsonEncodeMessage(msg, opts)</a> ⇒ <code>string</code></dt>
-<dd><p>Can be used to encode a message as json.</p>
-<p>Uses serializeMessage internally.</p>
-<pre><code>jsonEncodeMessage([&quot;Hello World&quot;, 42], { level: &#39;debug&#39; })
-// =&gt; {message: &#39;Hello World 42&#39;, level: &#39;debug&#39;}</code></pre></dd>
-<dt><a href="#log">log(msg, opts)</a></dt>
-<dd><p>Actually print a log message</p>
-<p>Implementations of this MUST NOT throw exceptions. Instead implementors
-ARE ADVISED to attempt to log the error using err() while employing some
-means to avoid recursively triggering the error. Loggers SHOULD fall back
-to logging with console.error.</p>
-<p>Even though loggers MUST NOT throw exceptions; users of this method SHOULD
-still catch any errors and handle them appropriately.</p>
-</dd>
-<dt><a href="#log">log(msg, opts)</a></dt>
-<dd><p>Lot to the root logger; this is a wrapper around <code>rootLogger.log</code>
-that handles exceptions thrown by rootLogger.log.</p>
-</dd>
-<dt><a href="#fatal">fatal()</a></dt>
-<dd><p>Uses the currently installed logger to print a fatal error-message</p>
-</dd>
-<dt><a href="#err">err()</a></dt>
-<dd><p>Uses the currently installed logger to print an error-message</p>
-</dd>
-<dt><a href="#warn">warn()</a></dt>
-<dd><p>Uses the currently installed logger to print an warn</p>
-</dd>
-<dt><a href="#info">info()</a></dt>
-<dd><p>Uses the currently installed logger to print an informational message</p>
-</dd>
-<dt><a href="#verbose">verbose()</a></dt>
-<dd><p>Uses the currently installed logger to print a verbose message</p>
-</dd>
-<dt><a href="#debug">debug()</a></dt>
-<dd><p>Uses the currently installed logger to print a message intended for debugging</p>
-</dd>
-<dt><a href="#recordLogs">recordLogs(opts, fn)</a> ⇒ <code>String</code></dt>
-<dd><p>Record the log files with debug granularity while the given function is running.</p>
-<p>While the logger is recording, all other loggers are disabled.
-If this is not your desired behaviour, you can use the MemLogger
-manually.</p>
-<pre><code>const { assertEquals } = require(&#39;ferrum&#39;);
-const { recordLogs, info, err } = require(&#39;@adobe/helix-shared&#39;).log;
-
-const logs = recordLogs(() =&gt; {
-  info(&#39;Hello World\n&#39;);
-  err(&#39;Nooo&#39;)
-});
-assertEquals(logs, &#39;Hello World\n[ERROR] Nooo&#39;);</code></pre></dd>
-<dt><a href="#assertLogs">assertLogs(opts, fn, logs)</a></dt>
-<dd><p>Assert that a piece of code produces a specific set of log messages.</p>
-<pre><code>const { assertLogs, info, err } = require(&#39;@adobe/helix-shared&#39;).log;
-
-assertLogs(() =&gt; {
-r
-  info(&#39;Hello World\n&#39;);
-  err(&#39;Nooo&#39;)
-}, multiline(`
-  Hello World
-  [ERROR] Nooo
-`));</code></pre></dd>
-<dt><a href="#recordAsyncLogs">recordAsyncLogs(opts, fn)</a> ⇒ <code>String</code></dt>
-<dd><p>Async variant of recordLogs.</p>
-<p>Note that using this is a bit dangerous;</p>
-<pre><code>const { assertEquals } = require(&#39;ferrum&#39;);
-const { recordAsyncLogs, info, err } = require(&#39;@adobe/helix-shared&#39;).log;
-
-const logs = await recordLogs(async () =&gt; {
-  info(&#39;Hello World\n&#39;);
-  await sleep(500);
-  err(&#39;Nooo&#39;)
-});
-assertEquals(logs, &#39;Hello World\n[ERROR] Nooo&#39;);</code></pre></dd>
-<dt><a href="#assertAsyncLogs">assertAsyncLogs(opts, fn, logs)</a></dt>
-<dd><p>Async variant of assertLogs</p>
-<pre><code>const { assertAsyncLogs, info, err } = require(&#39;@adobe/helix-shared&#39;).log;
-
-await assertAsyncLogs(() =&gt; {
-  info(&#39;Hello World\n&#39;);
-  await sleep(500);
-  err(&#39;Nooo&#39;)
-}, multiline(`
-  Hello World
-  [ERROR] Nooo
-`));</code></pre></dd>
 <dt><a href="#multiline">multiline()</a></dt>
 <dd><p>This is a helper for declaring multiline strings.</p>
 <pre><code>const s = multiline(`
@@ -434,27 +235,6 @@ from each line...</p>
 </dd>
 </dl>
 
-## Interfaces
-
-<dl>
-<dt><a href="#Logger">Logger</a></dt>
-<dd><p>The logger interface can be used to customize how logging is done.</p>
-<p>Uses a fairly simple interface to avoid complexity for use cases in
-which is not required. Can be used to dispatch logging to more
-elaborate libraries. E.g. a logger using winston could be constructed like this:</p>
-</dd>
-</dl>
-
-<a name="Logger"></a>
-
-## Logger
-The logger interface can be used to customize how logging is done.
-
-Uses a fairly simple interface to avoid complexity for use cases in
-which is not required. Can be used to dispatch logging to more
-elaborate libraries. E.g. a logger using winston could be constructed like this:
-
-**Kind**: global interface  
 <a name="BaseConfig"></a>
 
 ## BaseConfig
@@ -914,156 +694,10 @@ Creates the strains from a yaml node
 | --- | --- |
 | node | <code>YAMLSeq</code> | 
 
-<a name="ConsoleLogger"></a>
-
-## ConsoleLogger
-Logger that is especially designed to be used in node.js
-Print's to stderr; Marks errors, warns & debug messages
-with a colored `[ERROR]`/... prefix. Uses `inspect` to display
-all non-strings.
-
-**Kind**: global class  
-**Implements**: [<code>Logger</code>](#Logger)  
-**Parameter**: <code>Object</code> opts – Currently supports one option:
-  loglevel – One of the log levels described in the Logger interface.
-    Messages below this log level will not be printed.
-    Defaults to info.
-
-  The rest of the options will be passed to serialize…  
-<a name="MultiLogger"></a>
-
-## MultiLogger
-Simple logger that forwards all messages to the underlying loggers.
-
-This maintains an es6 map called loggers. Consumers of this API are
-explicitly permitted to mutate this map or replace it all together in
-order to add, remove or alter logger.
-
-```js
-const { rootLogger } = require('@adobe/helix-shared').log;
-
-// Changing the log level of the default logger:
-rootLogger.loggers.get('default').level = 'info';
-
-// Adding a named logger
-rootLogger.loggers.set('logfile', new FileLogger('...'));
-
-// Adding an anonymous logger (you can add an arbitrary number of these)
-const name = `logfile-${uuidgen()}`;
-rootLogger.loggers.set(name, new FileLogger('...'));
-
-// Deleting a logger
-rootLogger.loggers.delete(name);
-
-// Replacing all loggers
-rootLogger.loggers = new Map([['default', new ConsoleLogger({level: 'debug'})]]);
-```
-
-**Kind**: global class  
-**Implements**: [<code>Logger</code>](#Logger)  
-**Parameter**: <code>...Logger</code> ...loggers – The loggers to forward to.  
-<a name="StreamLogger"></a>
-
-## StreamLogger
-Logs to any writable node.js stream
-
-**Kind**: global class  
-**Implements**: [<code>Logger</code>](#Logger)  
-<a name="new_StreamLogger_new"></a>
-
-### new StreamLogger(stream, opts)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| stream | <code>WritableStream</code> | The stream to log to |
-| opts | <code>Object</code> | – Configuration object; contains only one key at   the moment: `level` - The log level which can be one of `error, warn,   info, verbose` and `debug`. |
-
-<a name="FileLogger"></a>
-
-## FileLogger ⇐ [<code>StreamLogger</code>](#StreamLogger)
-Log to a file.
-
-**Kind**: global class  
-**Extends**: [<code>StreamLogger</code>](#StreamLogger)  
-**Implements**: [<code>Logger</code>](#Logger)  
-<a name="new_FileLogger_new"></a>
-
-### new FileLogger(name, opts)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>String</code> | The name of the file to log to |
-| opts | <code>Object</code> | – Configuration object; contains only one key at   the moment: `level` - The log level which can be one of `error, warn,   info, verbose` and `debug`. |
-
-<a name="MemLogger"></a>
-
-## MemLogger
-Logs messages to an in-memory buffer.
-
-**Kind**: global class  
-**Implements**: [<code>Logger</code>](#Logger)  
-<a name="new_MemLogger_new"></a>
-
-### new MemLogger(opts)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| opts | <code>Object</code> | – Configuration object; contains only one key at   the moment: `level` - The log level which can be one of `error, warn,   info, verbose` and `debug`. |
-
 <a name="urlOverridesCondition"></a>
 
 ## urlOverridesCondition
 Flags indicating whether deprecation warning were shown.
-
-**Kind**: global variable  
-<a name="serializeOpts"></a>
-
-## serializeOpts : <code>object</code>
-Options that will be passed to `serializeMessage()`;
-Feel free to mutate or exchange.
-
-**Kind**: global variable  
-<a name="stream"></a>
-
-## stream : <code>Object</code>
-The stream this logs to.
-
-**Kind**: global variable  
-<a name="level"></a>
-
-## level : <code>string</code>
-The minimum log level for messages to be printed.
-Feel free to change to one of the levels described in the Logger
-interface.
-
-**Kind**: global variable  
-<a name="serializeOpts"></a>
-
-## serializeOpts : <code>object</code>
-Options that will be passed to `serializeMessage()`;
-Feel free to mutate or exchange.
-
-**Kind**: global variable  
-<a name="buf"></a>
-
-## buf : <code>Array.&lt;String&gt;</code>
-The buffer this records to.
-Each element is a message, without the newline at the end.
-
-**Kind**: global variable  
-<a name="level"></a>
-
-## level : <code>string</code>
-The minimum log level for messages to be printed.
-Feel free to change to one of the levels described in the Logger
-interface.
-
-**Kind**: global variable  
-<a name="serializeOpts"></a>
-
-## serializeOpts : <code>object</code>
-Options that will be passed to `serializeMessage()`;
-Feel free to mutate or exchange.
 
 **Kind**: global variable  
 <a name="configMapper"></a>
@@ -1094,20 +728,6 @@ Boolean conditions
 
 ## propertyMap
 Known properties
-
-**Kind**: global constant  
-<a name="progressFormat"></a>
-
-## progressFormat
-Winston format that suppresses messages when the `info.progress` is `true` and console._stdout
-is a TTY. This is used to log steps during a progress meter.
-
-**Kind**: global constant  
-<a name="commandLineFormat"></a>
-
-## commandLineFormat
-Winston format that is used for a command line application where `info` messages are rendered
-without level.
 
 **Kind**: global constant  
 <a name="nodeMatches"></a>
@@ -1151,25 +771,6 @@ match zero, one or many dom nodes in the given node to test.
 | node | <code>DomNode</code> | 
 | pattern | <code>DomNode</code> | 
 
-<a name="rootLogger"></a>
-
-## rootLogger
-The logger all other loggers attach to.
-
-Must always contain a logger named 'default'; it is very much reccomended
-that the default logger always be a console logger; this can serve as a good
-fallback in case other loggers fail.
-
-```js
-// Change the default logger
-rootLogger.loggers.set('default', new ConsoleLogger({level: 'debug'}));
-```
-
-You should not log to the root logger directly; instead use one of the
-wrapper functions `log, fatal, err, warn, info, verbose, debug`; they
-perform some additional
-
-**Kind**: global constant  
 <a name="urlPrefixCompose"></a>
 
 ## urlPrefixCompose()
@@ -1189,15 +790,6 @@ We therefore add extra clauses in VCL or evaluate an extra condition.
 | left | [<code>Strain</code>](#Strain) | the current candidate strain (can be undefined) |
 | right | [<code>Strain</code>](#Strain) | the alternative candidate strain (can be undefined) |
 
-<a name="getTestLogger"></a>
-
-## getTestLogger() ⇒ <code>winston.Logger</code>
-Creates a test logger that logs to the console but also to an internal buffer. The contents of
-the buffer can be retrieved with {@code Logger#getOutput()} which will flush also close the
-logger. Each test logger will be registered with a unique category, so that there is no risk of
-reusing a logger in between tests.
-
-**Kind**: global function  
 <a name="nextTick"></a>
 
 ## nextTick() ⇒ <code>promise</code>
@@ -1393,289 +985,6 @@ The implementation mostly defers to .isEqualNode,
 but provides better error messages.
 
 **Kind**: global function  
-<a name="numericLogLevel"></a>
-
-## numericLogLevel(name) ⇒ <code>Number</code>
-This can be used to convert a string log level into it's
-numeric equivalent. More pressing log levels have lower numbers.
-
-**Kind**: global function  
-**Returns**: <code>Number</code> - The numeric log level  
-**Throws**:
-
-- <code>Error</code> If the given log level name is invalid.
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>String</code> | Name of the log level |
-
-<a name="tryInspect"></a>
-
-## tryInspect(what, opts)
-Wrapper around inspect that is extremely robust against errors
-during inspection.
-
-Specifically designed to handle errors in toString() functions
-and custom inspect functions.
-
-If any error is encountered a less informative string than a full
-inspect is returned and the error is logged using `err()`.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| what | <code>Any</code> | The object to inspect |
-| opts | <code>Object</code> | Options will be passed through to inspect.   Note that these may be ignored if there is an error during inspect(). |
-
-<a name="serializeMessage"></a>
-
-## serializeMessage(msg, opts) ⇒ <code>string</code>
-This is a useful helper function that turns a message containing
-arbitrary objects (like you would hand to console.log) into a string.
-
-Leaves strings as is; uses `require('util').inspect(...)` on all other
-types and joins the parameters using space:
-
-Loggers writing to raw streams or to strings usually use this, however
-not all loggers require this; e.g. in a browser environment
-console.warn/log/error should be used as these enable the use of the
-visual object inspectors, at least in chrome and firefox.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Array.&lt;any&gt;</code> | – Parameters as you would pass them to console.log |
-| opts | <code>Object</code> | – Parameters are forwarded to util.inspect().   By default `{depth: null, breakLength: Infinity, colors: false}` is used. |
-
-<a name="jsonEncodeMessage"></a>
-
-## jsonEncodeMessage(msg, opts) ⇒ <code>string</code>
-Can be used to encode a message as json.
-
-Uses serializeMessage internally.
-
-```
-jsonEncodeMessage(["Hello World", 42], { level: 'debug' })
-// => {message: 'Hello World 42', level: 'debug'}
-```
-
-**Kind**: global function  
-**Returns**: <code>string</code> - Json encoded string  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Array.&lt;any&gt;</code> | – Parameters as you would pass them to console.log |
-| opts | <code>Object</code> | – Named parameters:   - level: The log level; defaults to 'info'   Any other parameters are forwarded to serializeMessage. |
-
-<a name="log"></a>
-
-## log(msg, opts)
-Actually print a log message
-
-Implementations of this MUST NOT throw exceptions. Instead implementors
-ARE ADVISED to attempt to log the error using err() while employing some
-means to avoid recursively triggering the error. Loggers SHOULD fall back
-to logging with console.error.
-
-Even though loggers MUST NOT throw exceptions; users of this method SHOULD
-still catch any errors and handle them appropriately.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Array.&lt;any&gt;</code> | The message; list of arguments as you would pass it to console.log |
-| opts | <code>Object</code> | – Configuration object; contains only one key at   the moment: `level` - The log level which can be one of `error, warn,   info, verbose` and `debug`. |
-
-<a name="log"></a>
-
-## log(msg, opts)
-Lot to the root logger; this is a wrapper around `rootLogger.log`
-that handles exceptions thrown by rootLogger.log.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Array.&lt;Any&gt;</code> | – The message as you would hand it to console.log |
-| opts | <code>Object</code> | – Any options you would pass to rootLogger.log |
-
-<a name="fatal"></a>
-
-## fatal()
-Uses the currently installed logger to print a fatal error-message
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ......msg | <code>Any</code> | – The message as you would hand it to console.log |
-
-<a name="err"></a>
-
-## err()
-Uses the currently installed logger to print an error-message
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ......msg | <code>Any</code> | – The message as you would hand it to console.log |
-
-<a name="warn"></a>
-
-## warn()
-Uses the currently installed logger to print an warn
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ......msg | <code>Any</code> | – The message as you would hand it to console.log |
-
-<a name="info"></a>
-
-## info()
-Uses the currently installed logger to print an informational message
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ......msg | <code>Any</code> | – The message as you would hand it to console.log |
-
-<a name="verbose"></a>
-
-## verbose()
-Uses the currently installed logger to print a verbose message
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ......msg | <code>Any</code> | – The message as you would hand it to console.log |
-
-<a name="debug"></a>
-
-## debug()
-Uses the currently installed logger to print a message intended for debugging
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ......msg | <code>Any</code> | – The message as you would hand it to console.log |
-
-<a name="recordLogs"></a>
-
-## recordLogs(opts, fn) ⇒ <code>String</code>
-Record the log files with debug granularity while the given function is running.
-
-While the logger is recording, all other loggers are disabled.
-If this is not your desired behaviour, you can use the MemLogger
-manually.
-
-```
-const { assertEquals } = require('ferrum');
-const { recordLogs, info, err } = require('@adobe/helix-shared').log;
-
-const logs = recordLogs(() => {
-  info('Hello World\n');
-  err('Nooo')
-});
-assertEquals(logs, 'Hello World\n[ERROR] Nooo');
-```
-
-**Kind**: global function  
-**Returns**: <code>String</code> - The logs that where produced by the codee  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| opts | <code>Object</code> | – optional first parameter; options passed to MemLogger |
-| fn | <code>function</code> | The logs that this code emits will be recorded. |
-
-<a name="assertLogs"></a>
-
-## assertLogs(opts, fn, logs)
-Assert that a piece of code produces a specific set of log messages.
-
-```
-const { assertLogs, info, err } = require('@adobe/helix-shared').log;
-
-assertLogs(() => {
-r
-  info('Hello World\n');
-  err('Nooo')
-}, multiline(`
-  Hello World
-  [ERROR] Nooo
-`));
-```
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| opts | <code>Object</code> | – optional first parameter; options passed to MemLogger |
-| fn | <code>function</code> | The logs that this code emits will be recorded. |
-| logs | <code>String</code> |  |
-
-<a name="recordAsyncLogs"></a>
-
-## recordAsyncLogs(opts, fn) ⇒ <code>String</code>
-Async variant of recordLogs.
-
-Note that using this is a bit dangerous;
-
-```
-const { assertEquals } = require('ferrum');
-const { recordAsyncLogs, info, err } = require('@adobe/helix-shared').log;
-
-const logs = await recordLogs(async () => {
-  info('Hello World\n');
-  await sleep(500);
-  err('Nooo')
-});
-assertEquals(logs, 'Hello World\n[ERROR] Nooo');
-```
-
-**Kind**: global function  
-**Returns**: <code>String</code> - The logs that where produced by the codee  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| opts | <code>Object</code> | – optional first parameter; options passed to MemLogger |
-| fn | <code>function</code> | The logs that this code emits will be recorded. |
-
-<a name="assertAsyncLogs"></a>
-
-## assertAsyncLogs(opts, fn, logs)
-Async variant of assertLogs
-
-```
-const { assertAsyncLogs, info, err } = require('@adobe/helix-shared').log;
-
-await assertAsyncLogs(() => {
-  info('Hello World\n');
-  await sleep(500);
-  err('Nooo')
-}, multiline(`
-  Hello World
-  [ERROR] Nooo
-`));
-```
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| opts | <code>Object</code> | – optional first parameter; options passed to MemLogger |
-| fn | <code>function</code> | The logs that this code emits will be recorded. |
-| logs | <code>String</code> |  |
-
 <a name="multiline"></a>
 
 ## multiline()

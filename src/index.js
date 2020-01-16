@@ -17,8 +17,6 @@ const Strain = require('./Strain.js');
 const utils = require('./utils.js');
 const string = require('./string.js');
 const dom = require('./dom.js');
-const log = require('./log.js');
-const Logger = require('./Logger.js');
 const Async = require('./async.js');
 const MarkupConfig = require('./MarkupConfig');
 
@@ -31,8 +29,6 @@ module.exports = {
   string,
   dom,
   utils,
-  log,
-  Logger,
   MarkupConfig,
   async: Async,
 };

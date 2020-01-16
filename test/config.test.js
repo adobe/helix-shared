@@ -15,7 +15,8 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const { HelixConfig, Logger } = require('../src/index.js');
+const { logging } = require('@adobe/helix-testutils');
+const { HelixConfig } = require('../src/index.js');
 
 const Strain = require('../src/Strain.js');
 const GitUrl = require('../src/GitUrl.js');
@@ -143,13 +144,13 @@ describe('Helix Config Loading', () => {
   });
 
   it('sets logger', async () => {
-    const logger = Logger.getTestLogger();
+    const logger = logging.createTestLogger();
     const cfg = await new HelixConfig()
       .withLogger(logger)
       .withConfigPath(path.resolve(SPEC_ROOT, 'minimal.yaml'))
       .init();
     cfg.log.info('Hello, world.');
-    assert.ok((await logger.getOutput()).indexOf('Hello, world.') > 0);
+    assert.ok(logger.getOutput().indexOf('Hello, world.') > 0);
   });
 
   it('sets directory', async () => {
