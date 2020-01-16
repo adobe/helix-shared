@@ -1,3 +1,15 @@
+# [5.0.0](https://github.com/adobe/helix-shared/compare/v4.0.1...v5.0.0) (2020-01-16)
+
+
+### Features
+
+* **log:** remove logger support ([#211](https://github.com/adobe/helix-shared/issues/211)) ([972e49f](https://github.com/adobe/helix-shared/commit/972e49fc0a35e6a7d649da24667e973eb47a9e83))
+
+
+### BREAKING CHANGES
+
+* **log:** Logger and log is no longer exported by this project. use helix-log directly.
+
 ## [4.0.1](https://github.com/adobe/helix-shared/compare/v4.0.0...v4.0.1) (2020-01-15)
 
 
