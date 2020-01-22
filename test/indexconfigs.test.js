@@ -56,6 +56,24 @@ describe('Index Config Loading', () => {
     });
   });
 
+  it('Does not trip over unset config', async () => {
+    const cfg = await new IndexConfig().init();
+    const actual = cfg.toJSON();
+    const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'empty-query.json'), 'utf-8'));
+
+    assert.deepEqual(actual, expected);
+  });
+
+  it('Does not trip over non-existing config', async () => {
+    const cfg = await new IndexConfig()
+      .withDirectory(SPEC_ROOT)
+      .init();
+    const actual = cfg.toJSON();
+    const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'empty-query.json'), 'utf-8'));
+
+    assert.deepEqual(actual, expected);
+  });
+
   it('theblog Index Config get loaded', async () => {
     const cfg = await new IndexConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'))
