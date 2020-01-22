@@ -36,9 +36,9 @@ describe('Index Config Loading', () => {
   tests.forEach((test) => {
     it(test.title, async () => {
       try {
-        const cfg = await new IndexConfig()
-          .withConfigPath(path.resolve(SPEC_ROOT, test.config))
-          .init();
+        const cfg = new IndexConfig()
+          .withConfigPath(path.resolve(SPEC_ROOT, test.config));
+        await cfg.init();
         if (test.result) {
           const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, test.result), 'utf-8'));
           const actual = cfg.toJSON();
@@ -57,7 +57,10 @@ describe('Index Config Loading', () => {
   });
 
   it('Does not trip over unset config', async () => {
-    const cfg = await new IndexConfig().init();
+    const cfg = new IndexConfig();
+
+    await cfg.init();
+
     const actual = cfg.toJSON();
     const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'empty-query.json'), 'utf-8'));
 
@@ -65,25 +68,46 @@ describe('Index Config Loading', () => {
   });
 
   it('Does not trip over non-existing config', async () => {
-    const cfg = await new IndexConfig()
-      .withDirectory(SPEC_ROOT)
-      .init();
+    const cfg = new IndexConfig()
+      .withDirectory(SPEC_ROOT);
+    await cfg.init();
+
     const actual = cfg.toJSON();
     const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'empty-query.json'), 'utf-8'));
 
     assert.deepEqual(actual, expected);
   });
 
-  it('theblog Index Config get loaded', async () => {
-    const cfg = await new IndexConfig()
-      .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'))
-      .init();
+  it('theblog Index Config gets loaded from JSON', async () => {
+    const cfg = new IndexConfig()
+      .withJSON(fs.readJSONSync(path.resolve(SPEC_ROOT, 'query.json')));
+    await cfg.init();
     assert.equal(cfg.indices.length, 1);
+    assert.ok(Array.isArray(cfg.indices));
     assert.equal(cfg.indices[0].name, 'blog-posts');
     // eslint-disable-next-line no-template-curly-in-string
     assert.equal(cfg.indices[0].fetch, 'https://${repo}-${owner}.project-helix.page/${path}');
     assert.equal(cfg.indices[0].properties.length, 5);
     assert.equal(cfg.indices[0].queries.length, 2);
+    assert.ok(Array.isArray(cfg.indices[0].queries));
+    assert.equal(cfg.indices[0].queries[1].cache, 300); // coerced from string to int
+    assert.equal(cfg.indices[0].queries[1].hitsPerPage, 25); // injected default value
+    assert.ok(Array.isArray(cfg.indices[0].queries[1].parameters));
+    assert.ok(Array.isArray(cfg.indices[0].queries[0].parameters));
+  });
+
+  it('theblog Index Config gets loaded', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'));
+    await cfg.init();
+    assert.equal(cfg.indices.length, 1);
+    assert.ok(Array.isArray(cfg.indices));
+    assert.equal(cfg.indices[0].name, 'blog-posts');
+    // eslint-disable-next-line no-template-curly-in-string
+    assert.equal(cfg.indices[0].fetch, 'https://${repo}-${owner}.project-helix.page/${path}');
+    assert.equal(cfg.indices[0].properties.length, 5);
+    assert.equal(cfg.indices[0].queries.length, 2);
+    assert.ok(Array.isArray(cfg.indices[0].queries));
     assert.equal(cfg.indices[0].queries[1].cache, 300); // coerced from string to int
     assert.equal(cfg.indices[0].queries[1].hitsPerPage, 25); // injected default value
     assert.ok(Array.isArray(cfg.indices[0].queries[1].parameters));
