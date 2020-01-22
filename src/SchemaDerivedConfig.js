@@ -77,9 +77,6 @@ class SchemaDerivedConfig extends BaseConfig {
   defaultHandler(root) {
     return {
       get: (target, prop) => {
-        if (this[prop]) {
-          return this[prop];
-        }
         if (typeof prop === 'string') {
           const handler = this.getHandler(`${root}/${prop}`);
           const handled = handler && target[prop] ? new Proxy(target[prop], handler) : target[prop];
