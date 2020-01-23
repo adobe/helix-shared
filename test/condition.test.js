@@ -125,7 +125,7 @@ describe('Condition tests', () => {
         assert.deepEqual(actual, expected);
       } catch (e) {
         if (e.message !== cfg.error) {
-          assert.fail(e.message);
+          throw e;
         }
       }
     });

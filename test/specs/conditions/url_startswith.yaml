@@ -5,7 +5,6 @@ vcl: (req.http.X-Full-URL ~ "^https://www.example.com/doc/" || req.http.X-Full-U
 vcl_path: |
   if (req.http.X-Full-URL ~ "^https://www.example.com/doc/" || req.http.X-Full-URL == "https://www.example.com/doc") {
     set req.http.X-Base = "/doc";
-    return;
   }
 
 samples:
