@@ -1,3 +1,10 @@
+## [5.0.2](https://github.com/adobe/helix-shared/compare/v5.0.1...v5.0.2) (2020-01-23)
+
+
+### Bug Fixes
+
+* **condition:** toVCLPath should not return ([#228](https://github.com/adobe/helix-shared/issues/228)) ([23cb3de](https://github.com/adobe/helix-shared/commit/23cb3de063dee01cfc9d8c6599082487a89e5d62))
+
 ## [5.0.1](https://github.com/adobe/helix-shared/compare/v5.0.0...v5.0.1) (2020-01-23)
 
 

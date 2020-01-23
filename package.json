@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
   "scripts": {
