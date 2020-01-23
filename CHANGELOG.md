@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/adobe/helix-shared/compare/v5.0.0...v5.0.1) (2020-01-23)
+
+
+### Bug Fixes
+
+* **index:** increase compatibility with index config consumers ([28e9df6](https://github.com/adobe/helix-shared/commit/28e9df68b8c83abd2a414e00d8a83fd5ddbc5204))
+
 # [5.0.0](https://github.com/adobe/helix-shared/compare/v4.0.1...v5.0.0) (2020-01-16)
 
 
