@@ -8,6 +8,9 @@ vcl_path: |
   if (req.url.path ~ "^/foo/" || req.url.path == "/foo") {
     set req.http.X-BasePath = "/foo";
   }
+vcl_path_fn: |
+  # Rewrite the URL to include the proxy path
+  set req.url = regsub(req.url, "^/oldpath", "/foo");
 
 samples:
   - uri: https://www.example.com/foo/
