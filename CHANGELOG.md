@@ -1,3 +1,10 @@
+# [5.1.0](https://github.com/adobe/helix-shared/compare/v5.0.2...v5.1.0) (2020-01-23)
+
+
+### Features
+
+* **condition:** allow toVCLPath to be passed a function ([#229](https://github.com/adobe/helix-shared/issues/229)) ([ac54757](https://github.com/adobe/helix-shared/commit/ac54757c712482ef2e39c003d54978608800f465))
+
 ## [5.0.2](https://github.com/adobe/helix-shared/compare/v5.0.1...v5.0.2) (2020-01-23)
 
 
