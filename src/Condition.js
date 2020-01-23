@@ -91,7 +91,6 @@ const booleanMap = {
       if (subpathItem) {
         return `if ${vcl()} {
   set req.http.${paramName} = "${subpathItem.getSubPath(paramName)}";
-  return;
 }
 `;
       }
@@ -197,7 +196,6 @@ class PropertyCondition {
     if (subPath) {
       return `if ${this.toVCL()} {
   set req.http.${paramName} = "${subPath}";
-  return;
 }
 `;
     }
