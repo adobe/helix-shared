@@ -77,22 +77,24 @@ class SchemaDerivedConfig extends BaseConfig {
   defaultHandler(root) {
     return {
       get: (target, prop) => {
-        if (prop === 'then') {
-          return target[prop];
-        }
-        if (prop === 'toJSON') {
-          return () => this._cfg;
-        }
-        const handler = this.getHandler(`${root}/${prop}`);
-        const handled = handler && target[prop] ? new Proxy(target[prop], handler) : target[prop];
+        if (typeof prop === 'string') {
+          const handler = this.getHandler(`${root}/${prop}`);
+          const handled = handler && target[prop] ? new Proxy(target[prop], handler) : target[prop];
 
-        if (typeof handled === 'object') {
-          // we are getting an object, so better wrap it again to
-          // intercept property access
-          return new Proxy(handled, this.defaultHandler(`${root}/${prop}`));
+          if (typeof handled === 'object') {
+            // we are getting an object, so better wrap it again to
+            // intercept property access
+            const wrapped = new Proxy(handled, this.defaultHandler(`${root}/${prop}`));
+
+            if (wrapped.length) {
+              return Array.from(wrapped);
+            }
+            return wrapped;
+          }
+          // this is a plain value
+          return handled;
         }
-        // this is a plain value
-        return handled;
+        return undefined;
       },
     };
   }
@@ -125,7 +127,18 @@ class SchemaDerivedConfig extends BaseConfig {
 
     this._content = new Proxy(this._cfg, this.defaultHandler(''));
 
-    return this._content;
+    // redefine getters
+    Object.keys(this._cfg).forEach((key) => {
+      if (typeof this[key] === 'undefined') {
+        this[key] = this._content[key];
+      }
+    });
+
+    return this;
+  }
+
+  toJSON() {
+    return this._cfg;
   }
 }
 
