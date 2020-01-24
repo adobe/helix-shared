@@ -109,6 +109,12 @@ describe('Condition tests', () => {
           const vclPath = cond.toVCLPath(cfg.param_name);
           assert.equal(vclPath, cfg.vcl_path);
         }
+        if (cfg.vcl_path_fn !== undefined) {
+          const vclPath = cond.toVCLPath((_vclpath, subpath) => `# Rewrite the URL to include the proxy path
+set req.url = regsub(req.url, "^/oldpath", "${subpath}");
+`);
+          assert.equal(vclPath, cfg.vcl_path_fn);
+        }
         if (cfg.samples !== undefined) {
           await assertMatch(cond, cfg.samples);
         } else {
@@ -125,7 +131,7 @@ describe('Condition tests', () => {
         assert.deepEqual(actual, expected);
       } catch (e) {
         if (e.message !== cfg.error) {
-          assert.fail(e.message);
+          throw e;
         }
       }
     });

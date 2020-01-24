@@ -10,9 +10,7 @@ condition:
 vcl_path: |
   if (req.http.host ~ "^www.adobe.io" && (req.url.path ~ "^/foo/" || req.url.path == "/foo")) {
     set req.http.X-Base = "/foo";
-    return;
   }
   if (req.http.host ~ "^developer.adobe.com" && (req.url.path ~ "^/bar/" || req.url.path == "/bar")) {
     set req.http.X-Base = "/bar";
-    return;
   }

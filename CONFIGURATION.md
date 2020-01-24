@@ -31,9 +31,8 @@ In order to make writing configurations easier and to enable re-use of configura
 definitions:
   strains:
     base: &basestrain
-      code: /acapt/default/https---github-com-adobe-project-helix-io-git--master--
-      sticky: false
-    
+      code: https://github.com/adobe/project-helix.io.git
+
   origins:
     publish: &publish
       address: 192.168.0.1

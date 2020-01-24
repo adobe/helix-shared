@@ -1,3 +1,142 @@
+# [5.1.0](https://github.com/adobe/helix-shared/compare/v5.0.2...v5.1.0) (2020-01-23)
+
+
+### Features
+
+* **condition:** allow toVCLPath to be passed a function ([#229](https://github.com/adobe/helix-shared/issues/229)) ([ac54757](https://github.com/adobe/helix-shared/commit/ac54757c712482ef2e39c003d54978608800f465))
+
+## [5.0.2](https://github.com/adobe/helix-shared/compare/v5.0.1...v5.0.2) (2020-01-23)
+
+
+### Bug Fixes
+
+* **condition:** toVCLPath should not return ([#228](https://github.com/adobe/helix-shared/issues/228)) ([23cb3de](https://github.com/adobe/helix-shared/commit/23cb3de063dee01cfc9d8c6599082487a89e5d62))
+
+## [5.0.1](https://github.com/adobe/helix-shared/compare/v5.0.0...v5.0.1) (2020-01-23)
+
+
+### Bug Fixes
+
+* **index:** increase compatibility with index config consumers ([28e9df6](https://github.com/adobe/helix-shared/commit/28e9df68b8c83abd2a414e00d8a83fd5ddbc5204))
+
+# [5.0.0](https://github.com/adobe/helix-shared/compare/v4.0.1...v5.0.0) (2020-01-16)
+
+
+### Features
+
+* **log:** remove logger support ([#211](https://github.com/adobe/helix-shared/issues/211)) ([972e49f](https://github.com/adobe/helix-shared/commit/972e49fc0a35e6a7d649da24667e973eb47a9e83))
+
+
+### BREAKING CHANGES
+
+* **log:** Logger and log is no longer exported by this project. use helix-log directly.
+
+## [4.0.1](https://github.com/adobe/helix-shared/compare/v4.0.0...v4.0.1) (2020-01-15)
+
+
+### Bug Fixes
+
+* **index:** guard against empty index config ([ebbe6a0](https://github.com/adobe/helix-shared/commit/ebbe6a0ac4f09da765d45d048910ac12c15f5d41))
+
+# [4.0.0](https://github.com/adobe/helix-shared/compare/v3.3.0...v4.0.0) (2020-01-14)
+
+
+### Features
+
+* **schema:** add support for multi-value properties ([fdb643c](https://github.com/adobe/helix-shared/commit/fdb643ca497a9b7e44bc098d46708a518202283b)), closes [#212](https://github.com/adobe/helix-shared/issues/212)
+
+
+### BREAKING CHANGES
+
+* **schema:** this is applying @tripodsan's changes from https://github.com/adobe/helix-index-pipelines/pull/38 to the Index Config schema. In particular it requires each property to have either one `value` or one `values` properties, but neve both. As this changes the behavior of `value`, it is a breaking change.
+
+# [3.3.0](https://github.com/adobe/helix-shared/compare/v3.2.0...v3.3.0) (2019-12-20)
+
+
+### Bug Fixes
+
+* **config:** fix tests for optional strains list ([c1617a6](https://github.com/adobe/helix-shared/commit/c1617a6c0b91cd723734bcd521fc4f3813ae3cab))
+* update copyright ([a004174](https://github.com/adobe/helix-shared/commit/a004174f0fb94e8c32db44d2722098ad974c5f25))
+* **config:** generalize error message for YAML with tabs ([3bc63b5](https://github.com/adobe/helix-shared/commit/3bc63b5de38c891f6ba093fd147aea50da6b590d))
+* **markup:** change default to `html` ([eb3d314](https://github.com/adobe/helix-shared/commit/eb3d314d429796b87ca0c22f4b55862fb4c6a5ff)), closes [/github.com/adobe/helix-pipeline/issues/516#issuecomment-549650766](https://github.com//github.com/adobe/helix-pipeline/issues/516/issues/issuecomment-549650766)
+
+
+### Features
+
+* **markup:** coerce array properties into arrays ([8d91304](https://github.com/adobe/helix-shared/commit/8d9130447f4900acd401d7d7cad9f0d40b65a3d8))
+* **markup:** coerce the default value for type ([7c3333c](https://github.com/adobe/helix-shared/commit/7c3333c19416d13f578b77fcb0e624f00e8a3092))
+* **markup:** define schema for markup configurations ([a73bb42](https://github.com/adobe/helix-shared/commit/a73bb4236e5b2ceaf3800e8b254bd8c14695f539))
+* **markup:** expose new `markup` config property in `HelixConfig` ([5cf1e0c](https://github.com/adobe/helix-shared/commit/5cf1e0c218433341a84cb241ca1bd9d638adf49e))
+* **markup:** validate markup config independently from strains config ([c20eea3](https://github.com/adobe/helix-shared/commit/c20eea3934a2a50c677309136ca5fa3188a97471))
+
+# [3.2.0](https://github.com/adobe/helix-shared/compare/v3.1.2...v3.2.0) (2019-12-20)
+
+
+### Bug Fixes
+
+* **config:** bring up test coverage ([61e0134](https://github.com/adobe/helix-shared/commit/61e01340bc5c0f8db0c747d910e7628c3e124540))
+* **config:** fix (and test) default value coercion ([67511d0](https://github.com/adobe/helix-shared/commit/67511d0860c99239af601b5c70bc9dc397829f8f))
+* **config:** make recusive access work in schema-derived config ([d267e40](https://github.com/adobe/helix-shared/commit/d267e40a6c0045b45bd0424cd8e5093819f0b4de))
+* **schema:** fix query schema id ([2128767](https://github.com/adobe/helix-shared/commit/2128767e813a8d5ed4e445426a2f97cd6d79af46))
+* **schema:** fix query schema id ([1d45c3d](https://github.com/adobe/helix-shared/commit/1d45c3d8e1cd607d392c3594cd05742d940d97a7))
+* **validate:** use correct ajv instance ([4340d63](https://github.com/adobe/helix-shared/commit/4340d6398e547ee7827dfe93aea1f4e47ce632e0))
+
+
+### Features
+
+* **config:** add (basic) support for `fstab.yaml` ([e0c5516](https://github.com/adobe/helix-shared/commit/e0c5516dba28467d4391f67065e7420ae7219ff1)), closes [#190](https://github.com/adobe/helix-shared/issues/190)
+* **config:** NamedMapProxy allows turning a JSON Schema into a config class ([e1744d7](https://github.com/adobe/helix-shared/commit/e1744d77c457fc8e5a5b1f99232666f14b1dd16f)), closes [#195](https://github.com/adobe/helix-shared/issues/195)
+* **query:** add schemas and config class for index and query configs ([ece8df4](https://github.com/adobe/helix-shared/commit/ece8df4e0aa3eed2a19e8c41164e2fcdf67a991d)), closes [#190](https://github.com/adobe/helix-shared/issues/190)
+
+## [3.1.2](https://github.com/adobe/helix-shared/compare/v3.1.1...v3.1.2) (2019-11-06)
+
+
+### Bug Fixes
+
+* **giturl:** use githubusercontent for raw url ([#194](https://github.com/adobe/helix-shared/issues/194)) ([01da4b1](https://github.com/adobe/helix-shared/commit/01da4b1c222cdcc1cfe27226b20603c3ad85e2c6)), closes [#193](https://github.com/adobe/helix-shared/issues/193)
+
+## [3.1.1](https://github.com/adobe/helix-shared/compare/v3.1.0...v3.1.1) (2019-10-29)
+
+
+### Bug Fixes
+
+* **ci:** use NPM_TOKEN env var for semantic-release ([545d9e3](https://github.com/adobe/helix-shared/commit/545d9e358a326a1fe16e8b76d509729154cbe708))
+
+# [3.1.0](https://github.com/adobe/helix-shared/compare/v3.0.4...v3.1.0) (2019-10-21)
+
+
+### Features
+
+* **strain:** add url deprecation example ([f7dd2ee](https://github.com/adobe/helix-shared/commit/f7dd2ee2f2310b03df994a92fb59b8da420aaec7))
+
+## [3.0.4](https://github.com/adobe/helix-shared/compare/v3.0.3...v3.0.4) (2019-10-16)
+
+
+### Bug Fixes
+
+* **package:** update snyk to the version 1.235.0. ([#182](https://github.com/adobe/helix-shared/issues/182)) ([311b8b3](https://github.com/adobe/helix-shared/commit/311b8b3))
+
+## [3.0.3](https://github.com/adobe/helix-shared/compare/v3.0.2...v3.0.3) (2019-10-08)
+
+
+### Bug Fixes
+
+* **package:** update ferrum to version 1.4.1 ([9d7eedd](https://github.com/adobe/helix-shared/commit/9d7eedd))
+
+## [3.0.2](https://github.com/adobe/helix-shared/compare/v3.0.1...v3.0.2) (2019-10-07)
+
+
+### Bug Fixes
+
+* **package:** update yaml to version 1.7.1 ([5d70d56](https://github.com/adobe/helix-shared/commit/5d70d56))
+
+## [3.0.1](https://github.com/adobe/helix-shared/compare/v3.0.0...v3.0.1) (2019-10-01)
+
+
+### Bug Fixes
+
+* Deprecation warnings should be shown just once per run ([#159](https://github.com/adobe/helix-shared/issues/159)) ([3f21b52](https://github.com/adobe/helix-shared/commit/3f21b52))
+
 # [3.0.0](https://github.com/adobe/helix-shared/compare/v2.3.0...v3.0.0) (2019-09-05)
 
 

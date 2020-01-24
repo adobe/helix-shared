@@ -454,8 +454,8 @@ describe('GitUrl from object tests', () => {
     assert.equal(url.repo, 'repository');
     assert.equal(url.path, '');
     assert.equal(url.ref, '');
-    assert.equal(url.raw, 'https://raw.github.com/company/repository/master');
-    assert.equal(url.rawRoot, 'https://raw.github.com');
+    assert.equal(url.raw, 'https://raw.githubusercontent.com/company/repository/master');
+    assert.equal(url.rawRoot, 'https://raw.githubusercontent.com');
     assert.equal(url.apiRoot, 'https://api.github.com');
     assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'https://github.com/company/repository.git');
@@ -484,8 +484,8 @@ describe('GitUrl from object tests', () => {
     assert.equal(url.repo, 'repository');
     assert.equal(url.path, '');
     assert.equal(url.ref, '');
-    assert.equal(url.raw, 'https://raw.github.com/company/repository/master');
-    assert.equal(url.rawRoot, 'https://raw.github.com');
+    assert.equal(url.raw, 'https://raw.githubusercontent.com/company/repository/master');
+    assert.equal(url.rawRoot, 'https://raw.githubusercontent.com');
     assert.equal(url.apiRoot, 'https://api.github.com');
     assert.equal(url.isLocal, false);
     assert.equal(url.toString(), 'https://github.com/company/repository.git');

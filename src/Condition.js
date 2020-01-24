@@ -91,7 +91,6 @@ const booleanMap = {
       if (subpathItem) {
         return `if ${vcl()} {
   set req.http.${paramName} = "${subpathItem.getSubPath(paramName)}";
-  return;
 }
 `;
       }
@@ -190,14 +189,16 @@ class PropertyCondition {
    * Return a VCL conditional clause that will assign the calculated base path
    * to a request parameter.
    *
-   * @param {String} paramName request parameter name to assign the base path to
+   * @param {String|Function} param request parameter name to insert or function to invoke
    */
-  toVCLPath(paramName) {
+  toVCLPath(param) {
     const subPath = this.getSubPath();
     if (subPath) {
+      if (typeof param === 'function') {
+        return param(this.toVCL(), subPath);
+      }
       return `if ${this.toVCL()} {
-  set req.http.${paramName} = "${subPath}";
-  return;
+  set req.http.${param} = "${subPath}";
 }
 `;
     }

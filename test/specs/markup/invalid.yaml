@@ -1,0 +1,18 @@
+#
+# markup configuration for theblog
+#
+version: 1
+
+markup:
+  images-in-gallery:
+    # missing match
+    wrap: .gallery-image
+  external-links:
+    # ok.
+    match: link[href!="https://"]
+    classnames: external
+  last-section:
+    match: section:last-of-type
+    # invalid operation
+    invalid:
+      data-type: footer

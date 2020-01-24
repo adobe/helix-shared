@@ -1,13 +1,13 @@
 version: 2.1
 executors:
-  node8:
+  node10:
     docker:
-    - image: circleci/node:8-stretch
+    - image: circleci/node:10-stretch
     environment:
       NPM_CONFIG_PREFIX: ~/.npm-global
 
 orbs:
-  helix-smoke-tests: adobe/helix-smoke-tests@0.0.9
+  helix-smoke-tests: adobe/helix-smoke-tests@0.0.11
 
 commands:
   setup:
@@ -32,7 +32,7 @@ commands:
 
 jobs:
   build:
-    executor: node8
+    executor: node10
 
     steps:
     - setup
@@ -54,18 +54,14 @@ jobs:
     - store_artifacts:
         path: junit
 
-  publish-pre-release:
-    executor: node8
+  release:
+    executor: node10
 
     steps:
     - setup
     - run:
         name: revert changes to package-lock.json
         command: git checkout -- package-lock.json
-
-    - run:
-        name: configure npm registry
-        command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
     - run:
         name: Semantic Release
@@ -76,9 +72,7 @@ workflows:
   build:
     jobs:
     - build
-    # the publish-pre-release jobs needs a $NPM_TOKEN environment to be setup and also have a
-    # valid SSH_KEY added for the `github.com` host.
-    - publish-pre-release:
+    - release:
         requires:
         - build
         filters:
