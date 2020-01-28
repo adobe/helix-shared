@@ -5,4 +5,5 @@ test/
 docs/
 logs/
 test-results.xml
+renovate.json
 .*
