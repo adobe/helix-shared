@@ -1,6 +1,8 @@
-coverage
-.nyc_output/
+coverage/
 node_modules/
-junit
-src/test/tmp
-logs
+junit/
+test/
+docs/
+logs/
+test-results.xml
+.*
