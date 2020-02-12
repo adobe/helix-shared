@@ -30,7 +30,13 @@ class IndexConfig extends SchemaDerivedConfig {
     });
   }
 
-  static encode(expression, parameters, values) {
+  /**
+   * Encodes a variable expression
+   * @param {string} expression the expression to encode
+   * @param {string[]} parameters the list of variable parameters in the query
+   * @param {object} urlparameters the URL parameters as key value pairs
+   */
+  static encode(expression, parameters, urlparameters) {
     if (!expression) {
       return '';
     }
@@ -38,9 +44,14 @@ class IndexConfig extends SchemaDerivedConfig {
     if (!parameters || parameters.length === 0) {
       return encodeURIComponent(cleanexpression);
     }
-    return `${parameters.reduce((expr, param) => `${expr.replace(`%24%7B${param}%7D`, values[param])}`, encodeURIComponent(cleanexpression))}`;
+    return `${parameters.reduce((expr, param) => `${expr.replace(`%24%7B${param}%7D`, urlparameters[param])}`, encodeURIComponent(cleanexpression))}`;
   }
 
+  /**
+   * Gets a query specified by indexname and queryname
+   * @param {string} indexname name of the search index
+   * @param {string} queryname name of the query
+   */
   getQuery(indexname, queryname) {
     const [myindex] = this.indices.filter((index) => index.name === indexname);
     if (!myindex) {
@@ -53,6 +64,11 @@ class IndexConfig extends SchemaDerivedConfig {
     return myquery;
   }
 
+  /**
+   * Gets the caching timeout in seconds for the specified query
+   * @param {string} indexname name of the search index
+   * @param {string} queryname name of the query
+   */
   getQueryCache(indexname, queryname) {
     const myquery = this.getQuery(indexname, queryname);
     if (myquery) {
@@ -63,9 +79,13 @@ class IndexConfig extends SchemaDerivedConfig {
   }
 
   /**
-   *
+   * Gets the correct (Algolia) query URL that corresponds to the query
+   * specified by indexname and queryname. Injects the correct parameters
+   * from urlparams
    * @param {string} indexname name of the search index
    * @param {string} queryname name of the query
+   * @param {string} owner the github owner
+   * @param {string} repo the github repo name
    * @param {object} urlparams key-value pairs of the URL parameters of the request
    */
   getQueryURL(indexname, queryname, owner, repo, urlparams) {

@@ -120,10 +120,10 @@ describe('Index Config Loading', () => {
       .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'));
     await cfg.init();
 
-    assert.equal(cfg.getQueryURL('no-index', 'no-query', 'adobe', 'helix-cli', {}), undefined);
-    assert.equal(cfg.getQueryURL('blog-posts', 'no-query', 'adobe', 'helix-cli', {}), undefined);
-    assert.equal(cfg.getQueryURL('blog-posts', 'all', 'adobe', 'helix-cli', {}), '/1/indexes/adobe--helix-cli--blog-posts?query=*&filters=&page=1&hitsPerPage=25');
-    assert.equal(cfg.getQueryURL('blog-posts', 'by-author', 'adobe', 'helix-cli', { author: 'Stefan' }), '/1/indexes/adobe--helix-cli--blog-posts?query=*&filters=author%3AStefan&page=1&hitsPerPage=25');
+    assert.equal(cfg.getAlgoliaQueryURL('no-index', 'no-query', 'adobe', 'helix-cli', {}), undefined);
+    assert.equal(cfg.getAlgoliaQueryURL('blog-posts', 'no-query', 'adobe', 'helix-cli', {}), undefined);
+    assert.equal(cfg.getAlgoliaQueryURL('blog-posts', 'all', 'adobe', 'helix-cli', {}), '/1/indexes/adobe--helix-cli--blog-posts?query=*&filters=&page=1&hitsPerPage=25');
+    assert.equal(cfg.getAlgoliaQueryURL('blog-posts', 'by-author', 'adobe', 'helix-cli', { author: 'Stefan' }), '/1/indexes/adobe--helix-cli--blog-posts?query=*&filters=author%3AStefan&page=1&hitsPerPage=25');
 
     assert.equal(cfg.getQueryCache('blog-posts', 'no-query'), 600);
     assert.equal(cfg.getQueryCache('blog-posts', 'all'), 600);
