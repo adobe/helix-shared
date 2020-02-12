@@ -30,22 +30,55 @@ class IndexConfig extends SchemaDerivedConfig {
     });
   }
 
+  static encode(expression, parameters, values) {
+    if (!expression) {
+      return '';
+    }
+    const cleanexpression = expression.replace(/\n/g, '');
+    if (!parameters || parameters.length === 0) {
+      return encodeURIComponent(cleanexpression);
+    }
+    return `${parameters.reduce((expr, param) => `${expr.replace(`%24%7B${param}%7D`, values[param])}`, encodeURIComponent(cleanexpression))}`;
+  }
+
+  getQuery(indexname, queryname) {
+    const [myindex] = this.indices.filter((index) => index.name === indexname);
+    if (!myindex) {
+      return undefined;
+    }
+    const [myquery] = myindex.queries.filter((query) => query.name === queryname);
+    if (!myquery) {
+      return undefined;
+    }
+    return myquery;
+  }
+
+  getQueryCache(indexname, queryname) {
+    const myquery = this.getQuery(indexname, queryname);
+    if (myquery) {
+      return myquery.cache;
+    }
+    // the query doesn't exist, so remember this for 10 minutes
+    return 600;
+  }
+
   /**
    *
    * @param {string} indexname name of the search index
    * @param {string} queryname name of the query
-   * @param {object} params key-value pairs of the request parameters of the request
+   * @param {object} urlparams key-value pairs of the URL parameters of the request
    */
-  getQueryURL(indexname, queryname, params) {
-    const [myindex] = this.indices.filter((index) => index.name === indexname);
-    if (!myindex) {
-      return;
+  getQueryURL(indexname, queryname, owner, repo, urlparams) {
+    const myquery = this.getQuery(indexname, queryname);
+    if (myquery) {
+      return `/1/indexes/${owner}--${repo}--${indexname}
+      ?query=${encodeURIComponent(myquery.query)}
+      &filters=${IndexConfig.encode(myquery.filters, myquery.parameters, urlparams)}
+      &page=${encodeURIComponent(urlparams.page || 1)}
+      &hitsPerPage=${encodeURIComponent(myquery.hitsPerPage)}`
+        .replace(/\n[\s]+/g, '');
     }
-    const [myquery] = myindex.queries.filter((query) => query.name === queryname);
-    if (!myquery) {
-      return;
-    }
-    throw new Error('Work in progress', params);
+    return undefined;
   }
 }
 
