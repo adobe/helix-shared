@@ -29,6 +29,24 @@ class IndexConfig extends SchemaDerivedConfig {
       },
     });
   }
+
+  /**
+   *
+   * @param {string} indexname name of the search index
+   * @param {string} queryname name of the query
+   * @param {object} params key-value pairs of the request parameters of the request
+   */
+  getQueryURL(indexname, queryname, params) {
+    const [myindex] = this.indices.filter((index) => index.name === indexname);
+    if (!myindex) {
+      return;
+    }
+    const [myquery] = myindex.queries.filter((query) => query.name === queryname);
+    if (!myquery) {
+      return;
+    }
+    throw new Error('Work in progress', params);
+  }
 }
 
 module.exports = IndexConfig;
