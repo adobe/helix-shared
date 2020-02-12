@@ -6,6 +6,14 @@
   "timezone": "Europe/Zurich",
   "packageRules": [
     {
+      "updateTypes": ["patch", "pin", "digest"],
+      "automerge": true,
+      "schedule": [
+        "at any time"
+      ],
+      "groupName": "fixes"
+    },
+    {
       "packagePatterns": [
         "^@adobe/"
       ],
