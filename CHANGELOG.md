@@ -1,3 +1,16 @@
+# [5.2.0](https://github.com/adobe/helix-shared/compare/v5.1.0...v5.2.0) (2020-02-12)
+
+
+### Bug Fixes
+
+* **query:** fix `getQueryURL` and `getQueryCache` methods ([6e10e08](https://github.com/adobe/helix-shared/commit/6e10e0806986ef2151affb2279a5f18dc8e84fdb))
+* **query:** fix method name in tests ([12df2cc](https://github.com/adobe/helix-shared/commit/12df2cc6dbccc2408596e290eada8ecf5db71c29)), closes [#239](https://github.com/adobe/helix-shared/issues/239)
+
+
+### Features
+
+* **query:** add (wip) method for resolving query URL ([9ec6518](https://github.com/adobe/helix-shared/commit/9ec6518c4cc93de5c2117badc95bb7c830f2f3a0))
+
 # [5.1.0](https://github.com/adobe/helix-shared/compare/v5.0.2...v5.1.0) (2020-01-23)
 
 
