@@ -29,6 +29,77 @@ class IndexConfig extends SchemaDerivedConfig {
       },
     });
   }
+
+  /**
+   * Encodes a variable expression
+   * @param {string} expression the expression to encode
+   * @param {string[]} parameters the list of variable parameters in the query
+   * @param {object} urlparameters the URL parameters as key value pairs
+   */
+  static encode(expression, parameters, urlparameters) {
+    if (!expression) {
+      return '';
+    }
+    const cleanexpression = expression.replace(/\n/g, '');
+    if (!parameters || parameters.length === 0) {
+      return encodeURIComponent(cleanexpression);
+    }
+    return `${parameters.reduce((expr, param) => `${expr.replace(`%24%7B${param}%7D`, urlparameters[param])}`, encodeURIComponent(cleanexpression))}`;
+  }
+
+  /**
+   * Gets a query specified by indexname and queryname
+   * @param {string} indexname name of the search index
+   * @param {string} queryname name of the query
+   */
+  getQuery(indexname, queryname) {
+    const [myindex] = this.indices.filter((index) => index.name === indexname);
+    if (!myindex) {
+      return undefined;
+    }
+    const [myquery] = myindex.queries.filter((query) => query.name === queryname);
+    if (!myquery) {
+      return undefined;
+    }
+    return myquery;
+  }
+
+  /**
+   * Gets the caching timeout in seconds for the specified query
+   * @param {string} indexname name of the search index
+   * @param {string} queryname name of the query
+   */
+  getQueryCache(indexname, queryname) {
+    const myquery = this.getQuery(indexname, queryname);
+    if (myquery) {
+      return myquery.cache;
+    }
+    // the query doesn't exist, so remember this for 10 minutes
+    return 600;
+  }
+
+  /**
+   * Gets the correct (Algolia) query URL that corresponds to the query
+   * specified by indexname and queryname. Injects the correct parameters
+   * from urlparams
+   * @param {string} indexname name of the search index
+   * @param {string} queryname name of the query
+   * @param {string} owner the github owner
+   * @param {string} repo the github repo name
+   * @param {object} urlparams key-value pairs of the URL parameters of the request
+   */
+  getQueryURL(indexname, queryname, owner, repo, urlparams) {
+    const myquery = this.getQuery(indexname, queryname);
+    if (myquery) {
+      return `/1/indexes/${owner}--${repo}--${indexname}
+      ?query=${encodeURIComponent(myquery.query)}
+      &filters=${IndexConfig.encode(myquery.filters, myquery.parameters, urlparams)}
+      &page=${encodeURIComponent(urlparams.page || 1)}
+      &hitsPerPage=${encodeURIComponent(myquery.hitsPerPage)}`
+        .replace(/\n[\s]+/g, '');
+    }
+    return undefined;
+  }
 }
 
 module.exports = IndexConfig;
