@@ -67,6 +67,20 @@ describe('Index Config Loading', () => {
     assert.deepEqual(actual, expected);
   });
 
+  it('Does not trip over broken config', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'broken.yaml'));
+
+    await cfg.init();
+
+    assert.strictEqual(cfg.getQuery('foo', 'bar'), undefined);
+
+    const actual = cfg.toJSON();
+    const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'broken.json'), 'utf-8'));
+
+    assert.deepEqual(actual, expected);
+  });
+
   it('Does not trip over non-existing config', async () => {
     const cfg = new IndexConfig()
       .withDirectory(SPEC_ROOT);
