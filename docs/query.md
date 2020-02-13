@@ -17,31 +17,31 @@ A named query that can be run against an index
 
 # Query Properties
 
-| Property                    | Type          | Required | Nullable       | Defined by                                                                                                      |
-| :-------------------------- | ------------- | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------- |
-| [select](#select)           | Not specified | Optional | cannot be null | [Query](query-properties-select.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/select")           |
-| [hitsPerPage](#hitsPerPage) | `integer`     | Optional | cannot be null | [Query](query-properties-hitsperpage.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/hitsPerPage") |
-| [cache](#cache)             | `integer`     | Optional | cannot be null | [Query](query-properties-cache.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/cache")             |
-| [parameters](#parameters)   | `array`       | Optional | cannot be null | [Query](query-properties-parameters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/parameters")   |
-| [filters](#filters)         | `string`      | Optional | cannot be null | [Query](query-properties-filters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/filters")         |
+| Property                    | Type      | Required | Nullable       | Defined by                                                                                                      |
+| :-------------------------- | --------- | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------- |
+| [query](#query)             | `string`  | Optional | cannot be null | [Query](query-properties-query.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/query")             |
+| [hitsPerPage](#hitsPerPage) | `integer` | Optional | cannot be null | [Query](query-properties-hitsperpage.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/hitsPerPage") |
+| [cache](#cache)             | `integer` | Optional | cannot be null | [Query](query-properties-cache.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/cache")             |
+| [parameters](#parameters)   | `array`   | Optional | cannot be null | [Query](query-properties-parameters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/parameters")   |
+| [filters](#filters)         | `string`  | Optional | cannot be null | [Query](query-properties-filters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/filters")         |
 
-## select
+## query
 
 The base query to run
 
 
-`select`
+`query`
 
 -   is optional
--   Type: unknown
+-   Type: `string`
 -   cannot be null
--   defined in: [Query](query-properties-select.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/select")
+-   defined in: [Query](query-properties-query.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/query")
 
-### select Type
+### query Type
 
-unknown
+`string`
 
-### select Default Value
+### query Default Value
 
 The default value is:
 

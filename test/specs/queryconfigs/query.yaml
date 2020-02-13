@@ -28,7 +28,6 @@ indices:
           ${attribute('src')}
     queries:
       all:
-        query: "*"
         hitsPerPage: 25
         cache: 600
       by-author:

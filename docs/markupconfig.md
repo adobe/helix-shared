@@ -17,11 +17,11 @@ A Markup Configuration File for Project Helix.
 
 # Configuration Properties
 
-| Property                    | Type     | Required | Nullable       | Defined by                                                                                                                            |
-| :-------------------------- | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| [definitions](#definitions) | `object` | Optional | cannot be null | [Configuration](markupconfig-properties-definitions.md "https&#x3A;//ns.adobe.com/helix/shared/markupconfig#/properties/definitions") |
-| [version](#version)         | Multiple | Optional | cannot be null | [Configuration](markupconfig-properties-version.md "https&#x3A;//ns.adobe.com/helix/shared/markupconfig#/properties/version")         |
-| [markup](#markup)           | `object` | Required | cannot be null | [Configuration](markupconfig-properties-markup-configuration.md "https&#x3A;//ns.adobe.com/helix/shared/markup#/properties/markup")   |
+| Property                    | Type         | Required | Nullable       | Defined by                                                                                                                            |
+| :-------------------------- | ------------ | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| [definitions](#definitions) | `object`     | Optional | cannot be null | [Configuration](markupconfig-properties-definitions.md "https&#x3A;//ns.adobe.com/helix/shared/markupconfig#/properties/definitions") |
+| [version](#version)         | Unknown Type | Optional | cannot be null | [Configuration](markupconfig-properties-version.md "https&#x3A;//ns.adobe.com/helix/shared/markupconfig#/properties/version")         |
+| [markup](#markup)           | `object`     | Required | cannot be null | [Configuration](markupconfig-properties-markup-configuration.md "https&#x3A;//ns.adobe.com/helix/shared/markup#/properties/markup")   |
 
 ## definitions
 
