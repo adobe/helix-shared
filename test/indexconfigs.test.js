@@ -72,6 +72,7 @@ describe('Index Config Loading', () => {
       .withDirectory(SPEC_ROOT);
     await cfg.init();
 
+    assert.strictEqual(cfg.getQuery('foo', 'bar'), undefined);
     const actual = cfg.toJSON();
     const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'empty-query.json'), 'utf-8'));
 
