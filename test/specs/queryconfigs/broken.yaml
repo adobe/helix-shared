@@ -1,0 +1,12 @@
+version: 1
+​
+indices:
+  blog-posts:
+    source: html
+    fetch: https://${repo}-${owner}.project-helix.page/${path}
+    properties:
+      author:
+        select: main > div:nth-of-type(3) > p:nth-of-type(1)
+        value: |
+          ${match('by (.*)')}
+        faceted: true

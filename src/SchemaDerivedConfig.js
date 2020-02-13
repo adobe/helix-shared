@@ -81,7 +81,7 @@ class SchemaDerivedConfig extends BaseConfig {
           const handler = this.getHandler(`${root}/${prop}`);
           const handled = handler && target[prop] ? new Proxy(target[prop], handler) : target[prop];
 
-          if (typeof handled === 'object') {
+          if (handled !== null && typeof handled === 'object') {
             // we are getting an object, so better wrap it again to
             // intercept property access
             const wrapped = new Proxy(handled, this.defaultHandler(`${root}/${prop}`));
