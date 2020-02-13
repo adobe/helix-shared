@@ -17,16 +17,16 @@ Representation of the fragments of a Git URL
 
 # Git URL Properties
 
-| Property              | Type     | Required | Nullable       | Defined by                                                                                                    |
-| :-------------------- | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------ |
-| [protocol](#protocol) | `string` | Optional | cannot be null | [Git URL](giturl-properties-protocol.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/protocol") |
-| [hostname](#hostname) | `string` | Optional | cannot be null | [Git URL](giturl-properties-hostname.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/hostname") |
-| [host](#host)         | `string` | Optional | cannot be null | [Git URL](giturl-properties-host.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/host")         |
-| [port](#port)         | Multiple | Optional | cannot be null | [Git URL](giturl-properties-port.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/port")         |
-| [owner](#owner)       | `string` | Required | cannot be null | [Git URL](giturl-properties-owner.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/owner")       |
-| [path](#path)         | `string` | Optional | cannot be null | [Git URL](giturl-properties-path.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/path")         |
-| [repo](#repo)         | `string` | Required | cannot be null | [Git URL](giturl-properties-repo.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/repo")         |
-| [ref](#ref)           | `string` | Required | cannot be null | [Git URL](giturl-properties-ref.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/ref")           |
+| Property              | Type         | Required | Nullable       | Defined by                                                                                                    |
+| :-------------------- | ------------ | -------- | -------------- | :------------------------------------------------------------------------------------------------------------ |
+| [protocol](#protocol) | `string`     | Optional | cannot be null | [Git URL](giturl-properties-protocol.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/protocol") |
+| [hostname](#hostname) | `string`     | Optional | cannot be null | [Git URL](giturl-properties-hostname.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/hostname") |
+| [host](#host)         | `string`     | Optional | cannot be null | [Git URL](giturl-properties-host.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/host")         |
+| [port](#port)         | Unknown Type | Optional | cannot be null | [Git URL](giturl-properties-port.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/port")         |
+| [owner](#owner)       | `string`     | Required | cannot be null | [Git URL](giturl-properties-owner.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/owner")       |
+| [path](#path)         | `string`     | Optional | cannot be null | [Git URL](giturl-properties-path.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/path")         |
+| [repo](#repo)         | `string`     | Required | cannot be null | [Git URL](giturl-properties-repo.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/repo")         |
+| [ref](#ref)           | `string`     | Required | cannot be null | [Git URL](giturl-properties-ref.md "https&#x3A;//ns.adobe.com/helix/shared/giturl#/properties/ref")           |
 
 ## protocol
 

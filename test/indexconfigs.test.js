@@ -122,8 +122,8 @@ describe('Index Config Loading', () => {
 
     assert.equal(cfg.getQueryURL('no-index', 'no-query', 'adobe', 'helix-cli', {}), undefined);
     assert.equal(cfg.getQueryURL('blog-posts', 'no-query', 'adobe', 'helix-cli', {}), undefined);
-    assert.equal(cfg.getQueryURL('blog-posts', 'all', 'adobe', 'helix-cli', {}), '/1/indexes/adobe--helix-cli--blog-posts?query=*&filters=&page=1&hitsPerPage=25');
-    assert.equal(cfg.getQueryURL('blog-posts', 'by-author', 'adobe', 'helix-cli', { author: 'Stefan' }), '/1/indexes/adobe--helix-cli--blog-posts?query=*&filters=author%3AStefan&page=1&hitsPerPage=25');
+    assert.equal(cfg.getQueryURL('blog-posts', 'all', 'adobe', 'helix-cli', {}), '/1/indexes/adobe--helix-cli--blog-posts?query=*&hitsPerPage=25');
+    assert.equal(cfg.getQueryURL('blog-posts', 'by-author', 'adobe', 'helix-cli', { author: 'Stefan' }), '/1/indexes/adobe--helix-cli--blog-posts?query=*&hitsPerPage=25&filters=author%3AStefan');
 
     assert.equal(cfg.getQueryCache('blog-posts', 'no-query'), 600);
     assert.equal(cfg.getQueryCache('blog-posts', 'all'), 600);

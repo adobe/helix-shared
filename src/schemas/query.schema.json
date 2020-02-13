@@ -16,8 +16,8 @@
   "description": "A named query that can be run against an index",
   "type": "object",
   "properties": {
-    "select": {
-      "query": "string",
+    "query": {
+      "type": "string",
       "description": "The base query to run",
       "default": "*"
     },

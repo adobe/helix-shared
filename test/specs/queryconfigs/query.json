@@ -32,8 +32,7 @@
           "cache": 600,
           "hitsPerPage": 25,
           "query": "*",
-          "parameters": [],
-          "select": "*"
+          "parameters": []
         },
         "by-author": {
           "cache": 300,
@@ -42,8 +41,7 @@
           "parameters": [
             "author"
           ],
-          "query": "*",
-          "select": "*"
+          "query": "*"
         }
       },
       "source": "html"

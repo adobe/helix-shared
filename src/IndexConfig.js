@@ -31,20 +31,20 @@ class IndexConfig extends SchemaDerivedConfig {
   }
 
   /**
-   * Encodes a variable expression
+   * Evaluates a variable expression
    * @param {string} expression the expression to encode
    * @param {string[]} parameters the list of variable parameters in the query
    * @param {object} urlparameters the URL parameters as key value pairs
    */
-  static encode(expression, parameters, urlparameters) {
+  static evaluate(expression, parameters, urlparameters) {
     if (!expression) {
       return '';
     }
     const cleanexpression = expression.replace(/\n/g, '');
     if (!parameters || parameters.length === 0) {
-      return encodeURIComponent(cleanexpression);
+      return cleanexpression;
     }
-    return `${parameters.reduce((expr, param) => `${expr.replace(`%24%7B${param}%7D`, urlparameters[param])}`, encodeURIComponent(cleanexpression))}`;
+    return `${parameters.reduce((expr, param) => `${expr.replace(`\${${param}}`, urlparameters[param])}`, cleanexpression)}`;
   }
 
   /**
@@ -91,12 +91,21 @@ class IndexConfig extends SchemaDerivedConfig {
   getQueryURL(indexname, queryname, owner, repo, urlparams) {
     const myquery = this.getQuery(indexname, queryname);
     if (myquery) {
-      return `/1/indexes/${owner}--${repo}--${indexname}
-      ?query=${encodeURIComponent(myquery.query)}
-      &filters=${IndexConfig.encode(myquery.filters, myquery.parameters, urlparams)}
-      &page=${encodeURIComponent(urlparams.page || 1)}
-      &hitsPerPage=${encodeURIComponent(myquery.hitsPerPage)}`
-        .replace(/\n[\s]+/g, '');
+      const sp = new URLSearchParams();
+      if (myquery.query) {
+        sp.append('query', myquery.query.trim());
+      }
+      if (urlparams.page) {
+        sp.append('page', urlparams.page.trim());
+      }
+      if (myquery.hitsPerPage) {
+        sp.append('hitsPerPage', myquery.hitsPerPage);
+      }
+      const filters = IndexConfig.evaluate(myquery.filters, myquery.parameters, urlparams);
+      if (filters) {
+        sp.append('filters', filters);
+      }
+      return `/1/indexes/${owner}--${repo}--${indexname}?${sp}`;
     }
     return undefined;
   }

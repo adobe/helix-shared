@@ -266,7 +266,7 @@ PropertyCondition
 **Kind**: global class  
 <a name="PropertyCondition+toVCLPath"></a>
 
-### propertyCondition.toVCLPath(paramName)
+### propertyCondition.toVCLPath(param)
 Return a VCL conditional clause that will assign the calculated base path
 to a request parameter.
 
@@ -274,7 +274,7 @@ to a request parameter.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| paramName | <code>String</code> | request parameter name to assign the base path to |
+| param | <code>String</code> \| <code>function</code> | request parameter name to insert or function to invoke |
 
 <a name="StringCondition"></a>
 

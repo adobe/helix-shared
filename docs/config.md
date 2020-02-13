@@ -17,11 +17,11 @@ A Configuration File for Project Helix.
 
 # Configuration Properties
 
-| Property                    | Type     | Required | Nullable       | Defined by                                                                                                                |
-| :-------------------------- | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| [definitions](#definitions) | `object` | Optional | cannot be null | [Configuration](config-properties-definitions.md "https&#x3A;//ns.adobe.com/helix/shared/config#/properties/definitions") |
-| [version](#version)         | Multiple | Optional | cannot be null | [Configuration](config-properties-version.md "https&#x3A;//ns.adobe.com/helix/shared/config#/properties/version")         |
-| [strains](#strains)         | Merged   | Required | cannot be null | [Configuration](config-properties-strains.md "https&#x3A;//ns.adobe.com/helix/shared/strains#/properties/strains")        |
+| Property                    | Type         | Required | Nullable       | Defined by                                                                                                                |
+| :-------------------------- | ------------ | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| [definitions](#definitions) | `object`     | Optional | cannot be null | [Configuration](config-properties-definitions.md "https&#x3A;//ns.adobe.com/helix/shared/config#/properties/definitions") |
+| [version](#version)         | Unknown Type | Optional | cannot be null | [Configuration](config-properties-version.md "https&#x3A;//ns.adobe.com/helix/shared/config#/properties/version")         |
+| [strains](#strains)         | Merged       | Required | cannot be null | [Configuration](config-properties-strains.md "https&#x3A;//ns.adobe.com/helix/shared/strains#/properties/strains")        |
 
 ## definitions
 
