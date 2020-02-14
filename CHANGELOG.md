@@ -1,3 +1,12 @@
+## [5.2.1](https://github.com/adobe/helix-shared/compare/v5.2.0...v5.2.1) (2020-02-14)
+
+
+### Bug Fixes
+
+* **config:** guard against broken config (fixes [#242](https://github.com/adobe/helix-shared/issues/242)) ([f221102](https://github.com/adobe/helix-shared/commit/f221102ed03cc3be1a4f2e4baa8ffd7ddb4e276a))
+* **index:** guard against empty config (fixes [#241](https://github.com/adobe/helix-shared/issues/241)) ([fc733cb](https://github.com/adobe/helix-shared/commit/fc733cbc28c7610519c1a9a6a31a2321d2509f35))
+* **query:** better defaults for query and pages ([04da304](https://github.com/adobe/helix-shared/commit/04da304f92dc5ae358b4b97ab9d98b8c087a07ba)), closes [#243](https://github.com/adobe/helix-shared/issues/243)
+
 # [5.2.0](https://github.com/adobe/helix-shared/compare/v5.1.0...v5.2.0) (2020-02-12)
 
 
