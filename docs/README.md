@@ -12,7 +12,7 @@
 -   [Index Configuration](./indexconfig.md) – `https://ns.adobe.com/helix/shared/indexconfig`
 -   [Markup Configuration](./markup.md "A container for markup mappings") – `https://ns.adobe.com/helix/shared/markup`
 -   [Markup Mapping](./markupmapping.md "A markup mapping defines how Helix should generate markup for certain Markdown or DOM patterns") – `https://ns.adobe.com/helix/shared/markupmapping`
--   [Mount Point](./mountpoint.md "Defines the target URL where content should be retrieved from") – `https://ns.adobe.com/helix/shared/mountpoint`
+-   [Mount Point](./mountpoint.md "Defines the mount point") – `https://ns.adobe.com/helix/shared/mountpoint`
 -   [Origin](./origin.md "Representation of a origin host for a proxy strain") – `https://ns.adobe.com/helix/shared/origin`
 -   [Performance](./performance.md "Performance testing details") – `https://ns.adobe.com/helix/shared/performance`
 -   [Property](./property.md "Each property in the search index is made up of two parts:") – `https://ns.adobe.com/helix/shared/property`
@@ -29,6 +29,7 @@
 -   [Git URL](./runtimestrain-properties-static-oneof-git-url.md "Representation of the fragments of a Git URL") – `https://ns.adobe.com/helix/shared/staticgiturl#/properties/static/oneOf/1`
 -   [Git URL](./runtimestrain-properties-code-oneof-git-url.md "Representation of the fragments of a Git URL") – `https://ns.adobe.com/helix/shared/giturl#/properties/code/oneOf/1`
 -   [Markup Mapping](./markup-markup-mapping.md) – `https://ns.adobe.com/helix/shared/markupmapping#/additionalProperties`
+-   [Mount Point](./fstab-properties-mountpoints-mount-point.md "Defines the mount point") – `https://ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/items`
 -   [Multi-Value Property](./property-oneof-multi-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/1`
 -   [Multi-Value Property](./property-oneof-multi-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/1`
 -   [Origin](./proxystrain-properties-origin-anyof-origin.md "Representation of a origin host for a proxy strain") – `https://ns.adobe.com/helix/shared/origin#/properties/origin/anyOf/1`
@@ -44,7 +45,6 @@
 -   [Single-Value Property](./property-oneof-single-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/0`
 -   [Untitled object in Configuration](./markupconfig-properties-definitions.md "A container for referencable objects that can be re-used elsewhere in the configuration") – `https://ns.adobe.com/helix/shared/markupconfig#/properties/definitions`
 -   [Untitled object in Configuration](./config-properties-definitions.md "A container for referencable objects that can be re-used elsewhere in the configuration") – `https://ns.adobe.com/helix/shared/config#/properties/definitions`
--   [Untitled object in FSTab (Mount Points)](./fstab-properties-mountpoints.md) – `https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints`
 -   [Untitled object in Index Configuration](./indexconfig-properties-indices.md) – `https://ns.adobe.com/helix/shared/indexconfig#/properties/indices`
 -   [Untitled object in Markup Mapping](./markupmapping-properties-attribute.md "create new attributes for each key value pair below this property") – `https://ns.adobe.com/helix/shared/markupmapping#/properties/attribute`
 -   [Untitled object in Markup Mapping](./markupmapping-properties-attribute.md "create new attributes for each key value pair below this property") – `https://ns.adobe.com/helix/shared/markupmapping#/properties/attribute`
@@ -53,26 +53,27 @@
 
 -   [Untitled array in Conditions](./conditions-properties-and.md "All conditions in this list must be met") – `https://ns.adobe.com/helix/shared/conditions#/properties/and`
 -   [Untitled array in Conditions](./conditions-properties-or.md "Any conditions in this list must be met") – `https://ns.adobe.com/helix/shared/conditions#/properties/or`
--   [Untitled array in Git URL](./staticgiturl-properties-deny.md "List of white listed paths") – `https://ns.adobe.com/helix/shared/staticgiturl#/properties/deny`
+-   [Untitled array in FSTab (Mount Points)](./fstab-properties-mountpoints.md "A list of mount points") – `https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints`
 -   [Untitled array in Git URL](./staticgiturl-properties-allow.md "List of white listed paths") – `https://ns.adobe.com/helix/shared/staticgiturl#/properties/allow`
 -   [Untitled array in Git URL](./staticgiturl-properties-allow.md "List of white listed paths") – `https://ns.adobe.com/helix/shared/staticgiturl#/properties/allow`
 -   [Untitled array in Git URL](./staticgiturl-properties-deny.md "List of white listed paths") – `https://ns.adobe.com/helix/shared/staticgiturl#/properties/deny`
+-   [Untitled array in Git URL](./staticgiturl-properties-deny.md "List of white listed paths") – `https://ns.adobe.com/helix/shared/staticgiturl#/properties/deny`
 -   [Untitled array in Markup Mapping](./markupmapping-properties-classnames.md "Add the following class names to the class attribute of the generated HTML") – `https://ns.adobe.com/helix/shared/markupmapping#/properties/classnames`
 -   [Untitled array in Markup Mapping](./markupmapping-properties-classnames.md "Add the following class names to the class attribute of the generated HTML") – `https://ns.adobe.com/helix/shared/markupmapping#/properties/classnames`
--   [Untitled array in Proxy Strain](./proxystrain-properties-redirects.md "The redirect rules that should be applied to this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/redirects`
 -   [Untitled array in Proxy Strain](./proxystrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/urls`
 -   [Untitled array in Proxy Strain](./proxystrain-properties-redirects.md "The redirect rules that should be applied to this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/redirects`
--   [Untitled array in Proxy Strain](./proxystrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/urls`
+-   [Untitled array in Proxy Strain](./proxystrain-properties-redirects.md "The redirect rules that should be applied to this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/redirects`
 -   [Untitled array in Proxy Strain](./proxystrain-properties-params.md "A whitelist (using globbing language) of URL parameters") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/params`
+-   [Untitled array in Proxy Strain](./proxystrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/urls`
 -   [Untitled array in Proxy Strain](./proxystrain-properties-params.md "A whitelist (using globbing language) of URL parameters") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/params`
 -   [Untitled array in Query](./query-properties-parameters.md "Which URL parameters to accept in the query when served on the web") – `https://ns.adobe.com/helix/shared/query#/properties/parameters`
 -   [Untitled array in Query](./query-properties-parameters.md "Which URL parameters to accept in the query when served on the web") – `https://ns.adobe.com/helix/shared/query#/properties/parameters`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-redirects.md "The redirect rules that should be applied to this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/redirects`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/urls`
--   [Untitled array in Runtime Strain](./runtimestrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/urls`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-params.md "A whitelist (using globbing language) of URL parameters") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/params`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-redirects.md "The redirect rules that should be applied to this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/redirects`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-params.md "A whitelist (using globbing language) of URL parameters") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/params`
+-   [Untitled array in Runtime Strain](./runtimestrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/urls`
 -   [Untitled array in Strains](./strains-oneof-0.md "A list of strains") – `https://ns.adobe.com/helix/shared/strains#/oneOf/0`
 -   [Untitled array in Strains](./strains-oneof-0.md "A list of strains") – `https://ns.adobe.com/helix/shared/strains#/oneOf/0`
 

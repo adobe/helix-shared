@@ -31,6 +31,11 @@ const tests = [
     config: 'fstab.yaml',
     result: 'fstab.json',
   },
+  {
+    title: 'loads a complex example',
+    config: 'complex.yaml',
+    result: 'complex.json',
+  },
 ];
 
 describe('Mount Point Config Loading', () => {
@@ -64,5 +69,35 @@ describe('Mount Point Config Loading', () => {
     assert.equal(cfg.mountpoints.length, 1);
     assert.equal(cfg.mountpoints[0].path, '/');
     assert.equal(cfg.mountpoints[0].url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog?csf=1&e=8Znxth');
+  });
+
+  it('complex Mount Points gets properly evaluated', async () => {
+    const cfg = await new MountConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'complex.json'))
+      .init();
+    assert.equal(cfg.match('/nomach'), null);
+
+    const m1 = cfg.match('/ms/en/posts/testdocument');
+    assert.equal(m1.type, 'sharepoint');
+    assert.equal(m1.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
+    assert.equal(m1.relPath, '/en/posts/testdocument');
+
+    const m2 = cfg.match('/ms/docs/different');
+    assert.equal(m2.type, 'onedrive');
+    assert.equal(m2.url, 'https://adobe.sharepoint.com/sites/docs');
+    assert.equal(m2.relPath, '/different');
+
+    const m3 = cfg.match('/gd/document42');
+    assert.equal(m3.type, 'google');
+    assert.equal(m3.url, 'https://drive.google.com/drive/u/0/folders/123456789');
+    assert.equal(m3.id, '123456789');
+    assert.equal(m3.relPath, '/document42');
+
+    const m4 = cfg.match('/foo/en/welcome');
+    assert.equal(m4.type, 'unknown');
+    assert.equal(m4.url, 'https://localhost:4502');
+    assert.equal(m4.relPath, '/en/welcome');
+    // custom property
+    assert.equal(m4.mappingType, 'model');
   });
 });

@@ -1,21 +1,21 @@
 # Mount Point Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/mountpoint
+https://ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/items
 ```
 
 Defines the mount point.
 
 
-| Abstract            | Extensible | Status      | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                              |
-| :------------------ | ---------- | ----------- | ------------ | :---------------- | --------------------- | ------------------- | ----------------------------------------------------------------------- |
-| Can be instantiated | No         | Stabilizing | No           | Forbidden         | Allowed               | none                | [mountpoint.schema.json](mountpoint.schema.json "open original schema") |
+| Abstract            | Extensible | Status      | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                      |
+| :------------------ | ---------- | ----------- | ------------ | :---------------- | --------------------- | ------------------- | --------------------------------------------------------------- |
+| Can be instantiated | No         | Stabilizing | No           | Forbidden         | Allowed               | none                | [fstab.schema.json\*](fstab.schema.json "open original schema") |
 
-## Mount Point Type
+## items Type
 
-`object` ([Mount Point](mountpoint.md))
+`object` ([Mount Point](fstab-properties-mountpoints-mount-point.md))
 
-## Mount Point Constraints
+## items Constraints
 
 **URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc4291 "check the specification")
 
