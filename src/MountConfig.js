@@ -10,7 +10,29 @@
  * governing permissions and limitations under the License.
  */
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { NamedPairHandler } = require('./NamedPairHandler');
+const { NamedMapHandler } = require('./NamedMapHandler');
+
+const onedriveHandler = {
+  test(m) {
+    return /https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/');
+  },
+  decorate(m) {
+    // eslint-disable-next-line no-param-reassign
+    m.type = 'onedrive';
+  },
+};
+
+const googleHandler = {
+  test(m) {
+    return !m.id && m.url.startsWith('https://drive.google.com/');
+  },
+  decorate(m) {
+    // eslint-disable-next-line no-param-reassign
+    m.type = 'google';
+    // eslint-disable-next-line no-param-reassign
+    m.id = m.url.split('/').pop();
+  },
+};
 
 class MountConfig extends SchemaDerivedConfig {
   constructor() {
@@ -21,9 +43,58 @@ class MountConfig extends SchemaDerivedConfig {
         '^/mountpoints/.*$': 'mountpoint.schema.json',
       },
       handlers: {
-        '^/mountpoints$': NamedPairHandler('path', 'url'),
+        '^/mountpoints$': NamedMapHandler,
       },
     });
+    this._sanitized = null;
+    this._decorators = [
+      onedriveHandler,
+      googleHandler,
+    ];
+  }
+
+  get mountpoints() {
+    if (!this._sanitized) {
+      this._sanitized = (this._content.mountpoints || []).map((mp) => {
+        const m = { ...mp };
+        if (!m.path.endsWith('/')) {
+          m.path += '/';
+        }
+        if (!m.type && m.url) {
+          m.type = 'unknown'; // default type
+          this._decorators.forEach((handler) => {
+            if (handler.test(m)) {
+              handler.decorate(m);
+            }
+          });
+        }
+        return m;
+      });
+    }
+    return this._sanitized;
+  }
+
+  /**
+   * Matches the given resource path against the mount points and returns the mount point if found.
+   * The mount point will also include a `relPath` property, which denotes the relative path
+   * from the mount points root.
+   *
+   * @param {string} resourcePath The resource path
+   * @returns {Mountpoint|null} The matched mount point or {@code null}.
+   */
+  match(resourcePath) {
+    if (!resourcePath.endsWith('/')) {
+      // eslint-disable-next-line no-param-reassign
+      resourcePath += '/';
+    }
+    const mp = this.mountpoints.find((m) => resourcePath.startsWith(m.path));
+    if (!mp) {
+      return null;
+    }
+    return {
+      ...mp,
+      relPath: resourcePath.substring(mp.path.length - 1, resourcePath.length - 1),
+    };
   }
 }
 
