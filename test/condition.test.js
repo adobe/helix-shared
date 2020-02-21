@@ -52,8 +52,7 @@ async function assertOK(cond) {
   nock(DEFAULT_SERVER)
     .get(() => true)
     .reply(function intercept() {
-      const fn = cond.toFunction();
-      const result = fn(expressify(this.req));
+      const result = cond.match(expressify(this.req));
       return [200, `${JSON.stringify(result)}`];
     });
   const response = await request(`${DEFAULT_SERVER}/index.html`);
@@ -72,8 +71,7 @@ async function assertMatch(cond, samples) {
     nock(DEFAULT_SERVER)
       .get(() => true)
       .reply(function intercept() {
-        const fn = cond.toFunction();
-        const result = fn(expressify(this.req));
+        const result = cond.match(expressify(this.req));
         return [200, `${JSON.stringify(result)}`];
       });
     const stdopts = { uri: `${DEFAULT_SERVER}/index.html` };
@@ -120,9 +118,6 @@ set req.url = regsub(req.url, "^/oldpath", "${subpath}");
         } else {
           await assertOK(cond);
         }
-        if (cfg.empty !== undefined) {
-          assert.equal(cfg.empty, cond.isEmpty());
-        }
         if (cfg.json !== undefined) {
           assert.equal(cfg.json, cond.toJSON());
         }
@@ -135,5 +130,32 @@ set req.url = regsub(req.url, "^/oldpath", "${subpath}");
         }
       }
     });
+  });
+
+  it('covering url expression evaluation with empty request', () => {
+    try {
+      const cond = new Condition({ url: '/test' });
+      assert.equal(cond.match({}), false);
+    } catch (e) {
+      assert.fail(e.message);
+    }
+  });
+
+  it('covering url expression evaluation with no protocol', () => {
+    try {
+      const cond = new Condition({ url: 'http://myhost/test' });
+      assert.equal(cond.match({ headers: { host: 'myhost' } }), false);
+    } catch (e) {
+      assert.fail(e.message);
+    }
+  });
+
+  it('toYAMLNode() of an empty condition should return null', () => {
+    try {
+      const cond = new Condition();
+      assert.equal(cond.toYAMLNode(), null);
+    } catch (e) {
+      assert.fail(e.message);
+    }
   });
 });

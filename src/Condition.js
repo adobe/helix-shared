@@ -62,7 +62,7 @@ const booleanMap = {
     mapper: configMapper.infix,
     jsonGen: jsonGenarator.infix('or'),
     vcl: vclComposer.infix(' || '),
-    express: (items, req) => items.reduce((prev, item) => prev || item.evaluate(req), false),
+    evaluate: (items, req) => items.reduce((prev, item) => prev || item.evaluate(req), false),
     vcl_path: (items, paramName) => items.reduce((prev, item) => {
       const clause = item.toVCLPath(paramName);
       if (clause) {
@@ -75,7 +75,7 @@ const booleanMap = {
     mapper: configMapper.infix,
     jsonGen: jsonGenarator.infix('and'),
     vcl: vclComposer.infix(' && '),
-    express: (items, req) => items.reduce((prev, item) => {
+    evaluate: (items, req) => items.reduce((prev, item) => {
       if (!prev) {
         return false;
       }
@@ -101,7 +101,7 @@ const booleanMap = {
     mapper: configMapper.prefix,
     jsonGen: jsonGenarator.prefix('not'),
     vcl: vclComposer.prefix(' !'),
-    express: (item, req) => !item.evaluate(req),
+    evaluate: (item, req) => !item.evaluate(req),
   },
 };
 
@@ -127,7 +127,7 @@ class BooleanCondition {
   }
 
   evaluate(req) {
-    return this._entry.express(this._items, req);
+    return this._entry.evaluate(this._items, req);
   }
 
   toJSON() {
@@ -213,10 +213,10 @@ class PropertyCondition {
   }
 
   evaluate(req) {
-    if (!this._prop.express) {
+    if (!this._prop.evaluate) {
       return true;
     }
-    const actual = this._prop.express(req, this);
+    const actual = this._prop.evaluate(req, this);
     if (!actual) {
       return false;
     }
@@ -291,14 +291,14 @@ const propertyMap = {
       }
       return '';
     },
-    express: (req) => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+    evaluate: (req) => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
     prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
   },
   'url.hostname': {
     vcl: 'req.http.host',
-    express: (req) => req.hostname,
+    evaluate: (req) => req.hostname,
     type: 'string',
     allowed_ops: '=~',
   },
@@ -306,14 +306,14 @@ const propertyMap = {
     vcl: 'req.url.path',
     prefixCompose: urlPrefixCompose,
     getSubPath: (value) => value,
-    express: (req) => req.path,
+    evaluate: (req) => req.path,
     prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
   },
   referer: {
     vcl: 'req.http.referer',
-    express: (req) => req.get('referer'),
+    evaluate: (req) => req.get('referer'),
     type: 'string',
     allowed_ops: '=~',
   },
@@ -329,13 +329,13 @@ const propertyMap = {
   },
   user_agent: {
     vcl: 'req.http.User-Agent',
-    express: (req) => req.get('user-agent'),
+    evaluate: (req) => req.get('user-agent'),
     type: 'string',
     allowed_ops: '=~',
   },
   accept_language: {
     vcl: 'req.http.Accept-Language',
-    express: (req) => req.get('accept-language'),
+    evaluate: (req) => req.get('accept-language'),
     type: 'string',
     allowed_ops: '=~',
   },
@@ -356,37 +356,37 @@ const propertyMap = {
   },
   time_day: {
     vcl: 'std.atoi(strftime({"%w"}, time.start))',
-    express: () => new Date().getDay(),
+    evaluate: () => new Date().getDay(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_date: {
     vcl: 'std.atoi(strftime({"%d"}, time.start))',
-    express: () => new Date().getDate(),
+    evaluate: () => new Date().getDate(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_hours: {
     vcl: 'std.atoi(strftime({"%H"}, time.start))',
-    express: () => new Date().getHours(),
+    evaluate: () => new Date().getHours(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_minutes: {
     vcl: 'std.atoi(strftime({"%M"}, time.start))',
-    express: () => new Date().getMinutes(),
+    evaluate: () => new Date().getMinutes(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_month: {
     vcl: 'std.atoi(strftime({"%m"}, time.start))',
-    express: () => new Date().getMonth(),
+    evaluate: () => new Date().getMonth(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_year: {
     vcl: 'std.atoi(strftime({"%Y"}, time.start))',
-    express: () => new Date().getFullYear(),
+    evaluate: () => new Date().getFullYear(),
     type: 'number',
     allowed_ops: '<=>',
   },
@@ -398,7 +398,7 @@ const propertyMap = {
       }
       return vcl;
     },
-    express: (req, property) => req.params[property.name],
+    evaluate: (req, property) => req.params[property.name],
     allowed_ops: '~<=>',
   },
 };
@@ -417,10 +417,6 @@ class StringCondition {
 
   toJSON() {
     return this._s;
-  }
-
-  isEmpty() {
-    return this._s === '';
   }
 }
 
@@ -448,14 +444,14 @@ class Condition {
   }
 
   /* eslint-disable no-underscore-dangle */
-  toFunction() {
-    const self = this;
-    return (req) => {
-      if (self._top && self._top.evaluate) {
-        return self._top.evaluate(req);
-      }
-      return true;
-    };
+  match(req) {
+    if (this._top && this._top.evaluate) {
+      req.headers = req.headers || {};
+      req.params = req.params || {};
+
+      return this._top.evaluate(req);
+    }
+    return true;
   }
 
   toJSON(opts) {
@@ -469,13 +465,6 @@ class Condition {
   toYAMLNode() {
     const json = this.toJSON({ minimal: true });
     return json ? YAML.createNode(json) : null;
-  }
-
-  isEmpty() {
-    if (this._top && this._top.isEmpty) {
-      return this._top.isEmpty();
-    }
-    return this._top === null;
   }
 }
 

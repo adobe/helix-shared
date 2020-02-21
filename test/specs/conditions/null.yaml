@@ -6,5 +6,4 @@ vcl_path: ''
 samples:
   - match: true
 
-empty: true
 json: null
