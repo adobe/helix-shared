@@ -64,7 +64,7 @@ describe('Mount Point Config Loading', () => {
 
   it('theblog Mount Points get loaded', async () => {
     const cfg = await new MountConfig()
-      .withConfigPath(path.resolve(SPEC_ROOT, 'fstab.json'))
+      .withConfigPath(path.resolve(SPEC_ROOT, 'fstab.yaml'))
       .init();
     assert.equal(cfg.mountpoints.length, 1);
     assert.equal(cfg.mountpoints[0].path, '/');
@@ -73,18 +73,18 @@ describe('Mount Point Config Loading', () => {
 
   it('complex Mount Points gets properly evaluated', async () => {
     const cfg = await new MountConfig()
-      .withConfigPath(path.resolve(SPEC_ROOT, 'complex.json'))
+      .withConfigPath(path.resolve(SPEC_ROOT, 'complex.yaml'))
       .init();
     assert.equal(cfg.match('/nomach'), null);
 
     const m1 = cfg.match('/ms/en/posts/testdocument');
-    assert.equal(m1.type, 'sharepoint');
+    assert.equal(m1.type, 'onedrive');
     assert.equal(m1.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
     assert.equal(m1.relPath, '/en/posts/testdocument');
 
     const m2 = cfg.match('/ms/docs/different');
     assert.equal(m2.type, 'onedrive');
-    assert.equal(m2.url, 'https://adobe.sharepoint.com/sites/docs');
+    assert.equal(m2.url, 'https://adobe.sharepoint.com/sites/docs', 'does not respect order');
     assert.equal(m2.relPath, '/different');
 
     const m3 = cfg.match('/gd/document42');
@@ -94,10 +94,8 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m3.relPath, '/document42');
 
     const m4 = cfg.match('/foo/en/welcome');
-    assert.equal(m4.type, 'unknown');
+    assert.equal(m4.type, undefined);
     assert.equal(m4.url, 'https://localhost:4502');
     assert.equal(m4.relPath, '/en/welcome');
-    // custom property
-    assert.equal(m4.mappingType, 'model');
   });
 });
