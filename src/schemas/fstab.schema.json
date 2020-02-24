@@ -17,11 +17,11 @@
   "description": "Defines a mapping between mount points and source URLs. Mount points **must** start with a slash (`/`) but may not end with one.",
   "properties": {
     "mountpoints": {
-      "type": "array",
-      "minItems": 1,
-      "description": "A list of mount points.",
-      "items": {
-        "$ref": "https://ns.adobe.com/helix/shared/mountpoint"
+      "type": "object",
+      "patternProperties": {
+        "^/.*[^/]$": {
+          "$ref": "https://ns.adobe.com/helix/shared/mountpoint"
+        }
       }
     }
   },

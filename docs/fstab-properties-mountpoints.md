@@ -1,10 +1,10 @@
-# Untitled array in FSTab (Mount Points) Schema
+# Untitled object in FSTab (Mount Points) Schema
 
 ```txt
 https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints
 ```
 
-A list of mount points.
+
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                      |
@@ -13,8 +13,30 @@ A list of mount points.
 
 ## mountpoints Type
 
-`object[]` ([Mount Point](fstab-properties-mountpoints-mount-point.md))
+`object` ([Details](fstab-properties-mountpoints.md))
 
-## mountpoints Constraints
+# undefined Properties
 
-**minimum number of items**: the minimum number of items for this array is: `1`
+| Property    | Type     | Required | Nullable       | Defined by                                                                                                                                                                                      |
+| :---------- | -------- | -------- | -------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `^/.*[^/]$` | `string` | Optional | cannot be null | [FSTab (Mount Points)](fstab-properties-mountpoints-patternproperties-mount-point.md "https&#x3A;//ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/patternProperties/^/.\*\[^/]$") |
+
+## Pattern: `^/.*[^/]$`
+
+Defines the target URL where content should be retrieved from.
+
+
+`^/.*[^/]$`
+
+-   is optional
+-   Type: `string` ([Mount Point](fstab-properties-mountpoints-patternproperties-mount-point.md))
+-   cannot be null
+-   defined in: [FSTab (Mount Points)](fstab-properties-mountpoints-patternproperties-mount-point.md "https&#x3A;//ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/patternProperties/^/.\*\[^/]$")
+
+### ]$ Type
+
+`string` ([Mount Point](fstab-properties-mountpoints-patternproperties-mount-point.md))
+
+### ]$ Constraints
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc4291 "check the specification")
