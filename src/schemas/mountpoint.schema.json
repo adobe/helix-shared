@@ -13,28 +13,7 @@
   "$id": "https://ns.adobe.com/helix/shared/mountpoint",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Mount Point",
-  "description": "Defines the mount point.",
-  "format": "uri",
-  "type": "object",
-  "meta:status": "stabilizing",
-  "additionalProperties": true,
-  "properties": {
-    "path": {
-      "description": "Mount point root path.",
-      "type": "string"
-    },
-    "url": {
-      "description": "Defines the target URL where content should be retrieved from.",
-      "type": "string",
-      "format": "uri"
-    },
-    "type": {
-      "description": "Type of the mount point.",
-      "type": "string"
-    }
-  },
-  "required": [
-    "path",
-    "url"
-  ]
+  "description": "Defines the target URL where content should be retrieved from.",
+  "type": "string",
+  "format": "uri"
 }

@@ -1,11 +1,5 @@
 mountpoints:
-  - path: /ms/docs
-    url: https://adobe.sharepoint.com/sites/docs
-  - path: /ms
-    url: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog
-    type: sharepoint
-  - path: /gd
-    url: https://drive.google.com/drive/u/0/folders/123456789
-  - path: /foo
-    url: https://localhost:4502
-    mappingType: model
+  /ms/docs: https://adobe.sharepoint.com/sites/docs
+  /ms:      https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog
+  /gd:      https://drive.google.com/drive/u/0/folders/123456789
+  /foo:     https://localhost:4502
