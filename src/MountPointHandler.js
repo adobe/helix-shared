@@ -18,7 +18,7 @@ const MountPointHandler = (decorators) => ({
       const [path, url] = Object.entries(target)[index];
       const obj = {
         url,
-        path,
+        path: path.endsWith('/') ? path : `${path}/`,
       };
 
       const decorator = decorators.find((d) => d.test(obj));
