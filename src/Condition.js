@@ -133,6 +133,11 @@ class BooleanCondition {
   toJSON() {
     return this._entry.jsonGen(this._items);
   }
+
+  sticky() {
+    const items = Array.isArray(this._items) ? this._items : [this._items];
+    return items.some((item) => item.sticky());
+  }
 }
 
 /**
@@ -210,6 +215,10 @@ class PropertyCondition {
     const name = `${this._label}${this._op}`;
     json[name] = this._value;
     return json;
+  }
+
+  sticky() {
+    return !!this._prop.sticky;
   }
 
   evaluate(req) {
@@ -316,6 +325,7 @@ const propertyMap = {
     evaluate: (req) => req.get('referer'),
     type: 'string',
     allowed_ops: '=~',
+    sticky: true,
   },
   client_city: {
     vcl: 'client.geo.city',
@@ -400,6 +410,7 @@ const propertyMap = {
     },
     evaluate: (req, property) => req.params[property.name],
     allowed_ops: '~<=>',
+    sticky: true,
   },
 };
 
@@ -443,7 +454,6 @@ class Condition {
     return '';
   }
 
-  /* eslint-disable no-underscore-dangle */
   match(req) {
     if (this._top && this._top.evaluate) {
       req.headers = req.headers || {};
@@ -454,6 +464,13 @@ class Condition {
       return this._top.evaluate(req);
     }
     return true;
+  }
+
+  sticky() {
+    if (this._top && this._top.sticky) {
+      return this._top.sticky();
+    }
+    return false;
   }
 
   toJSON(opts) {

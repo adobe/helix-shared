@@ -121,6 +121,9 @@ set req.url = regsub(req.url, "^/oldpath", "${subpath}");
         if (cfg.json !== undefined) {
           assert.equal(cfg.json, cond.toJSON());
         }
+        const sticky = cfg.sticky || false;
+        assert.equal(cond.sticky(), sticky);
+
         const actual = cond.toJSON();
         const expected = cfg.condition;
         assert.deepEqual(actual, expected);
