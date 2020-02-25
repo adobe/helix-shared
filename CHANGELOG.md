@@ -1,3 +1,10 @@
+## [5.2.2](https://github.com/adobe/helix-shared/compare/v5.2.1...v5.2.2) (2020-02-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency uuid to v7 ([ac0a11e](https://github.com/adobe/helix-shared/commit/ac0a11e9292310457063c906498f25e86e483558))
+
 ## [5.2.1](https://github.com/adobe/helix-shared/compare/v5.2.0...v5.2.1) (2020-02-14)
 
 
