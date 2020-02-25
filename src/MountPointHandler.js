@@ -9,34 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const onedriveDecorator = {
-  test(m) {
-    return /https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/');
-  },
-  decorate(m) {
-    return {
-      ...m,
-      type: 'onedrive',
-    };
-  },
-};
 
-const googleDecorator = {
-  test(m) {
-    return !m.id && m.url.startsWith('https://drive.google.com/');
-  },
-  decorate(m) {
-    return {
-      ...m,
-      type: 'google',
-      id: m.url.split('/').pop(),
-    };
-  },
-};
+const MountPointHandler = (decorators) => ({
 
-const decorators = [onedriveDecorator, googleDecorator];
-
-const MountPointHandler = () => ({
   get: (target, prop) => {
     const index = Number.parseInt(prop, 10);
     if (!Number.isNaN(index) && index >= 0) {
