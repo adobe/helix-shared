@@ -11,7 +11,7 @@
  */
 
 /* eslint-disable max-classes-per-file */
-const url = require('url');
+const { parse } = require('url');
 const YAML = require('yaml');
 const utils = require('./utils.js');
 
@@ -264,7 +264,7 @@ function urlPrefixCompose(name, value) {
 
 function urlPrefixMatch(actual, value) {
   if (actual === value || actual.startsWith(`${value}/`)) {
-    const baseURL = url.parse(value).path;
+    const baseURL = parse(value).path;
     return baseURL !== '/' ? { baseURL } : true;
   }
   return false;
@@ -277,7 +277,7 @@ const propertyMap = {
   url: {
     vcl: 'req.http.X-Full-URL',
     prefixCompose: (name, value) => {
-      const uri = url.parse(value);
+      const uri = parse(value);
       if (uri.path === '/') {
         // root path, no composition necessary
         return `${name} ~ "^${value}"`;
@@ -285,13 +285,13 @@ const propertyMap = {
       return urlPrefixCompose(name, value);
     },
     getSubPath: (value) => {
-      const uri = url.parse(value);
+      const uri = parse(value);
       if (uri.path !== '/') {
         return uri.path;
       }
       return '';
     },
-    evaluate: (req) => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+    evaluate: (req) => `${req.protocol}://${req.headers.host}${req.path}`,
     prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
@@ -448,6 +448,8 @@ class Condition {
     if (this._top && this._top.evaluate) {
       req.headers = req.headers || {};
       req.params = req.params || {};
+      req.protocol = req.protocol || 'http';
+      req.path = req.path || '/';
 
       return this._top.evaluate(req);
     }
