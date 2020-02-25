@@ -98,11 +98,17 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m4.url, 'https://localhost:4502');
     assert.equal(m4.relPath, '/en/welcome');
 
-
-    // trailing slash check
     const m5 = cfg.match('/ms/doc');
     assert.equal(m5.type, 'onedrive');
     assert.equal(m5.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog', 'is confused by slashes');
     assert.equal(m5.relPath, '/doc');
+
+    // trailing slash check
+    const m6 = cfg.match('/ms');
+    assert.equal(m6.type, 'onedrive');
+    assert.equal(m6.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog', 'is confused by slashes');
+    assert.equal(m6.relPath, '');
+
+    assert.equal(cfg.match('/mssoft'), null, 'requires trailing slash in matches');
   });
 });
