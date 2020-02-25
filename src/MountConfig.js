@@ -12,6 +12,31 @@
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
 const { MountPointHandler } = require('./MountPointHandler');
 
+const onedriveDecorator = {
+  test(m) {
+    return /https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/');
+  },
+  decorate(m) {
+    return {
+      ...m,
+      type: 'onedrive',
+    };
+  },
+};
+
+const googleDecorator = {
+  test(m) {
+    return !m.id && m.url.startsWith('https://drive.google.com/');
+  },
+  decorate(m) {
+    return {
+      ...m,
+      type: 'google',
+      id: m.url.split('/').pop(),
+    };
+  },
+};
+
 class MountConfig extends SchemaDerivedConfig {
   constructor() {
     super({
@@ -21,7 +46,7 @@ class MountConfig extends SchemaDerivedConfig {
         '^/mountpoints/.*$': 'mountpoint.schema.json',
       },
       handlers: {
-        '^/mountpoints$': MountPointHandler(),
+        '^/mountpoints$': MountPointHandler([onedriveDecorator, googleDecorator]),
       },
     });
   }
