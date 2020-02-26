@@ -3,7 +3,7 @@ condition:
     - url: https://www.example.com/doc
     - url.path~: index.html$
 
-vcl: '((req.http.X-Full-URL ~ "^https://www.example.com/doc/" || req.http.X-Full-URL == "https://www.example.com/doc") && req.url.path ~ "index.html$")'
+vcl: '(req.http.host == "www.example.com" && (req.http.X-FullDirname ~ "^/doc$" || req.http.X-FullDirname ~ "^/doc/") && req.url.path ~ "index.html$")'
 
 samples:
   - uri: https://www.example.com/doc/index.html

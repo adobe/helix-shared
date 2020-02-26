@@ -157,7 +157,7 @@ class PropertyCondition {
   }
 
   toVCL() {
-    const { vcl, prefixCompose } = this._prop;
+    const { vcl } = this._prop;
     const name = typeof vcl === 'function' ? vcl(this) : vcl;
     const quote = this._prop.type === 'string' ? '"' : '';
     let value = this._value;
@@ -165,9 +165,6 @@ class PropertyCondition {
 
     if (quote === '"' && !op) {
       // substring-start
-      if (prefixCompose) {
-        return prefixCompose(name, value);
-      }
       value = `^${value}`;
       op = '~';
     }
@@ -178,15 +175,8 @@ class PropertyCondition {
     return `${name} ${op} ${quote}${value}${quote}`;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getSubPath() {
-    const quote = this._prop.type === 'string' ? '"' : '';
-    if (quote === '"' && !this._op) {
-      // substring-start
-      const { getSubPath } = this._prop;
-      if (getSubPath) {
-        return getSubPath(this._value);
-      }
-    }
     return '';
   }
 
@@ -202,7 +192,7 @@ class PropertyCondition {
       if (typeof param === 'function') {
         return param(this.toVCL(), subPath);
       }
-      return `if ${this.toVCL()} {
+      return `if (${this.toVCL()}) {
   set req.http.${param} = "${subPath}";
 }
 `;
@@ -244,11 +234,15 @@ class PropertyCondition {
         return actual > value;
       default:
         if (type === 'string') {
-          const { prefixMatch } = this._prop;
-          return prefixMatch ? prefixMatch(actual, value) : actual.startsWith(value);
+          return this.prefixMatch(actual, value);
         }
         return actual === value;
     }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  prefixMatch(actual, prefix) {
+    return actual.startsWith(prefix);
   }
 
   get name() {
@@ -261,65 +255,69 @@ class PropertyCondition {
 }
 
 /**
- * For URLs and URL paths, a substring match of '/foo' should actually
- * match '/foo' or '/foo/index.html' but not '/fooby'.
- *
- * We therefore add extra clauses in VCL or evaluate an extra condition.
+ * URLCondition
  */
+class URLCondition extends PropertyCondition {
+  constructor(prop, op, uri, value, name, label) {
+    super(prop, op, value, name, label);
 
-function urlPrefixCompose(name, value) {
-  return `(${name} ~ "^${value}/" || ${name} == "${value}")`;
-}
-
-function urlPrefixMatch(actual, value) {
-  if (actual === value || actual.startsWith(`${value}/`)) {
-    const baseURL = parse(value).path;
-    return baseURL !== '/' ? { baseURL } : true;
+    this._uri = uri;
+    this._vclProp = uri.path.indexOf('.') !== -1 ? 'req.url.path' : 'req.http.X-FullDirname';
   }
-  return false;
+
+  getSubPath() {
+    const { _op: op, _uri: { path } } = this;
+    return (!op && path !== '/') ? path : '';
+  }
+
+  toVCL() {
+    const { _op: op, _vclProp: name, _uri: { host, path } } = this;
+    const vcl = [];
+
+    if (host) {
+      vcl.push(`req.http.host == "${host}"`);
+    }
+    if (path !== '/') {
+      if (!op) {
+        // substring-start
+        vcl.push(`(${name} ~ "^${path}$" || ${name} ~ "^${path}/")`);
+      } else {
+        vcl.push(`${name} ${op === '=' ? '==' : op} "${path}"`);
+      }
+    }
+    return vcl.join(' && ');
+  }
+
+  prefixMatch(actual, prefix) {
+    if (actual === prefix || actual.startsWith(`${prefix}/`)) {
+      const { path } = this._uri;
+      return path !== '/' ? { baseURL: path } : true;
+    }
+    return false;
+  }
 }
 
 /**
  * Known properties
  */
 const propertyMap = {
-  url: {
-    vcl: 'req.http.X-Full-URL',
-    prefixCompose: (name, value) => {
-      const uri = parse(value);
-      if (uri.path === '/') {
-        // root path, no composition necessary
-        return `${name} ~ "^${value}"`;
-      }
-      return urlPrefixCompose(name, value);
-    },
-    getSubPath: (value) => {
-      const uri = parse(value);
-      if (uri.path !== '/') {
-        return uri.path;
-      }
-      return '';
-    },
+  url: (op, value, name) => new URLCondition({
     evaluate: (req) => `${req.protocol}://${req.headers.host}${req.path}`,
-    prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
-  },
+  }, op, parse(value), value, name),
   'url.hostname': {
     vcl: 'req.http.host',
     evaluate: (req) => req.hostname,
     type: 'string',
     allowed_ops: '=~',
   },
-  'url.path': {
+  'url.path': (op, value, name) => new URLCondition({
     vcl: 'req.url.path',
-    prefixCompose: urlPrefixCompose,
-    getSubPath: (value) => value,
     evaluate: (req) => req.path,
-    prefixMatch: urlPrefixMatch,
     type: 'string',
     allowed_ops: '=~',
-  },
+  }, op, { path: value }, value, name),
   referer: {
     vcl: 'req.http.referer',
     evaluate: (req) => req.get('referer'),
@@ -429,6 +427,11 @@ class StringCondition {
   toJSON() {
     return this._s;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  sticky() {
+    return true;
+  }
 }
 
 /**
@@ -506,6 +509,9 @@ transform = (cfg) => {
   }
   let prop = propertyMap[name];
   if (prop) {
+    if (typeof prop === 'function') {
+      return prop(op, value, name);
+    }
     return new PropertyCondition(prop, op, value, name);
   }
   const match = name.match(/^url_param\.(.+)$/);
