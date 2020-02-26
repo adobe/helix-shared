@@ -1,3 +1,10 @@
+# [5.3.0](https://github.com/adobe/helix-shared/compare/v5.2.2...v5.3.0) (2020-02-26)
+
+
+### Features
+
+* **fstab:** Improve mount config ([f423750](https://github.com/adobe/helix-shared/commit/f42375007a774aa41b27800c0af2be7a64821ee4))
+
 ## [5.2.2](https://github.com/adobe/helix-shared/compare/v5.2.1...v5.2.2) (2020-02-24)
 
 
