@@ -33,8 +33,20 @@ class SchemaDerivedConfig extends BaseConfig {
     super(filename);
 
     this._content = null;
-    this._schemas = schemas;
-    this._handlers = handlers;
+
+    // ensure that sub classes don't accidentally override this properties.
+    Object.defineProperties(this, {
+      _schemas: {
+        writable: false,
+        configurable: false,
+        value: schemas,
+      },
+      _handlers: {
+        writable: false,
+        configurable: false,
+        value: handlers,
+      },
+    });
   }
 
   /**
