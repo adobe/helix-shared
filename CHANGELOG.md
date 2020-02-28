@@ -1,3 +1,15 @@
+## [5.3.1](https://github.com/adobe/helix-shared/compare/v5.3.0...v5.3.1) (2020-02-28)
+
+
+### Bug Fixes
+
+* **conditions:** changes required for integration with simulator ([2556169](https://github.com/adobe/helix-shared/commit/2556169801cfacea3f879b0cbeda308878adbb2e))
+* **conditions:** relax stickyness rules ([90cfe49](https://github.com/adobe/helix-shared/commit/90cfe49c17702da202cf74f4f837a8631a79c6f9))
+* **conditions:** use url.parse directly ([8a9bbe0](https://github.com/adobe/helix-shared/commit/8a9bbe057bc796c2aaa0d71f32dba99a94db79d9))
+* **conditions:** use X-FullDirname ([05a639e](https://github.com/adobe/helix-shared/commit/05a639e79985f0a100dd5f94d7b72f0d057befa7))
+* extra commit to add breaking change ([8cc054e](https://github.com/adobe/helix-shared/commit/8cc054e4b19cd43feb89558ae857d2c835330a07))
+* trigger check reruns ([18ca7e1](https://github.com/adobe/helix-shared/commit/18ca7e15454c675e77785fee9686c0246e213d92))
+
 # [5.3.0](https://github.com/adobe/helix-shared/compare/v5.2.2...v5.3.0) (2020-02-26)
 
 
