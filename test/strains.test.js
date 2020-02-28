@@ -234,7 +234,7 @@ describe('Strains test', () => {
     assert.deepEqual(strain.content, giturl);
     assert.deepEqual(strain.code, giturl);
     assert.deepEqual(strain.package, '');
-    assert.equal(strain.condition.isEmpty(), true);
+    assert.equal(strain.condition, null);
 
     strain.name = 'dirty';
     strain.content = 'https://github.com/adobe/project-helix.io.git#develop';
@@ -246,7 +246,7 @@ describe('Strains test', () => {
     assert.notDeepEqual(strain.content, giturl);
     assert.notDeepEqual(strain.code, giturl);
     assert.notDeepEqual(strain.package, '');
-    assert.equal(strain.condition.isEmpty(), false);
+    assert.notEqual(strain.condition, null);
   });
 
   it('proxy static can be read', () => {

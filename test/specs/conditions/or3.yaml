@@ -8,9 +8,9 @@ condition:
       - url.path: /bar
 
 vcl_path: |
-  if (req.http.host ~ "^www.adobe.io" && (req.url.path ~ "^/foo/" || req.url.path == "/foo")) {
+  if (req.http.host ~ "^www.adobe.io" && (req.http.X-FullDirname ~ "^/foo$" || req.http.X-FullDirname ~ "^/foo/")) {
     set req.http.X-Base = "/foo";
   }
-  if (req.http.host ~ "^developer.adobe.com" && (req.url.path ~ "^/bar/" || req.url.path == "/bar")) {
+  if (req.http.host ~ "^developer.adobe.com" && (req.http.X-FullDirname ~ "^/bar$" || req.http.X-FullDirname ~ "^/bar/")) {
     set req.http.X-Base = "/bar";
   }

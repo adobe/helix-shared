@@ -54,7 +54,7 @@ class Strain {
 
     // todo: schema for perf
     this._perf = new Performance(cfg.perf);
-    this._condition = new Condition(cfg.condition || '');
+    this._condition = cfg.condition ? new Condition(cfg.condition) : null;
 
     if (cfg.url) {
       if (cfg.condition && !urlOverridesCondition) {
@@ -67,8 +67,10 @@ class Strain {
     }
 
     // when `sticky` is not set
-    // assume the strain to be sticky when there is a condition
-    this._sticky = cfg.sticky === undefined ? !this._condition.isEmpty() : !!cfg.sticky;
+    // assume the strain to be sticky when the condition is
+    this._sticky = cfg.sticky === undefined
+      ? (this._condition !== null && this._condition.sticky())
+      : !!cfg.sticky;
 
     this._redirects = (Array.isArray(cfg.redirects) ? cfg.redirects : [])
       .map((r) => new Redirect(r));
@@ -244,7 +246,7 @@ class Strain {
     const json = {
       name: this.name,
       sticky: this.sticky,
-      condition: this.condition.toJSON(opts),
+      condition: this.condition ? this.condition.toJSON(opts) : '',
       perf: this.perf.toJSON(opts),
       urls: this.urls,
     };

@@ -4,6 +4,6 @@ condition:
     - url.hostname: www.example.com
 
 vcl_path: |
-  if (req.url.path ~ "^/foo/" || req.url.path == "/foo") {
+  if ((req.http.X-FullDirname ~ "^/foo$" || req.http.X-FullDirname ~ "^/foo/")) {
     set req.http.X-Base = "/foo";
   }
