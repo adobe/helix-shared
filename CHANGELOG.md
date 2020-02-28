@@ -1,5 +1,6 @@
 ## [5.3.1](https://github.com/adobe/helix-shared/compare/v5.3.0...v5.3.1) (2020-02-28)
 
+**This is a breaking change**: the generated conditions change. Due to a mistake in the release process, no major version increase has been made.
 
 ### Bug Fixes
 
