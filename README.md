@@ -41,7 +41,6 @@ const configfromfile = new HelixConfig()
 ### Using `sequence`, `functional`, and `op` for functional programming
 
 
-
 ## Development
 
 
