@@ -1,3 +1,15 @@
+# [6.0.0](https://github.com/adobe/helix-shared/compare/v5.3.1...v6.0.0) (2020-02-28)
+
+
+### Documentation
+
+* **changelog:** mark 5.3.1 as a breaking change ([b556e6e](https://github.com/adobe/helix-shared/commit/b556e6e8149ce6e2d0c648a01a7c3d300d402b21)), closes [#256](https://github.com/adobe/helix-shared/issues/256) [#253](https://github.com/adobe/helix-shared/issues/253) [#254](https://github.com/adobe/helix-shared/issues/254)
+
+
+### BREAKING CHANGES
+
+* **changelog:** The 5.3.1 release introduces breaking changes for conditions handling. This commit formally acknowledges that.
+
 ## [5.3.1](https://github.com/adobe/helix-shared/compare/v5.3.0...v5.3.1) (2020-02-28)
 
 **This is a breaking change**: the generated conditions change. Due to a mistake in the release process, no major version increase has been made.
