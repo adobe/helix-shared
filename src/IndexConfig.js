@@ -12,15 +12,20 @@
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
 const { NamedMapHandler } = require('./NamedMapHandler');
 
+const indexConfigSchema = require('./schemas/indexconfig.schema.json');
+const indexSchema = require('./schemas/index.schema.json');
+const propertySchema = require('./schemas/property.schema.json');
+const querySchema = require('./schemas/query.schema.json');
+
 class IndexConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'helix-query.yaml',
       schemas: {
-        '^/$': 'indexconfig.schema.json',
-        '^/indices/.*$': 'index.schema.json',
-        '^/indices/.*/properties/.*$': 'property.schema.json',
-        '^/indices/.*/queries/.*$': 'query.schema.json',
+        '^/$': indexConfigSchema,
+        '^/indices/.*$': indexSchema,
+        '^/indices/.*/properties/.*$': propertySchema,
+        '^/indices/.*/queries/.*$': querySchema,
       },
       handlers: {
         '^/indices$': NamedMapHandler(),
