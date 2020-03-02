@@ -12,14 +12,18 @@
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
 const { NamedMapHandler } = require('./NamedMapHandler');
 
+const markupConfigSchema = require('./schemas/markupconfig.schema.json');
+const markupSchema = require('./schemas/markup.schema.json');
+const markupMappingSchema = require('./schemas/markupmapping.schema.json');
+
 class MarkupConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'helix-markup.yaml',
       schemas: {
-        '^/$': 'markupconfig.schema.json',
-        '^/markup$': 'markup.schema.json',
-        '^/markup/.*$': 'markupmapping.schema.json',
+        '^/$': markupConfigSchema,
+        '^/markup$': markupSchema,
+        '^/markup/.*$': markupMappingSchema,
       },
       handlers: {
         '^/markup$': NamedMapHandler(),

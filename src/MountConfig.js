@@ -12,6 +12,9 @@
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
 const { MountPointHandler } = require('./MountPointHandler');
 
+const fstabSchema = require('./schemas/fstab.schema.json');
+const mountpointSchema = require('./schemas/mountpoint.schema.json');
+
 const onedriveDecorator = {
   test(m) {
     return /https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/');
@@ -42,8 +45,8 @@ class MountConfig extends SchemaDerivedConfig {
     super({
       filename: 'fstab.yaml',
       schemas: {
-        '^/$': 'fstab.schema.json',
-        '^/mountpoints/.*$': 'mountpoint.schema.json',
+        '^/$': fstabSchema,
+        '^/mountpoints/.*$': mountpointSchema,
       },
       handlers: {
         '^/mountpoints$': MountPointHandler([onedriveDecorator, googleDecorator]),

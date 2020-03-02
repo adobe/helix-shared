@@ -9,8 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const fs = require('fs-extra');
-const path = require('path');
 const Ajv = require('ajv');
 const BaseConfig = require('./BaseConfig.js');
 
@@ -22,7 +20,7 @@ class SchemaDerivedConfig extends BaseConfig {
    *
    * @param {object} opts
    * @param {string} opts.filename - the source file when loading the config from disk
-   * @param {object} opts.schema - a mapping between JSON paths (regex) and schema file names
+   * @param {object} opts.schemas - a mapping between JSON paths (regex) and schema file names
    * @param {object} opts.handlers - a mapping between JSON paths (regex) and proxy handlers
    */
   constructor({
@@ -60,10 +58,7 @@ class SchemaDerivedConfig extends BaseConfig {
       coerceTypes: 'array',
     });
 
-    for (const value of Object.values(this._schemas)) {
-      ajv.addSchema(value);
-    }
-
+    ajv.addSchema(Object.values(this._schemas));
     const res = ajv.validate(this._schemas['^/$'], this._cfg);
     if (res) {
       return res;
@@ -129,12 +124,6 @@ class SchemaDerivedConfig extends BaseConfig {
    */
   async init() {
     await this.loadConfig();
-
-    for (const [key, value] of Object.entries(this._schemas)) {
-      const schema = fs.readJsonSync(path.resolve(__dirname, 'schemas', value));
-      this._schemas[key] = schema;
-    }
-
     await this.validate();
 
     this._content = new Proxy(this._cfg, this.defaultHandler(''));
