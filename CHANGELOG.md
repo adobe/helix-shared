@@ -1,3 +1,10 @@
+## [6.0.1](https://github.com/adobe/helix-shared/compare/v6.0.0...v6.0.1) (2020-03-02)
+
+
+### Bug Fixes
+
+* **schema:** ensure the schemas are 'required()' ([d89bcff](https://github.com/adobe/helix-shared/commit/d89bcff5663e6b7c24db6bb7f926aade64405a04)), closes [#257](https://github.com/adobe/helix-shared/issues/257)
+
 # [6.0.0](https://github.com/adobe/helix-shared/compare/v5.3.1...v6.0.0) (2020-02-28)
 
 
