@@ -2,6 +2,7 @@ condition:
   referer=: www.example.com
 
 vcl: 'req.http.referer == "www.example.com"'
+sticky: true
 
 samples:
   - headers:

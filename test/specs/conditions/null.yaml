@@ -2,9 +2,9 @@ condition:
 
 vcl: ''
 vcl_path: ''
+sticky: false
 
 samples:
   - match: true
 
-empty: true
 json: null

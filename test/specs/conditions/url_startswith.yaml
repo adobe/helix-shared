@@ -1,9 +1,9 @@
 condition:
   url: https://www.example.com/doc
 
-vcl: (req.http.X-Full-URL ~ "^https://www.example.com/doc/" || req.http.X-Full-URL == "https://www.example.com/doc")
+vcl: req.http.host == "www.example.com" && (req.http.X-FullDirname ~ "^/doc$" || req.http.X-FullDirname ~ "^/doc/")
 vcl_path: |
-  if (req.http.X-Full-URL ~ "^https://www.example.com/doc/" || req.http.X-Full-URL == "https://www.example.com/doc") {
+  if (req.http.host == "www.example.com" && (req.http.X-FullDirname ~ "^/doc$" || req.http.X-FullDirname ~ "^/doc/")) {
     set req.http.X-Base = "/doc";
   }
 

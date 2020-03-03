@@ -10,20 +10,70 @@
  * governing permissions and limitations under the License.
  */
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { NamedPairHandler } = require('./NamedPairHandler');
+const { MountPointHandler } = require('./MountPointHandler');
+
+const fstabSchema = require('./schemas/fstab.schema.json');
+const mountpointSchema = require('./schemas/mountpoint.schema.json');
+
+const onedriveDecorator = {
+  test(m) {
+    return /https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/');
+  },
+  decorate(m) {
+    return {
+      ...m,
+      type: 'onedrive',
+    };
+  },
+};
+
+const googleDecorator = {
+  test(m) {
+    return !m.id && m.url.startsWith('https://drive.google.com/');
+  },
+  decorate(m) {
+    return {
+      ...m,
+      type: 'google',
+      id: m.url.split('/').pop(),
+    };
+  },
+};
 
 class MountConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'fstab.yaml',
       schemas: {
-        '^/$': 'fstab.schema.json',
-        '^/mountpoints/.*$': 'mountpoint.schema.json',
+        '^/$': fstabSchema,
+        '^/mountpoints/.*$': mountpointSchema,
       },
       handlers: {
-        '^/mountpoints$': NamedPairHandler('path', 'url'),
+        '^/mountpoints$': MountPointHandler([onedriveDecorator, googleDecorator]),
       },
     });
+  }
+
+  /**
+   * Matches the given resource path against the mount points and returns the mount point if found.
+   * The mount point will also include a `relPath` property, which denotes the relative path
+   * from the mount points root.
+   *
+   * @param {string} resourcePath The resource path
+   * @returns {Mountpoint|null} The matched mount point or {@code null}.
+   */
+  match(resourcePath) {
+    const fullPath = resourcePath.endsWith('/') ? resourcePath : `${resourcePath}/`;
+
+
+    const [mp] = this.mountpoints
+      .filter((m) => fullPath.startsWith(m.path)) // beginning must match
+      .map((m) => ({
+        ...m,
+        relPath: fullPath.substring(m.path.length - 1, fullPath.length - 1),
+      }));
+
+    return mp || null;
   }
 }
 

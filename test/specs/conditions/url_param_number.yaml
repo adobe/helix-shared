@@ -4,6 +4,7 @@ condition:
   - url_param.a<: 10
 
 vcl: '(std.atoi(subfield(req.url.qs, "a", "&")) > 5 && std.atoi(subfield(req.url.qs, "a", "&")) < 10)'
+sticky: true
 
 samples:
   - uri: https://www.example.com/index.html?a=7

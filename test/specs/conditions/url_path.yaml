@@ -1,11 +1,11 @@
 condition:
   url.path: /foo
 
-vcl: '(req.url.path ~ "^/foo/" || req.url.path == "/foo")'
+vcl: '(req.http.X-FullDirname ~ "^/foo$" || req.http.X-FullDirname ~ "^/foo/")'
 
 param_name: 'X-BasePath'
 vcl_path: |  
-  if (req.url.path ~ "^/foo/" || req.url.path == "/foo") {
+  if ((req.http.X-FullDirname ~ "^/foo$" || req.http.X-FullDirname ~ "^/foo/")) {
     set req.http.X-BasePath = "/foo";
   }
 vcl_path_fn: |

@@ -1,0 +1,5 @@
+mountpoints:
+  /ms/docs: https://adobe.sharepoint.com/sites/docs
+  /ms:      https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog
+  /gd:      https://drive.google.com/drive/u/0/folders/123456789
+  /foo:     https://localhost:4502

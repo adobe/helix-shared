@@ -1,3 +1,49 @@
+## [6.0.1](https://github.com/adobe/helix-shared/compare/v6.0.0...v6.0.1) (2020-03-02)
+
+
+### Bug Fixes
+
+* **schema:** ensure the schemas are 'required()' ([d89bcff](https://github.com/adobe/helix-shared/commit/d89bcff5663e6b7c24db6bb7f926aade64405a04)), closes [#257](https://github.com/adobe/helix-shared/issues/257)
+
+# [6.0.0](https://github.com/adobe/helix-shared/compare/v5.3.1...v6.0.0) (2020-02-28)
+
+
+### Documentation
+
+* **changelog:** mark 5.3.1 as a breaking change ([b556e6e](https://github.com/adobe/helix-shared/commit/b556e6e8149ce6e2d0c648a01a7c3d300d402b21)), closes [#256](https://github.com/adobe/helix-shared/issues/256) [#253](https://github.com/adobe/helix-shared/issues/253) [#254](https://github.com/adobe/helix-shared/issues/254)
+
+
+### BREAKING CHANGES
+
+* **changelog:** The 5.3.1 release introduces breaking changes for conditions handling. This commit formally acknowledges that.
+
+## [5.3.1](https://github.com/adobe/helix-shared/compare/v5.3.0...v5.3.1) (2020-02-28)
+
+**This is a breaking change**: the generated conditions change. Due to a mistake in the release process, no major version increase has been made.
+
+### Bug Fixes
+
+* **conditions:** changes required for integration with simulator ([2556169](https://github.com/adobe/helix-shared/commit/2556169801cfacea3f879b0cbeda308878adbb2e))
+* **conditions:** relax stickyness rules ([90cfe49](https://github.com/adobe/helix-shared/commit/90cfe49c17702da202cf74f4f837a8631a79c6f9))
+* **conditions:** use url.parse directly ([8a9bbe0](https://github.com/adobe/helix-shared/commit/8a9bbe057bc796c2aaa0d71f32dba99a94db79d9))
+* **conditions:** use X-FullDirname ([05a639e](https://github.com/adobe/helix-shared/commit/05a639e79985f0a100dd5f94d7b72f0d057befa7))
+* extra commit to add breaking change ([8cc054e](https://github.com/adobe/helix-shared/commit/8cc054e4b19cd43feb89558ae857d2c835330a07))
+* trigger check reruns ([18ca7e1](https://github.com/adobe/helix-shared/commit/18ca7e15454c675e77785fee9686c0246e213d92))
+
+# [5.3.0](https://github.com/adobe/helix-shared/compare/v5.2.2...v5.3.0) (2020-02-26)
+
+
+### Features
+
+* **fstab:** Improve mount config ([f423750](https://github.com/adobe/helix-shared/commit/f42375007a774aa41b27800c0af2be7a64821ee4))
+
+## [5.2.2](https://github.com/adobe/helix-shared/compare/v5.2.1...v5.2.2) (2020-02-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency uuid to v7 ([ac0a11e](https://github.com/adobe/helix-shared/commit/ac0a11e9292310457063c906498f25e86e483558))
+
 ## [5.2.1](https://github.com/adobe/helix-shared/compare/v5.2.0...v5.2.1) (2020-02-14)
 
 

@@ -11,7 +11,7 @@
  */
 
 /* eslint-disable max-classes-per-file */
-const url = require('url');
+const { parse } = require('url');
 const YAML = require('yaml');
 const utils = require('./utils.js');
 
@@ -62,7 +62,7 @@ const booleanMap = {
     mapper: configMapper.infix,
     jsonGen: jsonGenarator.infix('or'),
     vcl: vclComposer.infix(' || '),
-    express: (items, req) => items.reduce((prev, item) => prev || item.evaluate(req), false),
+    evaluate: (items, req) => items.reduce((prev, item) => prev || item.evaluate(req), false),
     vcl_path: (items, paramName) => items.reduce((prev, item) => {
       const clause = item.toVCLPath(paramName);
       if (clause) {
@@ -75,7 +75,7 @@ const booleanMap = {
     mapper: configMapper.infix,
     jsonGen: jsonGenarator.infix('and'),
     vcl: vclComposer.infix(' && '),
-    express: (items, req) => items.reduce((prev, item) => {
+    evaluate: (items, req) => items.reduce((prev, item) => {
       if (!prev) {
         return false;
       }
@@ -101,7 +101,7 @@ const booleanMap = {
     mapper: configMapper.prefix,
     jsonGen: jsonGenarator.prefix('not'),
     vcl: vclComposer.prefix(' !'),
-    express: (item, req) => !item.evaluate(req),
+    evaluate: (item, req) => !item.evaluate(req),
   },
 };
 
@@ -127,11 +127,16 @@ class BooleanCondition {
   }
 
   evaluate(req) {
-    return this._entry.express(this._items, req);
+    return this._entry.evaluate(this._items, req);
   }
 
   toJSON() {
     return this._entry.jsonGen(this._items);
+  }
+
+  sticky() {
+    const items = Array.isArray(this._items) ? this._items : [this._items];
+    return items.some((item) => item.sticky());
   }
 }
 
@@ -152,7 +157,7 @@ class PropertyCondition {
   }
 
   toVCL() {
-    const { vcl, prefixCompose } = this._prop;
+    const { vcl } = this._prop;
     const name = typeof vcl === 'function' ? vcl(this) : vcl;
     const quote = this._prop.type === 'string' ? '"' : '';
     let value = this._value;
@@ -160,9 +165,6 @@ class PropertyCondition {
 
     if (quote === '"' && !op) {
       // substring-start
-      if (prefixCompose) {
-        return prefixCompose(name, value);
-      }
       value = `^${value}`;
       op = '~';
     }
@@ -173,15 +175,8 @@ class PropertyCondition {
     return `${name} ${op} ${quote}${value}${quote}`;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getSubPath() {
-    const quote = this._prop.type === 'string' ? '"' : '';
-    if (quote === '"' && !this._op) {
-      // substring-start
-      const { getSubPath } = this._prop;
-      if (getSubPath) {
-        return getSubPath(this._value);
-      }
-    }
     return '';
   }
 
@@ -197,7 +192,7 @@ class PropertyCondition {
       if (typeof param === 'function') {
         return param(this.toVCL(), subPath);
       }
-      return `if ${this.toVCL()} {
+      return `if (${this.toVCL()}) {
   set req.http.${param} = "${subPath}";
 }
 `;
@@ -212,11 +207,15 @@ class PropertyCondition {
     return json;
   }
 
+  sticky() {
+    return !!this._prop.sticky;
+  }
+
   evaluate(req) {
-    if (!this._prop.express) {
+    if (!this._prop.evaluate) {
       return true;
     }
-    const actual = this._prop.express(req, this);
+    const actual = this._prop.evaluate(req, this);
     if (!actual) {
       return false;
     }
@@ -235,11 +234,15 @@ class PropertyCondition {
         return actual > value;
       default:
         if (type === 'string') {
-          const { prefixMatch } = this._prop;
-          return prefixMatch ? prefixMatch(actual, value) : actual.startsWith(value);
+          return this.prefixMatch(actual, value);
         }
         return actual === value;
     }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  prefixMatch(actual, prefix) {
+    return actual.startsWith(prefix);
   }
 
   get name() {
@@ -252,70 +255,75 @@ class PropertyCondition {
 }
 
 /**
- * For URLs and URL paths, a substring match of '/foo' should actually
- * match '/foo' or '/foo/index.html' but not '/fooby'.
- *
- * We therefore add extra clauses in VCL or evaluate an extra condition.
+ * URLCondition
  */
+class URLCondition extends PropertyCondition {
+  constructor(prop, op, uri, value, name, label) {
+    super(prop, op, value, name, label);
 
-function urlPrefixCompose(name, value) {
-  return `(${name} ~ "^${value}/" || ${name} == "${value}")`;
-}
-
-function urlPrefixMatch(actual, value) {
-  if (actual === value || actual.startsWith(`${value}/`)) {
-    const baseURL = url.parse(value).path;
-    return baseURL !== '/' ? { baseURL } : true;
+    this._uri = uri;
+    this._vclProp = uri.path.indexOf('.') !== -1 ? 'req.url.path' : 'req.http.X-FullDirname';
   }
-  return false;
+
+  getSubPath() {
+    const { _op: op, _uri: { path } } = this;
+    return (!op && path !== '/') ? path : '';
+  }
+
+  toVCL() {
+    const { _op: op, _vclProp: name, _uri: { host, path } } = this;
+    const vcl = [];
+
+    if (host) {
+      vcl.push(`req.http.host == "${host}"`);
+    }
+    if (path !== '/') {
+      if (!op) {
+        // substring-start
+        vcl.push(`(${name} ~ "^${path}$" || ${name} ~ "^${path}/")`);
+      } else {
+        vcl.push(`${name} ${op === '=' ? '==' : op} "${path}"`);
+      }
+    }
+    return vcl.join(' && ');
+  }
+
+  prefixMatch(actual, prefix) {
+    if (actual === prefix || actual.startsWith(`${prefix}/`)) {
+      const { path } = this._uri;
+      return path !== '/' ? { baseURL: path } : true;
+    }
+    return false;
+  }
 }
 
 /**
  * Known properties
  */
 const propertyMap = {
-  url: {
-    vcl: 'req.http.X-Full-URL',
-    prefixCompose: (name, value) => {
-      const uri = url.parse(value);
-      if (uri.path === '/') {
-        // root path, no composition necessary
-        return `${name} ~ "^${value}"`;
-      }
-      return urlPrefixCompose(name, value);
-    },
-    getSubPath: (value) => {
-      const uri = url.parse(value);
-      if (uri.path !== '/') {
-        return uri.path;
-      }
-      return '';
-    },
-    express: (req) => `${req.protocol}://${req.headers.host}${req.originalUrl}`,
-    prefixMatch: urlPrefixMatch,
+  url: (op, value, name) => new URLCondition({
+    evaluate: (req) => `${req.protocol}://${req.headers.host}${req.path}`,
     type: 'string',
     allowed_ops: '=~',
-  },
+  }, op, parse(value), value, name),
   'url.hostname': {
     vcl: 'req.http.host',
-    express: (req) => req.hostname,
+    evaluate: (req) => req.hostname,
     type: 'string',
     allowed_ops: '=~',
   },
-  'url.path': {
+  'url.path': (op, value, name) => new URLCondition({
     vcl: 'req.url.path',
-    prefixCompose: urlPrefixCompose,
-    getSubPath: (value) => value,
-    express: (req) => req.path,
-    prefixMatch: urlPrefixMatch,
+    evaluate: (req) => req.path,
     type: 'string',
     allowed_ops: '=~',
-  },
+  }, op, { path: value }, value, name),
   referer: {
     vcl: 'req.http.referer',
-    express: (req) => req.get('referer'),
+    evaluate: (req) => req.get('referer'),
     type: 'string',
     allowed_ops: '=~',
+    sticky: true,
   },
   client_city: {
     vcl: 'client.geo.city',
@@ -329,13 +337,13 @@ const propertyMap = {
   },
   user_agent: {
     vcl: 'req.http.User-Agent',
-    express: (req) => req.get('user-agent'),
+    evaluate: (req) => req.get('user-agent'),
     type: 'string',
     allowed_ops: '=~',
   },
   accept_language: {
     vcl: 'req.http.Accept-Language',
-    express: (req) => req.get('accept-language'),
+    evaluate: (req) => req.get('accept-language'),
     type: 'string',
     allowed_ops: '=~',
   },
@@ -356,37 +364,37 @@ const propertyMap = {
   },
   time_day: {
     vcl: 'std.atoi(strftime({"%w"}, time.start))',
-    express: () => new Date().getDay(),
+    evaluate: () => new Date().getDay(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_date: {
     vcl: 'std.atoi(strftime({"%d"}, time.start))',
-    express: () => new Date().getDate(),
+    evaluate: () => new Date().getDate(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_hours: {
     vcl: 'std.atoi(strftime({"%H"}, time.start))',
-    express: () => new Date().getHours(),
+    evaluate: () => new Date().getHours(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_minutes: {
     vcl: 'std.atoi(strftime({"%M"}, time.start))',
-    express: () => new Date().getMinutes(),
+    evaluate: () => new Date().getMinutes(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_month: {
     vcl: 'std.atoi(strftime({"%m"}, time.start))',
-    express: () => new Date().getMonth(),
+    evaluate: () => new Date().getMonth(),
     type: 'number',
     allowed_ops: '<=>',
   },
   time_year: {
     vcl: 'std.atoi(strftime({"%Y"}, time.start))',
-    express: () => new Date().getFullYear(),
+    evaluate: () => new Date().getFullYear(),
     type: 'number',
     allowed_ops: '<=>',
   },
@@ -398,8 +406,9 @@ const propertyMap = {
       }
       return vcl;
     },
-    express: (req, property) => req.params[property.name],
+    evaluate: (req, property) => req.params[property.name],
     allowed_ops: '~<=>',
+    sticky: true,
   },
 };
 
@@ -419,8 +428,9 @@ class StringCondition {
     return this._s;
   }
 
-  isEmpty() {
-    return this._s === '';
+  // eslint-disable-next-line class-methods-use-this
+  sticky() {
+    return true;
   }
 }
 
@@ -447,15 +457,23 @@ class Condition {
     return '';
   }
 
-  /* eslint-disable no-underscore-dangle */
-  toFunction() {
-    const self = this;
-    return (req) => {
-      if (self._top && self._top.evaluate) {
-        return self._top.evaluate(req);
-      }
-      return true;
-    };
+  match(req) {
+    if (this._top && this._top.evaluate) {
+      req.headers = req.headers || {};
+      req.params = req.params || {};
+      req.protocol = req.protocol || 'http';
+      req.path = req.path || '/';
+
+      return this._top.evaluate(req);
+    }
+    return true;
+  }
+
+  sticky() {
+    if (this._top && this._top.sticky) {
+      return this._top.sticky();
+    }
+    return false;
   }
 
   toJSON(opts) {
@@ -469,13 +487,6 @@ class Condition {
   toYAMLNode() {
     const json = this.toJSON({ minimal: true });
     return json ? YAML.createNode(json) : null;
-  }
-
-  isEmpty() {
-    if (this._top && this._top.isEmpty) {
-      return this._top.isEmpty();
-    }
-    return this._top === null;
   }
 }
 
@@ -498,6 +509,9 @@ transform = (cfg) => {
   }
   let prop = propertyMap[name];
   if (prop) {
+    if (typeof prop === 'function') {
+      return prop(op, value, name);
+    }
     return new PropertyCondition(prop, op, value, name);
   }
   const match = name.match(/^url_param\.(.+)$/);
