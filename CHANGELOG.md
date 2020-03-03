@@ -1,3 +1,10 @@
+## [6.0.2](https://github.com/adobe/helix-shared/compare/v6.0.1...v6.0.2) (2020-03-03)
+
+
+### Bug Fixes
+
+* **markup:** add name property to markup config schema ([e371416](https://github.com/adobe/helix-shared/commit/e371416e7545378b3fa24577f555ffd264ce345d)), closes [#248](https://github.com/adobe/helix-shared/issues/248)
+
 ## [6.0.1](https://github.com/adobe/helix-shared/compare/v6.0.0...v6.0.1) (2020-03-02)
 
 
