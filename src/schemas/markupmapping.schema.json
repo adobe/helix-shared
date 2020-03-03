@@ -21,6 +21,10 @@
   ],
   "additionalProperties": false,
   "properties": {
+    "name": {
+      "type": "string",
+      "description": "The (optional) name of the mapping. The name is normative only, and can be used for debugging purposes. It does not affect either matching nor the markup output."
+    },
     "match": {
       "type": "string",
       "description": "A CSS selector expression selecting the nodes that should get processed"

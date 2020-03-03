@@ -19,11 +19,28 @@ https://ns.adobe.com/helix/shared/markupmapping#/additionalProperties
 
 | Property                  | Type     | Required | Nullable       | Defined by                                                                                                                             |
 | :------------------------ | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| [name](#name)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-name.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/name")             |
 | [match](#match)           | `string` | Required | cannot be null | [Markup Mapping](markupmapping-properties-match.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/match")           |
 | [type](#type)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-type.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/type")             |
 | [wrap](#wrap)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-wrap.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/wrap")             |
 | [classnames](#classnames) | `array`  | Optional | cannot be null | [Markup Mapping](markupmapping-properties-classnames.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/classnames") |
 | [attribute](#attribute)   | `object` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-attribute.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/attribute")   |
+
+## name
+
+The (optional) name of the mapping. The name is normative only, and can be used for debugging purposes. It does not affect either matching nor the markup output.
+
+
+`name`
+
+-   is optional
+-   Type: `string`
+-   cannot be null
+-   defined in: [Markup Mapping](markupmapping-properties-name.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/name")
+
+### name Type
+
+`string`
 
 ## match
 
