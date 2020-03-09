@@ -30,7 +30,7 @@
     "object-hash": "^2.0.0",
     "uri-js": "^4.2.2",
     "uuid": "^7.0.0",
-    "yaml": "1.7.2"
+    "yaml": "1.8.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
