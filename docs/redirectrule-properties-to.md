@@ -17,10 +17,12 @@ A replacement string that replaces matched URLs found in `from`.
 
 ## to Examples
 
-```json
-"/new"
+```yaml
+/new
+
 ```
 
-```json
-"/new/$1.html"
+```yaml
+/new/$1.html
+
 ```

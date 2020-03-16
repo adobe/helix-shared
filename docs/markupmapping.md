@@ -117,16 +117,19 @@ Add the following HTML tags before the generated HTML. This attribute is using [
 
 ### wrap Examples
 
-```json
-"div>ul>li"
+```yaml
+div>ul>li
+
 ```
 
-```json
-"div+p+bq"
+```yaml
+div+p+bq
+
 ```
 
-```json
-"div+div>p>span+em "
+```yaml
+'div+div>p>span+em '
+
 ```
 
 ## classnames

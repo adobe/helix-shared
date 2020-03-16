@@ -6,6 +6,9 @@
 <dt><a href="#PropertyCondition">PropertyCondition</a></dt>
 <dd><p>PropertyCondition</p>
 </dd>
+<dt><a href="#URLCondition">URLCondition</a></dt>
+<dd><p>URLCondition</p>
+</dd>
 <dt><a href="#StringCondition">StringCondition</a></dt>
 <dd><p>StringCondition class</p>
 </dd>
@@ -93,11 +96,6 @@ match zero, one or many dom nodes in the given node to test.</p>
 ## Functions
 
 <dl>
-<dt><a href="#urlPrefixCompose">urlPrefixCompose()</a></dt>
-<dd><p>For URLs and URL paths, a substring match of &#39;/foo&#39; should actually
-match &#39;/foo&#39; or &#39;/foo/index.html&#39; but not &#39;/fooby&#39;.</p>
-<p>We therefore add extra clauses in VCL or evaluate an extra condition.</p>
-</dd>
 <dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
 <dd></dd>
 <dt><a href="#nextTick">nextTick()</a> ⇒ <code>promise</code></dt>
@@ -276,6 +274,12 @@ to a request parameter.
 | --- | --- | --- |
 | param | <code>String</code> \| <code>function</code> | request parameter name to insert or function to invoke |
 
+<a name="URLCondition"></a>
+
+## URLCondition
+URLCondition
+
+**Kind**: global class  
 <a name="StringCondition"></a>
 
 ## StringCondition
@@ -515,7 +519,7 @@ A Helix Config that is based on a (number of) JSON Schema(s).
 | --- | --- | --- |
 | opts | <code>object</code> |  |
 | opts.filename | <code>string</code> | the source file when loading the config from disk |
-| opts.schema | <code>object</code> | a mapping between JSON paths (regex) and schema file names |
+| opts.schemas | <code>object</code> | a mapping between JSON paths (regex) and schema file names |
 | opts.handlers | <code>object</code> | a mapping between JSON paths (regex) and proxy handlers |
 
 <a name="SchemaDerivedConfig+validate"></a>
@@ -771,15 +775,6 @@ match zero, one or many dom nodes in the given node to test.
 | node | <code>DomNode</code> | 
 | pattern | <code>DomNode</code> | 
 
-<a name="urlPrefixCompose"></a>
-
-## urlPrefixCompose()
-For URLs and URL paths, a substring match of '/foo' should actually
-match '/foo' or '/foo/index.html' but not '/fooby'.
-
-We therefore add extra clauses in VCL or evaluate an extra condition.
-
-**Kind**: global function  
 <a name="ResolveFn"></a>
 
 ## ResolveFn(left, right)

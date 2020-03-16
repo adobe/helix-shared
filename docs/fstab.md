@@ -6,6 +6,10 @@ https://ns.adobe.com/helix/shared/fstab
 
 Defines a mapping between mount points and source URLs. Mount points **must** start with a slash (`/`) but may not end with one.
 
+This configuration can typically be found in the `helix-fstab.yaml` file.
+
+The name and format are inspired by the [UNIX file system table](https://en.wikipedia.org/wiki/Fstab).
+
 
 | Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                    |
 | :------------------ | ---------- | -------------- | ------------ | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------- |
@@ -14,6 +18,17 @@ Defines a mapping between mount points and source URLs. Mount points **must** st
 ## FSTab (Mount Points) Type
 
 `object` ([FSTab (Mount Points)](fstab.md))
+
+## FSTab (Mount Points) Examples
+
+```yaml
+mountpoints:
+  /ms/docs: 'https://adobe.sharepoint.com/sites/docs'
+  /ms: 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog'
+  /gd: 'https://drive.google.com/drive/u/0/folders/123456789'
+  /foo: 'https://localhost:4502'
+
+```
 
 # FSTab (Mount Points) Properties
 

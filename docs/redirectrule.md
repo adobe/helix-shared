@@ -40,12 +40,14 @@ A URL path or regular expression to match the path of a URL. It can contain capt
 
 ### from Examples
 
-```json
-"/old"
+```yaml
+/old
+
 ```
 
-```json
-"/old/(.*)\\.php$"
+```yaml
+/old/(.*)\.php$
+
 ```
 
 ## to
@@ -66,10 +68,12 @@ A replacement string that replaces matched URLs found in `from`.
 
 ### to Examples
 
-```json
-"/new"
+```yaml
+/new
+
 ```
 
-```json
-"/new/$1.html"
+```yaml
+/new/$1.html
+
 ```
