@@ -17,10 +17,12 @@ A URL path or regular expression to match the path of a URL. It can contain capt
 
 ## from Examples
 
-```json
-"/old"
+```yaml
+/old
+
 ```
 
-```json
-"/old/(.*)\\.php$"
+```yaml
+/old/(.*)\.php$
+
 ```
