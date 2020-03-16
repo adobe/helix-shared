@@ -12,6 +12,13 @@
 [![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/helix-shared.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/helix-shared) [![Greenkeeper badge](https://badges.greenkeeper.io/adobe/helix-shared.svg)](https://greenkeeper.io/)
 [![Known Vulnerabilities](https://snyk.io/test/github/adobe/helix-shared/badge.svg?targetFile=package.json)](https://snyk.io/test/github/adobe/helix-shared?targetFile=package.json)
 
+## Helix Configuration Files
+
+- [`helix-fstab.yaml`](./docs/fstab.md): maps paths to source URLs, use this to pull content from sources other than GitHub
+- [`helix-config.yaml`](./docs/config.md): defines Strains (variants) of a Helix site, use this to create "environments", tests, or other variants
+- [`helix-query.yaml`](./docs/indexconfig.md): define what can be indexed and queried in a Helix site
+- [`helix-markup.yaml`](./docs/markup.md): define what Markdown should generate which HTML, use this to tweak the HTML output
+
 ## Usage
 
 * [API Documentation](docs/API.md)
