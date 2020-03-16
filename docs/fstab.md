@@ -15,6 +15,17 @@ Defines a mapping between mount points and source URLs. Mount points **must** st
 
 `object` ([FSTab (Mount Points)](fstab.md))
 
+## FSTab (Mount Points) Examples
+
+```yaml
+mountpoints:
+  /ms/docs: 'https://adobe.sharepoint.com/sites/docs'
+  /ms: 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog'
+  /gd: 'https://drive.google.com/drive/u/0/folders/123456789'
+  /foo: 'https://localhost:4502'
+
+```
+
 # FSTab (Mount Points) Properties
 
 | Property                    | Type     | Required | Nullable       | Defined by                                                                                                                     |
