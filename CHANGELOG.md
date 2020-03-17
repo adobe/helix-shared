@@ -1,3 +1,10 @@
+## [6.0.4](https://github.com/adobe/helix-shared/compare/v6.0.3...v6.0.4) (2020-03-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yaml to v1.8.2 ([#263](https://github.com/adobe/helix-shared/issues/263)) ([7e1d879](https://github.com/adobe/helix-shared/commit/7e1d879a32afb400647c3d416f5b94bbbf22cf8d))
+
 ## [6.0.3](https://github.com/adobe/helix-shared/compare/v6.0.2...v6.0.3) (2020-03-09)
 
 
