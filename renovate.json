@@ -40,6 +40,11 @@
       "patch": {
         "automerge": true
       }
+    },
+    {
+      "datasources": ["orb"],
+      "updateTypes": ["patch", "minor"],
+      "automerge": true
     }
   ]
 }
