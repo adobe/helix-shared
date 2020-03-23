@@ -1,3 +1,10 @@
+## [6.0.5](https://github.com/adobe/helix-shared/compare/v6.0.4...v6.0.5) (2020-03-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to v9 ([7813516](https://github.com/adobe/helix-shared/commit/78135169acf1dc1dac69815c1f77ad0bf46acccd))
+
 ## [6.0.4](https://github.com/adobe/helix-shared/compare/v6.0.3...v6.0.4) (2020-03-17)
 
 
