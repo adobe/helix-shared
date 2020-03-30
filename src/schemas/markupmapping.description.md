@@ -105,7 +105,7 @@ markup:
 
 ### On the Markdown abstract tree
 
-As an alternatie, it is also possible to directly operate on the Markdown abstract tree before it is converted to HTML. This is especially useful if you are heavily modifying the markup via the `*.pre.js` and need to already annotate your tree before processing. The `match` property takes a CSS like selector, but instead of DOM elements, you are targeting [MDAST nodes](https://github.com/syntax-tree/mdast#nodes).
+As an alternative, it is also possible to directly operate on the Markdown abstract syntax tree before it is converted to HTML. This is especially useful if you are heavily modifying the markup via the `*.pre.js` and need to already annotate your tree before processing. The `match` property takes a CSS like selector, but instead of DOM elements, you are targeting [MDAST nodes](https://github.com/syntax-tree/mdast#nodes).
 
 #### Adding a class
 
