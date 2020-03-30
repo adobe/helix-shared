@@ -27,7 +27,15 @@
     },
     "match": {
       "type": "string",
-      "description": "A CSS selector expression selecting the nodes that should get processed"
+      "description": "A CSS selector expression selecting the nodes that should get processed",
+      "examples": [
+        "p",
+        "p>img",
+        "h1+p",
+        "paragraph",
+        "paragraph>image",
+        "heading+paragraph"
+      ]
     },
     "type": {
       "type": "string",
@@ -40,7 +48,7 @@
       "examples": [
         "div>ul>li",
         "div+p+bq",
-        "div+div>p>span+em "
+        "div+div>p>span+em"
       ]
     },
     "classnames": {
