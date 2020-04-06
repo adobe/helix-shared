@@ -13,4 +13,3 @@ jobs:
         uses: adobe-rnd/github-semantic-release-comment-action@master
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          user: github-actions
