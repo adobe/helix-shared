@@ -59,7 +59,9 @@
         "ref": "master",
         "repo": "project-helix.io"
       },
-      "condition": "",
+      "condition": {
+        "url": "HTTPs://client.project-helix.io"
+      },
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -92,11 +94,9 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-      "url": "https://client.project-helix.io/",
       "urls": [
         "https://client.project-helix.io/index.html",
-        "https://client.project-helix.io/README.html",
-        "https://client.project-helix.io/"
+        "https://client.project-helix.io/README.html"
       ]
     },
     {
@@ -110,7 +110,9 @@
         "ref": "master",
         "repo": "project-helix.io"
       },
-      "condition": "",
+      "condition": {
+        "url": "https://pipeline.project-helix.io"
+      },
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -143,13 +145,12 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-      "url": "https://pipeline.project-helix.io/",
-      "urls": [
-        "https://pipeline.project-helix.io/"
-      ]
+      "urls": []
     },
     {
-      "condition": "",
+      "condition": {
+        "url": "https://proxy.project-helix.io"
+      },
       "name": "proxy",
       "origin": {
         "path": "/",
@@ -173,10 +174,7 @@
         "location": ""
       },
       "sticky": false,
-      "url": "https://proxy.project-helix.io/",
-      "urls": [
-        "https://proxy.project-helix.io/"
-      ]
+      "urls": []
     },
     {
       "condition": "",

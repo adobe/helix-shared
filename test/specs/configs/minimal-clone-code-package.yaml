@@ -29,6 +29,7 @@ strains:
 
   - name: clone
     <<: *basestrain
-    url: https://www.test.com/
+    condition:
+      url: https://www.test.com/
     code: https://github.com/adobe/helix-test.git#master
     package: bfbde5fbfbde5fbfbde5f

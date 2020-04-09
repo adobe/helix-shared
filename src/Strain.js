@@ -13,7 +13,6 @@
 const URI = require('uri-js');
 const YAML = require('yaml');
 const { YAMLMap, Pair } = require('yaml/types');
-const log = require('@adobe/helix-log');
 
 const GitUrl = require('./GitUrl.js');
 const Origin = require('./Origin.js');
@@ -22,12 +21,6 @@ const Performance = require('./Performance.js');
 const Redirect = require('./Redirect.js');
 const Condition = require('../src/Condition.js');
 const utils = require('./utils.js');
-
-/**
- * Flags indicating whether deprecation warning were shown.
- */
-let urlOverridesCondition;
-let urlIsDeprecated;
 
 /**
  * Strain
@@ -57,13 +50,7 @@ class Strain {
     this._condition = cfg.condition ? new Condition(cfg.condition) : null;
 
     if (cfg.url) {
-      if (cfg.condition && !urlOverridesCondition) {
-        log.warn('Property url overrides property condition, use just a condition instead.');
-        urlOverridesCondition = 1;
-      } else if (!urlIsDeprecated) {
-        log.info(`Property url is deprecated, use a condition instead:\ncondition:\n  url: ${cfg.url}`);
-        urlIsDeprecated = 1;
-      }
+      throw new Error('url property is no longer supported.');
     }
 
     // when `sticky` is not set
@@ -75,13 +62,7 @@ class Strain {
     this._redirects = (Array.isArray(cfg.redirects) ? cfg.redirects : [])
       .map((r) => new Redirect(r));
 
-    // todo: I assume this will go into the new condition language
-    // todo: if not, I would only have 1 property `url` that can be single or multi valued
-    this._url = cfg.url ? URI.normalize(cfg.url) : '';
     this._urls = new Set(Array.isArray(cfg.urls) ? cfg.urls.map(URI.normalize) : []);
-    if (this._url) {
-      this._urls.add(this._url);
-    }
     this._params = Array.isArray(cfg.params) ? cfg.params : [];
     this._yamlNode = null;
     // define them initially, and clear for alias node
@@ -96,7 +77,6 @@ class Strain {
       'perf',
       'condition',
       'sticky',
-      'url',
       'urls',
       'params',
       'redirects',
@@ -111,10 +91,6 @@ class Strain {
       strain._ownProperties.add('directoryIndex');
     }
     return strain;
-  }
-
-  get url() {
-    return this._url;
   }
 
   get urls() {
@@ -250,9 +226,6 @@ class Strain {
       perf: this.perf.toJSON(opts),
       urls: this.urls,
     };
-    if (this.url) {
-      json.url = this.url;
-    }
     if (this.params.length > 0) {
       json.params = this.params;
     }
