@@ -21,7 +21,8 @@ strains:
 
   client:
     <<: *default
-    url: HTTPs://client.project-helix.io
+    condition:
+      url: HTTPs://client.project-helix.io
     urls:
       - https://client.project-helix.io/index.html
       - https://client.project-helix.io/README.html
@@ -33,7 +34,8 @@ strains:
 
   pipeline:
     <<: *default
-    url: https://pipeline.project-helix.io
+    condition:
+      url: https://pipeline.project-helix.io
     content:
       repo: hypermedia-pipeline
       ref: master
@@ -41,7 +43,8 @@ strains:
 
   proxy:
     origin: https://www.adobe.io/
-    url: https://proxy.project-helix.io
+    condition:
+      url: https://proxy.project-helix.io
 
   proxy-detailed:
     origin:
