@@ -1,3 +1,17 @@
+# [7.0.0](https://github.com/adobe/helix-shared/compare/v6.0.5...v7.0.0) (2020-04-14)
+
+
+### Bug Fixes
+
+* **strain:** remove url property ([#271](https://github.com/adobe/helix-shared/issues/271)) ([527e396](https://github.com/adobe/helix-shared/commit/527e39624fe7fb00c1237598a92df22806e3f3b4))
+
+
+### BREAKING CHANGES
+
+* **strain:** url property removed from strain, use condition instead
+
+Co-authored-by: Lars Trieloff <lars@trieloff.net>
+
 ## [6.0.5](https://github.com/adobe/helix-shared/compare/v6.0.4...v6.0.5) (2020-03-23)
 
 
