@@ -1,0 +1,8 @@
+# Assert that condition URLs with ending slashes still match as a prefix
+
+condition:
+  url: https://www.example.com/
+
+samples:
+  - uri: https://www.example.com/docs/api/index.json
+    match: true
