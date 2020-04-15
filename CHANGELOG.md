@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/adobe/helix-shared/compare/v7.0.0...v7.0.1) (2020-04-15)
+
+
+### Bug Fixes
+
+* **condition:** prefix match fails if already contains trailing slash ([#275](https://github.com/adobe/helix-shared/issues/275)) ([c2fff9a](https://github.com/adobe/helix-shared/commit/c2fff9a9eb8feff484db3fb6f1c7a0af82aaebd8))
+
 # [7.0.0](https://github.com/adobe/helix-shared/compare/v6.0.5...v7.0.0) (2020-04-14)
 
 
