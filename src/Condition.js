@@ -289,7 +289,8 @@ class URLCondition extends PropertyCondition {
   }
 
   prefixMatch(actual, prefix) {
-    if (actual === prefix || actual.startsWith(`${prefix}/`)) {
+    const dir = prefix.replace(/\/+$/, '');
+    if (actual === prefix || actual.startsWith(`${dir}/`)) {
       const { path } = this._uri;
       return path !== '/' ? { baseURL: path } : true;
     }
