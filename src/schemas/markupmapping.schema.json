@@ -47,13 +47,28 @@
             "paragraph>image",
             "heading+paragraph"
           ]
+        },
+        {
+          "type": "string",
+          "title": "URL Pattern Match Expression",
+          "description": "An [Express-like](https://expressjs.com/en/guide/routing.html) path expression for selecting URL patterns that will apply the changes to the `body` element.",
+          "examples": [
+            "/about",
+            "/authors/:name",
+            "/posts/(\\d\\d\\d\\d)/(\\d\\d)/:title"
+          ]
         }
       ]
     },
     "type": {
       "type": "string",
-      "enum": ["html", "markdown"],
-      "default": "html"
+      "enum": ["html", "markdown", "url"],
+      "default": "html",
+      "meta:enum": {
+        "html": "Match against the generated DOM tree",
+        "markdown": "Match against the source MDAST tree",
+        "url": "Match against the request URL"
+      }
     },
     "wrap": {
       "type": "string",
