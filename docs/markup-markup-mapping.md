@@ -20,7 +20,7 @@ https://ns.adobe.com/helix/shared/markupmapping#/additionalProperties
 | Property                  | Type     | Required | Nullable       | Defined by                                                                                                                             |
 | :------------------------ | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
 | [name](#name)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-name.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/name")             |
-| [match](#match)           | `string` | Required | cannot be null | [Markup Mapping](markupmapping-properties-match.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/match")           |
+| [match](#match)           | Merged   | Required | cannot be null | [Markup Mapping](markupmapping-properties-match.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/match")           |
 | [type](#type)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-type.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/type")             |
 | [wrap](#wrap)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-wrap.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/wrap")             |
 | [classnames](#classnames) | `array`  | Optional | cannot be null | [Markup Mapping](markupmapping-properties-classnames.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/classnames") |
@@ -44,19 +44,24 @@ The (optional) name of the mapping. The name is normative only, and can be used 
 
 ## match
 
-A CSS selector expression selecting the nodes that should get processed
+
 
 
 `match`
 
 -   is required
--   Type: `string`
+-   Type: `string` ([Details](markupmapping-properties-match.md))
 -   cannot be null
 -   defined in: [Markup Mapping](markupmapping-properties-match.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/match")
 
 ### match Type
 
-`string`
+`string` ([Details](markupmapping-properties-match.md))
+
+one (and only one) of
+
+-   [DOM Match Expression](markupmapping-properties-match-oneof-dom-match-expression.md "check type definition")
+-   [MDAST Match Expression](markupmapping-properties-match-oneof-mdast-match-expression.md "check type definition")
 
 ## type
 
@@ -120,7 +125,7 @@ div+p+bq
 ```
 
 ```yaml
-'div+div>p>span+em '
+div+div>p>span+em
 
 ```
 
