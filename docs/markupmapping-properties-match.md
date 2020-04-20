@@ -20,3 +20,4 @@ one (and only one) of
 -   [DOM Match Expression](markupmapping-properties-match-oneof-dom-match-expression.md "check type definition")
 -   [MDAST Match Expression](markupmapping-properties-match-oneof-mdast-match-expression.md "check type definition")
 -   [URL Pattern Match Expression](markupmapping-properties-match-oneof-url-pattern-match-expression.md "check type definition")
+-   [Content Intelligence Match Expression](markupmapping-properties-match-oneof-content-intelligence-match-expression.md "check type definition")

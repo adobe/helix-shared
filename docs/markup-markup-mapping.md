@@ -63,6 +63,7 @@ one (and only one) of
 -   [DOM Match Expression](markupmapping-properties-match-oneof-dom-match-expression.md "check type definition")
 -   [MDAST Match Expression](markupmapping-properties-match-oneof-mdast-match-expression.md "check type definition")
 -   [URL Pattern Match Expression](markupmapping-properties-match-oneof-url-pattern-match-expression.md "check type definition")
+-   [Content Intelligence Match Expression](markupmapping-properties-match-oneof-content-intelligence-match-expression.md "check type definition")
 
 ## type
 
@@ -84,11 +85,12 @@ one (and only one) of
 
 **enum**: the value of this property must be equal to one of the following values:
 
-| Value        | Explanation                          |
-| :----------- | ------------------------------------ |
-| `"html"`     | Match against the generated DOM tree |
-| `"markdown"` | Match against the source MDAST tree  |
-| `"url"`      | Match against the request URL        |
+| Value        | Explanation                                    |
+| :----------- | ---------------------------------------------- |
+| `"html"`     | Match against the generated DOM tree           |
+| `"markdown"` | Match against the source MDAST tree            |
+| `"url"`      | Match against the request URL                  |
+| `"content"`  | Use content intelligence matching for sections |
 
 ### type Default Value
 

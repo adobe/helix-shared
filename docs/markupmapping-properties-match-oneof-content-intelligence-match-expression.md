@@ -1,35 +1,53 @@
-# Untitled string in Markup Mapping Schema
+# Content Intelligence Match Expression Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/markupmapping#/properties/type
+https://ns.adobe.com/helix/shared/markupmapping#/properties/match/oneOf/3
 ```
 
-
+Use a [Content Intelligence](https://github.com/adobe/helix-pipeline/blob/master/README.md#infer-content-types-with-utilstypes) expression for selecting sections in MDAST that have the specified order of children.
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
 | :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
 
-## type Type
+## 3 Type
 
-`string`
+`string` ([Content Intelligence Match Expression](markupmapping-properties-match-oneof-content-intelligence-match-expression.md))
 
-## type Constraints
+## 3 Examples
 
-**enum**: the value of this property must be equal to one of the following values:
+```yaml
+^heading
 
-| Value        | Explanation                                    |
-| :----------- | ---------------------------------------------- |
-| `"html"`     | Match against the generated DOM tree           |
-| `"markdown"` | Match against the source MDAST tree            |
-| `"url"`      | Match against the request URL                  |
-| `"content"`  | Use content intelligence matching for sections |
+```
 
-## type Default Value
+```yaml
+paragraph$
 
-The default value is:
+```
 
-```json
-"html"
+```yaml
+heading image+
+
+```
+
+```yaml
+heading? image
+
+```
+
+```yaml
+heading paragraph* image
+
+```
+
+```yaml
+(paragraph|list)
+
+```
+
+```yaml
+^heading (image paragraph)+$
+
 ```
