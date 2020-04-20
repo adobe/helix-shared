@@ -57,17 +57,32 @@
             "/authors/:name",
             "/posts/(\\d\\d\\d\\d)/(\\d\\d)/:title"
           ]
+        },
+        {
+          "type": "string",
+          "title": "Content Intelligence Match Expression",
+          "description": "Use a [Content Intelligence](https://github.com/adobe/helix-pipeline/blob/master/README.md#infer-content-types-with-utilstypes) expression for selecting sections in MDAST that have the specified order of children.",
+          "examples": [
+            "^heading",
+            "paragraph$",
+            "heading image+",
+            "heading? image",
+            "heading paragraph* image",
+            "(paragraph|list)",
+            "^heading (image paragraph)+$"
+          ]
         }
       ]
     },
     "type": {
       "type": "string",
-      "enum": ["html", "markdown", "url"],
+      "enum": ["html", "markdown", "url", "content"],
       "default": "html",
       "meta:enum": {
         "html": "Match against the generated DOM tree",
         "markdown": "Match against the source MDAST tree",
-        "url": "Match against the request URL"
+        "url": "Match against the request URL",
+        "content": "Use content intelligence matching for sections"
       }
     },
     "wrap": {
