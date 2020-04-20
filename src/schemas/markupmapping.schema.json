@@ -27,7 +27,7 @@
     },
     "match": {
       "type": "string",
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string",
           "title": "DOM Match Expression",
