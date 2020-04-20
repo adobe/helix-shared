@@ -27,14 +27,27 @@
     },
     "match": {
       "type": "string",
-      "description": "A CSS selector expression selecting the nodes that should get processed",
-      "examples": [
-        "p",
-        "p>img",
-        "h1+p",
-        "paragraph",
-        "paragraph>image",
-        "heading+paragraph"
+      "oneOf": [
+        {
+          "type": "string",
+          "title": "DOM Match Expression",
+          "description": "A CSS selector expression selecting the DOM nodes that should get processed",
+          "examples": [
+            "p",
+            "p>img",
+            "h1+p"
+          ]
+        },
+        {
+          "type": "string",
+          "title": "MDAST Match Expression",
+          "description": "A CSS selector expression selecting the Markdown nodes that should get processed",
+          "examples": [
+            "paragraph",
+            "paragraph>image",
+            "heading+paragraph"
+          ]
+        }
       ]
     },
     "type": {
