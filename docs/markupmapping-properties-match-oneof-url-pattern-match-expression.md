@@ -1,34 +1,33 @@
-# Untitled string in Markup Mapping Schema
+# URL Pattern Match Expression Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/markupmapping#/properties/type
+https://ns.adobe.com/helix/shared/markupmapping#/properties/match/oneOf/2
 ```
 
-
+An [Express-like](https://expressjs.com/en/guide/routing.html) path expression for selecting URL patterns that will apply the changes to the `body` element.
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
 | :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
 
-## type Type
+## 2 Type
 
-`string`
+`string` ([URL Pattern Match Expression](markupmapping-properties-match-oneof-url-pattern-match-expression.md))
 
-## type Constraints
+## 2 Examples
 
-**enum**: the value of this property must be equal to one of the following values:
+```yaml
+/about
 
-| Value        | Explanation                          |
-| :----------- | ------------------------------------ |
-| `"html"`     | Match against the generated DOM tree |
-| `"markdown"` | Match against the source MDAST tree  |
-| `"url"`      | Match against the request URL        |
+```
 
-## type Default Value
+```yaml
+'/authors/:name'
 
-The default value is:
+```
 
-```json
-"html"
+```yaml
+'/posts/(\d\d\d\d)/(\d\d)/:title'
+
 ```

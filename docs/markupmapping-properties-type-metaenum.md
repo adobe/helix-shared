@@ -1,7 +1,7 @@
-# Untitled string in Markup Mapping Schema
+# Untitled undefined type in Markup Mapping Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/markupmapping#/properties/type
+https://ns.adobe.com/helix/shared/markupmapping#/properties/type/meta:enum
 ```
 
 
@@ -11,24 +11,6 @@ https://ns.adobe.com/helix/shared/markupmapping#/properties/type
 | :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
 
-## type Type
+## meta:enum Type
 
-`string`
-
-## type Constraints
-
-**enum**: the value of this property must be equal to one of the following values:
-
-| Value        | Explanation                          |
-| :----------- | ------------------------------------ |
-| `"html"`     | Match against the generated DOM tree |
-| `"markdown"` | Match against the source MDAST tree  |
-| `"url"`      | Match against the request URL        |
-
-## type Default Value
-
-The default value is:
-
-```json
-"html"
-```
+unknown
