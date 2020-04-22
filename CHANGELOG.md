@@ -1,3 +1,17 @@
+# [7.1.0](https://github.com/adobe/helix-shared/compare/v7.0.1...v7.1.0) (2020-04-22)
+
+
+### Bug Fixes
+
+* **deps:** npm audit fix ([f6c28f5](https://github.com/adobe/helix-shared/commit/f6c28f5d7d474c01421e8c501fe2550e4b770409))
+* **markup:** relax markup mapping schema ([fd62ae0](https://github.com/adobe/helix-shared/commit/fd62ae0689932e469f1e8e0d9eaf4cd45b938f41))
+
+
+### Features
+
+* **markup:** add support for content intelligence matching expressions ([16a0916](https://github.com/adobe/helix-shared/commit/16a0916f1e2062528271b34bebd51b212bca863a)), closes [#278](https://github.com/adobe/helix-shared/issues/278)
+* **markup:** add URL matching type ([1902279](https://github.com/adobe/helix-shared/commit/19022790a8ea7eb333f126ab8d4434868ee7c49b)), closes [#279](https://github.com/adobe/helix-shared/issues/279)
+
 ## [7.0.1](https://github.com/adobe/helix-shared/compare/v7.0.0...v7.0.1) (2020-04-15)
 
 
