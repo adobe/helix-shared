@@ -1,33 +1,33 @@
-# Untitled string in Markup Mapping Schema
+# URL Pattern Match Expression Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/markupmapping#/properties/wrap
+https://ns.adobe.com/helix/shared/markupmapping#/properties/match/oneOf/2
 ```
 
-Add the following HTML tags before the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
+An [Express-like](https://expressjs.com/en/guide/routing.html) path expression for selecting URL patterns that will apply the changes to the `body` element.
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
 | :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
 
-## wrap Type
+## 2 Type
 
-`string`
+`string` ([URL Pattern Match Expression](markupmapping-properties-match-oneof-url-pattern-match-expression.md))
 
-## wrap Examples
+## 2 Examples
 
 ```yaml
-div>ul>li
+/about
 
 ```
 
 ```yaml
-div+p+bq
+'/authors/:name'
 
 ```
 
 ```yaml
-div+div>p>span+em
+'/posts/(\d\d\d\d)/(\d\d)/:title'
 
 ```

@@ -1,33 +1,33 @@
-# Untitled string in Markup Mapping Schema
+# DOM Match Expression Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/markupmapping#/properties/wrap
+https://ns.adobe.com/helix/shared/markupmapping#/properties/match/oneOf/0
 ```
 
-Add the following HTML tags before the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
+A CSS selector expression selecting the DOM nodes that should get processed
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
 | :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
 
-## wrap Type
+## 0 Type
 
-`string`
+`string` ([DOM Match Expression](markupmapping-properties-match-oneof-dom-match-expression.md))
 
-## wrap Examples
+## 0 Examples
 
 ```yaml
-div>ul>li
+p
 
 ```
 
 ```yaml
-div+p+bq
+p>img
 
 ```
 
 ```yaml
-div+div>p>span+em
+h1+p
 
 ```

@@ -1,33 +1,33 @@
-# Untitled string in Markup Mapping Schema
+# MDAST Match Expression Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/markupmapping#/properties/wrap
+https://ns.adobe.com/helix/shared/markupmapping#/properties/match/oneOf/1
 ```
 
-Add the following HTML tags before the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
+A CSS selector expression selecting the Markdown nodes that should get processed
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
 | :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
 
-## wrap Type
+## 1 Type
 
-`string`
+`string` ([MDAST Match Expression](markupmapping-properties-match-oneof-mdast-match-expression.md))
 
-## wrap Examples
+## 1 Examples
 
 ```yaml
-div>ul>li
+paragraph
 
 ```
 
 ```yaml
-div+p+bq
+paragraph>image
 
 ```
 
 ```yaml
-div+div>p>span+em
+heading+paragraph
 
 ```

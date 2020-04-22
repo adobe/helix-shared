@@ -4,7 +4,7 @@
 
 -   [Conditions](./conditions.md "A condition expression") – `https://ns.adobe.com/helix/shared/conditions`
 -   [Configuration](./markupconfig.md "A Markup Configuration File for Project Helix") – `https://ns.adobe.com/helix/shared/markupconfig`
--   [Configuration](./config.md "The helix-config") – `https://ns.adobe.com/helix/shared/config`
+-   [Configuration](./config.md "The Strains configuration for a Project Helix website") – `https://ns.adobe.com/helix/shared/config`
 -   [FSTab (Mount Points)](./fstab.md "Defines a mapping between mount points and source URLs") – `https://ns.adobe.com/helix/shared/fstab`
 -   [Git URL](./giturl.md "Representation of the fragments of a Git URL") – `https://ns.adobe.com/helix/shared/giturl`
 -   [Git URL](./staticgiturl.md "Representation of the fragments of a Git URL") – `https://ns.adobe.com/helix/shared/staticgiturl`

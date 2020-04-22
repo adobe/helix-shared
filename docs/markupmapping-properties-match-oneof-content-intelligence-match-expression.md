@@ -1,33 +1,53 @@
-# Untitled string in Markup Mapping Schema
+# Content Intelligence Match Expression Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/markupmapping#/properties/wrap
+https://ns.adobe.com/helix/shared/markupmapping#/properties/match/oneOf/3
 ```
 
-Add the following HTML tags before the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
+Use a [Content Intelligence](https://github.com/adobe/helix-pipeline/blob/master/README.md#infer-content-types-with-utilstypes) expression for selecting sections in MDAST that have the specified order of children.
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
 | :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
 
-## wrap Type
+## 3 Type
 
-`string`
+`string` ([Content Intelligence Match Expression](markupmapping-properties-match-oneof-content-intelligence-match-expression.md))
 
-## wrap Examples
+## 3 Examples
 
 ```yaml
-div>ul>li
+^heading
 
 ```
 
 ```yaml
-div+p+bq
+paragraph$
 
 ```
 
 ```yaml
-div+div>p>span+em
+heading image+
+
+```
+
+```yaml
+heading? image
+
+```
+
+```yaml
+heading paragraph* image
+
+```
+
+```yaml
+(paragraph|list)
+
+```
+
+```yaml
+^heading (image paragraph)+$
 
 ```

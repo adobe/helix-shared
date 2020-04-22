@@ -38,14 +38,6 @@
 </dd>
 </dl>
 
-## Members
-
-<dl>
-<dt><a href="#urlOverridesCondition">urlOverridesCondition</a></dt>
-<dd><p>Flags indicating whether deprecation warning were shown.</p>
-</dd>
-</dl>
-
 ## Constants
 
 <dl>
@@ -698,12 +690,6 @@ Creates the strains from a yaml node
 | --- | --- |
 | node | <code>YAMLSeq</code> | 
 
-<a name="urlOverridesCondition"></a>
-
-## urlOverridesCondition
-Flags indicating whether deprecation warning were shown.
-
-**Kind**: global variable  
 <a name="configMapper"></a>
 
 ## configMapper
