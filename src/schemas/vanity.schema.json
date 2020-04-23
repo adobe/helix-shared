@@ -14,7 +14,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Vanity URL mapping",
   "type": "object",
-  "additionalProperties": false,
   "properties": {
     "source": {
       "type": "string",
