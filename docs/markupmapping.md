@@ -315,12 +315,12 @@ The (optional) name of the mapping. The name is normative only, and can be used 
 
 `string` ([Details](markupmapping-properties-match.md))
 
-one (and only one) of
+any of
 
--   [DOM Match Expression](markupmapping-properties-match-oneof-dom-match-expression.md "check type definition")
--   [MDAST Match Expression](markupmapping-properties-match-oneof-mdast-match-expression.md "check type definition")
--   [URL Pattern Match Expression](markupmapping-properties-match-oneof-url-pattern-match-expression.md "check type definition")
--   [Content Intelligence Match Expression](markupmapping-properties-match-oneof-content-intelligence-match-expression.md "check type definition")
+-   [DOM Match Expression](markupmapping-properties-match-anyof-dom-match-expression.md "check type definition")
+-   [MDAST Match Expression](markupmapping-properties-match-anyof-mdast-match-expression.md "check type definition")
+-   [URL Pattern Match Expression](markupmapping-properties-match-anyof-url-pattern-match-expression.md "check type definition")
+-   [Content Intelligence Match Expression](markupmapping-properties-match-anyof-content-intelligence-match-expression.md "check type definition")
 
 ## type
 
