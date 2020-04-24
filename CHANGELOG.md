@@ -1,3 +1,12 @@
+# [7.2.0](https://github.com/adobe/helix-shared/compare/v7.1.0...v7.2.0) (2020-04-24)
+
+
+### Features
+
+* **redirects:** add RedirectConfig class for loading and parsing of redirect config ([eabc2d9](https://github.com/adobe/helix-shared/commit/eabc2d9018a94e94807f4c33b1bf55c3abce927d)), closes [#282](https://github.com/adobe/helix-shared/issues/282)
+* **redirects:** provide redirects handler that can list redirect rules as appropriate classes ([de36f38](https://github.com/adobe/helix-shared/commit/de36f382c9d860c28a55239bcd41a5f019f47616)), closes [#282](https://github.com/adobe/helix-shared/issues/282)
+* **schema:** define schema for redirects and vanity url extraction ([f2b7f2d](https://github.com/adobe/helix-shared/commit/f2b7f2d72107d20e554a0f350ece0a8a14ea38b1)), closes [#282](https://github.com/adobe/helix-shared/issues/282)
+
 # [7.1.0](https://github.com/adobe/helix-shared/compare/v7.0.1...v7.1.0) (2020-04-22)
 
 
