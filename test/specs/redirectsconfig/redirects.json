@@ -1,0 +1,25 @@
+{
+  "redirects": [
+    "https://adobe.sharepoint.com/sites/TheBlog/_layouts/15/guestaccess.aspx?share=ESR1N29Z7HpCh1Zfs_0YS_gB4gVSuKyWRut-kNcHVSvkew&email=helix%40adobe.com&e=hx0OUl",
+    "https://docs.google.com/spreadsheets/d/1IX0g5P74QnHPR3GW1AMCdTk_-m954A-FKZRT2uOZY7k/edit?ouid=107837958797411838063&usp=sheets_home&ths=true",
+    "https://raw.githubusercontent.com/adobe/helix-demo/master/config/redirects.csv",
+    {
+      "from": "(.*)\\.php",
+      "to": "$1.html"
+    },
+    {
+      "from": "/content/dam/(.*)$",
+      "to": "/htdocs/$1"
+    }
+  ],
+  "vanity": {
+    "canonical": {
+      "fetch": "https://${repo}-${owner}.project-helix.page/${path}",
+      "name": "canonical",
+      "select": "link[@rel=canonical]",
+      "source": "html",
+      "value": "${attribute(href)}\n"
+    }
+  },
+  "version": 1
+}
