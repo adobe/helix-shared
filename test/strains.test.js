@@ -267,7 +267,7 @@ describe('Strains test', () => {
         max_conn: 200,
         name: 'Proxywwwadobeio3a0a',
         port: 443,
-        shield: 'iad-va-us',
+        shield: 'bwi-va-us',
         ssl_cert_hostname: 'www.adobe.io',
         use_ssl: true,
         weight: 100,
