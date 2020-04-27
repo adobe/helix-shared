@@ -156,7 +156,7 @@
         "max_conn": 200,
         "name": "Proxywwwadobeio3a0a",
         "port": 443,
-        "shield": "iad-va-us",
+        "shield": "bwi-va-us",
         "ssl_cert_hostname": "www.adobe.io",
         "use_ssl": true,
         "weight": 100
@@ -186,7 +186,7 @@
         "max_conn": 200,
         "name": "Proxy1921680132fd",
         "port": 80,
-        "shield": "iad-va-us",
+        "shield": "bwi-va-us",
         "ssl_cert_hostname": "192.168.0.1",
         "use_ssl": false,
         "weight": 100
