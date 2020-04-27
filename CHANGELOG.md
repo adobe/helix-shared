@@ -1,3 +1,10 @@
+## [7.2.1](https://github.com/adobe/helix-shared/compare/v7.2.0...v7.2.1) (2020-04-27)
+
+
+### Bug Fixes
+
+* **proxy:** use non-deprecated backend for proxy strains ([f2a0522](https://github.com/adobe/helix-shared/commit/f2a0522c66c17d74d56f6d3d152e2b0850283a80)), closes [#285](https://github.com/adobe/helix-shared/issues/285)
+
 # [7.2.0](https://github.com/adobe/helix-shared/compare/v7.1.0...v7.2.0) (2020-04-24)
 
 
