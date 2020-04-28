@@ -50,14 +50,14 @@
     "jsdoc-to-markdown": "5.0.3",
     "jsdom": "16.2.2",
     "junit-report-builder": "1.3.3",
-    "lint-staged": "10.1.6",
-    "mocha": "7.1.1",
+    "lint-staged": "10.1.7",
+    "mocha": "7.1.2",
     "mocha-junit-reporter": "1.23.3",
     "mocha-parallel-tests": "2.3.0",
     "nock": "12.0.3",
     "nyc": "15.0.1",
     "request-promise-native": "1.0.8",
-    "semantic-release": "17.0.6"
+    "semantic-release": "17.0.7"
   },
   "lint-staged": {
     "*.js": "eslint"
