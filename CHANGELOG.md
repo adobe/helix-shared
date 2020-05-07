@@ -1,3 +1,10 @@
+# [7.3.0](https://github.com/adobe/helix-shared/compare/v7.2.1...v7.3.0) (2020-05-07)
+
+
+### Features
+
+* **utils:** Add utils for dealing with HTTP status codes in backend responses ([6697a0d](https://github.com/adobe/helix-shared/commit/6697a0d3c926a346962a468cf7615917c7b106fe))
+
 ## [7.2.1](https://github.com/adobe/helix-shared/compare/v7.2.0...v7.2.1) (2020-04-27)
 
 
