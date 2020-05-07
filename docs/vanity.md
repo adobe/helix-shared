@@ -9,7 +9,7 @@ https://ns.adobe.com/helix/shared/vanity
 
 | Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                      |
 | :------------------ | ---------- | -------------- | ------------ | :---------------- | --------------------- | ------------------- | --------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | No           | Forbidden         | Forbidden             | none                | [vanity.schema.json](vanity.schema.json "open original schema") |
+| Can be instantiated | No         | Unknown status | No           | Forbidden         | Allowed               | none                | [vanity.schema.json](vanity.schema.json "open original schema") |
 
 ## Vanity URL mapping Type
 
