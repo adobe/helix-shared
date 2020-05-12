@@ -13,8 +13,8 @@
 module.exports = {
   root: true,
   extends: '@adobe/helix',
-  'rules': {
+  rules: {
     // Allow while (true) infinite loops
-    'no-constant-condition': ["error", { "checkLoops": false }],
-  }
+    'no-constant-condition': ['error', { checkLoops: false }],
+  },
 };
