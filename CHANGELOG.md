@@ -1,3 +1,10 @@
+## [7.3.2](https://github.com/adobe/helix-shared/compare/v7.3.1...v7.3.2) (2020-05-14)
+
+
+### Bug Fixes
+
+* **proxy:** empty objects should be cast into arrays too, if they have a length ([72741f3](https://github.com/adobe/helix-shared/commit/72741f3769d0c31b021778f95f2cff02965571c0))
+
 ## [7.3.1](https://github.com/adobe/helix-shared/compare/v7.3.0...v7.3.1) (2020-05-14)
 
 
