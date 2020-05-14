@@ -1,3 +1,10 @@
+## [7.3.1](https://github.com/adobe/helix-shared/compare/v7.3.0...v7.3.1) (2020-05-14)
+
+
+### Bug Fixes
+
+* **fstab:** relax fstab to allow for empty configurations ([9947afc](https://github.com/adobe/helix-shared/commit/9947afc2f230f6c4601459f67b400e573081932f))
+
 # [7.3.0](https://github.com/adobe/helix-shared/compare/v7.2.1...v7.3.0) (2020-05-07)
 
 
