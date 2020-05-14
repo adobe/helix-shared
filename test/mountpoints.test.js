@@ -24,7 +24,7 @@ const tests = [
     title: 'fails with a broken config',
     config: 'broken.yaml',
     result: null,
-    error: 'Error: data should NOT have additional properties, data should have required property \'mountpoints\'',
+    error: 'Error: data should NOT have additional properties',
   },
   {
     title: 'loads a theblog example',
@@ -35,6 +35,11 @@ const tests = [
     title: 'loads a complex example',
     config: 'complex.yaml',
     result: 'complex.json',
+  },
+  {
+    title: 'loads an empty example',
+    config: 'empty.yaml',
+    result: 'empty.json',
   },
 ];
 
