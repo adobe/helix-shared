@@ -76,6 +76,13 @@ describe('Mount Point Config Loading', () => {
     assert.equal(cfg.mountpoints[0].url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog?csf=1&e=8Znxth');
   });
 
+  it('Empty Mount Points gets properly evaluated', async () => {
+    const cfg = await new MountConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'empty.yaml'))
+      .init();
+    assert.equal(cfg.match('/nomach'), null);
+  });
+
   it('complex Mount Points gets properly evaluated', async () => {
     const cfg = await new MountConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'complex.yaml'))
