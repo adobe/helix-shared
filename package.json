@@ -45,7 +45,7 @@
     "ghooks": "2.0.4",
     "istanbul": "1.1.0-alpha.1",
     "js-yaml": "3.14.0",
-    "jsdoc-to-markdown": "5.0.3",
+    "jsdoc-to-markdown": "6.0.1",
     "jsdom": "16.2.2",
     "junit-report-builder": "2.0.0",
     "lint-staged": "10.2.7",
