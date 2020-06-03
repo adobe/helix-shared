@@ -12,6 +12,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const YAML = require('yaml');
+const cache = require('./fetchconfig/cache');
+const fetch = require('./fetchconfig/fetch');
 
 async function isFile(filePath) {
   try {
@@ -36,6 +38,33 @@ class BaseConfig {
     this._version = '';
     this._value = null;
     this._name = name;
+    this._repo = null;
+  }
+
+  /**
+   * Reset the cache with a new cache size
+   * @param {object} options cache options
+   * @param {integer} options.maxSize
+   */
+  withCache(options) {
+    cache.options(options);
+    return this;
+  }
+
+  /**
+   * Set the base repository to fetch a config from
+   * @param {string} owner username or org
+   * @param {string} repo repository
+   * @param {string} ref ref name
+   * @param {object} options options
+   * @param {object} options.headers headers to be used for HTTP request
+   * @param {string} options.headers.authorization authorization token to include
+   */
+  withRepo(owner, repo, ref, options = {}) {
+    this._repo = {
+      owner, repo, ref, options,
+    };
+    return this;
   }
 
   withJSON(obj) {
@@ -95,6 +124,14 @@ class BaseConfig {
     if (!this._source) {
       if (await this.hasFile()) {
         this._source = await fs.readFile(this.configPath, 'utf8');
+      } else if (this._repo) {
+        // fetch the config file from the repo
+        this._source = await fetch({
+          ...this._repo,
+          root: 'https://raw.githubusercontent.com',
+          name: this._name,
+          log: this._logger,
+        });
       }
     }
     if (this._source.indexOf('\t') >= 0) {

@@ -12,10 +12,84 @@
 
 /* eslint-env mocha */
 
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
+
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
 const MountConfig = require('../src/MountConfig');
+const { setupPolly } = require('./utils.js');
+
+describe('Mount Point Config Loading (from GitHub)', () => {
+  setupPolly({
+    recordIfMissing: true,
+  });
+
+  it('Retrieves Document from GitHub', async () => {
+    const config = await new MountConfig()
+      .withCache({ maxSize: 1 })
+      .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733c36')
+      .init();
+
+    const match = config.match('/');
+
+    assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
+  });
+
+  it('Retrieves Document from GitHub with Auth', async function okGithub() {
+    const { server } = this.polly;
+    let foundtoken;
+
+    server
+      .get('https://raw.githubusercontent.com/adobe/theblog/7f65c0399b1b925ececf55becd4b150c357-auth/fstab.yaml')
+      .intercept((req, res) => {
+        foundtoken = req.headers.authorization;
+        res.status(200).send(`mountpoints:
+  /: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog`);
+      });
+
+    const config = await new MountConfig()
+      .withCache({ maxSize: 1 })
+      .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c357-auth', {
+        headers: { Authorization: 'fake' },
+      })
+      .init();
+
+    const match = config.match('/');
+
+    assert.equal(foundtoken, 'fake');
+    assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
+  });
+
+  it('Missing File from GitHub treated as empty', async () => {
+    const config = await new MountConfig()
+      .withCache({ maxSize: 1 })
+      .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733-missing')
+      .init();
+
+    const match = config.match('/');
+
+    assert.equal(match, null);
+  });
+
+  it('Error from GitHub is propagated', async function okGithub() {
+    const { server } = this.polly;
+
+    server
+      .get('https://raw.githubusercontent.com/adobe/theblog/7f65c0399b1b925ececf55becd4b150c35733-broken/fstab.yaml')
+      .intercept((_, res) => res.sendStatus(503));
+
+    try {
+      await new MountConfig()
+        .withCache({ maxSize: 1 })
+        .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733-broken')
+        .init();
+      assert.fail('This should have thrown');
+    } catch (e) {
+      assert.equal(e.message, 'Unable to fetch fstab');
+    }
+  });
+});
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/mountconfigs');
 

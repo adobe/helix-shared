@@ -16,8 +16,23 @@ const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
 const RedirectConfig = require('../src/RedirectConfig');
+const { setupPolly } = require('./utils.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/redirectsconfig');
+describe('Redirects Config Loading (from GitHub)', () => {
+  setupPolly({
+    recordIfMissing: true,
+  });
+
+  it('Retrieves Document from GitHub', async () => {
+    const config = await new RedirectConfig()
+      .withCache({ maxSize: 1 })
+      .withRepo('trieloff', 'helix-demo', '4e05a4e2c7aac6dd8d5f2b6dcf05815994812d7d')
+      .init();
+
+    assert.equal(config.redirects.length, 5);
+  });
+});
 
 const tests = [
   {
