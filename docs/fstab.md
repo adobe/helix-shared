@@ -51,3 +51,11 @@ mountpoints:
 ### mountpoints Type
 
 `object` ([Details](fstab-properties-mountpoints.md))
+
+### mountpoints Default Value
+
+The default value is:
+
+```json
+{}
+```

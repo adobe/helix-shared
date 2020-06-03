@@ -1,8 +1,11 @@
 {
   "mountpoints": {
-    "/ms/docs": "https://adobe.sharepoint.com/sites/docs",
+    "/ms/docs": "https://adobe.sharepoint.com/sites/docs?fallback=default.docx",
     "/ms": "https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog",
-    "/gd": "https://drive.google.com/drive/u/0/folders/123456789",
+    "/gd": {
+      "url": "https://drive.google.com/drive/u/0/folders/123456789",
+      "fallback": "default.md"
+    },
     "/foo": "https://localhost:4502"
   }
 }

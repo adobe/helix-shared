@@ -45,12 +45,14 @@
 -   [Runtime Strain](./strains-definitions-anystrain-oneof-runtime-strain.md "A runtime strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/runtimestrain#/definitions/anystrain/oneOf/1`
 -   [Single-Value Property](./property-oneof-single-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/0`
 -   [Single-Value Property](./property-oneof-single-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/0`
--   [Untitled object in Configuration](./config-properties-definitions.md "A container for referencable objects that can be re-used elsewhere in the configuration") – `https://ns.adobe.com/helix/shared/config#/properties/definitions`
 -   [Untitled object in Configuration](./markupconfig-properties-definitions.md "A container for referencable objects that can be re-used elsewhere in the configuration") – `https://ns.adobe.com/helix/shared/markupconfig#/properties/definitions`
+-   [Untitled object in Configuration](./config-properties-definitions.md "A container for referencable objects that can be re-used elsewhere in the configuration") – `https://ns.adobe.com/helix/shared/config#/properties/definitions`
 -   [Untitled object in FSTab (Mount Points)](./fstab-properties-mountpoints.md) – `https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints`
 -   [Untitled object in Index Configuration](./indexconfig-properties-indices.md) – `https://ns.adobe.com/helix/shared/indexconfig#/properties/indices`
 -   [Untitled object in Markup Mapping](./markupmapping-properties-attribute.md "create new attributes for each key value pair below this property") – `https://ns.adobe.com/helix/shared/markupmapping#/properties/attribute`
 -   [Untitled object in Markup Mapping](./markupmapping-properties-attribute.md "create new attributes for each key value pair below this property") – `https://ns.adobe.com/helix/shared/markupmapping#/properties/attribute`
+-   [Untitled object in Mount Point](./mountpoint-oneof-1.md) – `https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1`
+-   [Untitled object in Mount Point](./mountpoint-oneof-1.md) – `https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1`
 -   [Vanity URL extractor](./redirects-properties-vanity-url-extractor.md "Configure one or multiple vanity URL extractors, each extractor is a property of this object") – `https://ns.adobe.com/helix/shared/redirects#/properties/vanity`
 -   [Vanity URL mapping](./redirects-properties-vanity-url-extractor-vanity-url-mapping.md) – `https://ns.adobe.com/helix/shared/vanity#/properties/vanity/additionalProperties`
 

@@ -90,6 +90,10 @@ match zero, one or many dom nodes in the given node to test.</p>
 <dl>
 <dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
 <dd></dd>
+<dt><a href="#cleanURL">cleanURL(m, ...specialparams)</a> ⇒ <code>object</code></dt>
+<dd><p>Cleans up the URL by removing parameters that are deemed special. These
+special parameters will be returned in the return object instead.</p>
+</dd>
 <dt><a href="#nextTick">nextTick()</a> ⇒ <code>promise</code></dt>
 <dd><p>Await the next tick;</p>
 <p>NOTE: Internally this uses setImmediate, not process.nextTick.
@@ -223,6 +227,10 @@ whitespace prefix length (number of space 0x20 characters
 at the start of the line). This prefix is simply removed
 from each line...</p>
 </dd>
+<dt><a href="#lookupBackendResponses">lookupBackendResponses(status)</a> ⇒ <code>Object</code></dt>
+<dd><p>A glorified lookup table that translates backend errors into the appropriate
+HTTP status codes and log levels for your service.</p>
+</dd>
 </dl>
 
 <a name="BaseConfig"></a>
@@ -232,6 +240,8 @@ from each line...</p>
 
 * [BaseConfig](#BaseConfig)
     * [new BaseConfig(name)](#new_BaseConfig_new)
+    * [.withCache(options)](#BaseConfig+withCache)
+    * [.withRepo(owner, repo, ref, options)](#BaseConfig+withRepo)
     * [.saveConfig()](#BaseConfig+saveConfig) ⇒ <code>Promise.&lt;void&gt;</code>
 
 <a name="new_BaseConfig_new"></a>
@@ -241,6 +251,34 @@ from each line...</p>
 | Param | Type | Description |
 | --- | --- | --- |
 | name | <code>string</code> | name of the config file, e.g. `helix-config.yaml` |
+
+<a name="BaseConfig+withCache"></a>
+
+### baseConfig.withCache(options)
+Reset the cache with a new cache size
+
+**Kind**: instance method of [<code>BaseConfig</code>](#BaseConfig)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>object</code> | cache options |
+| options.maxSize | <code>integer</code> |  |
+
+<a name="BaseConfig+withRepo"></a>
+
+### baseConfig.withRepo(owner, repo, ref, options)
+Set the base repository to fetch a config from
+
+**Kind**: instance method of [<code>BaseConfig</code>](#BaseConfig)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| owner | <code>string</code> | username or org |
+| repo | <code>string</code> | repository |
+| ref | <code>string</code> | ref name |
+| options | <code>object</code> | options |
+| options.headers | <code>object</code> | headers to be used for HTTP request |
+| options.headers.authorization | <code>string</code> | authorization token to include |
 
 <a name="BaseConfig+saveConfig"></a>
 
@@ -771,6 +809,21 @@ match zero, one or many dom nodes in the given node to test.
 | left | [<code>Strain</code>](#Strain) | the current candidate strain (can be undefined) |
 | right | [<code>Strain</code>](#Strain) | the alternative candidate strain (can be undefined) |
 
+<a name="cleanURL"></a>
+
+## cleanURL(m, ...specialparams) ⇒ <code>object</code>
+Cleans up the URL by removing parameters that are deemed special. These
+special parameters will be returned in the return object instead.
+
+**Kind**: global function  
+**Returns**: <code>object</code> - an object with a clean URL and extracted parameters  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| m | <code>object</code> | the mount point |
+| m.url | <code>string</code> | mount point URL |
+| ...specialparams | <code>string</code> | list of special parameters that should be removed from the URL and returned in the object |
+
 <a name="nextTick"></a>
 
 ## nextTick() ⇒ <code>promise</code>
@@ -992,3 +1045,16 @@ at the start of the line). This prefix is simply removed
 from each line...
 
 **Kind**: global function  
+<a name="lookupBackendResponses"></a>
+
+## lookupBackendResponses(status) ⇒ <code>Object</code>
+A glorified lookup table that translates backend errors into the appropriate
+HTTP status codes and log levels for your service.
+
+**Kind**: global function  
+**Returns**: <code>Object</code> - a pair of status code to return and log level to use in your code  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| status | <code>int</code> | the HTTP status code you've been getting from the backend |
+

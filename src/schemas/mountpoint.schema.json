@@ -14,6 +14,24 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Mount Point",
   "description": "Defines the target URL where content should be retrieved from.",
-  "type": "string",
-  "format": "uri"
+  
+  "oneOf": [
+    {
+      "type": "string",
+      "format": "uri"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "fallback": {
+          "type": "string",
+          "description": "Specifies the fallback path if the requested item cannot be found"
+        }
+      }
+    }
+  ]
 }
