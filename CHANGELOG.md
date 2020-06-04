@@ -1,3 +1,10 @@
+# [7.4.0](https://github.com/adobe/helix-shared/compare/v7.3.2...v7.4.0) (2020-06-03)
+
+
+### Features
+
+* **config:** allow initialization of all configs from github owner, repo, ref ([a25a253](https://github.com/adobe/helix-shared/commit/a25a253cc477439afafeeb652f809b4315dd97b6))
+
 ## [7.3.2](https://github.com/adobe/helix-shared/compare/v7.3.1...v7.3.2) (2020-05-14)
 
 
