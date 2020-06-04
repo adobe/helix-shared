@@ -172,13 +172,13 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m2.type, 'onedrive');
     assert.equal(m2.url, 'https://adobe.sharepoint.com/sites/docs', 'does not respect order');
     assert.equal(m2.relPath, '/different');
-    assert.equal(m2.fallback, 'default.docx');
+    assert.equal(m2.fallbackPath, 'default.docx');
 
     const m3 = cfg.match('/gd/document42');
     assert.equal(m3.type, 'google');
     assert.equal(m3.url, 'https://drive.google.com/drive/u/0/folders/123456789');
     assert.equal(m3.id, '123456789');
-    assert.equal(m3.fallback, 'default.md');
+    assert.equal(m3.fallbackPath, 'default.md');
     assert.equal(m3.relPath, '/document42');
 
     const m4 = cfg.match('/foo/en/welcome');

@@ -24,7 +24,7 @@ const mountpointSchema = require('./schemas/mountpoint.schema.json');
  * removed from the URL and returned in the object
  * @returns {object} an object with a clean URL and extracted parameters
  */
-function cleanURL(m, ...specialparams) {
+function stripQuery(m, ...specialparams) {
   const url = new URL(m.url);
   const extracted = specialparams.reduce((obj, param) => {
     if (url && url.searchParams && url.searchParams.has(param)) {
@@ -48,7 +48,7 @@ const onedriveDecorator = {
   },
   decorate(m) {
     return {
-      ...cleanURL(m, 'fallback'),
+      ...stripQuery(m, 'fallbackPath'),
       type: 'onedrive',
     };
   },
@@ -60,7 +60,7 @@ const googleDecorator = {
   },
   decorate(m) {
     return {
-      ...cleanURL(m, 'fallback'),
+      ...stripQuery(m, 'fallbackPath'),
       type: 'google',
       id: m.url.split('/').pop(),
     };

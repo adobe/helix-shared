@@ -90,7 +90,7 @@ match zero, one or many dom nodes in the given node to test.</p>
 <dl>
 <dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
 <dd></dd>
-<dt><a href="#cleanURL">cleanURL(m, ...specialparams)</a> ⇒ <code>object</code></dt>
+<dt><a href="#stripQuery">stripQuery(m, ...specialparams)</a> ⇒ <code>object</code></dt>
 <dd><p>Cleans up the URL by removing parameters that are deemed special. These
 special parameters will be returned in the return object instead.</p>
 </dd>
@@ -809,9 +809,9 @@ match zero, one or many dom nodes in the given node to test.
 | left | [<code>Strain</code>](#Strain) | the current candidate strain (can be undefined) |
 | right | [<code>Strain</code>](#Strain) | the alternative candidate strain (can be undefined) |
 
-<a name="cleanURL"></a>
+<a name="stripQuery"></a>
 
-## cleanURL(m, ...specialparams) ⇒ <code>object</code>
+## stripQuery(m, ...specialparams) ⇒ <code>object</code>
 Cleans up the URL by removing parameters that are deemed special. These
 special parameters will be returned in the return object instead.
 

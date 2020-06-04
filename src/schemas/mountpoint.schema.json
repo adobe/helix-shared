@@ -22,14 +22,17 @@
     },
     {
       "type": "object",
+      "required": [
+        "url"
+      ],
       "properties": {
         "url": {
           "type": "string",
           "format": "uri"
         },
-        "fallback": {
+        "fallbackPath": {
           "type": "string",
-          "description": "Specifies the fallback path if the requested item cannot be found"
+          "description": "Specifies the fallback path if the requested item cannot be found. The fallback path is relative to the basepath of the item originally requested, so if the requested item is `/foo/bar.md` and the `fallbackPath` is `baz.md`, then `/foo/baz.md` will be the fallback item. "
         }
       }
     }
