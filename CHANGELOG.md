@@ -1,3 +1,10 @@
+# [7.5.0](https://github.com/adobe/helix-shared/compare/v7.4.0...v7.5.0) (2020-06-08)
+
+
+### Features
+
+* **fstab:** mount points can now be objects and contain a fallback parameter ([a187b24](https://github.com/adobe/helix-shared/commit/a187b244595de3feeea578c3e77ebfcf14d04998)), closes [#305](https://github.com/adobe/helix-shared/issues/305)
+
 # [7.4.0](https://github.com/adobe/helix-shared/compare/v7.3.2...v7.4.0) (2020-06-03)
 
 
