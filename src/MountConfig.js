@@ -15,13 +15,40 @@ const { MountPointHandler } = require('./MountPointHandler');
 const fstabSchema = require('./schemas/fstab.schema.json');
 const mountpointSchema = require('./schemas/mountpoint.schema.json');
 
+/**
+ * Cleans up the URL by removing parameters that are deemed special. These
+ * special parameters will be returned in the return object instead.
+ * @param {object} m the mount point
+ * @param {string} m.url mount point URL
+ * @param  {...string} specialparams list of special parameters that should be
+ * removed from the URL and returned in the object
+ * @returns {object} an object with a clean URL and extracted parameters
+ */
+function stripQuery(m, ...specialparams) {
+  const url = new URL(m.url);
+  const extracted = specialparams.reduce((obj, param) => {
+    if (url && url.searchParams && url.searchParams.has(param)) {
+      // eslint-disable-next-line no-param-reassign
+      obj[param] = url.searchParams.get(param);
+      url.searchParams.delete(param);
+    }
+    return obj;
+  }, {});
+
+  return {
+    ...m,
+    ...extracted,
+    url: url.href,
+  };
+}
+
 const onedriveDecorator = {
   test(m) {
     return /https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/');
   },
   decorate(m) {
     return {
-      ...m,
+      ...stripQuery(m, 'fallbackPath'),
       type: 'onedrive',
     };
   },
@@ -33,7 +60,7 @@ const googleDecorator = {
   },
   decorate(m) {
     return {
-      ...m,
+      ...stripQuery(m, 'fallbackPath'),
       type: 'google',
       id: m.url.split('/').pop(),
     };

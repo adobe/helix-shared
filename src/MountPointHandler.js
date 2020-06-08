@@ -15,9 +15,13 @@ const MountPointHandler = (decorators) => ({
   get: (target, prop) => {
     const index = Number.parseInt(prop, 10);
     if (!Number.isNaN(index) && index >= 0) {
-      const [path, url] = Object.entries(target)[index];
-      const obj = {
-        url,
+      const [path, config] = Object.entries(target)[index];
+
+      const obj = typeof config === 'string' ? {
+        url: config,
+        path: path.endsWith('/') ? path : `${path}/`,
+      } : {
+        ...config,
         path: path.endsWith('/') ? path : `${path}/`,
       };
 
