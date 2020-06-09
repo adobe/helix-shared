@@ -19,7 +19,7 @@ const Origin = require('./Origin.js');
 const Static = require('./Static.js');
 const Performance = require('./Performance.js');
 const Redirect = require('./Redirect.js');
-const Condition = require('../src/Condition.js');
+const Condition = require('./Condition.js');
 const utils = require('./utils.js');
 
 /**
