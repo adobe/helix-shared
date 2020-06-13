@@ -70,15 +70,15 @@
 -   [Untitled array in Proxy Strain](./proxystrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/urls`
 -   [Untitled array in Proxy Strain](./proxystrain-properties-redirects.md "The redirect rules that should be applied to this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/redirects`
 -   [Untitled array in Proxy Strain](./proxystrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/urls`
--   [Untitled array in Proxy Strain](./proxystrain-properties-params.md "A list (using globbing language) of accepted of URL parameters") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/params`
--   [Untitled array in Proxy Strain](./proxystrain-properties-params.md "A list (using globbing language) of accepted of URL parameters") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/params`
+-   [Untitled array in Proxy Strain](./proxystrain-properties-params.md "A list (using globbing language) of accepted URL parameters") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/params`
+-   [Untitled array in Proxy Strain](./proxystrain-properties-params.md "A list (using globbing language) of accepted URL parameters") – `https://ns.adobe.com/helix/shared/proxystrain#/properties/params`
 -   [Untitled array in Query](./query-properties-parameters.md "Which URL parameters to accept in the query when served on the web") – `https://ns.adobe.com/helix/shared/query#/properties/parameters`
 -   [Untitled array in Query](./query-properties-parameters.md "Which URL parameters to accept in the query when served on the web") – `https://ns.adobe.com/helix/shared/query#/properties/parameters`
 -   [Untitled array in Redirects Configuration](./redirects-properties-redirects.md) – `https://ns.adobe.com/helix/shared/redirects#/properties/redirects`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/urls`
--   [Untitled array in Runtime Strain](./runtimestrain-properties-params.md "A list (using globbing language) of accepted of URL parameters") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/params`
+-   [Untitled array in Runtime Strain](./runtimestrain-properties-params.md "A list (using globbing language) of accepted URL parameters") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/params`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-urls.md "List of known URLs for testing this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/urls`
--   [Untitled array in Runtime Strain](./runtimestrain-properties-params.md "A list (using globbing language) of accepted of URL parameters") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/params`
+-   [Untitled array in Runtime Strain](./runtimestrain-properties-params.md "A list (using globbing language) of accepted URL parameters") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/params`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-redirects.md "The redirect rules that should be applied to this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/redirects`
 -   [Untitled array in Runtime Strain](./runtimestrain-properties-redirects.md "The redirect rules that should be applied to this strain") – `https://ns.adobe.com/helix/shared/runtimestrain#/properties/redirects`
 -   [Untitled array in Strains](./strains-oneof-0.md "A list of strains") – `https://ns.adobe.com/helix/shared/strains#/oneOf/0`

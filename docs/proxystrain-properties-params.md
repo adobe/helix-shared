@@ -4,7 +4,7 @@
 https://ns.adobe.com/helix/shared/proxystrain#/properties/params
 ```
 
-A list (using globbing language) of accepted of URL parameters. Note: every parameter is a potential cache killer.
+A list (using globbing language) of accepted URL parameters. Note: every parameter is a potential cache killer.
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                  |
