@@ -159,7 +159,7 @@ Performance testing details.
 
 ## params
 
-A whitelist (using globbing language) of URL parameters. Note: every parameter is a potential cache killer.
+A list (using globbing language) of accepted of URL parameters. Note: every parameter is a potential cache killer.
 
 
 `params`
