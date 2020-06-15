@@ -71,7 +71,7 @@ function cache(fn, opts = {}) {
  * Resets the QuickLRU cache with new options. Existing cache entries
  * will be cleared.
  * @param {object} opts options
- * @param {integer} opts.maxSize maximum size of the cache
+ * @param {number} opts.maxSize maximum size of the cache
  */
 cache.options = (opts) => {
   lru = new QuickLRU(opts);

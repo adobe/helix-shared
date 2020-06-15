@@ -1,3 +1,10 @@
+# [7.6.0](https://github.com/adobe/helix-shared/compare/v7.5.0...v7.6.0) (2020-06-15)
+
+
+### Features
+
+* **config:** add 'withRepoURL(GitUrl)' to base config ([#314](https://github.com/adobe/helix-shared/issues/314)) ([5bd73db](https://github.com/adobe/helix-shared/commit/5bd73dbba741941b310f80fff6255ca086b5268d))
+
 # [7.5.0](https://github.com/adobe/helix-shared/compare/v7.4.0...v7.5.0) (2020-06-08)
 
 
