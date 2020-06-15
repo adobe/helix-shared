@@ -86,7 +86,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
         .init();
       assert.fail('This should have thrown');
     } catch (e) {
-      assert.equal(e.message, 'Unable to fetch fstab');
+      assert.equal(e.message, 'Unable to fetch fstab.yaml: Service Unavailable');
     }
   });
 });

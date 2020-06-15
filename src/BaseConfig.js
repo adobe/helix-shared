@@ -12,6 +12,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const YAML = require('yaml');
+const GitUrl = require('./GitUrl.js');
 const cache = require('./fetchconfig/cache');
 const fetch = require('./fetchconfig/fetch');
 
@@ -44,7 +45,7 @@ class BaseConfig {
   /**
    * Reset the cache with a new cache size
    * @param {object} options cache options
-   * @param {integer} options.maxSize
+   * @param {number} options.maxSize
    */
   withCache(options) {
     cache.options(options);
@@ -61,8 +62,24 @@ class BaseConfig {
    * @param {string} options.headers.authorization authorization token to include
    */
   withRepo(owner, repo, ref, options = {}) {
+    return this.withRepoURL(new GitUrl({
+      owner,
+      repo,
+      ref,
+    }), options);
+  }
+
+  /**
+   * Set the base repository to fetch the config from.
+   * @param {GitUrl} url The git url of the repository
+   * @param {object} options options
+   * @param {object} options.headers headers to be used for HTTP request
+   * @param {string} options.headers.authorization authorization token to include
+   */
+  withRepoURL(url, options) {
     this._repo = {
-      owner, repo, ref, options,
+      url,
+      options,
     };
     return this;
   }
@@ -128,7 +145,6 @@ class BaseConfig {
         // fetch the config file from the repo
         this._source = await fetch({
           ...this._repo,
-          root: 'https://raw.githubusercontent.com',
           name: this._name,
           log: this._logger,
         });
