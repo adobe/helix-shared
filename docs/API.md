@@ -146,7 +146,7 @@ usually not affect equivalence, neither should inserting newline
 characters/replacing spaces with newlines because a line is growing
 too long or because dom elements should be one per line.</p>
 <p>Whitespace in <pre> elements however should affect equivalence.</p>
-<p>The given examples also adhere to the 'do not affect rendering'
+<p>The given examples also adhere to the &#39;do not affect rendering&#39;
 rules unless exotic javascript or CSS is added after the fact.</p>
 <h1 id="precise-semantics">Precise semantics</h1>
 <p>The following rules are used by this function:</p>
@@ -169,16 +169,16 @@ rules unless exotic javascript or CSS is added after the fact.</p>
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM">https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM</a>
 <a href="https://drafts.csswg.org/css-text-3/#propdef-white-space">https://drafts.csswg.org/css-text-3/#propdef-white-space</a></p>
 <h1 id="examples">Examples</h1>
-<p><code>&lt;div&gt; &lt;/div&gt;</code> -> <code>&lt;div&gt;&lt;/div&gt;</code></p>
+<p><code>&lt;div&gt; &lt;/div&gt;</code> -&gt; <code>&lt;div&gt;&lt;/div&gt;</code></p>
 <p>Rule 3 - div is not inline:</p>
-<p><code>Hello &lt;div&gt; world &lt;/div&gt; friend</code> -> <code>Hello&lt;div&gt;world&lt;/div&gt;friend</code></p>
+<p><code>Hello &lt;div&gt; world &lt;/div&gt; friend</code> -&gt; <code>Hello&lt;div&gt;world&lt;/div&gt;friend</code></p>
 <p>Rule 4 - span is inline:</p>
-<p><code>Hello &lt;span&gt; world &lt;/span&gt; friend</code> -> <code>Hello &lt;span&gt;world&lt;/span&gt; friend</code></p>
+<p><code>Hello &lt;span&gt; world &lt;/span&gt; friend</code> -&gt; <code>Hello &lt;span&gt;world&lt;/span&gt; friend</code></p>
 <p>Rule 4 – the whitespace between multiple inline elements is placed
 int the lowest common ancestor.</p>
-<p><code>&lt;a&gt;Hello   &lt;/a&gt; \n  &lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
-<code>&lt;a&gt;Hello&lt;/a&gt;&lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
-<code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt;&lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt; &lt;a&gt;World&lt;/a&gt;</code></p>
+<p><code>&lt;a&gt;Hello   &lt;/a&gt; \n  &lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
+<code>&lt;a&gt;Hello&lt;/a&gt;&lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
+<code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt;&lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt; &lt;a&gt;World&lt;/a&gt;</code></p>
 <h1 id="css-handling">CSS Handling</h1>
 <p>Note that this function does not manually check for dom nodes like</p>
 <pre> or differentiate between <span> and <div>. Instead the `display`
@@ -220,7 +220,8 @@ but provides better error messages.</p>
        Hello
 
     Bang
-`);</code></pre><p>The function basically just takes a string and then
+`);</code></pre>
+<p>The function basically just takes a string and then
 strips the first &amp; last lines if they are empty.</p>
 <p>In order to remove indentation, we determine the common
 whitespace prefix length (number of space 0x20 characters

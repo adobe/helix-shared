@@ -63,7 +63,7 @@
       "$ref": "https://ns.adobe.com/helix/shared/performance"
     },
     "params": {
-      "description": "A whitelist (using globbing language) of URL parameters. Note: every parameter is a potential cache killer.",
+      "description": "A list (using globbing language) of accepted URL parameters. Note: every parameter is a potential cache killer.",
       "type": "array",
       "items": {
         "type": "string"
