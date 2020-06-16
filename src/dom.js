@@ -670,7 +670,6 @@ const assertEquivalentNode = (actual, expected) => {
   }
 };
 
-
 // Provide traits for nodes
 Deepclone.implWild((Typ) => (isNodeType(Typ) ? ((x) => x.cloneNode(true)) : undefined));
 Equals.implWild((Typ) => (isNodeType(Typ) ? ((a, b) => nodeIsEquivalent(a, b)) : undefined));

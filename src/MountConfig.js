@@ -92,7 +92,6 @@ class MountConfig extends SchemaDerivedConfig {
   match(resourcePath) {
     const fullPath = resourcePath.endsWith('/') ? resourcePath : `${resourcePath}/`;
 
-
     const [mp] = this.mountpoints
       .filter((m) => fullPath.startsWith(m.path)) // beginning must match
       .map((m) => ({

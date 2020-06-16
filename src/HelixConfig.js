@@ -18,7 +18,6 @@ const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
 const BaseConfig = require('./BaseConfig.js');
 
-
 const HELIX_CONFIG = 'helix-config.yaml';
 
 class HelixConfig extends BaseConfig {

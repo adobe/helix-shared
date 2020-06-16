@@ -129,7 +129,6 @@ describe('Index Config Loading', () => {
     assert.ok(Array.isArray(cfg.indices[0].queries[0].parameters));
   });
 
-
   it('theblog Index Config creates query URLs', async () => {
     const cfg = new IndexConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'));
