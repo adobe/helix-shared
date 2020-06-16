@@ -150,7 +150,6 @@ describe('Strains test', () => {
     assert.deepEqual(strain.urls, ['https://www.project-helix.io/']);
   });
 
-
   it('urls are normalized', () => {
     const strain = new Strain({
       name: 'test',
