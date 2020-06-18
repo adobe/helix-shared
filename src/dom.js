@@ -24,6 +24,7 @@ const {
   withFunctionName, exec, pipe, identity, Deepclone, deepclone, Equals, type,
   each, enumerate, reverse, takeUntilVal, extend1, uniq, mapSort, join, map, all,
 } = require('ferrum');
+const { ComputeDiff } = require('./utils');
 
 /** Check whether the given type is the type of a dom node.  Note that, in
  * order to support various dom implementations, this function uses a heuristic
@@ -660,8 +661,9 @@ const assertEquivalentNode = (actual, expected) => {
   const a2 = equalizeNode(deepclone(actual));
   const e2 = equalizeNode(deepclone(expected));
   if (!a2.isEqualNode(e2)) {
+    const message = ComputeDiff(a2.outerHTML, e2.outerHTML);
     throw new assert.AssertionError({
-      message: 'The DOM nodes are not equal.',
+      message,
       actual: a2.outerHTML,
       expected: e2.outerHTML,
       operator: 'nodeIsEquivalent',

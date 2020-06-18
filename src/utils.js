@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const crypto = require('crypto');
+const jsdiff = require('diff');
 
 /* eslint-disable class-methods-use-this */
 
@@ -52,6 +53,25 @@ class Utils {
     const hmac = crypto.createHmac('sha256', 'helix'); // lgtm [js/hardcoded-credentials]
     hmac.update(String(url));
     return hmac.digest('base64').substring(0, 16);
+  }
+
+  /**
+   * Computes diff and returns string detailing
+   * the changes that have been made
+   *
+   * @param {string} original - html from page rendered by original pages domain
+   * @param {string} updated - html from page rendered by testDomain
+   * @returns {object} the input object or {@code null} if the object is empty.
+   */
+  ComputeDiff(original, updated) {
+    const diff = jsdiff.diffWordsWithSpace(original, updated);
+    return diff.filter((change) => (change.added || change.removed))
+      .reduce((prev, curr) => {
+        const val = /\s/.exec(curr.value) ? '[space(s)]' : curr.value;
+        // eslint-disable-next-line no-param-reassign
+        prev += `Change detected: ${val} has been ${curr.removed ? 'removed\n' : 'added\n'}`;
+        return prev;
+      }, '\n');
   }
 }
 
