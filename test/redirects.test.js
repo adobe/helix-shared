@@ -60,6 +60,11 @@ describe('Redirect test', () => {
     assert.equal(r.from, before.from);
     assert.equal(r.to, before.to);
     assert.deepStrictEqual(r.toJSON(), before);
+
+    assert.deepStrictEqual(r.match('/foo'), {
+      url: '/bar',
+      type: 'internal',
+    });
   });
 
   it('Redirects work', () => {
@@ -74,5 +79,7 @@ describe('Redirect test', () => {
     assert.equal(r.to, before.to);
     assert.equal(r.type, 'permanent');
     assert.deepStrictEqual(r.toJSON(), before);
+
+    assert.deepStrictEqual(r.match('/bar'), null);
   });
 });

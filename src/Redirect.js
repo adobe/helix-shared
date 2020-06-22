@@ -22,6 +22,16 @@ class Redirect {
     this._type = cfg.type;
   }
 
+  match(path) {
+    if (this._from.test(path)) {
+      return {
+        url: path.replace(this._from, this._to),
+        type: this.type,
+      };
+    }
+    return null;
+  }
+
   get from() {
     return this._from.source;
   }
