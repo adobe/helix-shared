@@ -12,10 +12,84 @@
 
 /* eslint-env mocha */
 
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
+
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
 const MountConfig = require('../src/MountConfig');
+const { setupPolly } = require('./utils.js');
+
+describe('Mount Point Config Loading (from GitHub)', () => {
+  setupPolly({
+    recordIfMissing: true,
+  });
+
+  it('Retrieves Document from GitHub', async () => {
+    const config = await new MountConfig()
+      .withCache({ maxSize: 1 })
+      .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733c36')
+      .init();
+
+    const match = config.match('/');
+
+    assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
+  });
+
+  it('Retrieves Document from GitHub with Auth', async function okGithub() {
+    const { server } = this.polly;
+    let foundtoken;
+
+    server
+      .get('https://raw.githubusercontent.com/adobe/theblog/7f65c0399b1b925ececf55becd4b150c357-auth/fstab.yaml')
+      .intercept((req, res) => {
+        foundtoken = req.headers.authorization;
+        res.status(200).send(`mountpoints:
+  /: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog`);
+      });
+
+    const config = await new MountConfig()
+      .withCache({ maxSize: 1 })
+      .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c357-auth', {
+        headers: { Authorization: 'fake' },
+      })
+      .init();
+
+    const match = config.match('/');
+
+    assert.equal(foundtoken, 'fake');
+    assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
+  });
+
+  it('Missing File from GitHub treated as empty', async () => {
+    const config = await new MountConfig()
+      .withCache({ maxSize: 1 })
+      .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733-missing')
+      .init();
+
+    const match = config.match('/');
+
+    assert.equal(match, null);
+  });
+
+  it('Error from GitHub is propagated', async function okGithub() {
+    const { server } = this.polly;
+
+    server
+      .get('https://raw.githubusercontent.com/adobe/theblog/7f65c0399b1b925ececf55becd4b150c35733-broken/fstab.yaml')
+      .intercept((_, res) => res.sendStatus(503));
+
+    try {
+      await new MountConfig()
+        .withCache({ maxSize: 1 })
+        .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733-broken')
+        .init();
+      assert.fail('This should have thrown');
+    } catch (e) {
+      assert.equal(e.message, 'Unable to fetch fstab.yaml: Service Unavailable');
+    }
+  });
+});
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/mountconfigs');
 
@@ -24,7 +98,7 @@ const tests = [
     title: 'fails with a broken config',
     config: 'broken.yaml',
     result: null,
-    error: 'Error: data should NOT have additional properties, data should have required property \'mountpoints\'',
+    error: 'Error: data should NOT have additional properties',
   },
   {
     title: 'loads a theblog example',
@@ -35,6 +109,11 @@ const tests = [
     title: 'loads a complex example',
     config: 'complex.yaml',
     result: 'complex.json',
+  },
+  {
+    title: 'loads an empty example',
+    config: 'empty.yaml',
+    result: 'empty.json',
   },
 ];
 
@@ -71,6 +150,13 @@ describe('Mount Point Config Loading', () => {
     assert.equal(cfg.mountpoints[0].url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog?csf=1&e=8Znxth');
   });
 
+  it('Empty Mount Points gets properly evaluated', async () => {
+    const cfg = await new MountConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'empty.yaml'))
+      .init();
+    assert.equal(cfg.match('/nomach'), null);
+  });
+
   it('complex Mount Points gets properly evaluated', async () => {
     const cfg = await new MountConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'complex.yaml'))
@@ -86,11 +172,13 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m2.type, 'onedrive');
     assert.equal(m2.url, 'https://adobe.sharepoint.com/sites/docs', 'does not respect order');
     assert.equal(m2.relPath, '/different');
+    assert.equal(m2.fallbackPath, 'default.docx');
 
     const m3 = cfg.match('/gd/document42');
     assert.equal(m3.type, 'google');
     assert.equal(m3.url, 'https://drive.google.com/drive/u/0/folders/123456789');
     assert.equal(m3.id, '123456789');
+    assert.equal(m3.fallbackPath, 'default.md');
     assert.equal(m3.relPath, '/document42');
 
     const m4 = cfg.match('/foo/en/welcome');

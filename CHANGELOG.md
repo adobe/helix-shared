@@ -1,3 +1,96 @@
+# [7.6.0](https://github.com/adobe/helix-shared/compare/v7.5.0...v7.6.0) (2020-06-15)
+
+
+### Features
+
+* **config:** add 'withRepoURL(GitUrl)' to base config ([#314](https://github.com/adobe/helix-shared/issues/314)) ([5bd73db](https://github.com/adobe/helix-shared/commit/5bd73dbba741941b310f80fff6255ca086b5268d))
+
+# [7.5.0](https://github.com/adobe/helix-shared/compare/v7.4.0...v7.5.0) (2020-06-08)
+
+
+### Features
+
+* **fstab:** mount points can now be objects and contain a fallback parameter ([a187b24](https://github.com/adobe/helix-shared/commit/a187b244595de3feeea578c3e77ebfcf14d04998)), closes [#305](https://github.com/adobe/helix-shared/issues/305)
+
+# [7.4.0](https://github.com/adobe/helix-shared/compare/v7.3.2...v7.4.0) (2020-06-03)
+
+
+### Features
+
+* **config:** allow initialization of all configs from github owner, repo, ref ([a25a253](https://github.com/adobe/helix-shared/commit/a25a253cc477439afafeeb652f809b4315dd97b6))
+
+## [7.3.2](https://github.com/adobe/helix-shared/compare/v7.3.1...v7.3.2) (2020-05-14)
+
+
+### Bug Fixes
+
+* **proxy:** empty objects should be cast into arrays too, if they have a length ([72741f3](https://github.com/adobe/helix-shared/commit/72741f3769d0c31b021778f95f2cff02965571c0))
+
+## [7.3.1](https://github.com/adobe/helix-shared/compare/v7.3.0...v7.3.1) (2020-05-14)
+
+
+### Bug Fixes
+
+* **fstab:** relax fstab to allow for empty configurations ([9947afc](https://github.com/adobe/helix-shared/commit/9947afc2f230f6c4601459f67b400e573081932f))
+
+# [7.3.0](https://github.com/adobe/helix-shared/compare/v7.2.1...v7.3.0) (2020-05-07)
+
+
+### Features
+
+* **utils:** Add utils for dealing with HTTP status codes in backend responses ([6697a0d](https://github.com/adobe/helix-shared/commit/6697a0d3c926a346962a468cf7615917c7b106fe))
+
+## [7.2.1](https://github.com/adobe/helix-shared/compare/v7.2.0...v7.2.1) (2020-04-27)
+
+
+### Bug Fixes
+
+* **proxy:** use non-deprecated backend for proxy strains ([f2a0522](https://github.com/adobe/helix-shared/commit/f2a0522c66c17d74d56f6d3d152e2b0850283a80)), closes [#285](https://github.com/adobe/helix-shared/issues/285)
+
+# [7.2.0](https://github.com/adobe/helix-shared/compare/v7.1.0...v7.2.0) (2020-04-24)
+
+
+### Features
+
+* **redirects:** add RedirectConfig class for loading and parsing of redirect config ([eabc2d9](https://github.com/adobe/helix-shared/commit/eabc2d9018a94e94807f4c33b1bf55c3abce927d)), closes [#282](https://github.com/adobe/helix-shared/issues/282)
+* **redirects:** provide redirects handler that can list redirect rules as appropriate classes ([de36f38](https://github.com/adobe/helix-shared/commit/de36f382c9d860c28a55239bcd41a5f019f47616)), closes [#282](https://github.com/adobe/helix-shared/issues/282)
+* **schema:** define schema for redirects and vanity url extraction ([f2b7f2d](https://github.com/adobe/helix-shared/commit/f2b7f2d72107d20e554a0f350ece0a8a14ea38b1)), closes [#282](https://github.com/adobe/helix-shared/issues/282)
+
+# [7.1.0](https://github.com/adobe/helix-shared/compare/v7.0.1...v7.1.0) (2020-04-22)
+
+
+### Bug Fixes
+
+* **deps:** npm audit fix ([f6c28f5](https://github.com/adobe/helix-shared/commit/f6c28f5d7d474c01421e8c501fe2550e4b770409))
+* **markup:** relax markup mapping schema ([fd62ae0](https://github.com/adobe/helix-shared/commit/fd62ae0689932e469f1e8e0d9eaf4cd45b938f41))
+
+
+### Features
+
+* **markup:** add support for content intelligence matching expressions ([16a0916](https://github.com/adobe/helix-shared/commit/16a0916f1e2062528271b34bebd51b212bca863a)), closes [#278](https://github.com/adobe/helix-shared/issues/278)
+* **markup:** add URL matching type ([1902279](https://github.com/adobe/helix-shared/commit/19022790a8ea7eb333f126ab8d4434868ee7c49b)), closes [#279](https://github.com/adobe/helix-shared/issues/279)
+
+## [7.0.1](https://github.com/adobe/helix-shared/compare/v7.0.0...v7.0.1) (2020-04-15)
+
+
+### Bug Fixes
+
+* **condition:** prefix match fails if already contains trailing slash ([#275](https://github.com/adobe/helix-shared/issues/275)) ([c2fff9a](https://github.com/adobe/helix-shared/commit/c2fff9a9eb8feff484db3fb6f1c7a0af82aaebd8))
+
+# [7.0.0](https://github.com/adobe/helix-shared/compare/v6.0.5...v7.0.0) (2020-04-14)
+
+
+### Bug Fixes
+
+* **strain:** remove url property ([#271](https://github.com/adobe/helix-shared/issues/271)) ([527e396](https://github.com/adobe/helix-shared/commit/527e39624fe7fb00c1237598a92df22806e3f3b4))
+
+
+### BREAKING CHANGES
+
+* **strain:** url property removed from strain, use condition instead
+
+Co-authored-by: Lars Trieloff <lars@trieloff.net>
+
 ## [6.0.5](https://github.com/adobe/helix-shared/compare/v6.0.4...v6.0.5) (2020-03-23)
 
 

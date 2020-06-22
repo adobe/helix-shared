@@ -24,7 +24,7 @@ class Origin {
       this._connectTimeout = cfg.connect_timeout || 1000;
       this._name = cfg.name || `Proxy${this._hostname.replace(/[^\w]/g, '')}${hash(this._hostname).substr(0, 4)}`;
       this._betweenBytesTimeout = cfg.between_bytes_timeout || 10000;
-      this._shield = cfg.shield || 'iad-va-us';
+      this._shield = cfg.shield || 'bwi-va-us';
       this._SSLCertHostname = cfg.ssl_cert_hostname || this._hostname;
       this._maxConn = cfg.max_conn || 200;
       this._useSSL = !(cfg.use_ssl === false);
@@ -46,7 +46,7 @@ class Origin {
       this._name = `Proxy${this._hostname.replace(/[^\w]/g, '')}${hash(this._hostname).substr(0, 4)}`;
       this._port = backenduri.port || (backenduri.scheme === 'https' ? 443 : 80);
       this._betweenBytesTimeout = 10000;
-      this._shield = 'iad-va-us';
+      this._shield = 'bwi-va-us';
       this._SSLCertHostname = backenduri.host;
       this._maxConn = 200;
       this._useSSL = backenduri.scheme === 'https';

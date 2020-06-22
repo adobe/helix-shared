@@ -93,7 +93,7 @@ class SchemaDerivedConfig extends BaseConfig {
             // intercept property access
             const wrapped = new Proxy(handled, this.defaultHandler(`${root}/${prop}`));
 
-            if (wrapped.length) {
+            if (typeof wrapped.length === 'number') {
               return Array.from(wrapped);
             }
             return wrapped;

@@ -150,7 +150,6 @@ describe('Strains test', () => {
     assert.deepEqual(strain.urls, ['https://www.project-helix.io/']);
   });
 
-
   it('urls are normalized', () => {
     const strain = new Strain({
       name: 'test',
@@ -267,7 +266,7 @@ describe('Strains test', () => {
         max_conn: 200,
         name: 'Proxywwwadobeio3a0a',
         port: 443,
-        shield: 'iad-va-us',
+        shield: 'bwi-va-us',
         ssl_cert_hostname: 'www.adobe.io',
         use_ssl: true,
         weight: 100,
@@ -372,18 +371,5 @@ describe('Strains test', () => {
       + 'static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
       + 'condition: req.http.host == "client.project-helix.io"\n'
       + 'directoryIndex: somepage.html\n');
-  });
-
-  it('Strain with both url and condition', async () => {
-    const strain = new Strain({
-      name: 'test',
-      code: 'https://github.com/adobe/project-helix.io.git',
-      content: 'https://github.com/adobe/project-helix.io.git',
-      static: 'https://github.com/adobe/project-helix.io.git',
-      url: 'http://www.example.com',
-      condition: 'req.http.host == "www.example.com"',
-    });
-    assert.notEqual(strain.url, undefined);
-    assert.notEqual(strain.condition, undefined);
   });
 });

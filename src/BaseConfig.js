@@ -12,6 +12,9 @@
 const fs = require('fs-extra');
 const path = require('path');
 const YAML = require('yaml');
+const GitUrl = require('./GitUrl.js');
+const cache = require('./fetchconfig/cache');
+const fetch = require('./fetchconfig/fetch');
 
 async function isFile(filePath) {
   try {
@@ -36,6 +39,49 @@ class BaseConfig {
     this._version = '';
     this._value = null;
     this._name = name;
+    this._repo = null;
+  }
+
+  /**
+   * Reset the cache with a new cache size
+   * @param {object} options cache options
+   * @param {number} options.maxSize
+   */
+  withCache(options) {
+    cache.options(options);
+    return this;
+  }
+
+  /**
+   * Set the base repository to fetch a config from
+   * @param {string} owner username or org
+   * @param {string} repo repository
+   * @param {string} ref ref name
+   * @param {object} options options
+   * @param {object} options.headers headers to be used for HTTP request
+   * @param {string} options.headers.authorization authorization token to include
+   */
+  withRepo(owner, repo, ref, options = {}) {
+    return this.withRepoURL(new GitUrl({
+      owner,
+      repo,
+      ref,
+    }), options);
+  }
+
+  /**
+   * Set the base repository to fetch the config from.
+   * @param {GitUrl} url The git url of the repository
+   * @param {object} options options
+   * @param {object} options.headers headers to be used for HTTP request
+   * @param {string} options.headers.authorization authorization token to include
+   */
+  withRepoURL(url, options) {
+    this._repo = {
+      url,
+      options,
+    };
+    return this;
   }
 
   withJSON(obj) {
@@ -95,6 +141,13 @@ class BaseConfig {
     if (!this._source) {
       if (await this.hasFile()) {
         this._source = await fs.readFile(this.configPath, 'utf8');
+      } else if (this._repo) {
+        // fetch the config file from the repo
+        this._source = await fetch({
+          ...this._repo,
+          name: this._name,
+          log: this._logger,
+        });
       }
     }
     if (this._source.indexOf('\t') >= 0) {

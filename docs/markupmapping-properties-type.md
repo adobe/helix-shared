@@ -19,10 +19,12 @@ https://ns.adobe.com/helix/shared/markupmapping#/properties/type
 
 **enum**: the value of this property must be equal to one of the following values:
 
-| Value        | Explanation |
-| :----------- | ----------- |
-| `"html"`     |             |
-| `"markdown"` |             |
+| Value        | Explanation                                    |
+| :----------- | ---------------------------------------------- |
+| `"html"`     | Match against the generated DOM tree           |
+| `"markdown"` | Match against the source MDAST tree            |
+| `"url"`      | Match against the request URL                  |
+| `"content"`  | Use content intelligence matching for sections |
 
 ## type Default Value
 

@@ -13,6 +13,29 @@ const crypto = require('crypto');
 
 /* eslint-disable class-methods-use-this */
 
+/**
+ * A glorified lookup table that translates backend errors into the appropriate
+ * HTTP status codes and log levels for your service.
+ * @param {int} status the HTTP status code you've been getting from the backend
+ * @returns {Object} a pair of status code to return and log level to use in your code
+ */
+function lookupBackendResponses(status) {
+  if (status < 400) {
+    return { status, level: 'verbose' };
+  } else if (status === 429) {
+    // Too Many Requests in the backend
+    return { status: 503, level: 'error' };
+    // report as: Service Unavailable
+  } else if (status < 500) {
+    return { status, level: 'warn' };
+  } else if (status === 500) {
+    // Internal Server error in the backend
+    return { status: 502, level: 'error' };
+    // Report as: Bad Gateway
+  }
+  return { status, level: 'error' };
+}
+
 class Utils {
   /**
    * Iterates over the properties of the given object and removes all empty values.
@@ -52,6 +75,35 @@ class Utils {
     const hmac = crypto.createHmac('sha256', 'helix'); // lgtm [js/hardcoded-credentials]
     hmac.update(String(url));
     return hmac.digest('base64').substring(0, 16);
+  }
+
+  /**
+   * What is the appropriate status code to use in your service when your backend
+   * responds with `status`? This function provides a standardized lookup function
+   * to map backend responses to gateway responses, assuming you are implementing
+   * the gateway.
+   * @param {int} status the backend HTTP status code
+   * @returns {int} the appropriate HTTP status code for your app
+   */
+  propagateStatusCode(status) {
+    return lookupBackendResponses(status).status;
+  }
+
+  /**
+   * What is the appropriate log level for logging HTTP responses you are getting
+   * from a backend when the backend responds with `status`? This function provides
+   * a standardized lookup function of backend status codes to log levels.
+   *
+   * You can use it like this:
+   *
+   * ```javascript
+   * logger[logLevelForStatusCode(response.status)](response.message);
+   * ```
+   * @param {int} status the HTTP status code from your backend
+   * @returns {string} the correct log level
+   */
+  logLevelForStatusCode(status) {
+    return lookupBackendResponses(status).level;
   }
 }
 

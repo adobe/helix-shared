@@ -4,7 +4,7 @@
 https://ns.adobe.com/helix/shared/markupmapping#/properties/match
 ```
 
-A CSS selector expression selecting the nodes that should get processed
+
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
@@ -13,4 +13,11 @@ A CSS selector expression selecting the nodes that should get processed
 
 ## match Type
 
-`string`
+`string` ([Details](markupmapping-properties-match.md))
+
+any of
+
+-   [DOM Match Expression](markupmapping-properties-match-anyof-dom-match-expression.md "check type definition")
+-   [MDAST Match Expression](markupmapping-properties-match-anyof-mdast-match-expression.md "check type definition")
+-   [URL Pattern Match Expression](markupmapping-properties-match-anyof-url-pattern-match-expression.md "check type definition")
+-   [Content Intelligence Match Expression](markupmapping-properties-match-anyof-content-intelligence-match-expression.md "check type definition")

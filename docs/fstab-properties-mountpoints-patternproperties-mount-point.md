@@ -13,8 +13,9 @@ Defines the target URL where content should be retrieved from.
 
 ## ]$ Type
 
-`string` ([Mount Point](fstab-properties-mountpoints-patternproperties-mount-point.md))
+merged type ([Mount Point](fstab-properties-mountpoints-patternproperties-mount-point.md))
 
-## ]$ Constraints
+one (and only one) of
 
-**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc4291 "check the specification")
+-   [Untitled string in Mount Point](mountpoint-oneof-0.md "check type definition")
+-   [Untitled object in Mount Point](mountpoint-oneof-1.md "check type definition")

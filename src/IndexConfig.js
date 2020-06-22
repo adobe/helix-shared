@@ -58,9 +58,6 @@ class IndexConfig extends SchemaDerivedConfig {
    * @param {string} queryname name of the query
    */
   getQuery(indexname, queryname) {
-    if (!Array.isArray(this.indices)) {
-      return undefined;
-    }
     const [myindex] = this.indices.filter((index) => index.name === indexname);
     if (!myindex) {
       return undefined;

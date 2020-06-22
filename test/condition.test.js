@@ -82,10 +82,20 @@ async function assertMatch(cond, samples) {
 }
 
 describe('Condition tests', () => {
+  before(() => {
+    nock.restore();
+    nock.cleanAll();
+    nock.activate();
+  });
+
   afterEach(() => {
     nock.restore();
     nock.cleanAll();
     nock.activate();
+  });
+
+  after(() => {
+    nock.restore();
   });
 
   fs.readdirSync(SPEC_ROOT).forEach((filename) => {

@@ -28,6 +28,6 @@ div+p+bq
 ```
 
 ```yaml
-'div+div>p>span+em '
+div+div>p>span+em
 
 ```

@@ -18,6 +18,7 @@
   "properties": {
     "mountpoints": {
       "type": "object",
+      "default": {},
       "patternProperties": {
         "^/.*[^/]$": {
           "$ref": "https://ns.adobe.com/helix/shared/mountpoint"

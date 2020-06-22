@@ -38,14 +38,6 @@
 </dd>
 </dl>
 
-## Members
-
-<dl>
-<dt><a href="#urlOverridesCondition">urlOverridesCondition</a></dt>
-<dd><p>Flags indicating whether deprecation warning were shown.</p>
-</dd>
-</dl>
-
 ## Constants
 
 <dl>
@@ -98,6 +90,10 @@ match zero, one or many dom nodes in the given node to test.</p>
 <dl>
 <dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
 <dd></dd>
+<dt><a href="#stripQuery">stripQuery(m, ...specialparams)</a> ⇒ <code>object</code></dt>
+<dd><p>Cleans up the URL by removing parameters that are deemed special. These
+special parameters will be returned in the return object instead.</p>
+</dd>
 <dt><a href="#nextTick">nextTick()</a> ⇒ <code>promise</code></dt>
 <dd><p>Await the next tick;</p>
 <p>NOTE: Internally this uses setImmediate, not process.nextTick.
@@ -150,7 +146,7 @@ usually not affect equivalence, neither should inserting newline
 characters/replacing spaces with newlines because a line is growing
 too long or because dom elements should be one per line.</p>
 <p>Whitespace in <pre> elements however should affect equivalence.</p>
-<p>The given examples also adhere to the 'do not affect rendering'
+<p>The given examples also adhere to the &#39;do not affect rendering&#39;
 rules unless exotic javascript or CSS is added after the fact.</p>
 <h1 id="precise-semantics">Precise semantics</h1>
 <p>The following rules are used by this function:</p>
@@ -173,16 +169,16 @@ rules unless exotic javascript or CSS is added after the fact.</p>
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM">https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM</a>
 <a href="https://drafts.csswg.org/css-text-3/#propdef-white-space">https://drafts.csswg.org/css-text-3/#propdef-white-space</a></p>
 <h1 id="examples">Examples</h1>
-<p><code>&lt;div&gt; &lt;/div&gt;</code> -> <code>&lt;div&gt;&lt;/div&gt;</code></p>
+<p><code>&lt;div&gt; &lt;/div&gt;</code> -&gt; <code>&lt;div&gt;&lt;/div&gt;</code></p>
 <p>Rule 3 - div is not inline:</p>
-<p><code>Hello &lt;div&gt; world &lt;/div&gt; friend</code> -> <code>Hello&lt;div&gt;world&lt;/div&gt;friend</code></p>
+<p><code>Hello &lt;div&gt; world &lt;/div&gt; friend</code> -&gt; <code>Hello&lt;div&gt;world&lt;/div&gt;friend</code></p>
 <p>Rule 4 - span is inline:</p>
-<p><code>Hello &lt;span&gt; world &lt;/span&gt; friend</code> -> <code>Hello &lt;span&gt;world&lt;/span&gt; friend</code></p>
+<p><code>Hello &lt;span&gt; world &lt;/span&gt; friend</code> -&gt; <code>Hello &lt;span&gt;world&lt;/span&gt; friend</code></p>
 <p>Rule 4 – the whitespace between multiple inline elements is placed
 int the lowest common ancestor.</p>
-<p><code>&lt;a&gt;Hello   &lt;/a&gt; \n  &lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
-<code>&lt;a&gt;Hello&lt;/a&gt;&lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
-<code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt;&lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt; &lt;a&gt;World&lt;/a&gt;</code></p>
+<p><code>&lt;a&gt;Hello   &lt;/a&gt; \n  &lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
+<code>&lt;a&gt;Hello&lt;/a&gt;&lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
+<code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt;&lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt; &lt;a&gt;World&lt;/a&gt;</code></p>
 <h1 id="css-handling">CSS Handling</h1>
 <p>Note that this function does not manually check for dom nodes like</p>
 <pre> or differentiate between <span> and <div>. Instead the `display`
@@ -224,12 +220,17 @@ but provides better error messages.</p>
        Hello
 
     Bang
-`);</code></pre><p>The function basically just takes a string and then
+`);</code></pre>
+<p>The function basically just takes a string and then
 strips the first &amp; last lines if they are empty.</p>
 <p>In order to remove indentation, we determine the common
 whitespace prefix length (number of space 0x20 characters
 at the start of the line). This prefix is simply removed
 from each line...</p>
+</dd>
+<dt><a href="#lookupBackendResponses">lookupBackendResponses(status)</a> ⇒ <code>Object</code></dt>
+<dd><p>A glorified lookup table that translates backend errors into the appropriate
+HTTP status codes and log levels for your service.</p>
 </dd>
 </dl>
 
@@ -240,6 +241,8 @@ from each line...</p>
 
 * [BaseConfig](#BaseConfig)
     * [new BaseConfig(name)](#new_BaseConfig_new)
+    * [.withCache(options)](#BaseConfig+withCache)
+    * [.withRepo(owner, repo, ref, options)](#BaseConfig+withRepo)
     * [.saveConfig()](#BaseConfig+saveConfig) ⇒ <code>Promise.&lt;void&gt;</code>
 
 <a name="new_BaseConfig_new"></a>
@@ -249,6 +252,34 @@ from each line...</p>
 | Param | Type | Description |
 | --- | --- | --- |
 | name | <code>string</code> | name of the config file, e.g. `helix-config.yaml` |
+
+<a name="BaseConfig+withCache"></a>
+
+### baseConfig.withCache(options)
+Reset the cache with a new cache size
+
+**Kind**: instance method of [<code>BaseConfig</code>](#BaseConfig)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>object</code> | cache options |
+| options.maxSize | <code>integer</code> |  |
+
+<a name="BaseConfig+withRepo"></a>
+
+### baseConfig.withRepo(owner, repo, ref, options)
+Set the base repository to fetch a config from
+
+**Kind**: instance method of [<code>BaseConfig</code>](#BaseConfig)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| owner | <code>string</code> | username or org |
+| repo | <code>string</code> | repository |
+| ref | <code>string</code> | ref name |
+| options | <code>object</code> | options |
+| options.headers | <code>object</code> | headers to be used for HTTP request |
+| options.headers.authorization | <code>string</code> | authorization token to include |
 
 <a name="BaseConfig+saveConfig"></a>
 
@@ -698,12 +729,6 @@ Creates the strains from a yaml node
 | --- | --- |
 | node | <code>YAMLSeq</code> | 
 
-<a name="urlOverridesCondition"></a>
-
-## urlOverridesCondition
-Flags indicating whether deprecation warning were shown.
-
-**Kind**: global variable  
 <a name="configMapper"></a>
 
 ## configMapper
@@ -784,6 +809,21 @@ match zero, one or many dom nodes in the given node to test.
 | --- | --- | --- |
 | left | [<code>Strain</code>](#Strain) | the current candidate strain (can be undefined) |
 | right | [<code>Strain</code>](#Strain) | the alternative candidate strain (can be undefined) |
+
+<a name="stripQuery"></a>
+
+## stripQuery(m, ...specialparams) ⇒ <code>object</code>
+Cleans up the URL by removing parameters that are deemed special. These
+special parameters will be returned in the return object instead.
+
+**Kind**: global function  
+**Returns**: <code>object</code> - an object with a clean URL and extracted parameters  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| m | <code>object</code> | the mount point |
+| m.url | <code>string</code> | mount point URL |
+| ...specialparams | <code>string</code> | list of special parameters that should be removed from the URL and returned in the object |
 
 <a name="nextTick"></a>
 
@@ -1006,3 +1046,16 @@ at the start of the line). This prefix is simply removed
 from each line...
 
 **Kind**: global function  
+<a name="lookupBackendResponses"></a>
+
+## lookupBackendResponses(status) ⇒ <code>Object</code>
+A glorified lookup table that translates backend errors into the appropriate
+HTTP status codes and log levels for your service.
+
+**Kind**: global function  
+**Returns**: <code>Object</code> - a pair of status code to return and log level to use in your code  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| status | <code>int</code> | the HTTP status code you've been getting from the backend |
+

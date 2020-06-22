@@ -179,7 +179,7 @@ strains:
       name: Proxywwwadobeio3a0a
       port: 443
       between_bytes_timeout: 10000
-      shield: iad-va-us
+      shield: bwi-va-us
       ssl_cert_hostname: www.adobe.io
       max_conn: 200
       use_ssl: true
@@ -205,7 +205,7 @@ strains:
       name: publish
       port: 80
       between_bytes_timeout: 10000
-      shield: iad-va-us
+      shield: bwi-va-us
       ssl_cert_hostname: 192.168.0.1
       max_conn: 200
       use_ssl: false

@@ -1,6 +1,11 @@
 A markup mapping defines how Helix should generate markup for certain Markdown or DOM patterns.
 
-A configuration consits of a mandatory `match` expression, which is a CSS selector that operates either on the Markdown or DOM.
+A configuration consits of a mandatory `match` expression, which is a matching expression that works differently depending on the value of the `type` attribute.
+
+- If `type=html`, then `match` is a CSS selector that operates on the generated HTML
+- If `type=markdown`, then `match` is a CSS selector that operates on the source Markdown
+- If `type=url`, then `match` is a URL path expression
+- If `type=content`, then `match` is a content intelligence expression that selects sections based on the order of their children
 
 Furthermore, a configuration can have any number of actions (including none at all), for example:
 
