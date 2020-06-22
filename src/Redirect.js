@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+const DEFAULT_TYPE = 'permanent';
+
 /**
  * Defines a redirect rule
  */
@@ -17,6 +19,7 @@ class Redirect {
   constructor(cfg) {
     this._from = new RegExp(cfg.from);
     this._to = cfg.to;
+    this._type = cfg.type;
   }
 
   get from() {
@@ -27,11 +30,20 @@ class Redirect {
     return this._to;
   }
 
+  get type() {
+    return this._type || DEFAULT_TYPE;
+  }
+
   toJSON() {
-    return {
+    const retval = {
       from: this.from,
       to: this.to,
     };
+
+    return this._type ? {
+      ...retval,
+      type: this.type,
+    } : retval;
   }
 }
 
