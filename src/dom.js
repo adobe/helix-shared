@@ -24,7 +24,6 @@ const {
   withFunctionName, exec, pipe, identity, Deepclone, deepclone, Equals, type,
   each, enumerate, reverse, takeUntilVal, extend1, uniq, mapSort, join, map, all,
 } = require('ferrum');
-const { ComputeDiff } = require('./utils');
 
 /** Check whether the given type is the type of a dom node.  Note that, in
  * order to support various dom implementations, this function uses a heuristic
@@ -657,13 +656,11 @@ const assertEquivalentNode = (actual, expected) => {
     assertEquivalentNode(actual.documentElement, expected.documentElement);
     return;
   }
-
   const a2 = equalizeNode(deepclone(actual));
   const e2 = equalizeNode(deepclone(expected));
   if (!a2.isEqualNode(e2)) {
-    const message = ComputeDiff(a2.outerHTML, e2.outerHTML);
     throw new assert.AssertionError({
-      message,
+      message: 'Dom is not equal',
       actual: a2.outerHTML,
       expected: e2.outerHTML,
       operator: 'nodeIsEquivalent',
@@ -672,6 +669,60 @@ const assertEquivalentNode = (actual, expected) => {
   }
 };
 
+/**
+ * prints dom in order for changes to be more discernible.
+ *
+ * @param {object} actual node from original page
+ * @param {object} expected node from test domain page
+ * @param {number} level current level in recursion tree
+ *
+ * return dump of dom that is indented at every level by level*2 spaces
+ */
+const recursiveDomDump = (actual, expected, level = 0) => {
+  if (!actual || !expected) {
+    return '';
+  }
+  let nodeA;
+  let nodeB;
+  try {
+    nodeA = equalizeNode(actual);
+    nodeB = equalizeNode(expected);
+  } catch {
+    nodeA = actual;
+    nodeB = expected;
+  }
+  const aLength = nodeA.childNodes.length;
+  const bLength = nodeB.childNodes.length;
+  const listA = nodeA.childNodes;
+  const listB = nodeB.childNodes;
+  const padding = ''.padEnd(level * 2, ' ');
+  let message = '';
+
+  message += `${padding} ${nodeA.nodeName} \n`;
+  if (aLength !== bLength) {
+    const errMessage = 'different number of child nodes\n';
+    let originalPrint = `${nodeA.nodeName} > ${nodeA.nodeValue}\n`;
+    const extraPadding = padding.padEnd(level * 2, ' ');
+    listA.forEach((node) => {
+      originalPrint += `${extraPadding} ${node.nodeName} > ${node.nodeValue || node.textContent}\n`;
+    });
+    let testPrint = `${nodeB.nodeName} > ${nodeB.nodeValue}\n`;
+    listB.forEach((node) => {
+      testPrint += `${extraPadding} ${node.nodeName} > ${node.nodeValue || node.textContent}\n`;
+    });
+    throw new assert.AssertionError({
+      message: errMessage,
+      actual: originalPrint,
+      expected: testPrint,
+      stackStartFn: recursiveDomDump,
+    });
+  } else {
+    listA.forEach((node, idx) => {
+      message += recursiveDomDump(node, listB[idx], level + 1);
+    });
+  }
+  return message;
+};
 
 // Provide traits for nodes
 Deepclone.implWild((Typ) => (isNodeType(Typ) ? ((x) => x.cloneNode(true)) : undefined));
@@ -687,4 +738,5 @@ module.exports = {
   nodeIsEquivalent,
   nodeMatches,
   assertEquivalentNode,
+  recursiveDomDump,
 };
