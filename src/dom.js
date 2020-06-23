@@ -656,18 +656,72 @@ const assertEquivalentNode = (actual, expected) => {
     assertEquivalentNode(actual.documentElement, expected.documentElement);
     return;
   }
-
   const a2 = equalizeNode(deepclone(actual));
   const e2 = equalizeNode(deepclone(expected));
   if (!a2.isEqualNode(e2)) {
     throw new assert.AssertionError({
-      message: 'The DOM nodes are not equal.',
+      message: 'DOMs are not equal',
       actual: a2.outerHTML,
       expected: e2.outerHTML,
       operator: 'nodeIsEquivalent',
       stackStartFn: assertEquivalentNode,
     });
   }
+};
+
+/**
+ * prints dom in order for changes to be more discernible.
+ *
+ * @param {object} actual node from original page
+ * @param {object} expected node from test domain page
+ * @param {number} level current level in recursion tree
+ *
+ * return dump of dom that is indented at every level by level*2 spaces
+ */
+const dumpDOM = (actual, expected, level = 0) => {
+  if (!actual || !expected) {
+    return '';
+  }
+  let nodeA;
+  let nodeB;
+  try {
+    nodeA = equalizeNode(actual);
+    nodeB = equalizeNode(expected);
+  } catch {
+    nodeA = actual;
+    nodeB = expected;
+  }
+  const aLength = nodeA.childNodes.length;
+  const bLength = nodeB.childNodes.length;
+  const listA = nodeA.childNodes;
+  const listB = nodeB.childNodes;
+  const padding = ''.padEnd(level * 2, ' ');
+  let message = '';
+
+  message += `${padding} ${nodeA.nodeName} \n`;
+  if (aLength !== bLength) {
+    const errMessage = 'different number of child nodes\n';
+    let originalPrint = `${nodeA.nodeName} > ${nodeA.nodeValue}\n`;
+    const extraPadding = padding.padEnd(level * 2, ' ');
+    listA.forEach((node) => {
+      originalPrint += `${extraPadding} ${node.nodeName} > ${node.nodeValue || node.textContent}\n`;
+    });
+    let testPrint = `${nodeB.nodeName} > ${nodeB.nodeValue}\n`;
+    listB.forEach((node) => {
+      testPrint += `${extraPadding} ${node.nodeName} > ${node.nodeValue || node.textContent}\n`;
+    });
+    throw new assert.AssertionError({
+      message: errMessage,
+      actual: originalPrint,
+      expected: testPrint,
+      stackStartFn: dumpDOM,
+    });
+  } else {
+    listA.forEach((node, idx) => {
+      message += dumpDOM(node, listB[idx], level + 1);
+    });
+  }
+  return message;
 };
 
 // Provide traits for nodes
@@ -684,4 +738,5 @@ module.exports = {
   nodeIsEquivalent,
   nodeMatches,
   assertEquivalentNode,
+  dumpDOM,
 };
