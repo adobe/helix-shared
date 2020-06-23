@@ -21,14 +21,50 @@ const { setupPolly } = require('./utils.js');
 const SPEC_ROOT = path.resolve(__dirname, 'specs/redirectsconfig');
 describe('Redirects Config Loading (from GitHub)', () => {
   setupPolly({
-    recordIfMissing: true,
+    recordIfMissing: false,
+    logging: false,
   });
 
-  it('Retrieves Document from GitHub', async () => {
+  it('Retrieves Document from GitHub', async function get() {
+    const { server } = this.polly;
+
+    server.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/:path').intercept((req, res) => {
+      if (req.query.src.startsWith('https://adobe.sharepoint.com/')) {
+        return res.status(200).json([
+          {
+            from: '/foo',
+            to: '/bar',
+          },
+        ]);
+      } else if (req.query.src.startsWith('https://docs.google.com/')) {
+        return res.status(200).json([{
+          src: '/bar',
+          target: '/baz',
+          kind: 'temporary',
+        }]);
+      }
+
+      throw new Error('unsupported source');
+    });
+
     const config = await new RedirectConfig()
       .withCache({ maxSize: 1 })
       .withRepo('trieloff', 'helix-demo', '4e05a4e2c7aac6dd8d5f2b6dcf05815994812d7d')
       .init();
+
+    assert.deepEqual(config.toJSON().redirects, [
+      'https://adobe.sharepoint.com/sites/TheBlog/_layouts/15/guestaccess.aspx?share=ESR1N29Z7HpCh1Zfs_0YS_gB4gVSuKyWRut-kNcHVSvkew&email=helix%40adobe.com&e=hx0OUl',
+      'https://docs.google.com/spreadsheets/d/1IX0g5P74QnHPR3GW1AMCdTk_-m954A-FKZRT2uOZY7k/edit?ouid=107837958797411838063&usp=sheets_home&ths=true',
+      'https://raw.githubusercontent.com/adobe/helix-demo/master/config/redirects.csv',
+      {
+        from: '(.*)\\.php',
+        to: '$1.html',
+      },
+      {
+        from: '/content/dam/(.*)$',
+        to: '/htdocs/$1',
+      },
+    ]);
 
     assert.equal(config.redirects.length, 5);
 
@@ -41,7 +77,17 @@ describe('Redirects Config Loading (from GitHub)', () => {
       url: '/content/dam/test.html',
       type: 'permanent',
     });
-  });
+
+    assert.deepEqual(await config.match('/foo'), {
+      url: '/bar',
+      type: 'permanent',
+    });
+
+    assert.deepEqual(await config.match('/bar'), {
+      url: '/baz',
+      type: 'temporary',
+    });
+  }).timeout(10000);
 });
 
 const tests = [

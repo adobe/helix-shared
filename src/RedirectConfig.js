@@ -12,7 +12,6 @@
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
 const { NamedMapHandler } = require('./NamedMapHandler');
 const { RedirectRuleHandler } = require('./RedirectRuleHandler');
-const Redirect = require('./Redirect');
 
 const redirectsConfigSchema = require('./schemas/redirects.schema.json');
 const redirectSchema = require('./schemas/redirect.schema.json');
@@ -21,6 +20,8 @@ const vanitySchema = require('./schemas/vanity.schema.json');
 
 class RedirectConfig extends SchemaDerivedConfig {
   constructor() {
+    const rrhandler = RedirectRuleHandler();
+
     super({
       filename: 'helix-redirects.yaml',
       schemas: {
@@ -31,13 +32,16 @@ class RedirectConfig extends SchemaDerivedConfig {
       },
       handlers: {
         '^/vanity$': NamedMapHandler(),
-        '^/redirects$': RedirectRuleHandler(),
+        '^/redirects$': rrhandler,
       },
     });
+
+    rrhandler.withLogger(this._logger);
   }
 
   async match(path) {
-    return this.redirects.find((redirect) => (typeof redirect === 'object' && redirect instanceof Redirect ? redirect.match(path) : null)).match(path);
+    const resolved = await Promise.all(this.redirects.map((redirect) => redirect.match(path)));
+    return resolved.find((o) => o);
   }
 }
 

@@ -10,9 +10,15 @@
  * governing permissions and limitations under the License.
  */
 const Redirect = require('./Redirect');
+const DynamicRedirect = require('./DynamicRedirect');
 
 const RedirectRuleHandler = () => ({
-  get: (target, prop) => {
+  withLogger(logger) {
+    this.logger = logger;
+    return this;
+  },
+
+  get(target, prop) {
     const index = Number.parseInt(prop, 10);
     if (!Number.isNaN(index) && index >= 0) {
       const item = target[prop];
@@ -20,7 +26,7 @@ const RedirectRuleHandler = () => ({
       if (item.from && item.to) {
         return new Redirect(item);
       }
-      return item;
+      return new DynamicRedirect(item, this.logger);
     }
     return target[prop];
   },
