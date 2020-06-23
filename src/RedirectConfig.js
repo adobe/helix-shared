@@ -12,6 +12,7 @@
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
 const { NamedMapHandler } = require('./NamedMapHandler');
 const { RedirectRuleHandler } = require('./RedirectRuleHandler');
+const Redirect = require('./Redirect');
 
 const redirectsConfigSchema = require('./schemas/redirects.schema.json');
 const redirectSchema = require('./schemas/redirect.schema.json');
@@ -33,6 +34,18 @@ class RedirectConfig extends SchemaDerivedConfig {
         '^/redirects$': RedirectRuleHandler(),
       },
     });
+  }
+
+  match(path) {
+    return this.redirects.reduce((matched, redirect) => {
+      if (matched) {
+        return matched;
+      }
+      if (typeof redirect === 'object' && redirect instanceof Redirect) {
+        return redirect.match(path);
+      }
+      return null;
+    }, null);
   }
 }
 
