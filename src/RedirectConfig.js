@@ -37,15 +37,7 @@ class RedirectConfig extends SchemaDerivedConfig {
   }
 
   async match(path) {
-    return this.redirects.reduce((matched, redirect) => {
-      if (matched) {
-        return matched;
-      }
-      if (typeof redirect === 'object' && redirect instanceof Redirect) {
-        return redirect.match(path);
-      }
-      return null;
-    }, null);
+    return this.redirects.find((redirect) => (typeof redirect === 'object' && redirect instanceof Redirect ? redirect.match(path) : null)).match(path);
   }
 }
 
