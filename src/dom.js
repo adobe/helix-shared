@@ -660,7 +660,7 @@ const assertEquivalentNode = (actual, expected) => {
   const e2 = equalizeNode(deepclone(expected));
   if (!a2.isEqualNode(e2)) {
     throw new assert.AssertionError({
-      message: 'Dom is not equal',
+      message: 'DOMs are not equal',
       actual: a2.outerHTML,
       expected: e2.outerHTML,
       operator: 'nodeIsEquivalent',
@@ -678,7 +678,7 @@ const assertEquivalentNode = (actual, expected) => {
  *
  * return dump of dom that is indented at every level by level*2 spaces
  */
-const recursiveDomDump = (actual, expected, level = 0) => {
+const dumpDOM = (actual, expected, level = 0) => {
   if (!actual || !expected) {
     return '';
   }
@@ -714,11 +714,11 @@ const recursiveDomDump = (actual, expected, level = 0) => {
       message: errMessage,
       actual: originalPrint,
       expected: testPrint,
-      stackStartFn: recursiveDomDump,
+      stackStartFn: dumpDOM,
     });
   } else {
     listA.forEach((node, idx) => {
-      message += recursiveDomDump(node, listB[idx], level + 1);
+      message += dumpDOM(node, listB[idx], level + 1);
     });
   }
   return message;
@@ -738,5 +738,5 @@ module.exports = {
   nodeIsEquivalent,
   nodeMatches,
   assertEquivalentNode,
-  recursiveDomDump,
+  dumpDOM,
 };
