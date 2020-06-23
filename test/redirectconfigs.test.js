@@ -32,12 +32,12 @@ describe('Redirects Config Loading (from GitHub)', () => {
 
     assert.equal(config.redirects.length, 5);
 
-    assert.deepEqual(config.match('/content/dam/test.png'), {
+    assert.deepEqual(await config.match('/content/dam/test.png'), {
       url: '/htdocs/test.png',
       type: 'permanent',
     });
 
-    assert.deepEqual(config.match('/content/dam/test.php'), {
+    assert.deepEqual(await config.match('/content/dam/test.php'), {
       url: '/content/dam/test.html',
       type: 'permanent',
     });

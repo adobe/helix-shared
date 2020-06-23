@@ -36,7 +36,7 @@ class RedirectConfig extends SchemaDerivedConfig {
     });
   }
 
-  match(path) {
+  async match(path) {
     return this.redirects.reduce((matched, redirect) => {
       if (matched) {
         return matched;
