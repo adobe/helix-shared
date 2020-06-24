@@ -33,6 +33,14 @@
         "/new",
         "/new/$1.html"
       ]
+    },
+    "type": {
+      "enum": [
+        "permanent",
+        "temporary",
+        "internal"
+      ],
+      "description": "What kind of redirect is this?"
     }
   }
 }
