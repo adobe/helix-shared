@@ -210,6 +210,9 @@ is employed. Please refer to it&#39;s documentation to learn more</p>
 The implementation mostly defers to .isEqualNode,
 but provides better error messages.</p>
 </dd>
+<dt><a href="#dumpDOM">dumpDOM(actual, expected, level)</a></dt>
+<dd><p>prints dom in order for changes to be more discernible.</p>
+</dd>
 <dt><a href="#multiline">multiline()</a></dt>
 <dd><p>This is a helper for declaring multiline strings.</p>
 <pre><code>const s = multiline(`
@@ -243,6 +246,7 @@ HTTP status codes and log levels for your service.</p>
     * [new BaseConfig(name)](#new_BaseConfig_new)
     * [.withCache(options)](#BaseConfig+withCache)
     * [.withRepo(owner, repo, ref, options)](#BaseConfig+withRepo)
+    * [.withRepoURL(url, options)](#BaseConfig+withRepoURL)
     * [.saveConfig()](#BaseConfig+saveConfig) ⇒ <code>Promise.&lt;void&gt;</code>
 
 <a name="new_BaseConfig_new"></a>
@@ -263,7 +267,7 @@ Reset the cache with a new cache size
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | cache options |
-| options.maxSize | <code>integer</code> |  |
+| options.maxSize | <code>number</code> |  |
 
 <a name="BaseConfig+withRepo"></a>
 
@@ -277,6 +281,20 @@ Set the base repository to fetch a config from
 | owner | <code>string</code> | username or org |
 | repo | <code>string</code> | repository |
 | ref | <code>string</code> | ref name |
+| options | <code>object</code> | options |
+| options.headers | <code>object</code> | headers to be used for HTTP request |
+| options.headers.authorization | <code>string</code> | authorization token to include |
+
+<a name="BaseConfig+withRepoURL"></a>
+
+### baseConfig.withRepoURL(url, options)
+Set the base repository to fetch the config from.
+
+**Kind**: instance method of [<code>BaseConfig</code>](#BaseConfig)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | [<code>GitUrl</code>](#GitUrl) | The git url of the repository |
 | options | <code>object</code> | options |
 | options.headers | <code>object</code> | headers to be used for HTTP request |
 | options.headers.authorization | <code>string</code> | authorization token to include |
@@ -1020,6 +1038,19 @@ The implementation mostly defers to .isEqualNode,
 but provides better error messages.
 
 **Kind**: global function  
+<a name="dumpDOM"></a>
+
+## dumpDOM(actual, expected, level)
+prints dom in order for changes to be more discernible.
+
+**Kind**: global function  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| actual | <code>object</code> |  | node from original page |
+| expected | <code>object</code> |  | node from test domain page |
+| level | <code>number</code> | <code>0</code> | current level in recursion tree return dump of dom that is indented at every level by level*2 spaces |
+
 <a name="multiline"></a>
 
 ## multiline()
