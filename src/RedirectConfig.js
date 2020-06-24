@@ -37,7 +37,8 @@ class RedirectConfig extends SchemaDerivedConfig {
   }
 
   async match(path) {
-    return this.redirects.find((redirect) => (typeof redirect === 'object' && redirect instanceof Redirect ? redirect.match(path) : null)).match(path);
+    // eslint-disable-next-line max-len
+    return this.redirects.reduce((matched, redirect) => matched || (redirect instanceof Redirect ? redirect.match(path) : null), null);
   }
 }
 
