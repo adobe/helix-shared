@@ -1,3 +1,17 @@
+# [7.7.0](https://github.com/adobe/helix-shared/compare/v7.6.0...v7.7.0) (2020-06-24)
+
+
+### Bug Fixes
+
+* **redirects:** make match function async ([71f3625](https://github.com/adobe/helix-shared/commit/71f3625eee000f4d52898861d78cd3d7346f36a5))
+
+
+### Features
+
+* **redirects:** add match function for RedirectsConfig ([511664c](https://github.com/adobe/helix-shared/commit/511664c1becb9befc401987502d3badce3ed4754))
+* **redirects:** add match function for single redirects ([2fd10c8](https://github.com/adobe/helix-shared/commit/2fd10c8aeed86af4f0c4a84d6aef6c3314c79fd8))
+* **redirects:** add redirect type ([ad5a1fe](https://github.com/adobe/helix-shared/commit/ad5a1fec88d529b972dde290a071a4d1696d5c8e))
+
 # [7.6.0](https://github.com/adobe/helix-shared/compare/v7.5.0...v7.6.0) (2020-06-15)
 
 
