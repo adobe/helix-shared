@@ -48,6 +48,25 @@ describe('Redirect test', () => {
     }
   });
 
+  it('Internal redirects work', () => {
+    const before = {
+      from: '\\/foo',
+      to: '/bar',
+      type: 'internal',
+    };
+
+    const r = new Redirect(before);
+
+    assert.equal(r.from, before.from);
+    assert.equal(r.to, before.to);
+    assert.deepStrictEqual(r.toJSON(), before);
+
+    assert.deepStrictEqual(r.match('/foo'), {
+      url: '/bar',
+      type: 'internal',
+    });
+  });
+
   it('Redirects work', () => {
     const before = {
       from: '\\/foo',
@@ -58,6 +77,9 @@ describe('Redirect test', () => {
 
     assert.equal(r.from, before.from);
     assert.equal(r.to, before.to);
+    assert.equal(r.type, 'permanent');
     assert.deepStrictEqual(r.toJSON(), before);
+
+    assert.deepStrictEqual(r.match('/bar'), null);
   });
 });
