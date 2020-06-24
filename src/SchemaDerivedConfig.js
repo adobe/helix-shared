@@ -85,12 +85,17 @@ class SchemaDerivedConfig extends BaseConfig {
     return {
       get: (target, prop) => {
         if (typeof prop === 'string') {
+          // never proxy private fields
+          if (prop.charAt(0) === '_') {
+            return target[prop];
+          }
           const handler = this.getHandler(`${root}/${prop}`);
-          const handled = handler && target[prop] ? new Proxy(target[prop], handler) : target[prop];
+          const handled = handler && (prop in target)
+            ? new Proxy(target[prop], handler)
+            : target[prop];
 
           if (handled !== null && typeof handled === 'object') {
-            // we are getting an object, so better wrap it again to
-            // intercept property access
+            // we are getting an object, so better wrap it again to intercept property access
             const wrapped = new Proxy(handled, this.defaultHandler(`${root}/${prop}`));
 
             if (typeof wrapped.length === 'number') {
@@ -130,7 +135,7 @@ class SchemaDerivedConfig extends BaseConfig {
 
     // redefine getters
     Object.keys(this._cfg).forEach((key) => {
-      if (typeof this[key] === 'undefined') {
+      if (!(key in this)) {
         this[key] = this._content[key];
       }
     });

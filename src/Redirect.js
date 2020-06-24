@@ -23,9 +23,9 @@ class Redirect {
   }
 
   match(path) {
-    if (new RegExp(this.from).test(path)) {
+    if (this._from.test(path)) {
       return {
-        url: path.replace(new RegExp(this.from), this._to),
+        url: path.replace(this._from, this._to),
         type: this.type,
       };
     }
