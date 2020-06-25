@@ -25,8 +25,18 @@ Reference this group by using
 {"$ref":"undefined#undefined"}
 ```
 
-| Property | Type | Required | Nullable | Defined by |
-| :------- | ---- | -------- | -------- | :--------- |
+no description
+
+`type`
+
+-   is optional
+-   Type: unknown
+-   cannot be null
+-   defined in: [Untitled schema](undefined.md "undefined#undefined")
+
+### Untitled schema Type
+
+unknown
 
 ## Definitions group description
 
@@ -36,5 +46,15 @@ Reference this group by using
 {"$ref":"undefined#undefined"}
 ```
 
-| Property | Type | Required | Nullable | Defined by |
-| :------- | ---- | -------- | -------- | :--------- |
+no description
+
+`description`
+
+-   is optional
+-   Type: unknown
+-   cannot be null
+-   defined in: [Untitled schema](undefined.md "undefined#undefined")
+
+### Untitled schema Type
+
+unknown
