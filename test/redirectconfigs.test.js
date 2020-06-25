@@ -114,5 +114,9 @@ describe('Redirect Config Loading', () => {
     assert.equal(cfg.vanity[0].name, 'canonical');
     // eslint-disable-next-line no-template-curly-in-string
     assert.equal(cfg.vanity[0].fetch, 'https://${repo}-${owner}.project-helix.page/${path}');
+
+    assert.equal(cfg.redirects[4].type, 'temporary');
+
+    assert.equal(cfg.redirects[3].match('/test.php').type, 'internal');
   });
 });

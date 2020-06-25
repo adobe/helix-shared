@@ -29,5 +29,21 @@ Reference this group by using
 {"$ref":"https://ns.adobe.com/helix/shared/strains#/definitions/anystrain"}
 ```
 
-| Property | Type | Required | Nullable | Defined by |
-| :------- | ---- | -------- | -------- | :--------- |
+
+
+
+`anystrain`
+
+-   is optional
+-   Type: merged type ([Details](strains-definitions-anystrain.md))
+-   cannot be null
+-   defined in: [Strains](strains-definitions-anystrain.md "https&#x3A;//ns.adobe.com/helix/shared/strains#/definitions/anystrain")
+
+### anystrain Type
+
+merged type ([Details](strains-definitions-anystrain.md))
+
+one (and only one) of
+
+-   [Proxy Strain](strains-definitions-anystrain-oneof-proxy-strain.md "check type definition")
+-   [Runtime Strain](strains-definitions-anystrain-oneof-runtime-strain.md "check type definition")

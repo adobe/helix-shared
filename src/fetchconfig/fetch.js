@@ -46,12 +46,11 @@ async function fetchConfigUncached(opts) {
 // keep it cachy.
 const fetchConfigCached = cache(fetchConfigUncached, {
   hash: (fn, {
-    owner, repo, ref, _, options,
+    url, options, name,
   }) => ([
     fn.name,
-    owner,
-    repo,
-    ref,
+    url,
+    name,
     options && options.headers && options.headers.Authorization
       ? options.headers.Authorization : undefined,
   ].join()),

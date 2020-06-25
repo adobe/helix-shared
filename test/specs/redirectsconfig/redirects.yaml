@@ -9,8 +9,10 @@ redirects:
   # Straight out of the helix-config.yaml
   - from: (.*)\.php
     to: $1.html
+    type: internal
   - from: /content/dam/(.*)$
     to: /htdocs/$1
+    type: temporary
 
 vanity:
   canonical:

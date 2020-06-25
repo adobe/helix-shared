@@ -5,11 +5,13 @@
     "https://raw.githubusercontent.com/adobe/helix-demo/master/config/redirects.csv",
     {
       "from": "(.*)\\.php",
-      "to": "$1.html"
+      "to": "$1.html",
+      "type": "internal"
     },
     {
       "from": "/content/dam/(.*)$",
-      "to": "/htdocs/$1"
+      "to": "/htdocs/$1",
+      "type": "temporary"
     }
   ],
   "vanity": {
