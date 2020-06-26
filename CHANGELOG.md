@@ -1,3 +1,11 @@
+## [7.7.1](https://github.com/adobe/helix-shared/compare/v7.7.0...v7.7.1) (2020-06-25)
+
+
+### Bug Fixes
+
+* **fetch:** use correct cache keys when fetching configs ([dc08ee1](https://github.com/adobe/helix-shared/commit/dc08ee1b6516df2607f860e7e65d3dd7f833f067))
+* **redirects:** add redirect type to schema ([25cc058](https://github.com/adobe/helix-shared/commit/25cc0586745959248b30db2f7bdc831b8970abd8))
+
 # [7.7.0](https://github.com/adobe/helix-shared/compare/v7.6.0...v7.7.0) (2020-06-24)
 
 
