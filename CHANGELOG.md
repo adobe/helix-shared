@@ -1,3 +1,16 @@
+# [7.8.0](https://github.com/adobe/helix-shared/compare/v7.7.1...v7.8.0) (2020-06-26)
+
+
+### Bug Fixes
+
+* **redirects:** only use spreadsheet contents if response is 200 ([bf0845d](https://github.com/adobe/helix-shared/commit/bf0845d107ebd9b32069d87cdc4ef1e0a24408ce))
+
+
+### Features
+
+* **redirects:** add dynamic redirects class ([a810fc2](https://github.com/adobe/helix-shared/commit/a810fc2eab90149d54bc0852b1611b4798866cf4))
+* **redirects:** get redirect tables from data-embed ([a3bda56](https://github.com/adobe/helix-shared/commit/a3bda56ce1ae0ab4df9307d6404f4e50858507ae))
+
 ## [7.7.1](https://github.com/adobe/helix-shared/compare/v7.7.0...v7.7.1) (2020-06-25)
 
 
