@@ -1,3 +1,10 @@
+## [7.8.1](https://github.com/adobe/helix-shared/compare/v7.8.0...v7.8.1) (2020-06-26)
+
+
+### Bug Fixes
+
+* **redirects:** fix hanging HTTP requests ([2b9d219](https://github.com/adobe/helix-shared/commit/2b9d219b8ab12d68019e22264696436969525df8))
+
 # [7.8.0](https://github.com/adobe/helix-shared/compare/v7.7.1...v7.8.0) (2020-06-26)
 
 
