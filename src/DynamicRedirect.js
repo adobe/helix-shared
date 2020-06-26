@@ -49,7 +49,9 @@ class DynamicRedirect {
         const url = new URL(`https://adobeioruntime.net/api/v1/web/${namespace}/helix-services/data-embed@v1`);
         url.searchParams.append('src', this._src);
         const res = await fetch(url.href);
-        this._data = (await res.json()).map(clean);
+        if (res.ok) {
+          this._data = (await res.json()).map(clean);
+        }
       } catch (e) {
         this._logger.warn(`failed to get ${this._src} ${e.message}`);
       }
