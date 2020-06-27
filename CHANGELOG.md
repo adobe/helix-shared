@@ -1,3 +1,10 @@
+# [7.9.0](https://github.com/adobe/helix-shared/compare/v7.8.1...v7.9.0) (2020-06-27)
+
+
+### Features
+
+* **redirects:** export redirects in index ([1eae30e](https://github.com/adobe/helix-shared/commit/1eae30ef73e31cf12f268dd3a72edb2646d4d427)), closes [/github.com/adobe/helix-redirect/pull/21#discussion_r446144608](https://github.com//github.com/adobe/helix-redirect/pull/21/issues/discussion_r446144608)
+
 ## [7.8.1](https://github.com/adobe/helix-shared/compare/v7.8.0...v7.8.1) (2020-06-26)
 
 
