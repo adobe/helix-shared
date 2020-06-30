@@ -12,6 +12,13 @@
         "at any time"
       ],
       "groupName": "fixes"
+    },{
+      "updateTypes": ["minor"],
+      "automerge": true,
+      "schedule": [
+        "at any time"
+      ],
+      "groupName": "minor"
     },
     {
       "packagePatterns": [
