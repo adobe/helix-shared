@@ -6,46 +6,32 @@
   "timezone": "Europe/Zurich",
   "packageRules": [
     {
-      "updateTypes": ["patch", "pin", "digest"],
-      "automerge": true,
-      "schedule": [
-        "at any time"
-      ],
-      "groupName": "fixes"
-    },{
-      "updateTypes": ["minor"],
-      "automerge": true,
-      "schedule": [
-        "at any time"
-      ],
-      "groupName": "minor"
-    },
-    {
       "packagePatterns": [
         "^@adobe/"
+      ],
+      "schedule": [
+        "at any time"
       ],
       "groupName": "@adobe",
       "automerge": true,
       "major": {
         "automerge": false
       },
-      "schedule": [
-        "at any time"
-      ]
     },
     {
-      "schedule": [
-        "after 2pm on Monday"
-      ],
       "packagePatterns": [
         "^.+"
       ],
       "excludePackagePatterns": [
         "^@adobe/"
       ],
+      "schedule": [
+        "after 2pm on Monday"
+      ],
       "groupName": "external",
-      "patch": {
-        "automerge": true
+      "automerge": true,
+      "major": {
+        "automerge": false
       }
     },
     {
