@@ -10,7 +10,7 @@
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
       "packagePatterns": ["^@adobe/"],
-      "schedule": ["at any time"],
+      "schedule": ["at any time"]
     },
     {
       "groupName": "@adobe major",
