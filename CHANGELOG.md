@@ -1,3 +1,10 @@
+# [7.10.0](https://github.com/adobe/helix-shared/compare/v7.9.0...v7.10.0) (2020-07-21)
+
+
+### Features
+
+* **mount:** support mounting of documents ([#343](https://github.com/adobe/helix-shared/issues/343)) ([0362da4](https://github.com/adobe/helix-shared/commit/0362da48ffdd2b1b2d788b0ff084b1b0830534eb)), closes [#342](https://github.com/adobe/helix-shared/issues/342)
+
 # [7.9.0](https://github.com/adobe/helix-shared/compare/v7.8.1...v7.9.0) (2020-06-27)
 
 
