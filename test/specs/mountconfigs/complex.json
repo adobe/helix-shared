@@ -6,6 +6,9 @@
       "url": "https://drive.google.com/drive/u/0/folders/123456789",
       "fallbackPath": "default.md"
     },
-    "/foo": "https://localhost:4502"
+    "/mswithid": "onedrive:/drives/1234/items/5678",
+    "/foo/": "https://localhost:4502",
+    "/google-index.md": "gdrive:complexitemid",
+    "/onedrive-index.md": "https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/homepage.docx"
   }
 }

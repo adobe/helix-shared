@@ -19,11 +19,18 @@ const MountPointHandler = (decorators) => ({
 
       const obj = typeof config === 'string' ? {
         url: config,
-        path: path.endsWith('/') ? path : `${path}/`,
       } : {
         ...config,
-        path: path.endsWith('/') ? path : `${path}/`,
       };
+      // append trailing slash for paths w/o extension
+      const idxLastSlash = path.lastIndexOf('/');
+      const idx = path.lastIndexOf('.');
+      if (idxLastSlash !== path.length - 1 && idx < idxLastSlash) {
+        obj.path = `${path}/`;
+      } else {
+        obj.path = path;
+        obj.isDocument = idxLastSlash !== path.length - 1;
+      }
 
       const decorator = decorators.find((d) => d.test(obj));
 

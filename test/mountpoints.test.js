@@ -148,6 +148,11 @@ describe('Mount Point Config Loading', () => {
     assert.equal(cfg.mountpoints.length, 1);
     assert.equal(cfg.mountpoints[0].path, '/');
     assert.equal(cfg.mountpoints[0].url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog?csf=1&e=8Znxth');
+
+    const m1 = cfg.match('/index.md');
+    assert.equal(m1.type, 'onedrive');
+    assert.equal(m1.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog?csf=1&e=8Znxth');
+    assert.equal(m1.relPath, '/index.md');
   });
 
   it('Empty Mount Points gets properly evaluated', async () => {
@@ -163,10 +168,11 @@ describe('Mount Point Config Loading', () => {
       .init();
     assert.equal(cfg.match('/nomach'), null);
 
-    const m1 = cfg.match('/ms/en/posts/testdocument');
+    const m1 = cfg.match('/ms/en/posts/testdocument.md');
     assert.equal(m1.type, 'onedrive');
+    assert.equal(m1.isDocument, undefined);
     assert.equal(m1.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
-    assert.equal(m1.relPath, '/en/posts/testdocument');
+    assert.equal(m1.relPath, '/en/posts/testdocument.md');
 
     const m2 = cfg.match('/ms/docs/different');
     assert.equal(m2.type, 'onedrive');
@@ -177,6 +183,7 @@ describe('Mount Point Config Loading', () => {
     const m3 = cfg.match('/gd/document42');
     assert.equal(m3.type, 'google');
     assert.equal(m3.url, 'https://drive.google.com/drive/u/0/folders/123456789');
+    assert.equal(m3.path, '/gd/');
     assert.equal(m3.id, '123456789');
     assert.equal(m3.fallbackPath, 'default.md');
     assert.equal(m3.relPath, '/document42');
@@ -196,6 +203,28 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m6.type, 'onedrive');
     assert.equal(m6.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog', 'is confused by slashes');
     assert.equal(m6.relPath, '');
+
+    // onedrive document check with extension
+    const m7 = cfg.match('/onedrive-index');
+    assert.equal(m7.type, 'onedrive');
+    assert.equal(m7.path, '/onedrive-index.md');
+    assert.equal(m7.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/homepage.docx');
+    assert.equal(m7.isDocument, true);
+    assert.equal(m7.relPath, '');
+
+    // google drive document check
+    const m8 = cfg.match('/google-index');
+    assert.equal(m8.type, 'google');
+    assert.equal(m8.url, 'gdrive:complexitemid');
+    assert.equal(m8.id, 'complexitemid');
+    assert.equal(m8.isDocument, true);
+    assert.equal(m8.relPath, '');
+
+    // onedrive with onedrive uri
+    const m9 = cfg.match('/mswithid/foo');
+    assert.equal(m9.type, 'onedrive');
+    assert.equal(m9.url, 'onedrive:/drives/1234/items/5678');
+    assert.equal(m9.relPath, '/foo');
 
     assert.equal(cfg.match('/mssoft'), null, 'requires trailing slash in matches');
   });
