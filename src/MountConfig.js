@@ -44,7 +44,7 @@ function stripQuery(m, ...specialparams) {
 
 const onedriveDecorator = {
   test(m) {
-    return /https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/');
+    return /https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/') || m.url.startsWith('onedrive:');
   },
   decorate(m) {
     return {
@@ -56,13 +56,15 @@ const onedriveDecorator = {
 
 const googleDecorator = {
   test(m) {
-    return !m.id && m.url.startsWith('https://drive.google.com/');
+    return m.url.startsWith('https://drive.google.com/') || m.url.startsWith('gdrive:');
   },
   decorate(m) {
     return {
       ...stripQuery(m, 'fallbackPath'),
       type: 'google',
-      id: m.url.split('/').pop(),
+      id: m.url.startsWith('gdrive:')
+        ? m.url.split(':').pop()
+        : m.url.split('/').pop(),
     };
   },
 };
@@ -91,12 +93,13 @@ class MountConfig extends SchemaDerivedConfig {
    */
   match(resourcePath) {
     const fullPath = resourcePath.endsWith('/') ? resourcePath : `${resourcePath}/`;
+    const docPath = `${resourcePath}.md`;
 
     const [mp] = this.mountpoints
-      .filter((m) => fullPath.startsWith(m.path)) // beginning must match
+      .filter((m) => (m.isDocument ? docPath === m.path : fullPath.startsWith(m.path)))
       .map((m) => ({
         ...m,
-        relPath: fullPath.substring(m.path.length - 1, fullPath.length - 1),
+        relPath: m.isDocument ? '' : fullPath.substring(m.path.length - 1, fullPath.length - 1),
       }));
 
     return mp || null;
