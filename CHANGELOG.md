@@ -1,3 +1,10 @@
+## [7.10.1](https://github.com/adobe/helix-shared/compare/v7.10.0...v7.10.1) (2020-08-20)
+
+
+### Bug Fixes
+
+* **redirects:** relax redirect from matching ([4ff7c27](https://github.com/adobe/helix-shared/commit/4ff7c27713ae9b129f269ebcefd55699c3f23a02)), closes [#353](https://github.com/adobe/helix-shared/issues/353) [#352](https://github.com/adobe/helix-shared/issues/352)
+
 # [7.10.0](https://github.com/adobe/helix-shared/compare/v7.9.0...v7.10.0) (2020-07-21)
 
 
