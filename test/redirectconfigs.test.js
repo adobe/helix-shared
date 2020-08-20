@@ -35,6 +35,10 @@ describe('Redirects Config Loading (from GitHub)', () => {
             from: '/foo',
             to: '/bar',
           },
+          {
+            from: 'https://blog.adobe.com/en/2020/08/17/redefining%20-he-digital-experience-for-creating-and-collaborating-on-learning-content.html',
+            to: 'https://blog.adobe.com/en/2020/08/17/redefining-the-digital-experience-for-creating-and-collaborating-on-learning-content.html',
+          },
         ]);
       } else if (req.query.src.startsWith('https://docs.google.com/')) {
         return res.status(200).json([{
@@ -86,6 +90,16 @@ describe('Redirects Config Loading (from GitHub)', () => {
     assert.deepEqual(await config.match('/bar'), {
       url: '/baz',
       type: 'temporary',
+    });
+
+    assert.deepEqual(await config.match('/en/2020/08/17/redefining%20-he-digital-experience-for-creating-and-collaborating-on-learning-content.html'), {
+      url: 'https://blog.adobe.com/en/2020/08/17/redefining-the-digital-experience-for-creating-and-collaborating-on-learning-content.html',
+      type: 'permanent',
+    });
+
+    assert.deepEqual(await config.match('/en/2020/08/17/redefining -he-digital-experience-for-creating-and-collaborating-on-learning-content.html'), {
+      url: 'https://blog.adobe.com/en/2020/08/17/redefining-the-digital-experience-for-creating-and-collaborating-on-learning-content.html',
+      type: 'permanent',
     });
   }).timeout(10000);
 });

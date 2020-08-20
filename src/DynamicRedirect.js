@@ -26,9 +26,16 @@ function getProp(entry, names) {
   return pair ? pair[1] : null;
 }
 
+function getPath(value) {
+  if (value && value.startsWith('https://')) {
+    return new URL(value).pathname;
+  }
+  return value;
+}
+
 function clean(entry) {
   return {
-    from: getProp(entry, FROM_NAMES),
+    from: getPath(getProp(entry, FROM_NAMES)),
     to: getProp(entry, TO_NAMES),
     type: getProp(entry, TYPE_NAMES),
   };
@@ -58,7 +65,8 @@ class DynamicRedirect {
       }
     }
     if (this._data) {
-      const hit = this._data.find((entry) => entry.from === path);
+      const hit = this._data.find((entry) => entry.from === path
+        || entry.from === path.replace(/[ ]/g, encodeURIComponent));
       return hit ? {
         url: hit.to,
         type: hit.type || DEFAULT_TYPE,
