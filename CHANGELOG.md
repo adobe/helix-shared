@@ -1,3 +1,11 @@
+# [7.11.0](https://github.com/adobe/helix-shared/compare/v7.10.1...v7.11.0) (2020-08-26)
+
+
+### Features
+
+* **index:** add target property for alternative indexing targets ([5888c8c](https://github.com/adobe/helix-shared/commit/5888c8c4651fb62097d305c80b8b1de13ed86a01))
+* **schema:** allow QBL in query expressions ([bad803b](https://github.com/adobe/helix-shared/commit/bad803bf7b586f98439bf9e5ded6ec0c64c0b143))
+
 ## [7.10.1](https://github.com/adobe/helix-shared/compare/v7.10.0...v7.10.1) (2020-08-20)
 
 
