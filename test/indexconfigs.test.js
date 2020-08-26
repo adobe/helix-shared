@@ -26,6 +26,11 @@ const tests = [
     result: 'query.json',
   },
   {
+    title: 'loads a theblog example with QBL',
+    config: 'qbl-query.yaml',
+    result: 'qbl-query.json',
+  },
+  {
     title: 'loads an empty query config',
     config: 'empty-query.yaml',
     result: 'empty-query.json',
@@ -127,6 +132,30 @@ describe('Index Config Loading', () => {
     assert.equal(cfg.indices[0].queries[1].hitsPerPage, 25); // injected default value
     assert.ok(Array.isArray(cfg.indices[0].queries[1].parameters));
     assert.ok(Array.isArray(cfg.indices[0].queries[0].parameters));
+  });
+
+  it('theblog Index Config (QBL) gets loaded', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'qbl-query.yaml'));
+    await cfg.init();
+    assert.equal(cfg.indices.length, 1);
+    assert.ok(Array.isArray(cfg.indices));
+    assert.equal(cfg.indices[0].name, 'blog-posts');
+    // eslint-disable-next-line no-template-curly-in-string
+    assert.equal(cfg.indices[0].fetch, 'https://${repo}-${owner}.project-helix.page/${path}');
+    assert.equal(cfg.indices[0].properties.length, 5);
+    assert.equal(cfg.indices[0].queries.length, 1);
+    assert.ok(Array.isArray(cfg.indices[0].queries));
+    assert.equal(cfg.indices[0].queries[0].cache, 300); // coerced from string to int
+    assert.equal(cfg.indices[0].queries[0].hitsPerPage, 25); // injected default value
+    assert.ok(Array.isArray(cfg.indices[0].queries[0].parameters));
+    assert.deepEqual(cfg.indices[0].queries[0].query, {
+      property: {
+        _: 'author',
+        // eslint-disable-next-line no-template-curly-in-string
+        value: '${author}',
+      },
+    });
   });
 
   it('theblog Index Config creates query URLs', async () => {

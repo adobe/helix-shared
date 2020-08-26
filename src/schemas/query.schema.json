@@ -17,8 +17,8 @@
   "type": "object",
   "properties": {
     "query": {
-      "type": "string",
-      "description": "The base query to run",
+      "type": ["string", "object", "array"],
+      "description": "The base query to run. If the value is an object or array, use [QBL JSON or YAML notation](https://github.com/adobe/helix-querybuilder#as-json-or-yaml)",
       "default": "*"
     },
     "hitsPerPage": {

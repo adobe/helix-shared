@@ -1,0 +1,50 @@
+{
+  "indices": {
+    "blog-posts": {
+      "name": "blog-posts",
+      "fetch": "https://${repo}-${owner}.project-helix.page/${path}",
+      "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/en/query-index.xlsx?d=we7bf6b3af3234076968b30a1565f2373&csf=1&web=1&e=q9o8tW",
+      "properties": {
+        "author": {
+          "faceted": true,
+          "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+          "value": "${match('by (.*)')}\n"
+        },
+        "date": {
+          "select": "main > div:nth-of-type(3) > p:nth-of-type(2)",
+          "value": "${parseTimestamp('[POSTED ON] MM-DD-YYYY')}\n"
+        },
+        "hero": {
+          "select": "main > div > img:first-of-type",
+          "value": "${attribute('src')}\n"
+        },
+        "title": {
+          "select": "h1:first-of-type",
+          "value": "${textContent()}\n"
+        },
+        "topics": {
+          "faceted": true,
+          "select": "main > div:last-of-type > p:first-of-type",
+          "values": "${match('(Topics: )? ([^,]+)')}\n"
+        }
+      },
+      "queries": {
+        "by-author": {
+          "cache": 300,
+          "hitsPerPage": 25,
+          "parameters": [
+            "author"
+          ],
+          "query": {
+            "property": {
+              "_": "author",
+              "value": "${author}"
+            }
+          }
+        }
+      },
+      "source": "html"
+    }
+  },
+  "version": 1
+}
