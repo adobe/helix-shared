@@ -29,7 +29,7 @@
     "target": {
       "type": "string",
       "format": "uri",
-      "description": "The data sink to store the extracted data in. This can be an Excel or Google spreadsheet"
+      "description": "The data sink to store the extracted data in. This can be an Excel or Google spreadsheet, an Azure Index or Algolia index"
     },
     "properties": {
       "type": "object",
