@@ -184,4 +184,14 @@ describe('Redirect Config Loading', () => {
 
     assert.equal(cfg.redirects[3].match('/test.php').type, 'internal');
   });
+
+  it('feed Redirects Config gets loaded from YAML', async () => {
+    const cfg = new RedirectConfig()
+      .withSource(fs.readFileSync(path.resolve(SPEC_ROOT, 'feeds.yaml')).toString());
+    await cfg.init();
+    assert.equal(cfg.redirects.length, 2);
+
+    assert.equal((await cfg.match('/tags/news/feed')).url, '/feed.xml');
+    assert.equal((await cfg.match('/tags/news/feed/')).url, '/feed.xml');
+  });
 });
