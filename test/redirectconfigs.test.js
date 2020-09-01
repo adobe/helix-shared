@@ -115,6 +115,11 @@ const tests = [
     config: 'empty.yaml',
     result: 'empty.json',
   },
+  {
+    title: 'loads a feed config',
+    config: 'feeds.yaml',
+    result: 'feeds.json',
+  },
 ];
 
 describe('Redirect Config Loading', () => {
