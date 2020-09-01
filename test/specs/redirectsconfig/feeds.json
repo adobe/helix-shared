@@ -1,0 +1,16 @@
+{
+  "redirects": [
+    {
+      "from": ".*\\/feed/$",
+      "to": "/feed.xml",
+      "type": "temporary"
+    },
+    {
+      "from": ".*\\/feed$",
+      "to": "/feed.xml",
+      "type": "temporary"
+    }
+  ],
+  "vanity": {},
+  "version": 1
+}

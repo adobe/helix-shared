@@ -115,6 +115,11 @@ const tests = [
     config: 'empty.yaml',
     result: 'empty.json',
   },
+  {
+    title: 'loads a feed config',
+    config: 'feeds.yaml',
+    result: 'feeds.json',
+  },
 ];
 
 describe('Redirect Config Loading', () => {
@@ -178,5 +183,15 @@ describe('Redirect Config Loading', () => {
     assert.equal(cfg.redirects[4].type, 'temporary');
 
     assert.equal(cfg.redirects[3].match('/test.php').type, 'internal');
+  });
+
+  it('feed Redirects Config gets loaded from YAML', async () => {
+    const cfg = new RedirectConfig()
+      .withSource(fs.readFileSync(path.resolve(SPEC_ROOT, 'feeds.yaml')).toString());
+    await cfg.init();
+    assert.equal(cfg.redirects.length, 2);
+
+    assert.equal((await cfg.match('/tags/news/feed')).url, '/feed.xml');
+    assert.equal((await cfg.match('/tags/news/feed/')).url, '/feed.xml');
   });
 });
