@@ -46,6 +46,12 @@ class DynamicRedirect {
     this._src = src;
     this._data = null;
     this._logger = logger;
+    this._transactionID = null;
+  }
+
+  withTransactionID(id) {
+    this._transactionID = id;
+    return this;
   }
 
   async match(path) {
@@ -55,7 +61,11 @@ class DynamicRedirect {
         const namespace = process.env.__OW_NAMESPACE || 'helix';
         const url = new URL(`https://adobeioruntime.net/api/v1/web/${namespace}/helix-services/data-embed@v1`);
         url.searchParams.append('src', this._src);
-        const res = await fetch(url.href);
+        const res = await fetch(url.href, {
+          headers: {
+            'x-request-id': this._transactionID,
+          },
+        });
         const data = (await res.json()).map(clean);
         if (res.ok) {
           this._data = data;

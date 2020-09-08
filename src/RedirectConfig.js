@@ -37,6 +37,12 @@ class RedirectConfig extends SchemaDerivedConfig {
     });
 
     rrhandler.withLogger(this._logger);
+    this.rrhandler = rrhandler;
+  }
+
+  withTransactionID(id) {
+    this.rrhandler.withTransactionID(id);
+    return this;
   }
 
   async match(path) {
