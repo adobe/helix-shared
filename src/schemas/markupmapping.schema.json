@@ -87,7 +87,16 @@
     },
     "wrap": {
       "type": "string",
-      "description": "Add the following HTML tags before the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.",
+      "description": "Add the following HTML tags around the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.",
+      "examples": [
+        "div>ul>li",
+        "div+p+bq",
+        "div+div>p>span+em"
+      ]
+    },
+    "replace": {
+      "type": "string",
+      "description": "Add the following HTML tags instead of the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.",
       "examples": [
         "div>ul>li",
         "div+p+bq",

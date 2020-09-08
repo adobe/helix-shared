@@ -1,21 +1,21 @@
 # Untitled string in Markup Mapping Schema
 
 ```txt
-https://ns.adobe.com/helix/shared/markupmapping#/properties/wrap
+https://ns.adobe.com/helix/shared/markupmapping#/properties/replace
 ```
 
-Add the following HTML tags around the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
+Add the following HTML tags instead of the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
 
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
 | :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
 
-## wrap Type
+## replace Type
 
 `string`
 
-## wrap Examples
+## replace Examples
 
 ```yaml
 div>ul>li

@@ -23,6 +23,7 @@ https://ns.adobe.com/helix/shared/markupmapping#/additionalProperties
 | [match](#match)           | Merged   | Required | cannot be null | [Markup Mapping](markupmapping-properties-match.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/match")           |
 | [type](#type)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-type.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/type")             |
 | [wrap](#wrap)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-wrap.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/wrap")             |
+| [replace](#replace)       | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-replace.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/replace")       |
 | [classnames](#classnames) | `array`  | Optional | cannot be null | [Markup Mapping](markupmapping-properties-classnames.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/classnames") |
 | [attribute](#attribute)   | `object` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-attribute.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/attribute")   |
 
@@ -102,7 +103,7 @@ The default value is:
 
 ## wrap
 
-Add the following HTML tags before the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
+Add the following HTML tags around the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
 
 
 `wrap`
@@ -117,6 +118,39 @@ Add the following HTML tags before the generated HTML. This attribute is using [
 `string`
 
 ### wrap Examples
+
+```yaml
+div>ul>li
+
+```
+
+```yaml
+div+p+bq
+
+```
+
+```yaml
+div+div>p>span+em
+
+```
+
+## replace
+
+Add the following HTML tags instead of the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
+
+
+`replace`
+
+-   is optional
+-   Type: `string`
+-   cannot be null
+-   defined in: [Markup Mapping](markupmapping-properties-replace.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/replace")
+
+### replace Type
+
+`string`
+
+### replace Examples
 
 ```yaml
 div>ul>li
