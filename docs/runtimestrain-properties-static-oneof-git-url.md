@@ -17,19 +17,19 @@ Representation of the fragments of a Git URL
 
 # Git URL Properties
 
-| Property              | Type         | Required | Nullable       | Defined by                                                                                                                |
-| :-------------------- | ------------ | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| [protocol](#protocol) | `string`     | Optional | cannot be null | [Git URL](staticgiturl-properties-protocol.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/protocol") |
-| [hostname](#hostname) | `string`     | Optional | cannot be null | [Git URL](staticgiturl-properties-hostname.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/hostname") |
-| [host](#host)         | `string`     | Optional | cannot be null | [Git URL](staticgiturl-properties-host.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/host")         |
-| [port](#port)         | Unknown Type | Optional | cannot be null | [Git URL](staticgiturl-properties-port.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/port")         |
-| [owner](#owner)       | `string`     | Required | cannot be null | [Git URL](staticgiturl-properties-owner.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/owner")       |
-| [path](#path)         | `string`     | Optional | cannot be null | [Git URL](staticgiturl-properties-path.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/path")         |
-| [repo](#repo)         | `string`     | Required | cannot be null | [Git URL](staticgiturl-properties-repo.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/repo")         |
-| [ref](#ref)           | `string`     | Required | cannot be null | [Git URL](staticgiturl-properties-ref.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/ref")           |
-| [allow](#allow)       | `array`      | Optional | cannot be null | [Git URL](staticgiturl-properties-allow.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/allow")       |
-| [deny](#deny)         | `array`      | Optional | cannot be null | [Git URL](staticgiturl-properties-deny.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/deny")         |
-| [magic](#magic)       | `boolean`    | Optional | cannot be null | [Git URL](staticgiturl-properties-magic.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/magic")       |
+| Property              | Type      | Required | Nullable       | Defined by                                                                                                                |
+| :-------------------- | --------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| [protocol](#protocol) | `string`  | Optional | cannot be null | [Git URL](staticgiturl-properties-protocol.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/protocol") |
+| [hostname](#hostname) | `string`  | Optional | cannot be null | [Git URL](staticgiturl-properties-hostname.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/hostname") |
+| [host](#host)         | `string`  | Optional | cannot be null | [Git URL](staticgiturl-properties-host.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/host")         |
+| [port](#port)         | Multiple  | Optional | cannot be null | [Git URL](staticgiturl-properties-port.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/port")         |
+| [owner](#owner)       | `string`  | Required | cannot be null | [Git URL](staticgiturl-properties-owner.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/owner")       |
+| [path](#path)         | `string`  | Optional | cannot be null | [Git URL](staticgiturl-properties-path.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/path")         |
+| [repo](#repo)         | `string`  | Required | cannot be null | [Git URL](staticgiturl-properties-repo.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/repo")         |
+| [ref](#ref)           | `string`  | Required | cannot be null | [Git URL](staticgiturl-properties-ref.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/ref")           |
+| [allow](#allow)       | `array`   | Optional | cannot be null | [Git URL](staticgiturl-properties-allow.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/allow")       |
+| [deny](#deny)         | `array`   | Optional | cannot be null | [Git URL](staticgiturl-properties-deny.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/deny")         |
+| [magic](#magic)       | `boolean` | Optional | cannot be null | [Git URL](staticgiturl-properties-magic.md "https&#x3A;//ns.adobe.com/helix/shared/staticgiturl#/properties/magic")       |
 
 ## protocol
 

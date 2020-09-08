@@ -16,8 +16,13 @@ A configuration consits of a mandatory `match` expression, which is a matching e
 Furthermore, a configuration can have any number of actions (including none at all), for example:
 
 -   `wrap`: adds more HTML elements around the generated HTML
+-   `replace`: replaces the generated HTML with the provided markup
 -   `classnames` adds `class` attribute values into the generated HTML element
 -   `attribute` adds other attributes and values into the generated HTML element
+
+## Referencing AST values
+
+In the `wrap` and `replace` expressions you can use pattern expressions like `wrap: pre.zupp[data-embed="${url}"]` inside the Emmet syntax, allowing you to reference properties of the matched MDAST or DOM node.
 
 ## Examples
 

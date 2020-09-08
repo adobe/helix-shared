@@ -19,7 +19,7 @@ A named query that can be run against an index
 
 | Property                    | Type      | Required | Nullable       | Defined by                                                                                                      |
 | :-------------------------- | --------- | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------- |
-| [query](#query)             | `string`  | Optional | cannot be null | [Query](query-properties-query.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/query")             |
+| [query](#query)             | Multiple  | Optional | cannot be null | [Query](query-properties-query.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/query")             |
 | [hitsPerPage](#hitsPerPage) | `integer` | Optional | cannot be null | [Query](query-properties-hitsperpage.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/hitsPerPage") |
 | [cache](#cache)             | `integer` | Optional | cannot be null | [Query](query-properties-cache.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/cache")             |
 | [parameters](#parameters)   | `array`   | Optional | cannot be null | [Query](query-properties-parameters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/parameters")   |
@@ -27,19 +27,19 @@ A named query that can be run against an index
 
 ## query
 
-The base query to run
+The base query to run. If the value is an object or array, use [QBL JSON or YAML notation](https://github.com/adobe/helix-querybuilder#as-json-or-yaml)
 
 
 `query`
 
 -   is optional
--   Type: `string`
+-   Type: any of the folllowing: `string` or `object` or `array` ([Details](query-properties-query.md))
 -   cannot be null
 -   defined in: [Query](query-properties-query.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/query")
 
 ### query Type
 
-`string`
+any of the folllowing: `string` or `object` or `array` ([Details](query-properties-query.md))
 
 ### query Default Value
 

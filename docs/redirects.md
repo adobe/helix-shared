@@ -17,11 +17,11 @@ This configuration file enables the creation of programmatic redirects, rewrites
 
 # Redirects Configuration Properties
 
-| Property                | Type         | Required | Nullable       | Defined by                                                                                                                                    |
-| :---------------------- | ------------ | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| [version](#version)     | Unknown Type | Optional | cannot be null | [Redirects Configuration](redirects-properties-version.md "https&#x3A;//ns.adobe.com/helix/shared/redirects#/properties/version")             |
-| [redirects](#redirects) | `array`      | Optional | cannot be null | [Redirects Configuration](redirects-properties-redirects.md "https&#x3A;//ns.adobe.com/helix/shared/redirects#/properties/redirects")         |
-| [vanity](#vanity)       | `object`     | Optional | cannot be null | [Redirects Configuration](redirects-properties-vanity-url-extractor.md "https&#x3A;//ns.adobe.com/helix/shared/redirects#/properties/vanity") |
+| Property                | Type     | Required | Nullable       | Defined by                                                                                                                                    |
+| :---------------------- | -------- | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| [version](#version)     | Multiple | Optional | cannot be null | [Redirects Configuration](redirects-properties-version.md "https&#x3A;//ns.adobe.com/helix/shared/redirects#/properties/version")             |
+| [redirects](#redirects) | `array`  | Optional | cannot be null | [Redirects Configuration](redirects-properties-redirects.md "https&#x3A;//ns.adobe.com/helix/shared/redirects#/properties/redirects")         |
+| [vanity](#vanity)       | `object` | Optional | cannot be null | [Redirects Configuration](redirects-properties-vanity-url-extractor.md "https&#x3A;//ns.adobe.com/helix/shared/redirects#/properties/vanity") |
 
 ## version
 
