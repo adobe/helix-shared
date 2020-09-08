@@ -29,6 +29,8 @@ describe('Redirects Config Loading (from GitHub)', () => {
     const { server } = this.polly;
 
     server.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/:path').intercept((req, res) => {
+      assert.equal(req.headers['x-request-id'], 'random');
+
       if (req.query.src.startsWith('https://adobe.sharepoint.com/')) {
         return res.status(200).json([
           {
@@ -54,6 +56,7 @@ describe('Redirects Config Loading (from GitHub)', () => {
     const config = await new RedirectConfig()
       .withCache({ maxSize: 1 })
       .withRepo('trieloff', 'helix-demo', '4e05a4e2c7aac6dd8d5f2b6dcf05815994812d7d')
+      .withTransactionID('random')
       .init();
 
     assert.deepEqual(config.toJSON().redirects, [

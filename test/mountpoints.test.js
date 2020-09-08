@@ -39,11 +39,13 @@ describe('Mount Point Config Loading (from GitHub)', () => {
   it('Retrieves Document from GitHub with Auth', async function okGithub() {
     const { server } = this.polly;
     let foundtoken;
+    let foundid;
 
     server
       .get('https://raw.githubusercontent.com/adobe/theblog/7f65c0399b1b925ececf55becd4b150c357-auth/fstab.yaml')
       .intercept((req, res) => {
         foundtoken = req.headers.authorization;
+        foundid = req.headers['x-request-id'];
         res.status(200).send(`mountpoints:
   /: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog`);
       });
@@ -53,10 +55,12 @@ describe('Mount Point Config Loading (from GitHub)', () => {
       .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c357-auth', {
         headers: { Authorization: 'fake' },
       })
+      .withTransactionID('random')
       .init();
 
     const match = config.match('/');
 
+    assert.equal(foundid, 'random');
     assert.equal(foundtoken, 'fake');
     assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
   });

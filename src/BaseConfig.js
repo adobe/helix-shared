@@ -40,6 +40,12 @@ class BaseConfig {
     this._value = null;
     this._name = name;
     this._repo = null;
+    this._transactionID = null;
+  }
+
+  withTransactionID(id) {
+    this._transactionID = id;
+    return this;
   }
 
   /**
@@ -147,6 +153,14 @@ class BaseConfig {
           ...this._repo,
           name: this._name,
           log: this._logger,
+          options: {
+            headers: {
+              ...(this._repo && this._repo.options && this._repo.options.headers
+                ? this._repo.options.headers
+                : {}),
+              'x-request-id': this._transactionID,
+            },
+          },
         });
       }
     }

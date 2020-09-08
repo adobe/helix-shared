@@ -18,6 +18,11 @@ const RedirectRuleHandler = () => ({
     return this;
   },
 
+  withTransactionID(id) {
+    this._transactionID = id;
+    return this;
+  },
+
   get(target, prop) {
     const index = Number.parseInt(prop, 10);
     if (!Number.isNaN(index) && index >= 0) {
@@ -26,7 +31,8 @@ const RedirectRuleHandler = () => ({
       if (item.from && item.to) {
         return new Redirect(item);
       }
-      return new DynamicRedirect(item, this.logger);
+      return new DynamicRedirect(item, this.logger)
+        .withTransactionID(this._transactionID);
     }
     return target[prop];
   },
