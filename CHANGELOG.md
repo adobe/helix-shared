@@ -1,3 +1,10 @@
+# [7.12.0](https://github.com/adobe/helix-shared/compare/v7.11.0...v7.12.0) (2020-09-08)
+
+
+### Features
+
+* **config:** add ability to set transaction id when fetching config or data ([08584a1](https://github.com/adobe/helix-shared/commit/08584a187459495310b4bfe7f5afbd5fccd8d274)), closes [#350](https://github.com/adobe/helix-shared/issues/350)
+
 # [7.11.0](https://github.com/adobe/helix-shared/compare/v7.10.1...v7.11.0) (2020-08-26)
 
 
