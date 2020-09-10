@@ -1,3 +1,11 @@
+# [7.13.0](https://github.com/adobe/helix-shared/compare/v7.12.0...v7.13.0) (2020-09-10)
+
+
+### Features
+
+* **markup:** add `replace` directive ([bad520d](https://github.com/adobe/helix-shared/commit/bad520df15a2e877e53202e9b595bb9ac8ba8cb9)), closes [#363](https://github.com/adobe/helix-shared/issues/363)
+* **markup:** update schema ([dd1d71b](https://github.com/adobe/helix-shared/commit/dd1d71b1b37bbed9134cc185b9154badd46a354d)), closes [#363](https://github.com/adobe/helix-shared/issues/363)
+
 # [7.12.0](https://github.com/adobe/helix-shared/compare/v7.11.0...v7.12.0) (2020-09-08)
 
 
