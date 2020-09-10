@@ -21,6 +21,7 @@ https://ns.adobe.com/helix/shared/index
 | :------------------------ | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------ |
 | [source](#source)         | `string` | Optional | cannot be null | [Index](index-properties-source.md "https&#x3A;//ns.adobe.com/helix/shared/index#/properties/source")         |
 | [fetch](#fetch)           | `string` | Optional | cannot be null | [Index](index-properties-fetch.md "https&#x3A;//ns.adobe.com/helix/shared/index#/properties/fetch")           |
+| [target](#target)         | `string` | Optional | cannot be null | [Index](index-properties-target.md "https&#x3A;//ns.adobe.com/helix/shared/index#/properties/target")         |
 | [properties](#properties) | `object` | Optional | cannot be null | [Index](index-properties-properties.md "https&#x3A;//ns.adobe.com/helix/shared/index#/properties/properties") |
 | [queries](#queries)       | `object` | Optional | cannot be null | [Index](index-properties-queries.md "https&#x3A;//ns.adobe.com/helix/shared/index#/properties/queries")       |
 
@@ -68,6 +69,26 @@ The source document to retrieve values from. Known variables in the URI Template
 ### fetch Constraints
 
 **URI Template**: the string must be a URI template, according to [RFC 6570](https://tools.ietf.org/html/rfc6570 "check the specification")
+
+## target
+
+The data sink to store the extracted data in. This can be an Excel or Google spreadsheet, an Azure Index or Algolia index
+
+
+`target`
+
+-   is optional
+-   Type: `string`
+-   cannot be null
+-   defined in: [Index](index-properties-target.md "https&#x3A;//ns.adobe.com/helix/shared/index#/properties/target")
+
+### target Type
+
+`string`
+
+### target Constraints
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
 
 ## properties
 

@@ -17,4 +17,4 @@ A link to a Google spreadsheet, shared with `helix@adobe.com` that has at least 
 
 ## 1 Constraints
 
-**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc4291 "check the specification")
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
