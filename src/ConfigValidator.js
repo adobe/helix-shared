@@ -16,6 +16,7 @@ const Ajv = require('ajv');
 const schemas = [
   /* eslint-disable global-require */
   require('./schemas/config.schema.json'),
+  require('./schemas/version-lock.schema.json'),
   require('./schemas/runtimestrain.schema.json'),
   require('./schemas/proxystrain.schema.json'),
   require('./schemas/strains.schema.json'),
