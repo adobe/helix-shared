@@ -24,6 +24,7 @@
 -   [Runtime Strain](./runtimestrain.md "A runtime strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/runtimestrain`
 -   [Strains](./strains.md) – `https://ns.adobe.com/helix/shared/strains`
 -   [Vanity URL mapping](./vanity.md) – `https://ns.adobe.com/helix/shared/vanity`
+-   [Version Lock](./version-lock.md "The version-lock property allows pinning of specific services to a particular version number") – `https://ns.adobe.com/helix/shared/version-lock`
 
 ## Other Schemas
 
@@ -55,6 +56,7 @@
 -   [Untitled object in Mount Point](./mountpoint-oneof-1.md) – `https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1`
 -   [Vanity URL extractor](./redirects-properties-vanity-url-extractor.md "Configure one or multiple vanity URL extractors, each extractor is a property of this object") – `https://ns.adobe.com/helix/shared/redirects#/properties/vanity`
 -   [Vanity URL mapping](./redirects-properties-vanity-url-extractor-vanity-url-mapping.md) – `https://ns.adobe.com/helix/shared/vanity#/properties/vanity/additionalProperties`
+-   [Version Lock](./proxystrain-properties-version-lock.md) – `https://ns.adobe.com/helix/shared/version-lock#/properties/version-lock`
 
 ### Arrays
 
