@@ -230,6 +230,18 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m9.url, 'onedrive:/drives/1234/items/5678');
     assert.equal(m9.relPath, '/foo');
 
+    // gdrive without account selectors
+    const m10 = cfg.match('/gd-no-account/foo');
+    assert.equal(m10.type, 'google');
+    assert.equal(m10.id, '3453k4j3l4kjlk');
+    assert.equal(m10.relPath, '/foo');
+
+    // gdrive with query string
+    const m11 = cfg.match('/gd-with-query/foo');
+    assert.equal(m11.type, 'google');
+    assert.equal(m11.id, '99f999f99f9fff');
+    assert.equal(m11.relPath, '/foo');
+
     assert.equal(cfg.match('/mssoft'), null, 'requires trailing slash in matches');
   });
 });

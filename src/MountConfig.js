@@ -59,12 +59,13 @@ const googleDecorator = {
     return m.url.startsWith('https://drive.google.com/') || m.url.startsWith('gdrive:');
   },
   decorate(m) {
+    const url = new URL(m.url);
     return {
       ...stripQuery(m, 'fallbackPath'),
       type: 'google',
-      id: m.url.startsWith('gdrive:')
-        ? m.url.split(':').pop()
-        : m.url.split('/').pop(),
+      id: url.protocol === 'gdrive:'
+        ? url.pathname
+        : url.pathname.split('/').pop(),
     };
   },
 };
