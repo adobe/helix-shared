@@ -104,6 +104,10 @@ class HelixConfig extends BaseConfig {
     return this._cfg.preflight;
   }
 
+  /**
+   * Gets a list of all preflight headers used in this config
+   * @returns String[]
+   */
   get preflightHeaders() {
     return [...this._strains
       .getByFilter((s) => s.condition)

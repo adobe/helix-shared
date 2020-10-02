@@ -139,6 +139,10 @@ class BooleanCondition {
     return items.some((item) => item.sticky());
   }
 
+  /**
+   * Gets a list of all preflight headers used in this condition
+   * @returns String[]
+   */
   get preflightHeaders() {
     return [...this._items.reduce((s, i) => {
       const headers = i.preflightHeaders;
@@ -265,6 +269,10 @@ class PropertyCondition {
 }
 
 class PreflightCondition extends PropertyCondition {
+  /**
+   * Gets a list of all preflight headers used in this condition
+   * @returns String[]
+   */
   get preflightHeaders() {
     return [this._name];
   }
@@ -518,6 +526,10 @@ class Condition {
     return json ? YAML.createNode(json) : null;
   }
 
+  /**
+   * Gets a list of all preflight headers used in this condition
+   * @returns String[]
+   */
   get preflightHeaders() {
     return this._top.preflightHeaders;
   }
