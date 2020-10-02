@@ -1,3 +1,28 @@
+# [7.15.0](https://github.com/adobe/helix-shared/compare/v7.14.0...v7.15.0) (2020-10-02)
+
+
+### Bug Fixes
+
+* **schema:** relax version string constraints ([3d4dddf](https://github.com/adobe/helix-shared/commit/3d4dddf1ae90f1cf598a6847dcb9acc982478a54))
+* **validator:** add new schema to validator ([7be851a](https://github.com/adobe/helix-shared/commit/7be851a114f275b66a4e7e91e2c4e67fe27078c5))
+
+
+### Features
+
+* **schema:** allow specification of version lock for a strain ([5ac9991](https://github.com/adobe/helix-shared/commit/5ac9991755bbe00556fb3a1fbfb4a7e71918e548))
+
+# [7.14.0](https://github.com/adobe/helix-shared/compare/v7.13.0...v7.14.0) (2020-10-02)
+
+
+### Bug Fixes
+
+* **fstab:** make gdrive mountpoints more robust ([#371](https://github.com/adobe/helix-shared/issues/371)) ([4c83674](https://github.com/adobe/helix-shared/commit/4c83674db9e77810b51f256821f36722259e8b41)), closes [#370](https://github.com/adobe/helix-shared/issues/370)
+
+
+### Features
+
+* **schema:** add preflight conditions ([6bf84bd](https://github.com/adobe/helix-shared/commit/6bf84bd315d56f308be6c513fdf7ebbd04490782))
+
 # [7.13.0](https://github.com/adobe/helix-shared/compare/v7.12.0...v7.13.0) (2020-09-10)
 
 
