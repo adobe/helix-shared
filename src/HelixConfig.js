@@ -100,11 +100,21 @@ class HelixConfig extends BaseConfig {
     return this;
   }
 
+  get preflight() {
+    return this._cfg.preflight;
+  }
+
   toJSON() {
-    return {
+    const retval = {
       version: this._version,
       strains: this._strains.toJSON(),
     };
+
+    if (this.preflight) {
+      retval.preflight = this.preflight;
+    }
+
+    return retval;
   }
 }
 

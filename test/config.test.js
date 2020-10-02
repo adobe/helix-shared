@@ -64,6 +64,11 @@ A list of strains and a strain with the name "default" is required.`,
     result: 'urls.json',
   },
   {
+    title: 'loads config with preflight',
+    config: 'preflight.yaml',
+    result: 'preflight.json',
+  },
+  {
     title: 'loads config with urls (map style)',
     config: 'urls-map.yaml',
     result: 'urls.json',

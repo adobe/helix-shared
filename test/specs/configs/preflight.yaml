@@ -1,0 +1,86 @@
+# Copyright 2018 Adobe. All rights reserved.
+# This file is licensed to you under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License. You may obtain a copy
+# of the License at http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+# OF ANY KIND, either express or implied. See the License for the specific language
+# governing permissions and limitations under the License.
+version: 1
+
+definitions:
+  constants:
+    defaultRepo:
+      &myrepo
+      owner: adobe
+      repo: project-helix.io
+      ref: master
+  strains:
+    base:
+      &basestrain
+      code: *myrepo
+      content: *myrepo
+      static: *myrepo
+
+preflight: https://adobeioruntime.net/example
+
+strains:
+  - <<: *basestrain
+    name: default
+
+  - <<: *basestrain
+    name: adhoc
+    package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
+    perf:
+      location: London
+      onload: 1000
+
+  - code: *myrepo
+    static: *myrepo
+    name: client
+    condition: req.http.host == "client.project-helix.io"
+    sticky: false
+    content:
+      repo: helix-cli
+      ref: master
+      owner: adobe
+    directoryIndex: readme.html
+
+  - <<: *basestrain
+    name: pipeline
+    condition: req.http.host == "pipeline.project-helix.io"
+    params:
+      - search
+      - lang
+    content:
+      repo: hypermedia-pipeline
+      ref: master
+      owner: adobe
+    static:
+      <<: *myrepo
+      path: /www
+    redirects:
+      - from: (.*)\.php
+        to: $1.html
+      - from: /content/dam/(.*)$
+        to: /htdocs/$1
+
+  - name: proxy
+    origin: https://www.adobe.io/
+    condition: req.http.host == "proxy.project-helix.io"
+    params:
+      - search
+      - api*
+    sticky: true
+
+  - name: proxy-detailed
+    redirects:
+      - from: /old
+        to: /new
+    origin:
+      address: 192.168.0.1
+      name: publish
+      use_ssl: false
+      path: /stuff
+      override_host: www.adobe.io
