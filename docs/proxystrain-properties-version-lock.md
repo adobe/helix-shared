@@ -25,27 +25,44 @@ helix-data-embed: ci999
 
 # Version Lock Properties
 
-| Property              | Type   | Required | Nullable       | Defined by                                                                                                                       |
-| :-------------------- | ------ | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| Additional Properties | Merged | Optional | cannot be null | [Version Lock](version-lock-additionalproperties.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/additionalProperties") |
+| Property              | Type     | Required | Nullable       | Defined by                                                                                                                  |
+| :-------------------- | -------- | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| Additional Properties | `string` | Optional | cannot be null | [Version Lock](version-lock-service-version.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/additionalProperties") |
 
 ## Additional Properties
 
 Additional properties are allowed, as long as they follow this schema:
 
-
+A version number string
 
 
 -   is optional
--   Type: merged type ([Details](version-lock-additionalproperties.md))
+-   Type: `string` ([Service Version](version-lock-service-version.md))
 -   cannot be null
--   defined in: [Version Lock](version-lock-additionalproperties.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/additionalProperties")
+-   defined in: [Version Lock](version-lock-service-version.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/additionalProperties")
 
 ### additionalProperties Type
 
-merged type ([Details](version-lock-additionalproperties.md))
+`string` ([Service Version](version-lock-service-version.md))
 
-one (and only one) of
+### additionalProperties Examples
 
--   [Release Version](version-lock-additionalproperties-oneof-release-version.md "check type definition")
--   [CI Build Number](version-lock-additionalproperties-oneof-ci-build-number.md "check type definition")
+```yaml
+1.0.0
+
+```
+
+```yaml
+v1.0
+
+```
+
+```yaml
+v1
+
+```
+
+```yaml
+ci999
+
+```

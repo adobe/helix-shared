@@ -16,27 +16,14 @@
   "description": "",
   "type": "object",
   "additionalProperties": {
-    "oneOf": [
-      {
-        "type": "string",
-        "pattern": "^v(0|[1-9]\\d*)(\\.(0|[1-9]\\d*)(\\.(0|[1-9]\\d*))?)?(-.*)?$",
-        "description": "A version number, starting with `v`",
-        "title": "Release Version",
-        "examples": [
-          "v1.0.0",
-          "v1.0",
-          "v1"
-        ]
-      },
-      {
-        "type": "string",
-        "pattern": "^ci[0-9]+$",
-        "description": "A Continious Integration build number, starting with `ci`",
-        "title": "CI Build Number",
-        "examples": [
-          "ci999"
-        ] 
-      }
+    "type": "string",
+    "description": "A version number string",
+    "title": "Service Version",
+    "examples": [
+      "1.0.0",
+      "v1.0",
+      "v1",
+      "ci999"
     ]
   },
   "examples":[
