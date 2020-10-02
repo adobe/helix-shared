@@ -30,6 +30,7 @@ A runtime strain is a combination of code and content that enables the creation 
 | [urls](#urls)                     | `array`   | Optional | cannot be null | [Runtime Strain](runtimestrain-properties-urls.md "https&#x3A;//ns.adobe.com/helix/shared/runtimestrain#/properties/urls")                     |
 | [condition](#condition)           | Merged    | Optional | cannot be null | [Runtime Strain](runtimestrain-properties-condition.md "https&#x3A;//ns.adobe.com/helix/shared/runtimestrain#/properties/condition")           |
 | [perf](#perf)                     | `object`  | Optional | cannot be null | [Runtime Strain](proxystrain-properties-performance.md "https&#x3A;//ns.adobe.com/helix/shared/performance#/properties/perf")                  |
+| [version-lock](#version-lock)     | `object`  | Optional | cannot be null | [Runtime Strain](proxystrain-properties-version-lock.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/properties/version-lock")        |
 | [params](#params)                 | `array`   | Optional | cannot be null | [Runtime Strain](runtimestrain-properties-params.md "https&#x3A;//ns.adobe.com/helix/shared/runtimestrain#/properties/params")                 |
 | [redirects](#redirects)           | `array`   | Optional | cannot be null | [Runtime Strain](runtimestrain-properties-redirects.md "https&#x3A;//ns.adobe.com/helix/shared/runtimestrain#/properties/redirects")           |
 
@@ -253,6 +254,30 @@ Performance testing details.
 ### perf Type
 
 `object` ([Performance](proxystrain-properties-performance.md))
+
+## version-lock
+
+
+
+
+`version-lock`
+
+-   is optional
+-   Type: `object` ([Version Lock](proxystrain-properties-version-lock.md))
+-   cannot be null
+-   defined in: [Runtime Strain](proxystrain-properties-version-lock.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/properties/version-lock")
+
+### version-lock Type
+
+`object` ([Version Lock](proxystrain-properties-version-lock.md))
+
+### version-lock Examples
+
+```yaml
+helix-embed: v3
+helix-data-embed: ci999
+
+```
 
 ## params
 

@@ -17,17 +17,18 @@ A strain is a combination of code and content that enables the creation of a dig
 
 # Proxy Strain Properties
 
-| Property                | Type      | Required | Nullable       | Defined by                                                                                                                     |
-| :---------------------- | --------- | -------- | -------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| [name](#name)           | `string`  | Required | cannot be null | [Proxy Strain](proxystrain-properties-name.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/name")           |
-| [origin](#origin)       | Merged    | Required | cannot be null | [Proxy Strain](proxystrain-properties-origin.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/origin")       |
-| [sticky](#sticky)       | `boolean` | Optional | cannot be null | [Proxy Strain](proxystrain-properties-sticky.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/sticky")       |
-| [url](#url)             | `string`  | Optional | cannot be null | [Proxy Strain](proxystrain-properties-url.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/url")             |
-| [urls](#urls)           | `array`   | Optional | cannot be null | [Proxy Strain](proxystrain-properties-urls.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/urls")           |
-| [condition](#condition) | Merged    | Optional | cannot be null | [Proxy Strain](proxystrain-properties-condition.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/condition") |
-| [perf](#perf)           | `object`  | Optional | cannot be null | [Proxy Strain](proxystrain-properties-performance.md "https&#x3A;//ns.adobe.com/helix/shared/performance#/properties/perf")    |
-| [params](#params)       | `array`   | Optional | cannot be null | [Proxy Strain](proxystrain-properties-params.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/params")       |
-| [redirects](#redirects) | `array`   | Optional | cannot be null | [Proxy Strain](proxystrain-properties-redirects.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/redirects") |
+| Property                      | Type      | Required | Nullable       | Defined by                                                                                                                            |
+| :---------------------------- | --------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| [name](#name)                 | `string`  | Required | cannot be null | [Proxy Strain](proxystrain-properties-name.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/name")                  |
+| [origin](#origin)             | Merged    | Required | cannot be null | [Proxy Strain](proxystrain-properties-origin.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/origin")              |
+| [sticky](#sticky)             | `boolean` | Optional | cannot be null | [Proxy Strain](proxystrain-properties-sticky.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/sticky")              |
+| [url](#url)                   | `string`  | Optional | cannot be null | [Proxy Strain](proxystrain-properties-url.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/url")                    |
+| [urls](#urls)                 | `array`   | Optional | cannot be null | [Proxy Strain](proxystrain-properties-urls.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/urls")                  |
+| [condition](#condition)       | Merged    | Optional | cannot be null | [Proxy Strain](proxystrain-properties-condition.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/condition")        |
+| [perf](#perf)                 | `object`  | Optional | cannot be null | [Proxy Strain](proxystrain-properties-performance.md "https&#x3A;//ns.adobe.com/helix/shared/performance#/properties/perf")           |
+| [version-lock](#version-lock) | `object`  | Optional | cannot be null | [Proxy Strain](proxystrain-properties-version-lock.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/properties/version-lock") |
+| [params](#params)             | `array`   | Optional | cannot be null | [Proxy Strain](proxystrain-properties-params.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/params")              |
+| [redirects](#redirects)       | `array`   | Optional | cannot be null | [Proxy Strain](proxystrain-properties-redirects.md "https&#x3A;//ns.adobe.com/helix/shared/proxystrain#/properties/redirects")        |
 
 ## name
 
@@ -156,6 +157,30 @@ Performance testing details.
 ### perf Type
 
 `object` ([Performance](proxystrain-properties-performance.md))
+
+## version-lock
+
+
+
+
+`version-lock`
+
+-   is optional
+-   Type: `object` ([Version Lock](proxystrain-properties-version-lock.md))
+-   cannot be null
+-   defined in: [Proxy Strain](proxystrain-properties-version-lock.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/properties/version-lock")
+
+### version-lock Type
+
+`object` ([Version Lock](proxystrain-properties-version-lock.md))
+
+### version-lock Examples
+
+```yaml
+helix-embed: v3
+helix-data-embed: ci999
+
+```
 
 ## params
 
