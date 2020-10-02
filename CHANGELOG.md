@@ -1,3 +1,15 @@
+# [7.14.0](https://github.com/adobe/helix-shared/compare/v7.13.0...v7.14.0) (2020-10-02)
+
+
+### Bug Fixes
+
+* **fstab:** make gdrive mountpoints more robust ([#371](https://github.com/adobe/helix-shared/issues/371)) ([4c83674](https://github.com/adobe/helix-shared/commit/4c83674db9e77810b51f256821f36722259e8b41)), closes [#370](https://github.com/adobe/helix-shared/issues/370)
+
+
+### Features
+
+* **schema:** add preflight conditions ([6bf84bd](https://github.com/adobe/helix-shared/commit/6bf84bd315d56f308be6c513fdf7ebbd04490782))
+
 # [7.13.0](https://github.com/adobe/helix-shared/compare/v7.12.0...v7.13.0) (2020-09-10)
 
 
