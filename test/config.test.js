@@ -407,3 +407,29 @@ describe('Helix Config Serializing', () => {
     assert.equal(actual, expected);
   });
 });
+
+describe('Helix Config Conditions', () => {
+  it('can get preflight headers from a simple config', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'preflight.yaml'))
+      .init();
+
+    assert.deepStrictEqual(cfg.preflightHeaders, ['x-version']);
+  });
+
+  it('can get preflight headers from an empty config', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))
+      .init();
+
+    assert.deepStrictEqual(cfg.preflightHeaders, []);
+  });
+
+  it('can get preflight headers from a complex config', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'preflight-complex.yaml'))
+      .init();
+
+    assert.deepStrictEqual(cfg.preflightHeaders, ['x-version', 'x-audience', 'x-segment']);
+  });
+});

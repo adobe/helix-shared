@@ -104,6 +104,19 @@ class HelixConfig extends BaseConfig {
     return this._cfg.preflight;
   }
 
+  get preflightHeaders() {
+    return [...this._strains
+      .getByFilter((s) => s.condition)
+      .map((s) => s.condition)
+      .reduce((s, c) => {
+        const headers = c.preflightHeaders;
+        if (headers && Array.isArray(headers)) {
+          headers.forEach((h) => s.add(h));
+        }
+        return s;
+      }, new Set())];
+  }
+
   toJSON() {
     const retval = {
       version: this._version,
