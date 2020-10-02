@@ -123,6 +123,18 @@
     "^url_param\\..+[=]$": {
       "type": ["number", "string"],
       "description": "Matches a URL parameter's value as a number or string"
+    },
+    "^preflight\\..+[~]?$": {
+      "type": "string",
+      "description": "Matches a preflight response header value as a string"
+    },
+    "^preflight\\..+[<>]$": {
+      "type": "number",
+      "description": "Matches a preflight response header value as a number"
+    },
+    "^preflight\\..+[=]$": {
+      "type": ["number", "string"],
+      "description": "Matches a preflight response header value as a number or string"
     }
   }
 }

@@ -30,6 +30,12 @@
     },
     "strains": {
       "$ref": "https://ns.adobe.com/helix/shared/strains"
+    },
+    "preflight": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://adobeioruntime\\.net/",
+      "description": "The URL of a preflight check that should be performed before assigning a strain to a request. The headers returned by this preflight request can be used in strain conditions."
     }
   },
   "required": [
