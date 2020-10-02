@@ -411,6 +411,18 @@ const propertyMap = {
     allowed_ops: '~<=>',
     sticky: true,
   },
+  preflight: {
+    vcl: (property) => {
+      const vcl = `req.http.x-preflight-${property.name}`;
+      if (property.type === 'number') {
+        return `std.atoi(${vcl})`;
+      }
+      return vcl;
+    },
+    evaluate: (req, property) => req.preflight && req.preflight[property.name],
+    allowed_ops: '~<=>',
+    sticky: true,
+  },
 };
 
 /**
@@ -515,10 +527,10 @@ transform = (cfg) => {
     }
     return new PropertyCondition(prop, op, value, name);
   }
-  const match = name.match(/^url_param\.(.+)$/);
+  const match = name.match(/^(url_param|preflight)\.(.+)$/);
   if (match) {
-    prop = { type: op === '<' || op === '>' ? 'number' : 'string', ...propertyMap.url_param };
-    return new PropertyCondition(prop, op, value, match[1], name);
+    prop = { type: op === '<' || op === '>' ? 'number' : 'string', ...propertyMap[match[1]] };
+    return new PropertyCondition(prop, op, value, match[2], name);
   }
   throw new Error(`Unknown property: ${name}`);
 };

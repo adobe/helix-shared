@@ -35,6 +35,8 @@ strains:
     perf:
       location: London
       onload: 1000
+    condition:
+      preflight.x-version>: 1
 
   - code: *myrepo
     static: *myrepo

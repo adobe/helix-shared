@@ -58,7 +58,9 @@
         "ref": "master",
         "repo": "project-helix.io"
       },
-      "condition": "",
+      "condition": {
+        "preflight.x-version>": 1
+      },
       "content": {
         "host": "github.com",
         "hostname": "github.com",
@@ -91,7 +93,7 @@
         "ref": "master",
         "repo": "project-helix.io"
       },
-      "sticky": false,
+      "sticky": true,
       "urls": []
     },
     {

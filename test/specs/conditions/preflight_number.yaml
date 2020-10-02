@@ -1,0 +1,5 @@
+condition:
+  preflight.x-version>: 2
+
+vcl: 'std.atoi(req.http.x-preflight-x-version) > 2'
+sticky: true
