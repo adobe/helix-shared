@@ -100,11 +100,38 @@ class HelixConfig extends BaseConfig {
     return this;
   }
 
+  get preflight() {
+    return this._cfg.preflight;
+  }
+
+  /**
+   * Gets a list of all preflight headers used in this config
+   * @returns String[]
+   */
+  get preflightHeaders() {
+    return [...this._strains
+      .getByFilter((s) => s.condition)
+      .map((s) => s.condition)
+      .reduce((s, c) => {
+        const headers = c.preflightHeaders;
+        if (headers && Array.isArray(headers)) {
+          headers.forEach((h) => s.add(h));
+        }
+        return s;
+      }, new Set())];
+  }
+
   toJSON() {
-    return {
+    const retval = {
       version: this._version,
       strains: this._strains.toJSON(),
     };
+
+    if (this.preflight) {
+      retval.preflight = this.preflight;
+    }
+
+    return retval;
   }
 }
 

@@ -1,0 +1,5 @@
+condition:
+  preflight.segment=: bar
+
+vcl: 'req.http.x-preflight-segment == "bar"'
+sticky: true

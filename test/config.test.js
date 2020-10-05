@@ -64,6 +64,11 @@ A list of strains and a strain with the name "default" is required.`,
     result: 'urls.json',
   },
   {
+    title: 'loads config with preflight',
+    config: 'preflight.yaml',
+    result: 'preflight.json',
+  },
+  {
     title: 'loads config with urls (map style)',
     config: 'urls-map.yaml',
     result: 'urls.json',
@@ -400,5 +405,31 @@ describe('Helix Config Serializing', () => {
     const actual = cfg.toYAML();
     const expected = await fs.readFile(path.resolve(SPEC_ROOT, 'minimal-clone-code.yaml'), 'utf-8');
     assert.equal(actual, expected);
+  });
+});
+
+describe('Helix Config Conditions', () => {
+  it('can get preflight headers from a simple config', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'preflight.yaml'))
+      .init();
+
+    assert.deepStrictEqual(cfg.preflightHeaders, ['x-version']);
+  });
+
+  it('can get preflight headers from an empty config', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'full.yaml'))
+      .init();
+
+    assert.deepStrictEqual(cfg.preflightHeaders, []);
+  });
+
+  it('can get preflight headers from a complex config', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'preflight-complex.yaml'))
+      .init();
+
+    assert.deepStrictEqual(cfg.preflightHeaders, ['x-version', 'x-audience', 'x-segment']);
   });
 });

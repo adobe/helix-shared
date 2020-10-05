@@ -138,6 +138,20 @@ class BooleanCondition {
     const items = Array.isArray(this._items) ? this._items : [this._items];
     return items.some((item) => item.sticky());
   }
+
+  /**
+   * Gets a list of all preflight headers used in this condition
+   * @returns String[]
+   */
+  get preflightHeaders() {
+    return [...this._items.reduce((s, i) => {
+      const headers = i.preflightHeaders;
+      if (headers && Array.isArray(headers)) {
+        headers.forEach((h) => s.add(h));
+      }
+      return s;
+    }, new Set())];
+  }
 }
 
 /**
@@ -251,6 +265,16 @@ class PropertyCondition {
 
   get type() {
     return this._prop.type;
+  }
+}
+
+class PreflightCondition extends PropertyCondition {
+  /**
+   * Gets a list of all preflight headers used in this condition
+   * @returns String[]
+   */
+  get preflightHeaders() {
+    return [this._name];
   }
 }
 
@@ -411,6 +435,18 @@ const propertyMap = {
     allowed_ops: '~<=>',
     sticky: true,
   },
+  preflight: {
+    vcl: (property) => {
+      const vcl = `req.http.x-preflight-${property.name}`;
+      if (property.type === 'number') {
+        return `std.atoi(${vcl})`;
+      }
+      return vcl;
+    },
+    evaluate: (req, property) => req.preflight && req.preflight[property.name],
+    allowed_ops: '~<=>',
+    sticky: true,
+  },
 };
 
 /**
@@ -489,6 +525,14 @@ class Condition {
     const json = this.toJSON({ minimal: true });
     return json ? YAML.createNode(json) : null;
   }
+
+  /**
+   * Gets a list of all preflight headers used in this condition
+   * @returns String[]
+   */
+  get preflightHeaders() {
+    return this._top.preflightHeaders;
+  }
 }
 
 // Now define our transformer
@@ -515,10 +559,13 @@ transform = (cfg) => {
     }
     return new PropertyCondition(prop, op, value, name);
   }
-  const match = name.match(/^url_param\.(.+)$/);
-  if (match) {
-    prop = { type: op === '<' || op === '>' ? 'number' : 'string', ...propertyMap.url_param };
-    return new PropertyCondition(prop, op, value, match[1], name);
+  const match = name.match(/^(url_param|preflight)\.(.+)$/);
+  if (match && match[1] === 'url_param') {
+    prop = { type: op === '<' || op === '>' ? 'number' : 'string', ...propertyMap[match[1]] };
+    return new PropertyCondition(prop, op, value, match[2], name);
+  } else if (match && match[1] === 'preflight') {
+    prop = { type: op === '<' || op === '>' ? 'number' : 'string', ...propertyMap[match[1]] };
+    return new PreflightCondition(prop, op, value, match[2], name);
   }
   throw new Error(`Unknown property: ${name}`);
 };
