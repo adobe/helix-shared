@@ -1,3 +1,12 @@
+# [7.16.0](https://github.com/adobe/helix-shared/compare/v7.15.0...v7.16.0) (2020-10-05)
+
+
+### Features
+
+* **conditions:** support preflight conditions ([62c07b6](https://github.com/adobe/helix-shared/commit/62c07b6a34bf2705f239c11ecc2c819d21530918))
+* **strains:** add `preflightHeaders` getter to strain and conditions ([a9b5a5c](https://github.com/adobe/helix-shared/commit/a9b5a5c0912f02f1f305c8e50eeb65c118680c77))
+* **strains:** add preflight getter to strains config ([1cf77a9](https://github.com/adobe/helix-shared/commit/1cf77a9cd84ac27e659cf4a7d4c2711792ff663c))
+
 # [7.15.0](https://github.com/adobe/helix-shared/compare/v7.14.0...v7.15.0) (2020-10-02)
 
 
