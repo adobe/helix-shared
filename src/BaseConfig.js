@@ -145,9 +145,7 @@ class BaseConfig {
     }
 
     if (!this._source) {
-      if (await this.hasFile()) {
-        this._source = await fs.readFile(this.configPath, 'utf8');
-      } else if (this._repo) {
+      if (this._repo) {
         // fetch the config file from the repo
         this._source = await fetch({
           ...this._repo,
@@ -162,6 +160,8 @@ class BaseConfig {
             },
           },
         });
+      } else if (await this.hasFile()) {
+        this._source = await fs.readFile(this.configPath, 'utf8');
       }
     }
     if (this._source.indexOf('\t') >= 0) {
