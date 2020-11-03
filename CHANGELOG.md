@@ -1,3 +1,10 @@
+## [7.16.1](https://github.com/adobe/helix-shared/compare/v7.16.0...v7.16.1) (2020-11-03)
+
+
+### Bug Fixes
+
+* use git url first if specified ([#386](https://github.com/adobe/helix-shared/issues/386)) ([f99b02e](https://github.com/adobe/helix-shared/commit/f99b02eb87445cb481a57bbf83b71fdc7642b84d))
+
 # [7.16.0](https://github.com/adobe/helix-shared/compare/v7.15.0...v7.16.0) (2020-10-05)
 
 
