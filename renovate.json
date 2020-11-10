@@ -11,14 +11,14 @@
       "allowedVersions": "<5.0.0"
     },
     {
-      "groupName": "@adobe fixes",
+      "groupName": "adobe fixes",
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
       "packagePatterns": ["^@adobe/"],
       "schedule": ["at any time"]
     },
     {
-      "groupName": "@adobe major",
+      "groupName": "adobe major",
       "updateTypes": ["major"],
       "packagePatterns": ["^@adobe/"],
       "automerge": false,
