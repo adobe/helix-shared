@@ -4,6 +4,7 @@
     ":semanticCommits"
   ],
   "timezone": "Europe/Zurich",
+  "branchPrefix": "renovate_",
   "packageRules": [
     {
       "packageNames": ["webpack"],
