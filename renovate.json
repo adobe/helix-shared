@@ -4,20 +4,21 @@
     ":semanticCommits"
   ],
   "timezone": "Europe/Zurich",
+  "branchPrefix": "renovate-",
   "packageRules": [
     {
       "packageNames": ["webpack"],
       "allowedVersions": "<5.0.0"
     },
     {
-      "groupName": "@adobe fixes",
+      "groupName": "adobe fixes",
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
       "packagePatterns": ["^@adobe/"],
       "schedule": ["at any time"]
     },
     {
-      "groupName": "@adobe major",
+      "groupName": "adobe major",
       "updateTypes": ["major"],
       "packagePatterns": ["^@adobe/"],
       "automerge": false,
@@ -49,4 +50,3 @@
     "npmToken": "mk0AasloZFiNy0v8xIYJ4b5pMkY2dpGMCWBXY+vFtlG+X74ENpf2MxYGmJR4Ljel12RkflYffjPuCvCQLTkKVaOwLqnXBROZj+ZXL66dBw/Lj8HnPt8NeBJ2iY6tzBtMxKKp3qpa6nAYuVQ1aBdusKAe5cgm2RU9/4JG/p1l5r05CI11+oGVQptNnuHCD67bcGPLWqLwedbNFztOdUhr1W9pNP6aSq1FpAOFWsx4P4NRNbX1CmqbOe57gyDi3C8bpjTjMRqBfbWPTReZqZXiTsjLskEY2RUah0GbP2RZ3jWZV3KurW/yxFIXaJXNGmH0KJzKKBGxTZ90Qm5r8/l1Jw=="
   }
 }
-
