@@ -1,3 +1,10 @@
+## [7.16.2](https://github.com/adobe/helix-shared/compare/v7.16.1...v7.16.2) (2020-11-26)
+
+
+### Bug Fixes
+
+* **redirect:** ignore leading and trailing whitespace ([39a943d](https://github.com/adobe/helix-shared/commit/39a943d6444be9b1544b99421747d96834dd3315))
+
 ## [7.16.1](https://github.com/adobe/helix-shared/compare/v7.16.0...v7.16.1) (2020-11-03)
 
 
