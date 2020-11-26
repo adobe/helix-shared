@@ -33,11 +33,18 @@ function getPath(value) {
   return value;
 }
 
+function trim(value) {
+  if (value && typeof value === 'string') {
+    return value.trim();
+  }
+  return value;
+}
+
 function clean(entry) {
   return {
-    from: getPath(getProp(entry, FROM_NAMES)),
-    to: getProp(entry, TO_NAMES),
-    type: getProp(entry, TYPE_NAMES),
+    from: getPath(trim(getProp(entry, FROM_NAMES))),
+    to: trim(getProp(entry, TO_NAMES)),
+    type: trim(getProp(entry, TYPE_NAMES)),
   };
 }
 

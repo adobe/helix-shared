@@ -38,6 +38,13 @@ describe('Redirects Config Loading (from GitHub)', () => {
             to: '/bar',
           },
           {
+            from: ' /test ',
+            to: ' /target',
+          },
+          {
+            to: ' /target',
+          },
+          {
             from: 'https://blog.adobe.com/en/2020/08/17/redefining%20-he-digital-experience-for-creating-and-collaborating-on-learning-content.html',
             to: 'https://blog.adobe.com/en/2020/08/17/redefining-the-digital-experience-for-creating-and-collaborating-on-learning-content.html',
           },
@@ -87,6 +94,11 @@ describe('Redirects Config Loading (from GitHub)', () => {
 
     assert.deepEqual(await config.match('/foo'), {
       url: '/bar',
+      type: 'permanent',
+    });
+
+    assert.deepEqual(await config.match('/test'), {
+      url: '/target',
       type: 'permanent',
     });
 
