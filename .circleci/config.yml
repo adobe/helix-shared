@@ -77,7 +77,7 @@ workflows:
         - build
         filters:
           branches:
-            only: master
+            only: main
   smoke:
     jobs:
     - helix-smoke-tests/run:
