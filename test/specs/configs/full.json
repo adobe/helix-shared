@@ -91,7 +91,11 @@
         "repo": "project-helix.io"
       },
       "sticky": false,
-      "urls": []
+      "urls": [],
+      "version-lock": {
+        "content-proxy": "v4",
+        "word2md": "2.1.3"
+      }
     },
     {
       "code": {

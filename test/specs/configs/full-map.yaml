@@ -29,6 +29,9 @@ strains:
   adhoc:
     <<: *basestrain
     package: 75f29aa936bfc2b84bde5ac0ee4afbf824b1391e-dirty
+    version-lock:
+      word2md: 2.1.3
+      content-proxy: v4
     perf:
       location: London
       onload: 1000

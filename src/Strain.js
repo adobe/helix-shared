@@ -64,6 +64,7 @@ class Strain {
 
     this._urls = new Set(Array.isArray(cfg.urls) ? cfg.urls.map(URI.normalize) : []);
     this._params = Array.isArray(cfg.params) ? cfg.params : [];
+    this._versionLock = cfg['version-lock'];
     this._yamlNode = null;
     // define them initially, and clear for alias node
     // todo: improve
@@ -80,6 +81,7 @@ class Strain {
       'urls',
       'params',
       'redirects',
+      'version-lock',
     ]);
   }
 
@@ -201,6 +203,10 @@ class Strain {
     return this._redirects;
   }
 
+  get versionLock() {
+    return this._versionLock;
+  }
+
   /**
    * JSON Serialization of a Strain
    * @typedef Strain~JSON
@@ -234,6 +240,9 @@ class Strain {
     }
     if (this.isProxy()) {
       return { origin: this.origin.toJSON(opts), ...json };
+    }
+    if (this.versionLock) {
+      json['version-lock'] = this.versionLock;
     }
     const ret = {
       code: this.code.toJSON(opts),
