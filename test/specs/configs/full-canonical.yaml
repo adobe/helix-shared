@@ -81,6 +81,9 @@ strains:
       connection: ""
       onload: 1000
     urls: []
+    version-lock:
+      word2md: 2.1.3
+      content-proxy: v4
   - code:
       protocol: https
       host: github.com
