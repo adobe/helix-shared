@@ -10,6 +10,8 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
@@ -18,5 +20,5 @@ jobs:
       - run: npm test
       - run: npm run semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
