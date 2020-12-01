@@ -1,3 +1,10 @@
+## [7.16.3](https://github.com/adobe/helix-shared/compare/v7.16.2...v7.16.3) (2020-12-01)
+
+
+### Bug Fixes
+
+* **cfg:** add version lock property to json and strain ([#393](https://github.com/adobe/helix-shared/issues/393)) ([b36c327](https://github.com/adobe/helix-shared/commit/b36c327a330e1c8100b3a9400e9f87fd3b86309d))
+
 ## [7.16.2](https://github.com/adobe/helix-shared/compare/v7.16.1...v7.16.2) (2020-11-26)
 
 
