@@ -268,7 +268,7 @@ class Strain {
       this._ownProperties.forEach((key) => {
         const idx = node.items.findIndex((i) => i.key === key
           || (i.key.value && i.key.value === key));
-        let value = this[key];
+        let value = key === 'version-lock' ? this.versionLock : this[key];
         if (value && value.toYAMLNode) {
           value = value.toYAMLNode();
         }
