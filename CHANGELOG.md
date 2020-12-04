@@ -1,3 +1,10 @@
+## [7.16.4](https://github.com/adobe/helix-shared/compare/v7.16.3...v7.16.4) (2020-12-04)
+
+
+### Bug Fixes
+
+* **yaml:** modified strain doesn't preserve version-lock on save ([#395](https://github.com/adobe/helix-shared/issues/395)) ([70569e2](https://github.com/adobe/helix-shared/commit/70569e2e74a8249cf9b37372c39241b3e6a9e995)), closes [#394](https://github.com/adobe/helix-shared/issues/394)
+
 ## [7.16.3](https://github.com/adobe/helix-shared/compare/v7.16.2...v7.16.3) (2020-12-01)
 
 
