@@ -11,9 +11,9 @@
  */
 const { URL } = require('url');
 const { fetch } = require('@adobe/helix-fetch').context({
-  httpsProtocols:
-  /* istanbul ignore next */
-    process.env.HELIX_FETCH_FORCE_HTTP1 ? ['http1'] : ['http2', 'http1'],
+  // force HTTP/1 in order to avoid issues with long-lived HTTP/2 sessions
+  // on azure/kubernetes based I/O Runtime
+  httpsProtocols: ['http1'],
 });
 
 const DEFAULT_TYPE = 'permanent';
