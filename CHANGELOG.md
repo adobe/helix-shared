@@ -1,3 +1,11 @@
+# [7.17.0](https://github.com/adobe/helix-shared/compare/v7.16.4...v7.17.0) (2020-12-06)
+
+
+### Features
+
+* address feedback ([b4ff0d6](https://github.com/adobe/helix-shared/commit/b4ff0d68107933df2f0c80190674aa538d4b3ad8))
+* force http1 when invoking other runtime actions ([e169277](https://github.com/adobe/helix-shared/commit/e1692770d4bc1c6967b00cbab87f6a681046e5a4))
+
 ## [7.16.4](https://github.com/adobe/helix-shared/compare/v7.16.3...v7.16.4) (2020-12-04)
 
 
