@@ -10,9 +10,13 @@
  * governing permissions and limitations under the License.
  */
 const { URL } = require('url');
+
+// force HTTP/1 in order to avoid issues with long-lived HTTP/2 sessions
+// on azure/kubernetes based I/O Runtime
+process.env.HELIX_FETCH_FORCE_HTTP1 = true;
 const { fetch } = require('@adobe/helix-fetch').context({
   httpsProtocols:
-  /* istanbul ignore next */
+    /* istanbul ignore next */
     process.env.HELIX_FETCH_FORCE_HTTP1 ? ['http1'] : ['http2', 'http1'],
 });
 
