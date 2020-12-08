@@ -46,7 +46,7 @@ describe('Test Log Level Determination', () => {
     assert.equal(logLevelForStatusCode(401), 'warn');
     assert.equal(logLevelForStatusCode(402), 'warn');
     assert.equal(logLevelForStatusCode(403), 'warn');
-    assert.equal(logLevelForStatusCode(404), 'warn');
+    assert.equal(logLevelForStatusCode(404), 'info');
     assert.equal(logLevelForStatusCode(405), 'warn');
     assert.equal(logLevelForStatusCode(406), 'warn');
     assert.equal(logLevelForStatusCode(407), 'warn');
