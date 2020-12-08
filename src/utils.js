@@ -27,7 +27,7 @@ function lookupBackendResponses(status) {
     return { status: 503, level: 'error' };
     // report as: Service Unavailable
   } else if (status < 500) {
-    return { status, level: 'warn' };
+    return { status, level: 'info' };
   } else if (status === 500) {
     // Internal Server error in the backend
     return { status: 502, level: 'error' };
