@@ -22,6 +22,8 @@ const crypto = require('crypto');
 function lookupBackendResponses(status) {
   if (status < 400) {
     return { status, level: 'verbose' };
+  } else if (status === 404) {
+    return { status, level: 'info' };
   } else if (status === 429) {
     // Too Many Requests in the backend
     return { status: 503, level: 'error' };
