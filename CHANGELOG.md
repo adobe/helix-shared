@@ -1,3 +1,10 @@
+# [7.18.0](https://github.com/adobe/helix-shared/compare/v7.17.0...v7.18.0) (2020-12-09)
+
+
+### Features
+
+* **log:** info logs for 404 ([9d2af1c](https://github.com/adobe/helix-shared/commit/9d2af1c47705be278a3660afbab9c95ebc8cf544))
+
 # [7.17.0](https://github.com/adobe/helix-shared/compare/v7.16.4...v7.17.0) (2020-12-06)
 
 
