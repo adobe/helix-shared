@@ -20,7 +20,7 @@ A named query that can be run against an index
 | Property                    | Type      | Required | Nullable       | Defined by                                                                                                      |
 | :-------------------------- | --------- | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------- |
 | [query](#query)             | Multiple  | Optional | cannot be null | [Query](query-properties-query.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/query")             |
-| [hitsPerPage](#hitsPerPage) | `integer` | Optional | cannot be null | [Query](query-properties-hitsperpage.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/hitsPerPage") |
+| [hitsPerPage](#hitsperpage) | `integer` | Optional | cannot be null | [Query](query-properties-hitsperpage.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/hitsPerPage") |
 | [cache](#cache)             | `integer` | Optional | cannot be null | [Query](query-properties-cache.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/cache")             |
 | [parameters](#parameters)   | `array`   | Optional | cannot be null | [Query](query-properties-parameters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/parameters")   |
 | [filters](#filters)         | `string`  | Optional | cannot be null | [Query](query-properties-filters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/filters")         |

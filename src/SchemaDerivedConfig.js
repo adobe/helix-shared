@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const Ajv = require('ajv');
+const Ajv = require('ajv').default;
+const ajvFormats = require('ajv-formats');
 const BaseConfig = require('./BaseConfig.js');
 
 /**
@@ -56,7 +57,9 @@ class SchemaDerivedConfig extends BaseConfig {
       verbose: true,
       useDefaults: true,
       coerceTypes: 'array',
+      strict: false,
     });
+    ajvFormats(ajv);
 
     ajv.addSchema(Object.values(this._schemas));
     const res = ajv.validate(this._schemas['^/$'], this._cfg);

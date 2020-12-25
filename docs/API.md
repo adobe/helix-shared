@@ -341,6 +341,13 @@ StringCondition class
 Condition class
 
 **Kind**: global class  
+<a name="Condition+preflightHeaders"></a>
+
+### condition.preflightHeaders ⇒
+Gets a list of all preflight headers used in this condition
+
+**Kind**: instance property of [<code>Condition</code>](#Condition)  
+**Returns**: String[]  
 <a name="GitUrl"></a>
 
 ## GitUrl

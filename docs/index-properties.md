@@ -22,7 +22,7 @@ unknown
 | [type](#type)                                 | Not specified | Optional | cannot be null | [Untitled schema](undefined.md "undefined#undefined")                                                                                          |
 | [title](#title)                               | Not specified | Optional | cannot be null | [Untitled schema](undefined.md "undefined#undefined")                                                                                          |
 | [description](#description)                   | Not specified | Optional | cannot be null | [Untitled schema](undefined.md "undefined#undefined")                                                                                          |
-| [additionalProperties](#additionalProperties) | Merged        | Optional | cannot be null | [Index](index-properties-properties-property.md "https&#x3A;//ns.adobe.com/helix/shared/property#/properties/properties/additionalProperties") |
+| [additionalProperties](#additionalproperties) | Merged        | Optional | cannot be null | [Index](index-properties-properties-property.md "https&#x3A;//ns.adobe.com/helix/shared/property#/properties/properties/additionalProperties") |
 
 ## type
 
