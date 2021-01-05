@@ -12,7 +12,9 @@
 
 /* eslint-disable max-classes-per-file */
 
-const Ajv = require('ajv');
+const Ajv = require('ajv').default;
+const ajvFormats = require('ajv-formats');
+
 const schemas = [
   /* eslint-disable global-require */
   require('./schemas/config.schema.json'),
@@ -73,8 +75,10 @@ class ConfigValidator {
       verbose: true,
       useDefaults: true,
       coerceTypes: true,
+      strict: false,
     });
     this._ajv.addSchema(schemas);
+    ajvFormats(this._ajv);
   }
 
   validate(config = {}) {

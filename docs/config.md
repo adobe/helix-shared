@@ -49,6 +49,7 @@ strains:
 | [definitions](#definitions) | `object` | Optional | cannot be null | [Configuration](config-properties-definitions.md "https&#x3A;//ns.adobe.com/helix/shared/config#/properties/definitions") |
 | [version](#version)         | Multiple | Optional | cannot be null | [Configuration](config-properties-version.md "https&#x3A;//ns.adobe.com/helix/shared/config#/properties/version")         |
 | [strains](#strains)         | Merged   | Required | cannot be null | [Configuration](config-properties-strains.md "https&#x3A;//ns.adobe.com/helix/shared/strains#/properties/strains")        |
+| [preflight](#preflight)     | `string` | Optional | cannot be null | [Configuration](config-properties-preflight.md "https&#x3A;//ns.adobe.com/helix/shared/config#/properties/preflight")     |
 
 ## definitions
 
@@ -118,3 +119,31 @@ merged type ([Strains](config-properties-strains.md))
 one (and only one) of
 
 -   [Untitled array in Strains](strains-oneof-0.md "check type definition")
+
+## preflight
+
+The URL of a preflight check that should be performed before assigning a strain to a request. The headers returned by this preflight request can be used in strain conditions.
+
+
+`preflight`
+
+-   is optional
+-   Type: `string`
+-   cannot be null
+-   defined in: [Configuration](config-properties-preflight.md "https&#x3A;//ns.adobe.com/helix/shared/config#/properties/preflight")
+
+### preflight Type
+
+`string`
+
+### preflight Constraints
+
+**pattern**: the string must match the following regular expression: 
+
+```regexp
+^https://adobeioruntime\.net/
+```
+
+[try pattern](https://regexr.com/?expression=%5Ehttps%3A%2F%2Fadobeioruntime%5C.net%2F "try regular expression with regexr.com")
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")

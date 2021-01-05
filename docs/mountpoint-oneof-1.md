@@ -20,7 +20,7 @@ https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1
 | Property                      | Type     | Required | Nullable       | Defined by                                                                                                                                        |
 | :---------------------------- | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [url](#url)                   | `string` | Required | cannot be null | [Mount Point](mountpoint-oneof-1-properties-url.md "https&#x3A;//ns.adobe.com/helix/shared/mountpoint#/oneOf/1/properties/url")                   |
-| [fallbackPath](#fallbackPath) | `string` | Optional | cannot be null | [Mount Point](mountpoint-oneof-1-properties-fallbackpath.md "https&#x3A;//ns.adobe.com/helix/shared/mountpoint#/oneOf/1/properties/fallbackPath") |
+| [fallbackPath](#fallbackpath) | `string` | Optional | cannot be null | [Mount Point](mountpoint-oneof-1-properties-fallbackpath.md "https&#x3A;//ns.adobe.com/helix/shared/mountpoint#/oneOf/1/properties/fallbackPath") |
 
 ## url
 

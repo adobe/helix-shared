@@ -50,6 +50,9 @@ A condition expression
 | `^url_param\..+[~]?$`        | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[~]?$")                 |
 | `^url_param\..+[<>]$`        | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param-1.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[&lt;>]$")            |
 | `^url_param\..+[=]$`         | Multiple | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param-2.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[=]$")                |
+| `^preflight\..+[~]?$`        | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[~]?$")                 |
+| `^preflight\..+[<>]$`        | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight-1.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[&lt;>]$")            |
+| `^preflight\..+[=]$`         | Multiple | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight-2.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[=]$")                |
 
 ## and
 
@@ -460,3 +463,51 @@ Matches a URL parameter's value as a number or string
 ### ^url_param\\..+\[=]$ Type
 
 any of the folllowing: `number` or `string` ([Details](conditions-patternproperties-url_param-2.md))
+
+## Pattern: `^preflight\..+[~]?$`
+
+Matches a preflight response header value as a string
+
+
+`^preflight\..+[~]?$`
+
+-   is optional
+-   Type: `string`
+-   cannot be null
+-   defined in: [Conditions](conditions-patternproperties-preflight.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[~]?$")
+
+### ^preflight\\..+\[~]?$ Type
+
+`string`
+
+## Pattern: `^preflight\..+[<>]$`
+
+Matches a preflight response header value as a number
+
+
+`^preflight\..+[<>]$`
+
+-   is optional
+-   Type: `number`
+-   cannot be null
+-   defined in: [Conditions](conditions-patternproperties-preflight-1.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[&lt;>]$")
+
+### ^preflight\\..+\[&lt;>]$ Type
+
+`number`
+
+## Pattern: `^preflight\..+[=]$`
+
+Matches a preflight response header value as a number or string
+
+
+`^preflight\..+[=]$`
+
+-   is optional
+-   Type: any of the folllowing: `number` or `string` ([Details](conditions-patternproperties-preflight-2.md))
+-   cannot be null
+-   defined in: [Conditions](conditions-patternproperties-preflight-2.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[=]$")
+
+### ^preflight\\..+\[=]$ Type
+
+any of the folllowing: `number` or `string` ([Details](conditions-patternproperties-preflight-2.md))

@@ -22,14 +22,15 @@
   },
   "homepage": "https://github.com/adobe/helix-shared#readme",
   "dependencies": {
-    "@adobe/helix-fetch": "^1.6.1",
-    "@adobe/helix-log": "^4.5.1",
-    "ajv": "^6.12.2",
-    "ferrum": "^1.4.1",
-    "fs-extra": "^9.0.0",
-    "object-hash": "^2.0.3",
-    "quick-lru": "^5.1.0",
-    "uri-js": "^4.2.2",
+    "@adobe/helix-fetch": "1.9.2",
+    "@adobe/helix-log": "4.5.3",
+    "ajv": "7.0.2",
+    "ajv-formats": "1.5.1",
+    "ferrum": "1.4.1",
+    "fs-extra": "9.0.1",
+    "object-hash": "2.0.3",
+    "quick-lru": "5.1.1",
+    "uri-js": "4.4.0",
     "yaml": "1.10.0"
   },
   "devDependencies": {
