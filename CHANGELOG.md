@@ -1,3 +1,10 @@
+## [7.18.1](https://github.com/adobe/helix-shared/compare/v7.18.0...v7.18.1) (2021-01-05)
+
+
+### Bug Fixes
+
+* **deps:** update external major (major) ([03ce6c0](https://github.com/adobe/helix-shared/commit/03ce6c0b8303381c4a68fa9c0af9576177e471ed))
+
 # [7.18.0](https://github.com/adobe/helix-shared/compare/v7.17.0...v7.18.0) (2020-12-09)
 
 
