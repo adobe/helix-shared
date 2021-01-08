@@ -48,6 +48,32 @@ describe('Redirects Config Loading (from GitHub)', () => {
             from: 'https://blog.adobe.com/en/2020/08/17/redefining%20-he-digital-experience-for-creating-and-collaborating-on-learning-content.html',
             to: 'https://blog.adobe.com/en/2020/08/17/redefining-the-digital-experience-for-creating-and-collaborating-on-learning-content.html',
           },
+          {
+            Destination: 'https://blog.adobe.com/en/2019/04/01/karcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+            Notes: '',
+            Source: '/en/publish/2019/04/01/k%D3%93rcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+          },
+          {
+            Destination: 'https://blog.adobe.com/en/2019/04/01/karcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+            Notes: '',
+            Source: '/en/publish/2019/04/01/k%d3%93rcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+          },
+          {
+            Destination: 'https://blog.adobe.com/en/2019/04/01/karcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+            Notes: '',
+            // note: the ä is a Cyrillic Small Letter A With Diaeresis
+            Source: '/en/publish/2019/04/01/kärcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+          },
+          {
+            Destination: 'https://blog.adobe.com/en/2019/04/01/karcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+            Notes: '',
+            Source: '/en/publish/2019/04/01/k%C3%A4rcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+          },
+          {
+            Destination: 'https://blog.adobe.com/en/2019/04/01/karcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+            Notes: '',
+            Source: '/en/publish/2019/04/01/k%c3%a4rcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+          },
         ]);
       } else if (req.query.src.startsWith('https://docs.google.com/')) {
         return res.status(200).json([{
@@ -114,6 +140,12 @@ describe('Redirects Config Loading (from GitHub)', () => {
 
     assert.deepEqual(await config.match('/en/2020/08/17/redefining -he-digital-experience-for-creating-and-collaborating-on-learning-content.html'), {
       url: 'https://blog.adobe.com/en/2020/08/17/redefining-the-digital-experience-for-creating-and-collaborating-on-learning-content.html',
+      type: 'permanent',
+    });
+
+    // note: the ä here is a Latin Small Letter A With Diaeresis
+    assert.deepEqual(await config.match('/en/publish/2019/04/01/kӓrcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html'), {
+      url: 'https://blog.adobe.com/en/2019/04/01/karcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
       type: 'permanent',
     });
   }).timeout(10000);
