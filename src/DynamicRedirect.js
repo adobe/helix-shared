@@ -87,7 +87,7 @@ class DynamicRedirect {
     }
     if (this._data) {
       const hit = this._data.find((entry) => entry.from === path
-        || entry.from === path.replace(/[ ]/g, encodeURIComponent));
+        || entry.from === path.replace(/[ äӓ]/g, encodeURIComponent));
       return hit ? {
         url: hit.to,
         type: hit.type || DEFAULT_TYPE,
