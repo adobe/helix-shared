@@ -1,3 +1,10 @@
+## [7.18.3](https://github.com/adobe/helix-shared/compare/v7.18.2...v7.18.3) (2021-01-11)
+
+
+### Bug Fixes
+
+* **redirects:** handle special case of äӓ confusion ([370aa4a](https://github.com/adobe/helix-shared/commit/370aa4a2891e1d96d38648f4920f84b61875e5f3))
+
 ## [7.18.2](https://github.com/adobe/helix-shared/compare/v7.18.1...v7.18.2) (2021-01-09)
 
 
