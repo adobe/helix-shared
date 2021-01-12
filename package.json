@@ -50,7 +50,7 @@
     "eslint-plugin-import": "2.22.1",
     "ghooks": "2.0.4",
     "istanbul": "1.1.0-alpha.1",
-    "js-yaml": "3.14.1",
+    "js-yaml": "4.0.0",
     "jsdoc-to-markdown": "6.0.1",
     "jsdom": "16.4.0",
     "junit-report-builder": "2.1.0",
