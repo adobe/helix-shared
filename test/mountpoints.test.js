@@ -36,7 +36,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
     assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
   });
 
-  it('Retrieves Document from GitHub with Auth', async function okGithub() {
+  it.skip('Retrieves Document from GitHub with Auth', async function okGithub() {
     const { server } = this.polly;
     let foundtoken;
     let foundid;
@@ -76,7 +76,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
     assert.equal(match, null);
   });
 
-  it('Error from GitHub is propagated', async function okGithub() {
+  it.skip('Error from GitHub is propagated', async function okGithub() {
     const { server } = this.polly;
 
     server
