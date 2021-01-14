@@ -12,4 +12,4 @@ mountpoints:
   /gd-with-query: https://drive.google.com/drive/folders/99f999f99f9fff?ups=sharing
   /github-simple: https://github.com/adobe/helix-shared
   /github-path: https://github.com/adobe/helix-shared/tree/main/src
-  /github-branch: https://github.com/adobe/helix-shared/tree/downloader/src
+  /github-branch: https://github.com/adobe/helix-shared/tree/downloader
