@@ -1,3 +1,10 @@
+# [7.19.0](https://github.com/adobe/helix-shared/compare/v7.18.3...v7.19.0) (2021-01-14)
+
+
+### Features
+
+* **fstab:** add support for github mount points ([b579e3d](https://github.com/adobe/helix-shared/commit/b579e3d9f92802bf734ab69b42ece0a1ae2be99a)), closes [#410](https://github.com/adobe/helix-shared/issues/410)
+
 ## [7.18.3](https://github.com/adobe/helix-shared/compare/v7.18.2...v7.18.3) (2021-01-11)
 
 
