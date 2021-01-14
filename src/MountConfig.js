@@ -70,6 +70,28 @@ const googleDecorator = {
   },
 };
 
+const githubDecorator = {
+  re: /^https:\/\/github.com\/(?<owner>[^/]+)\/(?<repo>[^/]+)(\/tree\/(?<ref>[^/]+)(?<path>.*))?$/,
+  test(m) {
+    return this.re.test(m.url);
+  },
+  decorate(m) {
+    const {
+      owner, repo, ref, path,
+    } = m.url.match(this.re).groups;
+
+    const ret = {
+      type: 'github',
+      owner,
+      repo,
+      ref,
+      path: m.path,
+      basePath: path,
+    };
+    return ret;
+  },
+};
+
 class MountConfig extends SchemaDerivedConfig {
   constructor() {
     super({
@@ -79,7 +101,7 @@ class MountConfig extends SchemaDerivedConfig {
         '^/mountpoints/.*$': mountpointSchema,
       },
       handlers: {
-        '^/mountpoints$': MountPointHandler([onedriveDecorator, googleDecorator]),
+        '^/mountpoints$': MountPointHandler([onedriveDecorator, googleDecorator, githubDecorator]),
       },
     });
   }

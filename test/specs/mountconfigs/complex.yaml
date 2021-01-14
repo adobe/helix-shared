@@ -10,3 +10,6 @@ mountpoints:
   /onedrive-index.md: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog/homepage.docx
   /gd-no-account: https://drive.google.com/drive/folders/3453k4j3l4kjlk
   /gd-with-query: https://drive.google.com/drive/folders/99f999f99f9fff?ups=sharing
+  /github-simple: https://github.com/adobe/helix-shared
+  /github-path: https://github.com/adobe/helix-shared/tree/main/src
+  /github-branch: https://github.com/adobe/helix-shared/tree/downloader
