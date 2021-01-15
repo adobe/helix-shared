@@ -206,6 +206,13 @@ describe('equalizeNode()', () => {
   //   '<div>foo</foo><div>   <pre style="display: inline"> hello</pre>  \n \n \t foo </div>',
   //   '<div>foo</foo><div><pre style="display: inline"> hello</a> foo</div>');
 
+  ck('works with forms',
+    `<form>
+        <textarea id="rating-comments" name="rating-comments"></textarea>
+        <input type="submit" value="Send">
+    </form>`,
+    '<form><textarea id="rating-comments" name="rating-comments"></textarea><input type="submit" value="Send"></form>');
+
   const style = `
     <style>
       mypro {
