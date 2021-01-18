@@ -202,16 +202,34 @@ describe('equalizeNode()', () => {
   ck('collapses spaces inside inline element inside pre',
     '<pre> <span>   \n </span> </pre>',
     '<pre> <span> </span> </pre>');
-  // ck('collapses spaces between inline pre and text at the end of a div',
-  //   '<div>foo</foo><div>   <pre style="display: inline"> hello</pre>  \n \n \t foo </div>',
-  //   '<div>foo</foo><div><pre style="display: inline"> hello</a> foo</div>');
 
-  ck('works with forms',
-    `<form>
-        <textarea id="rating-comments" name="rating-comments"></textarea>
-        <input type="submit" value="Send">
-    </form>`,
-    '<form><textarea id="rating-comments" name="rating-comments"></textarea><input type="submit" value="Send"></form>');
+  ck('deals with inline pre',
+    '<span style="white-space: pre"></span>',
+    '<span style="white-space: pre"></span>');
+  ck('deals with inline pre side by side',
+    '<span style="white-space: pre"></span><span style="white-space: pre"></span>',
+    '<span style="white-space: pre"></span><span style="white-space: pre"></span>');
+  ck('deals with inline pre side by side with space',
+    `
+      <span style="white-space: pre">         </span>  
+      <span style="white-space: pre">     </span>   
+    `,
+    '<span style="white-space: pre">         </span> <span style="white-space: pre">     </span>');
+  ck('deals with inline pre side by side wrapped in span left',
+    `
+      <span>  <span style="white-space: pre">         </span>    </span>
+      <span style="white-space: pre">     </span>
+    `,
+    '<span><span style="white-space: pre">         </span></span> <span style="white-space: pre">     </span>');
+  ck('deals with inline pre side by side wrapped in span right',
+    `
+      <span style="white-space: pre">         </span>
+      <span>  <span style="white-space: pre">     </span>  </span>
+    `,
+    '<span style="white-space: pre">         </span> <span><span style="white-space: pre">     </span></span>');
+  ck('collapses spaces between inline pre and text at the end of a div',
+    '<div>foo</div><div>   <pre style="display: inline"> hello</pre>  \n \n \t foo </div>',
+    '<div>foo</div><div><pre style="display: inline"> hello</pre> foo</div>');
 
   const style = `
     <style>
@@ -231,6 +249,8 @@ describe('equalizeNode()', () => {
         World </div>
     <div> Hello    World </div>
     <div>
+      <span style="white-space: pre">         </span>  
+      <span style="white-space: pre">     </span>   
       <!-- Hello World -->
       <span     >Hello</span>
       world
@@ -251,6 +271,8 @@ describe('equalizeNode()', () => {
           We are the borg
         </mynom> my dear </pre></mynom>fnord</mypro>
       foo
+      <span style="white-space: pre">         </span>
+      <span>  <span style="white-space: pre">     </span>  </span>
       <!-- Nomnomnom -->
       <!-- Nomnomnom -->
     </div>`;
@@ -260,6 +282,8 @@ describe('equalizeNode()', () => {
     + '<div>Hello World</div>'
     + '<div>Hello World</div>'
     + '<div>'
+      + '<span style="white-space: pre">         </span> '
+      + '<span style="white-space: pre">     </span> '
       + '<span>Hello</span> world'
       + '<div>xxx</div>'
       + '<pre>   </pre>'
@@ -269,7 +293,8 @@ describe('equalizeNode()', () => {
             + '<mynom> We are the borg </mynom> '
           + 'my dear '
         + '</pre>'
-      + '</mynom>fnord</mypro> foo'
+      + '</mynom>fnord</mypro> foo '
+      + '<span style="white-space: pre">         </span> <span><span style="white-space: pre">     </span></span>'
     + '</div>';
 
   ck('grand test with all features combined', `
