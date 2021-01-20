@@ -231,6 +231,14 @@ describe('equalizeNode()', () => {
     '<div>foo</div><div>   <pre style="display: inline"> hello</pre>  \n \n \t foo </div>',
     '<div>foo</div><div><pre style="display: inline"> hello</pre> foo</div>');
 
+  // regression test
+  ck('works with forms',
+    `<form>
+        <textarea id="rating-comments" name="rating-comments"></textarea>
+        <input type="submit" value="Send">
+    </form>`,
+    '<form><textarea id="rating-comments" name="rating-comments"></textarea> <input type="submit" value="Send"></form>');
+
   const style = `
     <style>
       mypro {
