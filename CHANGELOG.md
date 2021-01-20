@@ -1,3 +1,10 @@
+## [7.19.1](https://github.com/adobe/helix-shared/compare/v7.19.0...v7.19.1) (2021-01-20)
+
+
+### Bug Fixes
+
+* **dom:**  deal with pre+inline nodes in equalizeNode ([bafb02b](https://github.com/adobe/helix-shared/commit/bafb02b52e2797946f37c7165e00408a2233a730))
+
 # [7.19.0](https://github.com/adobe/helix-shared/compare/v7.18.3...v7.19.0) (2021-01-14)
 
 
