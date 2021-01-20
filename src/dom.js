@@ -296,10 +296,10 @@ equalizeNode.impl = (node, root = true, inlineTextNodes = []) => {
           elm.nodeValue = ` ${elm.nodeValue}`;
         } else if (elmParents.length > 0) {
           // Like in the `<b>Hello</b> <em>World</em>` case
-          const before = elmParents[0];
+          const before = elmParents[0] || elm;
           before.insertAdjacentHTML('beforebegin', ' ');
         } else {
-          const after = prevParents[0];
+          const after = prevParents[0] || prev;
           after.insertAdjacentHTML('afterend', ' ');
         }
       }
