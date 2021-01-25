@@ -82,7 +82,7 @@
           ]
         },
         {
-          "description": "The Universal Runtime base URL to use for all actions in this strain.",
+          "description": "A base URL to use for all actions in this strain.",
           "type": "string",
           "format": "uri",
           "examples": [
