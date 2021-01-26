@@ -63,8 +63,33 @@
       "type": "boolean"
     },
     "package": {
-      "description": "Name of the action package that renders this strain.",
-      "type": "string"
+      "oneOf": [
+        {
+          "description": "Name of the action package that renders this strain.",
+          "type": "string",
+          "pattern": "^[^/]*$",
+          "examples": [
+            "10e05c072b108ac9533c6206c6eaa651901ca29b"
+          ]
+        },
+        {
+          "description": "A pair of OpenWhisk namespace and package name, separated by slash.\n\n This will be the base package to look up actions to run in this strain.",
+          "type": "string",
+          "pattern": "^[^/]+\\/[^/]+$",
+          "examples": [
+            "helix-pages/pages_4.15.1",
+            "trieloff/10e05c072b108ac9533c6206c6eaa651901ca29b"
+          ]
+        },
+        {
+          "description": "A base URL to use for all actions in this strain.",
+          "type": "string",
+          "format": "uri",
+          "examples": [
+            "https://helix-pages.anywhere.run/helix-pages/pages@4.15.1"
+          ]
+        }
+      ]
     },
     "url": {
       "description": "URL condition.\n\n**Warning**: this property has been deprecated in favour of adding the `url` to the `condition` property.",
