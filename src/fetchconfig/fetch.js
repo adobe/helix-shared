@@ -9,13 +9,17 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { fetch } = require('@adobe/helix-fetch').context({
-  httpsProtocols:
-  /* istanbul ignore next */
-    process.env.HELIX_FETCH_FORCE_HTTP1 ? ['http1'] : ['http2', 'http1'],
-});
+
+const fetchAPI = require('@adobe/helix-fetch');
 const utils = require('../utils');
 const cache = require('./cache');
+
+const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
+  /* istanbul ignore next */
+  ? fetchAPI.context({
+    alpnProtocols: [fetchAPI.ALPN_HTTP1_1],
+  })
+  : fetchAPI;
 
 /**
  * Fetches an FSTab file from a GitHub repository
