@@ -11,6 +11,7 @@
  */
 
 /* eslint-env mocha */
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
 const assert = require('assert');
 const fs = require('fs-extra');
@@ -82,8 +83,7 @@ describe('Redirects Config Loading (from GitHub)', () => {
           kind: 'temporary',
         }]);
       }
-
-      throw new Error('unsupported source');
+      return res.status(500, 'unsupported source');
     });
 
     const config = await new RedirectConfig()
