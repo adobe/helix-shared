@@ -16,10 +16,10 @@ const fetchAPI = require('@adobe/helix-fetch');
 // on azure/kubernetes based I/O Runtime
 process.env.HELIX_FETCH_FORCE_HTTP1 = true;
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
-  /* istanbul ignore next */
   ? fetchAPI.context({
     alpnProtocols: [fetchAPI.ALPN_HTTP1_1],
   })
+  /* istanbul ignore next */
   : fetchAPI;
 
 const DEFAULT_TYPE = 'permanent';
