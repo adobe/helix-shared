@@ -1,3 +1,10 @@
+## [7.19.3](https://github.com/adobe/helix-shared/compare/v7.19.2...v7.19.3) (2021-01-29)
+
+
+### Bug Fixes
+
+* **cache:** use lru-cache instead of quick-lru and limit max age to 1 minute ([3fe4bdb](https://github.com/adobe/helix-shared/commit/3fe4bdb1fd1946e21ecbdf5f9ca0481e27543a70))
+
 ## [7.19.2](https://github.com/adobe/helix-shared/compare/v7.19.1...v7.19.2) (2021-01-23)
 
 
