@@ -14,11 +14,12 @@ const fetchAPI = require('@adobe/helix-fetch');
 const utils = require('../utils');
 const cache = require('./cache');
 
-const fetchContext = process.env.HELIX_FETCH_FORCE_HTTP1
+const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
   /* istanbul ignore next */
-  ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })
+  ? fetchAPI.context({
+    alpnProtocols: [fetchAPI.ALPN_HTTP1_1],
+  })
   : fetchAPI;
-const { fetch } = fetchContext;
 
 /**
  * Fetches an FSTab file from a GitHub repository
@@ -60,6 +61,3 @@ const fetchConfigCached = cache(fetchConfigUncached, {
 });
 
 module.exports = fetchConfigCached;
-
-// for tests
-fetchConfigCached.fetchContext = fetchContext;

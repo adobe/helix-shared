@@ -25,11 +25,6 @@ describe('Redirects Config Loading (from GitHub)', () => {
     recordIfMissing: false,
     logging: false,
   });
-  after(() => {
-    // force disconnect to terminate pending mocha
-    // eslint-disable-next-line global-require
-    require('../src/fetchconfig/fetch.js').fetchContext.reset();
-  });
 
   it('Retrieves Document from GitHub', async function get() {
     const { server } = this.polly;
