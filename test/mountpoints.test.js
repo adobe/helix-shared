@@ -24,6 +24,11 @@ describe('Mount Point Config Loading (from GitHub)', () => {
   setupPolly({
     recordIfMissing: true,
   });
+  after(() => {
+    // force disconnect to terminate pending mocha
+    // eslint-disable-next-line global-require
+    require('../src/fetchconfig/fetch.js').fetchContext.reset();
+  });
 
   it('Retrieves Document from GitHub', async () => {
     const config = await new MountConfig()
