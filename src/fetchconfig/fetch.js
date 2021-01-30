@@ -15,10 +15,8 @@ const utils = require('../utils');
 const cache = require('./cache');
 
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
+  ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })
   /* istanbul ignore next */
-  ? fetchAPI.context({
-    alpnProtocols: [fetchAPI.ALPN_HTTP1_1],
-  })
   : fetchAPI;
 
 /**
