@@ -1,3 +1,10 @@
+## [7.19.4](https://github.com/adobe/helix-shared/compare/v7.19.3...v7.19.4) (2021-01-29)
+
+
+### Bug Fixes
+
+* **deps:** update to helix v2 ([1bba55e](https://github.com/adobe/helix-shared/commit/1bba55ef08ad4f6af43150c06a2db116a24897c7))
+
 ## [7.19.3](https://github.com/adobe/helix-shared/compare/v7.19.2...v7.19.3) (2021-01-29)
 
 
