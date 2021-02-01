@@ -1,3 +1,10 @@
+## [7.19.5](https://github.com/adobe/helix-shared/compare/v7.19.4...v7.19.5) (2021-02-01)
+
+
+### Bug Fixes
+
+* **deps:** use helix-fetch@2.1.0 ([#425](https://github.com/adobe/helix-shared/issues/425)) ([1663aa9](https://github.com/adobe/helix-shared/commit/1663aa9be7402f75d3bc2f0f347c9884a569a540))
+
 ## [7.19.4](https://github.com/adobe/helix-shared/compare/v7.19.3...v7.19.4) (2021-01-29)
 
 
