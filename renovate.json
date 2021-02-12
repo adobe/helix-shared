@@ -15,10 +15,6 @@
       "allowedVersions": "<6.0.0"
     },
     {
-      "packageNames": ["@adobe/helix-fetch"],
-      "allowedVersions": "<2.0.0"
-    },
-    {
       "groupName": "adobe fixes",
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
