@@ -1,3 +1,10 @@
+## [7.19.9](https://github.com/adobe/helix-shared/compare/v7.19.8...v7.19.9) (2021-02-19)
+
+
+### Bug Fixes
+
+* re-enable HTTP/2 ([7e31de0](https://github.com/adobe/helix-shared/commit/7e31de0bb44ae9625375ddf6052603323109e31d))
+
 ## [7.19.8](https://github.com/adobe/helix-shared/compare/v7.19.7...v7.19.8) (2021-02-16)
 
 
