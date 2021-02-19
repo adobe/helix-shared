@@ -12,9 +12,6 @@
 const { URL } = require('url');
 const fetchAPI = require('@adobe/helix-fetch');
 
-// force HTTP/1 in order to avoid issues with long-lived HTTP/2 sessions
-// on azure/kubernetes based I/O Runtime
-process.env.HELIX_FETCH_FORCE_HTTP1 = true;
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
   ? fetchAPI.context({
     alpnProtocols: [fetchAPI.ALPN_HTTP1_1],
