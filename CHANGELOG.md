@@ -1,3 +1,10 @@
+## [7.19.10](https://github.com/adobe/helix-shared/compare/v7.19.9...v7.19.10) (2021-02-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ajv to v7.1.1 ([48d8ae6](https://github.com/adobe/helix-shared/commit/48d8ae6b165079176752b3a24c18ab69f8a69e06))
+
 ## [7.19.9](https://github.com/adobe/helix-shared/compare/v7.19.8...v7.19.9) (2021-02-19)
 
 
