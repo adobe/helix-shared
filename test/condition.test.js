@@ -11,12 +11,13 @@
  */
 
 /* eslint-env mocha */
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
 const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
 const path = require('path');
-const request = require('request-promise-native');
+const fetchAPI = require('@adobe/helix-fetch');
 const url = require('url');
 const YAML = require('yaml');
 
@@ -24,6 +25,13 @@ const Condition = require('../src/Condition.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/conditions');
 const DEFAULT_SERVER = 'https://www.example.com';
+
+const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
+  ? fetchAPI.context({
+    alpnProtocols: [fetchAPI.ALPN_HTTP1_1],
+  })
+  /* istanbul ignore next */
+  : fetchAPI;
 
 /**
  * Adorn our mock up request with fields/methods exposed by an express-style request.
@@ -55,7 +63,7 @@ async function assertOK(cond) {
       const result = cond.match(expressify(this.req));
       return [200, `${JSON.stringify(result)}`];
     });
-  const response = await request(`${DEFAULT_SERVER}/index.html`);
+  const response = await (await fetch(`${DEFAULT_SERVER}/index.html`)).text();
   assert.ok(response);
 }
 
@@ -76,7 +84,7 @@ async function assertMatch(cond, samples) {
       });
     const stdopts = { uri: `${DEFAULT_SERVER}/index.html` };
     const opts = { ...stdopts, ...sample };
-    const response = await request(opts);
+    const response = await (await fetch(opts.uri, opts)).text();
     assert.deepEqual(JSON.parse(response), opts.match);
   }));
 }
