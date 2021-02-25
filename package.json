@@ -28,8 +28,8 @@
     "ajv-formats": "1.5.1",
     "ferrum": "1.7.0",
     "fs-extra": "9.1.0",
-    "object-hash": "2.1.1",
     "lru-cache": "6.0.0",
+    "object-hash": "2.1.1",
     "uri-js": "4.4.1",
     "yaml": "1.10.0"
   },

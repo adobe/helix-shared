@@ -67,18 +67,22 @@ class DynamicRedirect {
   async match(path) {
     if (!this._data) {
       try {
-        // eslint-disable-next-line no-underscore-dangle
-        const namespace = process.env.__OW_NAMESPACE || 'helix';
-        const url = new URL(`https://adobeioruntime.net/api/v1/web/${namespace}/helix-services/data-embed@v1`);
-        url.searchParams.append('src', this._src);
+        let url = new URL(this._src);
+        if (!this._src.endsWith('.json')) {
+          // load via runtime (todo: do this via a plugin)
+          // eslint-disable-next-line no-underscore-dangle
+          const namespace = process.env.__OW_NAMESPACE || 'helix';
+          url = new URL(`https://adobeioruntime.net/api/v1/web/${namespace}/helix-services/data-embed@v1`);
+          url.searchParams.append('src', this._src);
+        }
         const res = await fetch(url.href, {
           headers: {
             'x-request-id': this._transactionID,
           },
         });
-        const data = (await res.json()).map(clean);
+        const text = await res.text();
         if (res.ok) {
-          this._data = data;
+          this._data = JSON.parse(text).map(clean);
         }
       } catch (e) {
         this._logger.warn(`failed to get ${this._src} ${e.message}`);

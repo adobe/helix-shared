@@ -86,9 +86,19 @@ describe('Redirects Config Loading (from GitHub)', () => {
       return res.status(500, 'unsupported source');
     });
 
+    server.get('https://helix-demo--adobe.hlx.page/redirects.json').intercept((req, res) => {
+      assert.equal(req.headers['x-request-id'], 'random');
+      return res.status(200).json([
+        {
+          from: '/en/old',
+          to: '/en/new',
+        },
+      ]);
+    });
+
     const config = await new RedirectConfig()
       .withCache({ maxSize: 1 })
-      .withRepo('trieloff', 'helix-demo', '4e05a4e2c7aac6dd8d5f2b6dcf05815994812d7d')
+      .withConfigPath(path.resolve(SPEC_ROOT, 'dynamic.yaml'))
       .withTransactionID('random')
       .init();
 
@@ -96,6 +106,7 @@ describe('Redirects Config Loading (from GitHub)', () => {
       'https://adobe.sharepoint.com/sites/TheBlog/_layouts/15/guestaccess.aspx?share=ESR1N29Z7HpCh1Zfs_0YS_gB4gVSuKyWRut-kNcHVSvkew&email=helix%40adobe.com&e=hx0OUl',
       'https://docs.google.com/spreadsheets/d/1IX0g5P74QnHPR3GW1AMCdTk_-m954A-FKZRT2uOZY7k/edit?ouid=107837958797411838063&usp=sheets_home&ths=true',
       'https://raw.githubusercontent.com/adobe/helix-demo/master/config/redirects.csv',
+      'https://helix-demo--adobe.hlx.page/redirects.json',
       {
         from: '(.*)\\.php',
         to: '$1.html',
@@ -106,7 +117,7 @@ describe('Redirects Config Loading (from GitHub)', () => {
       },
     ]);
 
-    assert.equal(config.redirects.length, 5);
+    assert.equal(config.redirects.length, 6);
 
     assert.deepEqual(await config.match('/content/dam/test.png'), {
       url: '/htdocs/test.png',
@@ -146,6 +157,10 @@ describe('Redirects Config Loading (from GitHub)', () => {
     // note: the ä here is a Latin Small Letter A With Diaeresis
     assert.deepEqual(await config.match('/en/publish/2019/04/01/kӓrcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html'), {
       url: 'https://blog.adobe.com/en/2019/04/01/karcher-cleans-up-software-licensing-with-an-adobe-etla-mobilizing-for-growth.html',
+      type: 'permanent',
+    });
+    assert.deepEqual(await config.match('/en/old'), {
+      url: '/en/new',
       type: 'permanent',
     });
   }).timeout(10000);
@@ -221,15 +236,15 @@ describe('Redirect Config Loading', () => {
     const cfg = new RedirectConfig()
       .withJSON(fs.readJSONSync(path.resolve(SPEC_ROOT, 'redirects.json')));
     await cfg.init();
-    assert.equal(cfg.redirects.length, 5);
+    assert.equal(cfg.redirects.length, 6);
     assert.ok(Array.isArray(cfg.redirects));
     assert.equal(cfg.vanity[0].name, 'canonical');
     // eslint-disable-next-line no-template-curly-in-string
     assert.equal(cfg.vanity[0].fetch, 'https://${repo}-${owner}.project-helix.page/${path}');
 
-    assert.equal(cfg.redirects[4].type, 'temporary');
+    assert.equal(cfg.redirects[5].type, 'temporary');
 
-    assert.equal(cfg.redirects[3].match('/test.php').type, 'internal');
+    assert.equal(cfg.redirects[4].match('/test.php').type, 'internal');
   });
 
   it('feed Redirects Config gets loaded from YAML', async () => {
