@@ -1,3 +1,10 @@
+## [7.19.12](https://github.com/adobe/helix-shared/compare/v7.19.11...v7.19.12) (2021-02-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.1.6 ([4849c02](https://github.com/adobe/helix-shared/commit/4849c028514cbbe0ffb4b069b9edb049c54e00ec))
+
 ## [7.19.11](https://github.com/adobe/helix-shared/compare/v7.19.10...v7.19.11) (2021-02-25)
 
 
