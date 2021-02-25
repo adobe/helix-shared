@@ -1,3 +1,10 @@
+## [7.19.11](https://github.com/adobe/helix-shared/compare/v7.19.10...v7.19.11) (2021-02-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v5 ([#434](https://github.com/adobe/helix-shared/issues/434)) ([6486554](https://github.com/adobe/helix-shared/commit/648655497d9b6ab639a4969028a06424ef8d78c2))
+
 ## [7.19.10](https://github.com/adobe/helix-shared/compare/v7.19.9...v7.19.10) (2021-02-21)
 
 
