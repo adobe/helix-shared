@@ -1,25 +1,10 @@
 version: 1
 redirects:
-  # Excel list from Sharepoint
   - https://adobe.sharepoint.com/sites/TheBlog/_layouts/15/guestaccess.aspx?share=ESR1N29Z7HpCh1Zfs_0YS_gB4gVSuKyWRut-kNcHVSvkew&email=helix%40adobe.com&e=hx0OUl
-  # Google Sheets
   - https://docs.google.com/spreadsheets/d/1IX0g5P74QnHPR3GW1AMCdTk_-m954A-FKZRT2uOZY7k/edit?ouid=107837958797411838063&usp=sheets_home&ths=true
-  # Some random CSV
   - https://raw.githubusercontent.com/adobe/helix-demo/master/config/redirects.csv
-  # JSON from the content proxy
   - https://helix-demo--adobe.hlx.page/redirects.json
-  # Straight out of the helix-config.yaml
   - from: (.*)\.php
     to: $1.html
-    type: internal
   - from: /content/dam/(.*)$
     to: /htdocs/$1
-    type: temporary
-
-vanity:
-  canonical:
-    source: html
-    fetch: https://${repo}-${owner}.project-helix.page/${path}
-    select: link[@rel=canonical]
-    value: |
-      ${attribute(href)}
