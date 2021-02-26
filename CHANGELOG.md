@@ -1,3 +1,10 @@
+# [7.20.0](https://github.com/adobe/helix-shared/compare/v7.19.12...v7.20.0) (2021-02-26)
+
+
+### Features
+
+* **redirect:** allow fetching json directly ([#438](https://github.com/adobe/helix-shared/issues/438)) ([2decd56](https://github.com/adobe/helix-shared/commit/2decd561b53dba7e91f9780c78926979c7e7bdaf)), closes [#437](https://github.com/adobe/helix-shared/issues/437)
+
 ## [7.19.12](https://github.com/adobe/helix-shared/compare/v7.19.11...v7.19.12) (2021-02-25)
 
 
