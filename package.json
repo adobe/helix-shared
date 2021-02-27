@@ -57,9 +57,9 @@
     "lint-staged": "10.5.4",
     "mocha": "8.3.0",
     "mocha-junit-reporter": "2.0.0",
-    "nock": "13.0.7",
+    "nock": "13.0.9",
     "nyc": "15.1.0",
-    "semantic-release": "17.3.9"
+    "semantic-release": "17.4.0"
   },
   "lint-staged": {
     "*.js": "eslint"
