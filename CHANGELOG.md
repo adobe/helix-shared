@@ -1,3 +1,10 @@
+# [7.21.0](https://github.com/adobe/helix-shared/compare/v7.20.0...v7.21.0) (2021-03-02)
+
+
+### Features
+
+* **config:** allow universal runtime URLs as preflight URLs ([b8e8685](https://github.com/adobe/helix-shared/commit/b8e8685552b4796d721b06502b42cfa764e081a9)), closes [#442](https://github.com/adobe/helix-shared/issues/442)
+
 # [7.20.0](https://github.com/adobe/helix-shared/compare/v7.19.12...v7.20.0) (2021-02-26)
 
 
