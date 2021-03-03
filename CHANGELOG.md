@@ -1,3 +1,10 @@
+## [7.21.1](https://github.com/adobe/helix-shared/compare/v7.21.0...v7.21.1) (2021-03-03)
+
+
+### Bug Fixes
+
+* **redirect:** fix dynamic redirects via json ([#446](https://github.com/adobe/helix-shared/issues/446)) ([2124b60](https://github.com/adobe/helix-shared/commit/2124b60a05ae44b52b4d154947ae687b886959b2)), closes [#445](https://github.com/adobe/helix-shared/issues/445)
+
 # [7.21.0](https://github.com/adobe/helix-shared/compare/v7.20.0...v7.21.0) (2021-03-02)
 
 
