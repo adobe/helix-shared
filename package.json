@@ -4,12 +4,8 @@
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
   "scripts": {
-    "semantic-release": "semantic-release",
-    "commit": "git-cz",
-    "docs": "npx jsonschema2md -d src/schemas -o docs -x docs -f yaml &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
-    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 95 --statements 98 --lines 98 mocha",
-    "lint": "./node_modules/.bin/eslint .",
-    "junit": "mocha --exit -R mocha-junit-reporter"
+    "test": "lerna run test --stream",
+    "lint": "lerna run lint"
   },
   "repository": {
     "type": "git",
@@ -22,21 +18,5 @@
   },
   "homepage": "https://github.com/adobe/helix-shared#readme",
   "devDependencies": {
-    "@adobe/eslint-config-helix": "1.1.4",
-    "commitizen": "4.2.3",
-    "cz-conventional-changelog": "3.3.0",
-    "ghooks": "2.0.4",
-    "lint-staged": "10.5.4"
-  },
-  "lint-staged": {
-    "*.js": "eslint"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    },
-    "ghooks": {
-      "pre-commit": "npx lint-staged"
-    }
   }
 }
