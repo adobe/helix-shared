@@ -82,8 +82,13 @@ class DynamicRedirect {
         });
         const text = await res.text();
         if (res.ok) {
-          this._data = JSON.parse(text).map(clean);
+          this._data = JSON.parse(text);
+          if ('data' in this._data) {
+            this._data = this._data.data;
+          }
+          this._data = this._data.map(clean);
         }
+        this._logger.info(`loaded lookup table from ${this._src}`);
       } catch (e) {
         this._logger.warn(`failed to get ${this._src} ${e.message}`);
       }
