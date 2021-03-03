@@ -88,12 +88,12 @@ describe('Redirects Config Loading (from GitHub)', () => {
 
     server.get('https://helix-demo--adobe.hlx.page/redirects.json').intercept((req, res) => {
       assert.equal(req.headers['x-request-id'], 'random');
-      return res.status(200).json([
-        {
+      return res.status(200).json({
+        data: [{
           from: '/en/old',
           to: '/en/new',
-        },
-      ]);
+        }],
+      });
     });
 
     const config = await new RedirectConfig()
