@@ -1,0 +1,43 @@
+{
+  "name": "@adobe/helix-shared-git",
+  "version": "7.21.0",
+  "description": "Shared modules of the Helix Project - Git Utils",
+  "main": "src/index.js",
+  "scripts": {
+    "semantic-release": "semantic-release",
+    "commit": "git-cz",
+    "docs": "npx jsonschema2md -d src/schemas -o docs -x docs -f yaml &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
+    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 90 --statements 90 --lines 90 mocha",
+    "lint": "./node_modules/.bin/eslint .",
+    "junit": "mocha --exit -R mocha-junit-reporter"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "dependencies": {
+    "@adobe/helix-shared-utils": "*",
+    "yaml": "1.10.0"
+  },
+  "devDependencies": {
+    "@adobe/eslint-config-helix": "1.1.4",
+    "@semantic-release/changelog": "5.0.1",
+    "@semantic-release/git": "9.0.0",
+    "codecov": "3.8.1",
+    "eslint": "7.20.0",
+    "eslint-plugin-header": "3.1.1",
+    "eslint-plugin-import": "2.22.1",
+    "junit-report-builder": "3.0.0",
+    "lint-staged": "^10.5.4",
+    "mocha": "8.3.0",
+    "mocha-junit-reporter": "2.0.0",
+    "nyc": "15.1.0",
+    "semantic-release": "17.4.0"
+  }
+}
