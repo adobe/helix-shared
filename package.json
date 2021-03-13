@@ -24,14 +24,14 @@
   "dependencies": {
     "@adobe/helix-fetch": "2.1.7",
     "@adobe/helix-log": "5.0.0",
-    "ajv": "7.1.1",
+    "ajv": "7.2.1",
     "ajv-formats": "1.5.1",
     "ferrum": "1.8.0",
     "fs-extra": "9.1.0",
     "lru-cache": "6.0.0",
     "object-hash": "2.1.1",
     "uri-js": "4.4.1",
-    "yaml": "1.10.0"
+    "yaml": "1.10.1"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
@@ -45,21 +45,21 @@
     "codecov": "3.8.1",
     "commitizen": "4.2.3",
     "cz-conventional-changelog": "3.3.0",
-    "eslint": "7.21.0",
+    "eslint": "7.22.0",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-import": "2.22.1",
     "ghooks": "2.0.4",
     "istanbul": "1.1.0-alpha.1",
     "js-yaml": "4.0.0",
     "jsdoc-to-markdown": "7.0.0",
-    "jsdom": "16.4.0",
+    "jsdom": "16.5.1",
     "junit-report-builder": "3.0.0",
     "lint-staged": "10.5.4",
-    "mocha": "8.3.1",
+    "mocha": "8.3.2",
     "mocha-junit-reporter": "2.0.0",
-    "nock": "13.0.10",
+    "nock": "13.0.11",
     "nyc": "15.1.0",
-    "semantic-release": "17.4.1"
+    "semantic-release": "17.4.2"
   },
   "lint-staged": {
     "*.js": "eslint"
