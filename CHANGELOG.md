@@ -1,3 +1,10 @@
+## [7.21.4](https://github.com/adobe/helix-shared/compare/v7.21.3...v7.21.4) (2021-03-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yaml to v1.10.2 ([3f159b8](https://github.com/adobe/helix-shared/commit/3f159b8d8ffe472a27f376d6be1f849e58a802ef))
+
 ## [7.21.3](https://github.com/adobe/helix-shared/compare/v7.21.2...v7.21.3) (2021-03-13)
 
 
