@@ -24,7 +24,7 @@
   "dependencies": {
     "@adobe/helix-fetch": "2.1.7",
     "@adobe/helix-log": "5.0.0",
-    "ajv": "7.2.1",
+    "ajv": "7.2.3",
     "ajv-formats": "1.5.1",
     "ferrum": "1.8.0",
     "fs-extra": "9.1.0",
