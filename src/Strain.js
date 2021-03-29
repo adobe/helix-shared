@@ -275,7 +275,7 @@ class Strain {
         if (Array.isArray(value) && value.length === 0) {
           value = null;
         }
-        if (value) {
+        if (typeof value !== 'undefined') {
           if (idx >= 0) {
             const item = node.items[idx];
             const oldValue = item.value.type === 'ALIAS' ? item.value.source : item.value;
