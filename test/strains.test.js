@@ -91,7 +91,7 @@ describe('Strains test', () => {
     assert.deepEqual(names, ['default', 'dev', 'dev2', 'stage', 'proxy']);
   });
 
-  it('clone single strain', async () => {
+  it('clone single strain default', async () => {
     const cfg = await new HelixConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'clone-tests.yaml'))
       .init();
@@ -109,7 +109,14 @@ describe('Strains test', () => {
       + 'static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
       + 'condition:\n'
       + '  url.hostname=: client.project-helix.io\n'
+      + 'sticky: false\n'
       + 'directoryIndex: readme.html\n');
+  });
+
+  it('clone single strain foo', async () => {
+    const cfg = await new HelixConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'clone-tests.yaml'))
+      .init();
 
     const fooCopy = cfg.strains.get('foo').clone();
     assert.deepEqual(fooCopy.toYAML(), ''
@@ -370,6 +377,7 @@ describe('Strains test', () => {
       + '  ref: master\n'
       + 'static: https://github.com/adobe/project-helix.io.git/htdocs#dev\n'
       + 'condition: req.http.host == "client.project-helix.io"\n'
+      + 'sticky: false\n'
       + 'directoryIndex: somepage.html\n');
   });
 });
