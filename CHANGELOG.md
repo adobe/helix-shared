@@ -1,3 +1,11 @@
+## [7.21.11](https://github.com/adobe/helix-shared/compare/v7.21.10...v7.21.11) (2021-03-30)
+
+
+### Bug Fixes
+
+* **strains:** better handling of undefined stickiness in strains ([3451440](https://github.com/adobe/helix-shared/commit/3451440f924a31b75118cd15722cfdbb301ed7ff)), closes [#464](https://github.com/adobe/helix-shared/issues/464)
+* **strains:** persist properties with value `false` as well ([3e01ce8](https://github.com/adobe/helix-shared/commit/3e01ce838a37b6ae4f057a52e4684341b3f225e1)), closes [#464](https://github.com/adobe/helix-shared/issues/464)
+
 ## [7.21.10](https://github.com/adobe/helix-shared/compare/v7.21.9...v7.21.10) (2021-03-30)
 
 
