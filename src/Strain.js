@@ -53,11 +53,7 @@ class Strain {
       throw new Error('url property is no longer supported.');
     }
 
-    // when `sticky` is not set
-    // assume the strain to be sticky when the condition is
-    this._sticky = cfg.sticky === undefined
-      ? (this._condition !== null && this._condition.sticky())
-      : !!cfg.sticky;
+    this._sticky = cfg.sticky;
 
     this._redirects = (Array.isArray(cfg.redirects) ? cfg.redirects : [])
       .map((r) => new Redirect(r));
@@ -92,6 +88,9 @@ class Strain {
       // eslint-disable-next-line no-underscore-dangle
       strain._ownProperties.add('directoryIndex');
     }
+    // another neccessary hack
+    // eslint-disable-next-line no-underscore-dangle
+    strain._sticky = this._sticky;
     return strain;
   }
 
@@ -108,7 +107,11 @@ class Strain {
   }
 
   get sticky() {
-    return this._sticky;
+    // when `sticky` is not set
+    // assume the strain to be sticky when the condition is
+    return this._sticky === undefined && this._condition !== null
+      ? this._condition.sticky()
+      : !!this._sticky;
   }
 
   /**
@@ -269,13 +272,14 @@ class Strain {
         const idx = node.items.findIndex((i) => i.key === key
           || (i.key.value && i.key.value === key));
         let value = key === 'version-lock' ? this.versionLock : this[key];
+        value = key === 'sticky' ? this._sticky : value;
         if (value && value.toYAMLNode) {
           value = value.toYAMLNode();
         }
         if (Array.isArray(value) && value.length === 0) {
           value = null;
         }
-        if (value) {
+        if (value || (value === false && key === 'sticky')) {
           if (idx >= 0) {
             const item = node.items[idx];
             const oldValue = item.value.type === 'ALIAS' ? item.value.source : item.value;
