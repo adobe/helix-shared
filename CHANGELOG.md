@@ -1,3 +1,10 @@
+## [7.21.10](https://github.com/adobe/helix-shared/compare/v7.21.9...v7.21.10) (2021-03-30)
+
+
+### Bug Fixes
+
+* **deps:** update ajv to 8.0.1 ([673b01f](https://github.com/adobe/helix-shared/commit/673b01f3174095896687ece37f923aa2b673b680))
+
 ## [7.21.9](https://github.com/adobe/helix-shared/compare/v7.21.8...v7.21.9) (2021-03-27)
 
 
