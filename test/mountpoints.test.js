@@ -102,7 +102,7 @@ const tests = [
     title: 'fails with a broken config',
     config: 'broken.yaml',
     result: null,
-    error: 'Error: data should NOT have additional properties',
+    error: 'Error: data must NOT have additional properties',
   },
   {
     title: 'loads a theblog example',

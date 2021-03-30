@@ -67,7 +67,7 @@ describe('Markup Config Loading', () => {
       if (e instanceof AssertionError) {
         throw e;
       }
-      assert.equal(e.message, 'data/markup/images-in-gallery should have required property \'match\', data/markup/last-section should NOT have additional properties');
+      assert.equal(e.message, 'data/markup/images-in-gallery must have required property \'match\', data/markup/last-section must NOT have additional properties');
     }
   });
 });
