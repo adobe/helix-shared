@@ -23,7 +23,7 @@
   "homepage": "https://github.com/adobe/helix-shared#readme",
   "dependencies": {
     "@adobe/helix-fetch": "2.2.0",
-    "@adobe/helix-log": "5.0.1",
+    "@adobe/helix-log": "5.0.2",
     "ajv": "8.0.1",
     "ajv-formats": "2.0.1",
     "ferrum": "1.8.0",
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
     "@adobe/helix-testutils": "0.4.3",
-    "@adobe/jsonschema2md": "5.0.5",
+    "@adobe/jsonschema2md": "5.0.6",
     "@pollyjs/adapter-node-http": "5.1.0",
     "@pollyjs/core": "5.1.0",
     "@pollyjs/persister-fs": "5.0.0",
