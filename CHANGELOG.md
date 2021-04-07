@@ -1,3 +1,10 @@
+# [7.22.0](https://github.com/adobe/helix-shared/compare/v7.21.14...v7.22.0) (2021-04-07)
+
+
+### Features
+
+* **utils:** add headercleanup helper function ([4d28f25](https://github.com/adobe/helix-shared/commit/4d28f25fdbad11cbc1fef8ad4dc31fd1db15d8bc)), closes [adobe/helix-deploy#201](https://github.com/adobe/helix-deploy/issues/201)
+
 ## [7.21.14](https://github.com/adobe/helix-shared/compare/v7.21.13...v7.21.14) (2021-04-03)
 
 
