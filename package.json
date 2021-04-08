@@ -3,6 +3,7 @@
   "version": "7.22.0",
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "semantic-release": "semantic-release",
     "commit": "git-cz",
