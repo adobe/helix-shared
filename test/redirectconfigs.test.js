@@ -163,6 +163,9 @@ describe('Redirects Config Loading (from GitHub)', () => {
       url: '/en/new',
       type: 'permanent',
     });
+
+    const all = await config.all();
+    assert.equal(all.length, 13);
   }).timeout(10000);
 });
 
