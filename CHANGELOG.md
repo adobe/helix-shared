@@ -1,3 +1,10 @@
+# [7.23.0](https://github.com/adobe/helix-shared/compare/v7.22.0...v7.23.0) (2021-04-09)
+
+
+### Features
+
+* **wrap:** add wrap function ([#473](https://github.com/adobe/helix-shared/issues/473)) ([3b75a76](https://github.com/adobe/helix-shared/commit/3b75a76671e240e224025d17d40afe78d800976d))
+
 # [7.22.0](https://github.com/adobe/helix-shared/compare/v7.21.14...v7.22.0) (2021-04-07)
 
 
