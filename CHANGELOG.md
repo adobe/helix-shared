@@ -1,3 +1,10 @@
+# [7.24.0](https://github.com/adobe/helix-shared/compare/v7.23.1...v7.24.0) (2021-04-12)
+
+
+### Features
+
+* **redirect:** add RedirectConfig.all method that lists all redirects ([e79a62b](https://github.com/adobe/helix-shared/commit/e79a62b57986651d2c5b41d2a5093d79e2a9a3c5)), closes [adobe/helix-redirect#201](https://github.com/adobe/helix-redirect/issues/201)
+
 ## [7.23.1](https://github.com/adobe/helix-shared/compare/v7.23.0...v7.23.1) (2021-04-12)
 
 
