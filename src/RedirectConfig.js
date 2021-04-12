@@ -49,6 +49,11 @@ class RedirectConfig extends SchemaDerivedConfig {
     const resolved = await Promise.all(this.redirects.map((redirect) => redirect.match(path)));
     return resolved.find((o) => o);
   }
+
+  async all() {
+    const resolved = await Promise.all(this.redirects.map((redirect) => redirect.all()));
+    return resolved.flat();
+  }
 }
 
 module.exports = RedirectConfig;

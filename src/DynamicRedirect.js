@@ -64,13 +64,13 @@ class DynamicRedirect {
     return this;
   }
 
-  async match(path) {
+  async fetch() {
     if (!this._data) {
       try {
         let url = new URL(this._src);
         if (!this._src.endsWith('.json')) {
-          // load via runtime (todo: do this via a plugin)
-          // eslint-disable-next-line no-underscore-dangle
+        // load via runtime (todo: do this via a plugin)
+        // eslint-disable-next-line no-underscore-dangle
           const namespace = process.env.__OW_NAMESPACE || 'helix';
           url = new URL(`https://adobeioruntime.net/api/v1/web/${namespace}/helix-services/data-embed@v1`);
           url.searchParams.append('src', this._src);
@@ -93,6 +93,10 @@ class DynamicRedirect {
         this._logger.warn(`failed to get ${this._src} ${e.message}`);
       }
     }
+  }
+
+  async match(path) {
+    await this.fetch();
     if (this._data) {
       const hit = this._data.find((entry) => entry.from === path
         || entry.from === path.replace(/[ äӓ]/g, encodeURIComponent));
@@ -102,6 +106,14 @@ class DynamicRedirect {
       } : null;
     }
     return null;
+  }
+
+  async all() {
+    await this.fetch();
+    if (this._data) {
+      return this._data;
+    }
+    return [];
   }
 }
 

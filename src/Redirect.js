@@ -55,6 +55,10 @@ class Redirect {
       type: this.type,
     } : retval;
   }
+
+  all() {
+    return [this];
+  }
 }
 
 module.exports = Redirect;
