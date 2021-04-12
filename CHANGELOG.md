@@ -1,3 +1,10 @@
+## [7.23.1](https://github.com/adobe/helix-shared/compare/v7.23.0...v7.23.1) (2021-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([c06942e](https://github.com/adobe/helix-shared/commit/c06942e3a0d0ca6d3567bf063259584070ce4963))
+
 # [7.23.0](https://github.com/adobe/helix-shared/compare/v7.22.0...v7.23.0) (2021-04-09)
 
 
