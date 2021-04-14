@@ -13,3 +13,11 @@ mountpoints:
   /github-simple: https://github.com/adobe/helix-shared
   /github-path: https://github.com/adobe/helix-shared/tree/main/src
   /github-branch: https://github.com/adobe/helix-shared/tree/downloader
+  /creds:
+    url: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog
+    credentials: abcd
+  /multicreds:
+    url: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog
+    credentials:
+      - abcd
+      - efgh

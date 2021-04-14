@@ -8,17 +8,17 @@ A markup mapping defines how Helix should generate markup for certain Markdown o
 
 A configuration consits of a mandatory `match` expression, which is a matching expression that works differently depending on the value of the `type` attribute.
 
--   If `type=html`, then `match` is a CSS selector that operates on the generated HTML
--   If `type=markdown`, then `match` is a CSS selector that operates on the source Markdown
--   If `type=url`, then `match` is a URL path expression
--   If `type=content`, then `match` is a content intelligence expression that selects sections based on the order of their children
+*   If `type=html`, then `match` is a CSS selector that operates on the generated HTML
+*   If `type=markdown`, then `match` is a CSS selector that operates on the source Markdown
+*   If `type=url`, then `match` is a URL path expression
+*   If `type=content`, then `match` is a content intelligence expression that selects sections based on the order of their children
 
 Furthermore, a configuration can have any number of actions (including none at all), for example:
 
--   `wrap`: adds more HTML elements around the generated HTML
--   `replace`: replaces the generated HTML with the provided markup
--   `classnames` adds `class` attribute values into the generated HTML element
--   `attribute` adds other attributes and values into the generated HTML element
+*   `wrap`: adds more HTML elements around the generated HTML
+*   `replace`: replaces the generated HTML with the provided markup
+*   `classnames` adds `class` attribute values into the generated HTML element
+*   `attribute` adds other attributes and values into the generated HTML element
 
 ## Referencing AST values
 
@@ -268,9 +268,8 @@ markup:
 <img src="http://dolor.sit/amet.jpeg" alt="Lorem ipsum"/>
 ```
 
-
 | Abstract            | Extensible | Status      | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                    |
-| :------------------ | ---------- | ----------- | ------------ | :---------------- | --------------------- | ------------------- | ----------------------------------------------------------------------------- |
+| :------------------ | :--------- | :---------- | :----------- | :---------------- | :-------------------- | :------------------ | :---------------------------------------------------------------------------- |
 | Can be instantiated | No         | Stabilizing | No           | Forbidden         | Forbidden             | none                | [markupmapping.schema.json](markupmapping.schema.json "open original schema") |
 
 ## Markup Mapping Type
@@ -279,27 +278,29 @@ markup:
 
 # Markup Mapping Properties
 
-| Property                  | Type     | Required | Nullable       | Defined by                                                                                                                             |
-| :------------------------ | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
-| [name](#name)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-name.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/name")             |
-| [match](#match)           | Merged   | Required | cannot be null | [Markup Mapping](markupmapping-properties-match.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/match")           |
-| [type](#type)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-type.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/type")             |
-| [wrap](#wrap)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-wrap.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/wrap")             |
-| [replace](#replace)       | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-replace.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/replace")       |
-| [classnames](#classnames) | `array`  | Optional | cannot be null | [Markup Mapping](markupmapping-properties-classnames.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/classnames") |
-| [attribute](#attribute)   | `object` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-attribute.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/attribute")   |
+| Property                  | Type     | Required | Nullable       | Defined by                                                                                                                        |
+| :------------------------ | :------- | :------- | :------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| [name](#name)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-name.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/name")             |
+| [match](#match)           | Merged   | Required | cannot be null | [Markup Mapping](markupmapping-properties-match.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/match")           |
+| [type](#type)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-type.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/type")             |
+| [wrap](#wrap)             | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-wrap.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/wrap")             |
+| [replace](#replace)       | `string` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-replace.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/replace")       |
+| [classnames](#classnames) | `array`  | Optional | cannot be null | [Markup Mapping](markupmapping-properties-classnames.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/classnames") |
+| [attribute](#attribute)   | `object` | Optional | cannot be null | [Markup Mapping](markupmapping-properties-attribute.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/attribute")   |
 
 ## name
 
 The (optional) name of the mapping. The name is normative only, and can be used for debugging purposes. It does not affect either matching nor the markup output.
 
-
 `name`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Markup Mapping](markupmapping-properties-name.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/name")
+*   is optional
+
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Markup Mapping](markupmapping-properties-name.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/name")
 
 ### name Type
 
@@ -309,13 +310,15 @@ The (optional) name of the mapping. The name is normative only, and can be used 
 
 
 
-
 `match`
 
--   is required
--   Type: `string` ([Details](markupmapping-properties-match.md))
--   cannot be null
--   defined in: [Markup Mapping](markupmapping-properties-match.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/match")
+*   is required
+
+*   Type: `string` ([Details](markupmapping-properties-match.md))
+
+*   cannot be null
+
+*   defined in: [Markup Mapping](markupmapping-properties-match.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/match")
 
 ### match Type
 
@@ -323,22 +326,27 @@ The (optional) name of the mapping. The name is normative only, and can be used 
 
 any of
 
--   [DOM Match Expression](markupmapping-properties-match-anyof-dom-match-expression.md "check type definition")
--   [MDAST Match Expression](markupmapping-properties-match-anyof-mdast-match-expression.md "check type definition")
--   [URL Pattern Match Expression](markupmapping-properties-match-anyof-url-pattern-match-expression.md "check type definition")
--   [Content Intelligence Match Expression](markupmapping-properties-match-anyof-content-intelligence-match-expression.md "check type definition")
+*   [DOM Match Expression](markupmapping-properties-match-anyof-dom-match-expression.md "check type definition")
+
+*   [MDAST Match Expression](markupmapping-properties-match-anyof-mdast-match-expression.md "check type definition")
+
+*   [URL Pattern Match Expression](markupmapping-properties-match-anyof-url-pattern-match-expression.md "check type definition")
+
+*   [Content Intelligence Match Expression](markupmapping-properties-match-anyof-content-intelligence-match-expression.md "check type definition")
 
 ## type
 
 
 
-
 `type`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Markup Mapping](markupmapping-properties-type.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/type")
+*   is optional
+
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Markup Mapping](markupmapping-properties-type.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/type")
 
 ### type Type
 
@@ -349,7 +357,7 @@ any of
 **enum**: the value of this property must be equal to one of the following values:
 
 | Value        | Explanation                                    |
-| :----------- | ---------------------------------------------- |
+| :----------- | :--------------------------------------------- |
 | `"html"`     | Match against the generated DOM tree           |
 | `"markdown"` | Match against the source MDAST tree            |
 | `"url"`      | Match against the request URL                  |
@@ -367,13 +375,15 @@ The default value is:
 
 Add the following HTML tags around the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
 
-
 `wrap`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Markup Mapping](markupmapping-properties-wrap.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/wrap")
+*   is optional
+
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Markup Mapping](markupmapping-properties-wrap.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/wrap")
 
 ### wrap Type
 
@@ -400,13 +410,15 @@ div+div>p>span+em
 
 Add the following HTML tags instead of the generated HTML. This attribute is using [Emmet](https://emmet.io) notation.
 
-
 `replace`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Markup Mapping](markupmapping-properties-replace.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/replace")
+*   is optional
+
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Markup Mapping](markupmapping-properties-replace.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/replace")
 
 ### replace Type
 
@@ -433,13 +445,15 @@ div+div>p>span+em
 
 Add the following class names to the `class` attribute of the generated HTML
 
-
 `classnames`
 
--   is optional
--   Type: `string[]`
--   cannot be null
--   defined in: [Markup Mapping](markupmapping-properties-classnames.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/classnames")
+*   is optional
+
+*   Type: `string[]`
+
+*   cannot be null
+
+*   defined in: [Markup Mapping](markupmapping-properties-classnames.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/classnames")
 
 ### classnames Type
 
@@ -449,13 +463,15 @@ Add the following class names to the `class` attribute of the generated HTML
 
 create new attributes for each key value pair below this property
 
-
 `attribute`
 
--   is optional
--   Type: `object` ([Details](markupmapping-properties-attribute.md))
--   cannot be null
--   defined in: [Markup Mapping](markupmapping-properties-attribute.md "https&#x3A;//ns.adobe.com/helix/shared/markupmapping#/properties/attribute")
+*   is optional
+
+*   Type: `object` ([Details](markupmapping-properties-attribute.md))
+
+*   cannot be null
+
+*   defined in: [Markup Mapping](markupmapping-properties-attribute.md "https://ns.adobe.com/helix/shared/markupmapping#/properties/attribute")
 
 ### attribute Type
 

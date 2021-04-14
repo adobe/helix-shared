@@ -267,5 +267,13 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m14.relPath, '/foo');
 
     assert.equal(cfg.match('/mssoft'), null, 'requires trailing slash in matches');
+
+    // with credentials
+    const m15 = cfg.match('/creds');
+    assert.deepEqual(m15.credentials, ['abcd']);
+
+    // with multiple credentials
+    const m16 = cfg.match('/multicreds');
+    assert.deepEqual(m16.credentials, ['abcd', 'efgh']);
   });
 });

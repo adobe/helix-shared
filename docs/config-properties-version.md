@@ -6,10 +6,9 @@ https://ns.adobe.com/helix/shared/config#/properties/version
 
 The helix-config file format version
 
-
-| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                        |
-| :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ----------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [config.schema.json\*](config.schema.json "open original schema") |
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                       |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [config.schema.json*](config.schema.json "open original schema") |
 
 ## version Type
 
@@ -20,7 +19,7 @@ any of the folllowing: `string` or `number` ([Details](config-properties-version
 **enum**: the value of this property must be equal to one of the following values:
 
 | Value | Explanation |
-| :---- | ----------- |
+| :---- | :---------- |
 | `"1"` |             |
 | `1`   |             |
 

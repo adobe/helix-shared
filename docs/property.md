@@ -5,8 +5,9 @@ https://ns.adobe.com/helix/shared/property
 ```
 
 Each property in the search index is made up of two parts:
-1\. a `select` expression that selects nodes in the DOM or MDAST of the document to be indexed
-2\. a `value` or `values` expression that specifies how to extract values from the selected nodes.
+
+1.  a `select` expression that selects nodes in the DOM or MDAST of the document to be indexed
+2.  a `value` or `values` expression that specifies how to extract values from the selected nodes.
 
 When using `value`, a single cardinal value will be stored in the index, when using `values`, an array of values will be stored.
 
@@ -27,17 +28,16 @@ expression, using [jesp](http://jsep.from.so) to parse the tree it supports func
 
 Following variables and functions can be used in these expressions:
 
--   `el` – the list of all matching DOM elements
--   `logger` – a Helix Log instance
--   `parseTimestamp` – helper function to parse timestamps from a string
--   `attribute` – retrieves the value of an attribute from an element
--   `textContent` – retrieves the plain text content of an element
--   `match` 
--   `words`
-
+*   `el` – the list of all matching DOM elements
+*   `logger` – a Helix Log instance
+*   `parseTimestamp` – helper function to parse timestamps from a string
+*   `attribute` – retrieves the value of an attribute from an element
+*   `textContent` – retrieves the plain text content of an element
+*   `match`
+*   `words`
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                          |
-| :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------- |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :------------------------------------------------------------------ |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [property.schema.json](property.schema.json "open original schema") |
 
 ## Property Type
@@ -46,5 +46,6 @@ Following variables and functions can be used in these expressions:
 
 one (and only one) of
 
--   [Single-Value Property](property-oneof-single-value-property.md "check type definition")
--   [Multi-Value Property](property-oneof-multi-value-property.md "check type definition")
+*   [Single-Value Property](property-oneof-single-value-property.md "check type definition")
+
+*   [Multi-Value Property](property-oneof-multi-value-property.md "check type definition")

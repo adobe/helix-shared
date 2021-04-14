@@ -1,3 +1,23 @@
+## Modules
+
+<dl>
+<dt><a href="#module_wrap">wrap</a></dt>
+<dd><p>Helper function to easily chain functions.</p>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-js">const { wrap } = require(&#39;@adobe/helix-shared&#39;);
+
+async main(params) {
+  // …my action code…
+}
+
+module.exports.main = wrap(main)
+  .with(epsagon)
+  .with(status)
+  .with(logger);
+</code></pre>
+</dd>
+</dl>
+
 ## Classes
 
 <dl>
@@ -104,7 +124,8 @@ and their <a href="https://github.com/nodejs/node/blob/v6.x/doc/topics/event-loo
   await nextTick();
   const page2 = await request(&#39;https://example.com/2&#39;);
   ...
-};</code></pre>
+};
+</code></pre>
 </dd>
 <dt><a href="#isNodeType">isNodeType()</a></dt>
 <dd><p>Check whether the given type is the type of a dom node.  Note that, in
@@ -139,8 +160,10 @@ Going by isEqualNode, any two dom trees just differentiated by their
 whitespace content are unequal.</p>
 <p>This function&#39;s ultimate goal is to introduce an equivalence concept
 which</p>
-<p>1) closely matches the mental model developers would have
-2) does not affect rendering</p>
+<ol>
+<li>closely matches the mental model developers would have</li>
+<li>does not affect rendering</li>
+</ol>
 <p>For instance, indenting dom nodes for improved readability should
 usually not affect equivalence, neither should inserting newline
 characters/replacing spaces with newlines because a line is growing
@@ -150,20 +173,22 @@ too long or because dom elements should be one per line.</p>
 rules unless exotic javascript or CSS is added after the fact.</p>
 <h1 id="precise-semantics">Precise semantics</h1>
 <p>The following rules are used by this function:</p>
-<p>1) Whitespace in <pre> tags and contained tags is left alone.
-  In more precise terms, whitespace in any elements whose computed
-  <code>white-space</code> style property starts with <code>pre</code> is left alone.
-2) Whitespace in other elements is compacted, meaning any combination
-   of whitespace characters (newlines, spaces, tabs, etc) is replaced
-   by a single space.
-3) Any whitespace before/after closing/opening tags is removed, unless
-   the tag in question is inline. A tag is inline if it's computed
-   style property <code>display</code> starts with <code>inline</code> or is set to <code>content</code>.
-   This is the default behaviour for <span>.
-4) Whitespace next to opening/closing tags is also collapsed; all
-   space between text nodes across a tree of purely inline elements are
-   collapsed into a single space character. The space character is placed
-   in the closest common ancestor, between the ancestors of both text nodes.</p>
+<ol>
+<li>Whitespace in <pre> tags and contained tags is left alone.
+In more precise terms, whitespace in any elements whose computed
+<code>white-space</code> style property starts with <code>pre</code> is left alone.</li>
+<li>Whitespace in other elements is compacted, meaning any combination
+of whitespace characters (newlines, spaces, tabs, etc) is replaced
+by a single space.</li>
+<li>Any whitespace before/after closing/opening tags is removed, unless
+the tag in question is inline. A tag is inline if it&#39;s computed
+style property <code>display</code> starts with <code>inline</code> or is set to <code>content</code>.
+This is the default behaviour for <span>.</li>
+<li>Whitespace next to opening/closing tags is also collapsed; all
+space between text nodes across a tree of purely inline elements are
+collapsed into a single space character. The space character is placed
+in the closest common ancestor, between the ancestors of both text nodes.</li>
+</ol>
 <p>Rule 3 and 4 are a bit verbose. Please take a look at the examples below.</p>
 <p>See also:
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM">https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM</a>
@@ -223,7 +248,8 @@ but provides better error messages.</p>
        Hello
 
     Bang
-`);</code></pre>
+`);
+</code></pre>
 <p>The function basically just takes a string and then
 strips the first &amp; last lines if they are empty.</p>
 <p>In order to remove indentation, we determine the common
@@ -236,6 +262,54 @@ from each line...</p>
 HTTP status codes and log levels for your service.</p>
 </dd>
 </dl>
+
+<a name="module_wrap"></a>
+
+## wrap
+Helper function to easily chain functions.
+
+**Usage:**
+
+```js
+const { wrap } = require('@adobe/helix-shared');
+
+async main(params) {
+  // …my action code…
+}
+
+module.exports.main = wrap(main)
+  .with(epsagon)
+  .with(status)
+  .with(logger);
+```
+
+<a name="module_wrap..wrap"></a>
+
+### wrap~wrap(fn) ⇒ <code>WrappableFunction</code>
+A function that makes your function (i.e. `main`) wrappable,
+so that using `with` a number of wrappers can be applied. This allows
+you to export the result as a new function.
+
+Usage:
+
+```js
+async main(req, context) {
+  //…my action code…
+}
+
+module.exports.main = wrap(main)
+.with(epsagon)
+.with(status)
+.with(logger);
+```
+Note: the execution order is that the last wrapper added will be executed first.
+
+**Kind**: inner method of [<code>wrap</code>](#module_wrap)  
+**Returns**: <code>WrappableFunction</code> - the same main function, now including a `with` method  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fn | <code>function</code> | the function to prepare for wrapping |
 
 <a name="BaseConfig"></a>
 

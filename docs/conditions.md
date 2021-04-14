@@ -6,9 +6,8 @@ https://ns.adobe.com/helix/shared/conditions
 
 A condition expression
 
-
 | Abstract            | Extensible | Status      | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                              |
-| :------------------ | ---------- | ----------- | ------------ | :---------------- | --------------------- | ------------------- | ----------------------------------------------------------------------- |
+| :------------------ | :--------- | :---------- | :----------- | :---------------- | :-------------------- | :------------------ | :---------------------------------------------------------------------- |
 | Can be instantiated | No         | Stabilizing | No           | Forbidden         | Forbidden             | none                | [conditions.schema.json](conditions.schema.json "open original schema") |
 
 ## Conditions Type
@@ -23,48 +22,50 @@ A condition expression
 
 # Conditions Properties
 
-| Property                     | Type     | Required | Nullable       | Defined by                                                                                                                                                           |
-| :--------------------------- | -------- | -------- | -------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [and](#and)                  | `array`  | Optional | cannot be null | [Conditions](conditions-properties-and.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/properties/and")                                                       |
-| [or](#or)                    | `array`  | Optional | cannot be null | [Conditions](conditions-properties-or.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/properties/or")                                                         |
-| [not](#not)                  | `object` | Optional | cannot be null | [Conditions](conditions-properties-conditions.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/properties/not")                                                |
-| `^url[=~]?$`                 | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-url.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url\[=~]?$")                                 |
-| `^url\.hostname[=~]?$`       | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-urlhostname.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url\\.hostname\[=~]?$")              |
-| `^url\.path[=~]?$`           | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-urlpath.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url\\.path\[=~]?$")                      |
-| `^referer[=~]?$`             | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-referer.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^referer\[=~]?$")                         |
-| `^client_name[=~]?$`         | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_name.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_name\[=~]?$")                 |
-| `^client_city[=~]?$`         | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_city.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_city\[=~]?$")                 |
-| `^client_country_code[=~]?$` | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_country_code.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_country_code\[=~]?$") |
-| `^user_agent[=~]?$`          | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-user_agent.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^user_agent\[=~]?$")                   |
-| `^accept_language[=~]?$`     | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-accept_language.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^accept_language\[=~]?$")         |
-| `^client_lat[<=>]?$`         | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_lat.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_lat\[&lt;=>]?$")               |
-| `^client_lon[<=>]?$`         | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_lon.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_lon\[&lt;=>]?$")               |
-| `^client_gmt_offset[<=>]?$`  | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_gmt_offset.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_gmt_offset\[&lt;=>]?$") |
-| `^time[<=>]?$`               | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-time.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time\[&lt;=>]?$")                           |
-| `^time_day[<=>]?$`           | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_day.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_day\[&lt;=>]?$")                   |
-| `^time_date[<=>]?$`          | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_date.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_date\[&lt;=>]?$")                 |
-| `^time_hours[<=>]?$`         | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_hours.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_hours\[&lt;=>]?$")               |
-| `^time_minutes[<=>]?$`       | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_minutes.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_minutes\[&lt;=>]?$")           |
-| `^time_month[<=>]?$`         | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_month.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_month\[&lt;=>]?$")               |
-| `^time_year[<=>]?$`          | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_year.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_year\[&lt;=>]?$")                 |
-| `^url_param\..+[~]?$`        | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[~]?$")                 |
-| `^url_param\..+[<>]$`        | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param-1.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[&lt;>]$")            |
-| `^url_param\..+[=]$`         | Multiple | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param-2.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[=]$")                |
-| `^preflight\..+[~]?$`        | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[~]?$")                 |
-| `^preflight\..+[<>]$`        | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight-1.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[&lt;>]$")            |
-| `^preflight\..+[=]$`         | Multiple | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight-2.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[=]$")                |
+| Property                     | Type     | Required | Nullable       | Defined by                                                                                                                                                     |
+| :--------------------------- | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [and](#and)                  | `array`  | Optional | cannot be null | [Conditions](conditions-properties-and.md "https://ns.adobe.com/helix/shared/conditions#/properties/and")                                                      |
+| [or](#or)                    | `array`  | Optional | cannot be null | [Conditions](conditions-properties-or.md "https://ns.adobe.com/helix/shared/conditions#/properties/or")                                                        |
+| [not](#not)                  | `object` | Optional | cannot be null | [Conditions](conditions-properties-conditions.md "https://ns.adobe.com/helix/shared/conditions#/properties/not")                                               |
+| `^url[=~]?$`                 | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-url.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url[=~]?$")                                 |
+| `^url\.hostname[=~]?$`       | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-urlhostname.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url\\.hostname[=~]?$")              |
+| `^url\.path[=~]?$`           | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-urlpath.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url\\.path[=~]?$")                      |
+| `^referer[=~]?$`             | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-referer.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^referer[=~]?$")                         |
+| `^client_name[=~]?$`         | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_name.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_name[=~]?$")                 |
+| `^client_city[=~]?$`         | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_city.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_city[=~]?$")                 |
+| `^client_country_code[=~]?$` | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_country_code.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_country_code[=~]?$") |
+| `^user_agent[=~]?$`          | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-user_agent.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^user_agent[=~]?$")                   |
+| `^accept_language[=~]?$`     | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-accept_language.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^accept_language[=~]?$")         |
+| `^client_lat[<=>]?$`         | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_lat.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_lat[<=>]?$")                  |
+| `^client_lon[<=>]?$`         | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_lon.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_lon[<=>]?$")                  |
+| `^client_gmt_offset[<=>]?$`  | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-client_gmt_offset.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_gmt_offset[<=>]?$")    |
+| `^time[<=>]?$`               | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-time.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time[<=>]?$")                              |
+| `^time_day[<=>]?$`           | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_day.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_day[<=>]?$")                      |
+| `^time_date[<=>]?$`          | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_date.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_date[<=>]?$")                    |
+| `^time_hours[<=>]?$`         | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_hours.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_hours[<=>]?$")                  |
+| `^time_minutes[<=>]?$`       | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_minutes.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_minutes[<=>]?$")              |
+| `^time_month[<=>]?$`         | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_month.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_month[<=>]?$")                  |
+| `^time_year[<=>]?$`          | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-time_year.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_year[<=>]?$")                    |
+| `^url_param\..+[~]?$`        | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+[~]?$")                 |
+| `^url_param\..+[<>]$`        | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param-1.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+[<>]$")               |
+| `^url_param\..+[=]$`         | Multiple | Optional | cannot be null | [Conditions](conditions-patternproperties-url_param-2.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+[=]$")                |
+| `^preflight\..+[~]?$`        | `string` | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+[~]?$")                 |
+| `^preflight\..+[<>]$`        | `number` | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight-1.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+[<>]$")               |
+| `^preflight\..+[=]$`         | Multiple | Optional | cannot be null | [Conditions](conditions-patternproperties-preflight-2.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+[=]$")                |
 
 ## and
 
 All conditions in this list must be met
 
-
 `and`
 
--   is optional
--   Type: `object[]` ([Conditions](conditions-properties-conditions.md))
--   cannot be null
--   defined in: [Conditions](conditions-properties-and.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/properties/and")
+*   is optional
+
+*   Type: `object[]` ([Conditions](conditions-properties-conditions.md))
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-properties-and.md "https://ns.adobe.com/helix/shared/conditions#/properties/and")
 
 ### and Type
 
@@ -74,13 +75,15 @@ All conditions in this list must be met
 
 Any conditions in this list must be met
 
-
 `or`
 
--   is optional
--   Type: `object[]` ([Conditions](conditions-properties-conditions.md))
--   cannot be null
--   defined in: [Conditions](conditions-properties-or.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/properties/or")
+*   is optional
+
+*   Type: `object[]` ([Conditions](conditions-properties-conditions.md))
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-properties-or.md "https://ns.adobe.com/helix/shared/conditions#/properties/or")
 
 ### or Type
 
@@ -90,13 +93,15 @@ Any conditions in this list must be met
 
 A condition expression
 
-
 `not`
 
--   is optional
--   Type: `object` ([Conditions](conditions-properties-conditions.md))
--   cannot be null
--   defined in: [Conditions](conditions-properties-conditions.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/properties/not")
+*   is optional
+
+*   Type: `object` ([Conditions](conditions-properties-conditions.md))
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-properties-conditions.md "https://ns.adobe.com/helix/shared/conditions#/properties/not")
 
 ### not Type
 
@@ -112,15 +117,17 @@ A condition expression
 
 Matches the full URL, including request parameters
 
-
 `^url[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-url.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url\[=~]?$")
+*   is optional
 
-### ^url\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-url.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url\[=\~]?$")
+
+### ^url\[=\~]?$ Type
 
 `string`
 
@@ -128,15 +135,17 @@ Matches the full URL, including request parameters
 
 Matches the hostname only
 
-
 `^url\.hostname[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-urlhostname.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url\\.hostname\[=~]?$")
+*   is optional
 
-### ^url\\.hostname\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-urlhostname.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url\\.hostname\[=\~]?$")
+
+### ^url\\.hostname\[=\~]?$ Type
 
 `string`
 
@@ -144,15 +153,17 @@ Matches the hostname only
 
 Matches the path only. Path does not include the query string.
 
-
 `^url\.path[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-urlpath.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url\\.path\[=~]?$")
+*   is optional
 
-### ^url\\.path\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-urlpath.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url\\.path\[=\~]?$")
+
+### ^url\\.path\[=\~]?$ Type
 
 `string`
 
@@ -160,15 +171,17 @@ Matches the path only. Path does not include the query string.
 
 Matches the Referrer (note the spelling)
 
-
 `^referer[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-referer.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^referer\[=~]?$")
+*   is optional
 
-### ^referer\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-referer.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^referer\[=\~]?$")
+
+### ^referer\[=\~]?$ Type
 
 `string`
 
@@ -176,15 +189,17 @@ Matches the Referrer (note the spelling)
 
 Matches the client's company or ISP name
 
-
 `^client_name[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-client_name.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_name\[=~]?$")
+*   is optional
 
-### ^client_name\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-client_name.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_name\[=\~]?$")
+
+### ^client_name\[=\~]?$ Type
 
 `string`
 
@@ -192,15 +207,17 @@ Matches the client's company or ISP name
 
 Matches the client's city
 
-
 `^client_city[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-client_city.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_city\[=~]?$")
+*   is optional
 
-### ^client_city\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-client_city.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_city\[=\~]?$")
+
+### ^client_city\[=\~]?$ Type
 
 `string`
 
@@ -208,15 +225,17 @@ Matches the client's city
 
 Matches the ISO 3166-1 country code (two letters)
 
-
 `^client_country_code[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-client_country_code.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_country_code\[=~]?$")
+*   is optional
 
-### ^client_country_code\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-client_country_code.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_country_code\[=\~]?$")
+
+### ^client_country_code\[=\~]?$ Type
 
 `string`
 
@@ -224,15 +243,17 @@ Matches the ISO 3166-1 country code (two letters)
 
 Matches the User Agent
 
-
 `^user_agent[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-user_agent.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^user_agent\[=~]?$")
+*   is optional
 
-### ^user_agent\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-user_agent.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^user_agent\[=\~]?$")
+
+### ^user_agent\[=\~]?$ Type
 
 `string`
 
@@ -240,15 +261,17 @@ Matches the User Agent
 
 Matches the Accept-Language header
 
-
 `^accept_language[=~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-accept_language.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^accept_language\[=~]?$")
+*   is optional
 
-### ^accept_language\[=~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-accept_language.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^accept_language\[=\~]?$")
+
+### ^accept_language\[=\~]?$ Type
 
 `string`
 
@@ -256,15 +279,17 @@ Matches the Accept-Language header
 
 Compares the latitude
 
-
 `^client_lat[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-client_lat.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_lat\[&lt;=>]?$")
+*   is optional
 
-### ^client_lat\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-client_lat.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_lat\[<=>]?$")
+
+### ^client_lat\[<=>]?$ Type
 
 `number`
 
@@ -272,15 +297,17 @@ Compares the latitude
 
 Compares the longitude
 
-
 `^client_lon[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-client_lon.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_lon\[&lt;=>]?$")
+*   is optional
 
-### ^client_lon\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-client_lon.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_lon\[<=>]?$")
+
+### ^client_lon\[<=>]?$ Type
 
 `number`
 
@@ -288,15 +315,17 @@ Compares the longitude
 
 UTC offset for the client's time zone. Values look like -100 or 300.
 
-
 `^client_gmt_offset[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-client_gmt_offset.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^client_gmt_offset\[&lt;=>]?$")
+*   is optional
 
-### ^client_gmt_offset\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-client_gmt_offset.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^client_gmt_offset\[<=>]?$")
+
+### ^client_gmt_offset\[<=>]?$ Type
 
 `number`
 
@@ -304,19 +333,21 @@ UTC offset for the client's time zone. Values look like -100 or 300.
 
 Absolute time of the request, evaluated against UTC
 
-
 `^time[<=>]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-time.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time\[&lt;=>]?$")
+*   is optional
 
-### ^time\[&lt;=>]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-time.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time\[<=>]?$")
+
+### ^time\[<=>]?$ Type
 
 `string`
 
-### ^time\[&lt;=>]?$ Constraints
+### ^time\[<=>]?$ Constraints
 
 **date time**: the string must be a date time string, according to [RFC 3339, section 5.6](https://tools.ietf.org/html/rfc3339 "check the specification")
 
@@ -324,15 +355,17 @@ Absolute time of the request, evaluated against UTC
 
 Day of the week, same as Date.getDay() – adjusted for GMT offset
 
-
 `^time_day[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-time_day.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_day\[&lt;=>]?$")
+*   is optional
 
-### ^time_day\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-time_day.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_day\[<=>]?$")
+
+### ^time_day\[<=>]?$ Type
 
 `number`
 
@@ -340,15 +373,17 @@ Day of the week, same as Date.getDay() – adjusted for GMT offset
 
 Day of the month, same as Date.getDate() – adjusted for GMT offset
 
-
 `^time_date[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-time_date.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_date\[&lt;=>]?$")
+*   is optional
 
-### ^time_date\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-time_date.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_date\[<=>]?$")
+
+### ^time_date\[<=>]?$ Type
 
 `number`
 
@@ -356,15 +391,17 @@ Day of the month, same as Date.getDate() – adjusted for GMT offset
 
 Hour of the day, same as Date.getHours() – adjusted for GMT offset
 
-
 `^time_hours[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-time_hours.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_hours\[&lt;=>]?$")
+*   is optional
 
-### ^time_hours\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-time_hours.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_hours\[<=>]?$")
+
+### ^time_hours\[<=>]?$ Type
 
 `number`
 
@@ -372,15 +409,17 @@ Hour of the day, same as Date.getHours() – adjusted for GMT offset
 
 Minute of the hour, same as Date.getMinutes() – adjusted for GMT offset
 
-
 `^time_minutes[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-time_minutes.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_minutes\[&lt;=>]?$")
+*   is optional
 
-### ^time_minutes\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-time_minutes.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_minutes\[<=>]?$")
+
+### ^time_minutes\[<=>]?$ Type
 
 `number`
 
@@ -388,15 +427,17 @@ Minute of the hour, same as Date.getMinutes() – adjusted for GMT offset
 
 Month of the year, same as Date.getMonth() – adjusted for GMT offset
 
-
 `^time_month[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-time_month.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_month\[&lt;=>]?$")
+*   is optional
 
-### ^time_month\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-time_month.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_month\[<=>]?$")
+
+### ^time_month\[<=>]?$ Type
 
 `number`
 
@@ -404,15 +445,17 @@ Month of the year, same as Date.getMonth() – adjusted for GMT offset
 
 Year, same as Date.getFullYear() – adjusted for GMT offset
 
-
 `^time_year[<=>]?$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-time_year.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^time_year\[&lt;=>]?$")
+*   is optional
 
-### ^time_year\[&lt;=>]?$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-time_year.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^time_year\[<=>]?$")
+
+### ^time_year\[<=>]?$ Type
 
 `number`
 
@@ -420,15 +463,17 @@ Year, same as Date.getFullYear() – adjusted for GMT offset
 
 Matches a URL parameter's value as a string
 
-
 `^url_param\..+[~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-url_param.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[~]?$")
+*   is optional
 
-### ^url_param\\..+\[~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-url_param.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[\~]?$")
+
+### ^url_param\\..+\[\~]?$ Type
 
 `string`
 
@@ -436,15 +481,17 @@ Matches a URL parameter's value as a string
 
 Matches a URL parameter's value as a number
 
-
 `^url_param\..+[<>]$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-url_param-1.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[&lt;>]$")
+*   is optional
 
-### ^url_param\\..+\[&lt;>]$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-url_param-1.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[<>]$")
+
+### ^url_param\\..+\[<>]$ Type
 
 `number`
 
@@ -452,13 +499,15 @@ Matches a URL parameter's value as a number
 
 Matches a URL parameter's value as a number or string
 
-
 `^url_param\..+[=]$`
 
--   is optional
--   Type: any of the folllowing: `number` or `string` ([Details](conditions-patternproperties-url_param-2.md))
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-url_param-2.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[=]$")
+*   is optional
+
+*   Type: any of the folllowing: `number` or `string` ([Details](conditions-patternproperties-url_param-2.md))
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-url_param-2.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^url_param\\..+\[=]$")
 
 ### ^url_param\\..+\[=]$ Type
 
@@ -468,15 +517,17 @@ any of the folllowing: `number` or `string` ([Details](conditions-patternpropert
 
 Matches a preflight response header value as a string
 
-
 `^preflight\..+[~]?$`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-preflight.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[~]?$")
+*   is optional
 
-### ^preflight\\..+\[~]?$ Type
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-preflight.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[\~]?$")
+
+### ^preflight\\..+\[\~]?$ Type
 
 `string`
 
@@ -484,15 +535,17 @@ Matches a preflight response header value as a string
 
 Matches a preflight response header value as a number
 
-
 `^preflight\..+[<>]$`
 
--   is optional
--   Type: `number`
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-preflight-1.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[&lt;>]$")
+*   is optional
 
-### ^preflight\\..+\[&lt;>]$ Type
+*   Type: `number`
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-preflight-1.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[<>]$")
+
+### ^preflight\\..+\[<>]$ Type
 
 `number`
 
@@ -500,13 +553,15 @@ Matches a preflight response header value as a number
 
 Matches a preflight response header value as a number or string
 
-
 `^preflight\..+[=]$`
 
--   is optional
--   Type: any of the folllowing: `number` or `string` ([Details](conditions-patternproperties-preflight-2.md))
--   cannot be null
--   defined in: [Conditions](conditions-patternproperties-preflight-2.md "https&#x3A;//ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[=]$")
+*   is optional
+
+*   Type: any of the folllowing: `number` or `string` ([Details](conditions-patternproperties-preflight-2.md))
+
+*   cannot be null
+
+*   defined in: [Conditions](conditions-patternproperties-preflight-2.md "https://ns.adobe.com/helix/shared/conditions#/patternProperties/^preflight\\..+\[=]$")
 
 ### ^preflight\\..+\[=]$ Type
 

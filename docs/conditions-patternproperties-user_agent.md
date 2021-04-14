@@ -6,11 +6,10 @@ https://ns.adobe.com/helix/shared/conditions#/patternProperties/^user_agent[=~]?
 
 Matches the User Agent
 
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                               |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [conditions.schema.json*](conditions.schema.json "open original schema") |
 
-| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                |
-| :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [conditions.schema.json\*](conditions.schema.json "open original schema") |
-
-## ^user_agent\[=~]?$ Type
+## ^user_agent\[=\~]?$ Type
 
 `string`
