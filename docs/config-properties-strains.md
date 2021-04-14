@@ -6,10 +6,9 @@ https://ns.adobe.com/helix/shared/strains#/properties/strains
 
 
 
-
-| Abstract               | Extensible | Status      | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                        |
-| :--------------------- | ---------- | ----------- | ----------------------- | :---------------- | --------------------- | ------------------- | ----------------------------------------------------------------- |
-| Cannot be instantiated | Yes        | Stabilizing | Unknown identifiability | Forbidden         | Allowed               | none                | [config.schema.json\*](config.schema.json "open original schema") |
+| Abstract               | Extensible | Status      | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                       |
+| :--------------------- | :--------- | :---------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------- |
+| Cannot be instantiated | Yes        | Stabilizing | Unknown identifiability | Forbidden         | Allowed               | none                | [config.schema.json*](config.schema.json "open original schema") |
 
 ## strains Type
 
@@ -17,7 +16,7 @@ merged type ([Strains](config-properties-strains.md))
 
 one (and only one) of
 
--   [Untitled array in Strains](strains-oneof-0.md "check type definition")
+*   [Untitled array in Strains](strains-oneof-0.md "check type definition")
 
 # Strains Definitions
 
@@ -30,4 +29,4 @@ Reference this group by using
 ```
 
 | Property | Type | Required | Nullable | Defined by |
-| :------- | ---- | -------- | -------- | :--------- |
+| :------- | :--- | :------- | :------- | :--------- |

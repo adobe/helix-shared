@@ -6,9 +6,8 @@ https://ns.adobe.com/helix/shared/query
 
 A named query that can be run against an index
 
-
 | Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                    |
-| :------------------ | ---------- | -------------- | ------------ | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------- |
+| :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :------------------------------------------------------------ |
 | Can be instantiated | No         | Unknown status | No           | Forbidden         | Allowed               | none                | [query.schema.json](query.schema.json "open original schema") |
 
 ## Query Type
@@ -17,25 +16,27 @@ A named query that can be run against an index
 
 # Query Properties
 
-| Property                    | Type      | Required | Nullable       | Defined by                                                                                                      |
-| :-------------------------- | --------- | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------- |
-| [query](#query)             | Multiple  | Optional | cannot be null | [Query](query-properties-query.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/query")             |
-| [hitsPerPage](#hitsperpage) | `integer` | Optional | cannot be null | [Query](query-properties-hitsperpage.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/hitsPerPage") |
-| [cache](#cache)             | `integer` | Optional | cannot be null | [Query](query-properties-cache.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/cache")             |
-| [parameters](#parameters)   | `array`   | Optional | cannot be null | [Query](query-properties-parameters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/parameters")   |
-| [filters](#filters)         | `string`  | Optional | cannot be null | [Query](query-properties-filters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/filters")         |
+| Property                    | Type      | Required | Nullable       | Defined by                                                                                                 |
+| :-------------------------- | :-------- | :------- | :------------- | :--------------------------------------------------------------------------------------------------------- |
+| [query](#query)             | Multiple  | Optional | cannot be null | [Query](query-properties-query.md "https://ns.adobe.com/helix/shared/query#/properties/query")             |
+| [hitsPerPage](#hitsperpage) | `integer` | Optional | cannot be null | [Query](query-properties-hitsperpage.md "https://ns.adobe.com/helix/shared/query#/properties/hitsPerPage") |
+| [cache](#cache)             | `integer` | Optional | cannot be null | [Query](query-properties-cache.md "https://ns.adobe.com/helix/shared/query#/properties/cache")             |
+| [parameters](#parameters)   | `array`   | Optional | cannot be null | [Query](query-properties-parameters.md "https://ns.adobe.com/helix/shared/query#/properties/parameters")   |
+| [filters](#filters)         | `string`  | Optional | cannot be null | [Query](query-properties-filters.md "https://ns.adobe.com/helix/shared/query#/properties/filters")         |
 
 ## query
 
 The base query to run. If the value is an object or array, use [QBL JSON or YAML notation](https://github.com/adobe/helix-querybuilder#as-json-or-yaml)
 
-
 `query`
 
--   is optional
--   Type: any of the folllowing: `string` or `object` or `array` ([Details](query-properties-query.md))
--   cannot be null
--   defined in: [Query](query-properties-query.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/query")
+*   is optional
+
+*   Type: any of the folllowing: `string` or `object` or `array` ([Details](query-properties-query.md))
+
+*   cannot be null
+
+*   defined in: [Query](query-properties-query.md "https://ns.adobe.com/helix/shared/query#/properties/query")
 
 ### query Type
 
@@ -53,13 +54,15 @@ The default value is:
 
 How many hits each page of search results should contain
 
-
 `hitsPerPage`
 
--   is optional
--   Type: `integer`
--   cannot be null
--   defined in: [Query](query-properties-hitsperpage.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/hitsPerPage")
+*   is optional
+
+*   Type: `integer`
+
+*   cannot be null
+
+*   defined in: [Query](query-properties-hitsperpage.md "https://ns.adobe.com/helix/shared/query#/properties/hitsPerPage")
 
 ### hitsPerPage Type
 
@@ -81,13 +84,15 @@ The default value is:
 
 How long (in seconds) search results should be cached on the CDN
 
-
 `cache`
 
--   is optional
--   Type: `integer`
--   cannot be null
--   defined in: [Query](query-properties-cache.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/cache")
+*   is optional
+
+*   Type: `integer`
+
+*   cannot be null
+
+*   defined in: [Query](query-properties-cache.md "https://ns.adobe.com/helix/shared/query#/properties/cache")
 
 ### cache Type
 
@@ -97,13 +102,15 @@ How long (in seconds) search results should be cached on the CDN
 
 Which URL parameters to accept in the query when served on the web
 
-
 `parameters`
 
--   is optional
--   Type: `string[]`
--   cannot be null
--   defined in: [Query](query-properties-parameters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/parameters")
+*   is optional
+
+*   Type: `string[]`
+
+*   cannot be null
+
+*   defined in: [Query](query-properties-parameters.md "https://ns.adobe.com/helix/shared/query#/properties/parameters")
 
 ### parameters Type
 
@@ -121,13 +128,15 @@ The default value is:
 
 An ES6 template expression that determines which filters to apply
 
-
 `filters`
 
--   is optional
--   Type: `string`
--   cannot be null
--   defined in: [Query](query-properties-filters.md "https&#x3A;//ns.adobe.com/helix/shared/query#/properties/filters")
+*   is optional
+
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Query](query-properties-filters.md "https://ns.adobe.com/helix/shared/query#/properties/filters")
 
 ### filters Type
 

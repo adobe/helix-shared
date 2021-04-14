@@ -8,10 +8,9 @@ URL condition.
 
 **Warning**: this property has been deprecated in favour of adding the `url` to the `condition` property.
 
-
-| Abstract            | Extensible | Status     | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                  |
-| :------------------ | ---------- | ---------- | ----------------------- | :---------------- | --------------------- | ------------------- | --------------------------------------------------------------------------- |
-| Can be instantiated | No         | Deprecated | Unknown identifiability | Forbidden         | Allowed               | none                | [proxystrain.schema.json\*](proxystrain.schema.json "open original schema") |
+| Abstract            | Extensible | Status     | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                 |
+| :------------------ | :--------- | :--------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :------------------------------------------------------------------------- |
+| Can be instantiated | No         | Deprecated | Unknown identifiability | Forbidden         | Allowed               | none                | [proxystrain.schema.json*](proxystrain.schema.json "open original schema") |
 
 ## url Type
 

@@ -6,10 +6,9 @@ https://ns.adobe.com/helix/shared/markupmapping#/properties/match/anyOf/2
 
 An [Express-like](https://expressjs.com/en/guide/routing.html) path expression for selecting URL patterns that will apply the changes to the `body` element.
 
-
-| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
-| :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                     |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json*](markupmapping.schema.json "open original schema") |
 
 ## 2 Type
 
@@ -23,11 +22,11 @@ An [Express-like](https://expressjs.com/en/guide/routing.html) path expression f
 ```
 
 ```yaml
-'/authors/:name'
+/authors/:name
 
 ```
 
 ```yaml
-'/posts/(\d\d\d\d)/(\d\d)/:title'
+/posts/(\d\d\d\d)/(\d\d)/:title
 
 ```

@@ -6,10 +6,9 @@ https://ns.adobe.com/helix/shared/markupmapping#/properties/match/anyOf/3
 
 Use a [Content Intelligence](https://github.com/adobe/helix-pipeline/blob/master/README.md#infer-content-types-with-utilstypes) expression for selecting sections in MDAST that have the specified order of children.
 
-
-| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
-| :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json\*](markupmapping.schema.json "open original schema") |
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                     |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [markupmapping.schema.json*](markupmapping.schema.json "open original schema") |
 
 ## 3 Type
 
