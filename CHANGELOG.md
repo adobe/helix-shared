@@ -1,3 +1,10 @@
+# [7.25.0](https://github.com/adobe/helix-shared/compare/v7.24.0...v7.25.0) (2021-04-14)
+
+
+### Features
+
+* **fstab:** add support for credentials ([#478](https://github.com/adobe/helix-shared/issues/478)) ([b8ea502](https://github.com/adobe/helix-shared/commit/b8ea502b9c9851ab50e60a0b8d9f98b9383d4c37))
+
 # [7.24.0](https://github.com/adobe/helix-shared/compare/v7.23.1...v7.24.0) (2021-04-12)
 
 
