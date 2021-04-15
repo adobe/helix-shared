@@ -57,10 +57,16 @@ class DynamicRedirect {
     this._data = null;
     this._logger = logger;
     this._transactionID = null;
+    this._githubToken = null;
   }
 
   withTransactionID(id) {
     this._transactionID = id;
+    return this;
+  }
+
+  withGithubToken(token) {
+    this._githubToken = token;
     return this;
   }
 
@@ -78,6 +84,7 @@ class DynamicRedirect {
         const res = await fetch(url.href, {
           headers: {
             'x-request-id': this._transactionID,
+            'x-github-token': this._githubToken,
           },
         });
         const text = await res.text();

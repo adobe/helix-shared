@@ -59,6 +59,15 @@ class BaseConfig {
   }
 
   /**
+   * Empty method to allow subclasses to intercept setting the
+   * GitHub token, if authentication option are provided in the
+   * repo options.
+   */
+  withGithubToken() {
+    return this;
+  }
+
+  /**
    * Set the base repository to fetch a config from
    * @param {string} owner username or org
    * @param {string} repo repository
@@ -87,6 +96,9 @@ class BaseConfig {
       url,
       options,
     };
+    if (options && options.headers && /^token /.test(options.headers.authorization)) {
+      this.withGithubToken(options.headers.authorization.replace(/token /, ''));
+    }
     return this;
   }
 

@@ -23,6 +23,11 @@ const RedirectRuleHandler = () => ({
     return this;
   },
 
+  withGithubToken(token) {
+    this._token = token;
+    return this;
+  },
+
   get(target, prop) {
     const index = Number.parseInt(prop, 10);
     if (!Number.isNaN(index) && index >= 0) {
@@ -32,6 +37,7 @@ const RedirectRuleHandler = () => ({
         return new Redirect(item);
       }
       return new DynamicRedirect(item, this.logger)
+        .withGithubToken(this._token)
         .withTransactionID(this._transactionID);
     }
     return target[prop];
