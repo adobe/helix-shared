@@ -1,3 +1,10 @@
+## [7.25.1](https://github.com/adobe/helix-shared/compare/v7.25.0...v7.25.1) (2021-04-15)
+
+
+### Bug Fixes
+
+* make some properties required ([#479](https://github.com/adobe/helix-shared/issues/479)) ([cad4af3](https://github.com/adobe/helix-shared/commit/cad4af3b5e4ed23573e841cef1817fc9f42eb7f1))
+
 # [7.25.0](https://github.com/adobe/helix-shared/compare/v7.24.0...v7.25.0) (2021-04-14)
 
 
