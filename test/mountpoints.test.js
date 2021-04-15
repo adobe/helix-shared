@@ -36,7 +36,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
     assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
   });
 
-  it.skip('Retrieves Document from GitHub with Auth', async function okGithub() {
+  it('Retrieves Document from GitHub with Auth', async function okGithub() {
     const { server } = this.polly;
     let foundtoken;
     let foundid;
@@ -53,7 +53,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
     const config = await new MountConfig()
       .withCache({ maxSize: 1 })
       .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c357-auth', {
-        headers: { Authorization: 'fake' },
+        headers: { authorization: 'fake' },
       })
       .withTransactionID('random')
       .init();
