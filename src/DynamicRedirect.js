@@ -57,10 +57,16 @@ class DynamicRedirect {
     this._data = null;
     this._logger = logger;
     this._transactionID = null;
+    this._githubToken = null;
   }
 
   withTransactionID(id) {
     this._transactionID = id;
+    return this;
+  }
+
+  withGithubToken(token) {
+    this._githubToken = token;
     return this;
   }
 
@@ -69,15 +75,14 @@ class DynamicRedirect {
       try {
         let url = new URL(this._src);
         if (!this._src.endsWith('.json')) {
-        // load via runtime (todo: do this via a plugin)
-        // eslint-disable-next-line no-underscore-dangle
-          const namespace = process.env.__OW_NAMESPACE || 'helix';
-          url = new URL(`https://adobeioruntime.net/api/v1/web/${namespace}/helix-services/data-embed@v1`);
+        // load via universal runtime (todo: do this via a plugin)
+          url = new URL('https://helix-pages.anywhere.run/helix-services/data-embed@v2');
           url.searchParams.append('src', this._src);
         }
         const res = await fetch(url.href, {
           headers: {
             'x-request-id': this._transactionID,
+            'x-github-token': this._githubToken,
           },
         });
         const text = await res.text();
