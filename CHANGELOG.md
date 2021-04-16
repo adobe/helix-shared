@@ -1,3 +1,15 @@
+# [7.26.0](https://github.com/adobe/helix-shared/compare/v7.25.1...v7.26.0) (2021-04-16)
+
+
+### Bug Fixes
+
+* **redirects:** use universal runtime for non-json data sources ([5b4155d](https://github.com/adobe/helix-shared/commit/5b4155db2f45df6d1fdaa87d6bab28ae730687a5)), closes [#480](https://github.com/adobe/helix-shared/issues/480)
+
+
+### Features
+
+* **redirects:** pass github token to data sources ([16aacf0](https://github.com/adobe/helix-shared/commit/16aacf04457351a81bf8e23c5e710808db9ebca4)), closes [#480](https://github.com/adobe/helix-shared/issues/480)
+
 ## [7.25.1](https://github.com/adobe/helix-shared/compare/v7.25.0...v7.25.1) (2021-04-15)
 
 
