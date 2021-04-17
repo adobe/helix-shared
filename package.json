@@ -37,7 +37,7 @@
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
     "@adobe/helix-testutils": "0.4.5",
-    "@adobe/jsonschema2md": "6.0.1",
+    "@adobe/jsonschema2md": "6.0.2",
     "@pollyjs/adapter-node-http": "5.1.0",
     "@pollyjs/core": "5.1.0",
     "@pollyjs/persister-fs": "5.0.0",
