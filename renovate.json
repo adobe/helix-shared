@@ -7,8 +7,28 @@
   "branchPrefix": "renovate-",
   "packageRules": [
     {
-      "packageNames": ["webpack"],
-      "allowedVersions": "<5.0.0"
+      "packageNames": ["unist-util-inspect"],
+      "allowedVersions": "<7.0.0"
+    },
+    {
+      "packageNames": ["unist-builder"],
+      "allowedVersions": "<3.0.0"
+    },
+    {
+      "packageNames": ["unist-util-inspect"],
+      "allowedVersions": "<7.0.0"
+    },
+    {
+      "packageNames": ["unist-util-map"],
+      "allowedVersions": "<3.0.0"
+    },
+    {
+      "packageNames": ["unist-util-remove"],
+      "allowedVersions": "<3.0.0"
+    },
+    {
+      "packageNames": ["unist-util-visit-parents"],
+      "allowedVersions": "<4.0.0"
     },
     {
       "packageNames": ["quick-lru"],
