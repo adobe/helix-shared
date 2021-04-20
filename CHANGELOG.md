@@ -1,3 +1,10 @@
+## [7.26.2](https://github.com/adobe/helix-shared/compare/v7.26.1...v7.26.2) (2021-04-20)
+
+
+### Bug Fixes
+
+* **config:** update npm token ([#486](https://github.com/adobe/helix-shared/issues/486)) ([1c88759](https://github.com/adobe/helix-shared/commit/1c88759db9d83dedc5de00b9920d30d793fd75d3))
+
 ## [7.26.1](https://github.com/adobe/helix-shared/compare/v7.26.0...v7.26.1) (2021-04-17)
 
 
