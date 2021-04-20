@@ -1,3 +1,10 @@
+## [7.26.3](https://github.com/adobe/helix-shared/compare/v7.26.2...v7.26.3) (2021-04-20)
+
+
+### Bug Fixes
+
+* **renovate:** ignore ESM only dependencies ([#487](https://github.com/adobe/helix-shared/issues/487)) ([499c6f1](https://github.com/adobe/helix-shared/commit/499c6f189f59f362b0b8d210c3b3cd6713e1d0e6))
+
 ## [7.26.2](https://github.com/adobe/helix-shared/compare/v7.26.1...v7.26.2) (2021-04-20)
 
 
