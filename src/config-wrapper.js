@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { Request } = require('@adobe/helix-fetch');
+const { Request, Response } = require('@adobe/helix-fetch');
 const redirect = require('./RedirectConfig');
 
 const loaders = {
@@ -61,7 +61,7 @@ function getToken({ headers }) {
   return undefined;
 }
 
-function wrap(func, ...configs) {
+function wrap(func, required, ...configs) {
   return async (request, context) => {
     const { owner, repo, ref } = getData(request, 'owner', 'repo', 'ref');
     const {
@@ -79,17 +79,43 @@ function wrap(func, ...configs) {
     const newreq = new Request(request.url, request.init());
 
     if (!!owner && !!repo && !!ref) {
-      const config = await configs
-        .filter((name) => !!loaders[name])
-        .reduce(async (confp, name) => {
-          const conf = await confp;
-          conf[name] = await new loaders[name]()
-            .withTransactionId(transactionId)
-            .withRepo(owner, repo, ref, options);
-          return conf;
-        }, {});
+      try {
+        const config = await configs
+          .filter((name) => !!loaders[name])
+          .reduce(async (confp, name) => {
+            const conf = await confp;
+            try {
+              conf[name] = await new loaders[name]()
+                .withTransactionId(transactionId)
+                .withRepo(owner, repo, ref, options)
+                .init();
+            } catch (e) {
+              if (required) {
+                throw new Error(`Unable to load ${name} config for ${owner}, ${repo}, ${ref}: ${e.message}`);
+              } else if (context.log) {
+                context.log.warn(`Unable to load ${name} config for ${owner}, ${repo}, ${ref}: ${e.message}`);
+              }
+            }
+            return conf;
+          }, {});
 
-      context.config = config;
+        context.config = config;
+      } catch (e) {
+        return new Response(e.message, {
+          status: 502,
+          headers: {
+            'Content-Type': 'text/plain',
+            'x-error': e.message,
+          },
+        });
+      }
+    } else if (required) {
+      return new Response('Unable to load configuration, owner, repo, ref not provided', {
+        status: 400,
+        headers: {
+          'x-error': 'Unable to load configuration, owner, repo, ref not provided',
+        },
+      });
     } else if (context.log) {
       context.log.warn('expected owner, repo, ref to load config, proceeding without configurations');
     }
@@ -97,4 +123,14 @@ function wrap(func, ...configs) {
   };
 }
 
-module.exports.config = wrap;
+function requiredConfig(func, ...configs) {
+  return wrap(func, true, ...configs);
+}
+
+function optionalConfig(func, ...configs) {
+  return wrap(func, true, ...configs);
+}
+
+module.exports = {
+  requiredConfig, optionalConfig,
+};
