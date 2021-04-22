@@ -30,13 +30,14 @@ async function getData(request, ...names) {
     }, {});
   } else if (/json/.test(request.headers.get('content-type'))) {
     const data = await request.json();
-    return names.reduce((prev, name) => {
+    const ret = names.reduce((prev, name) => {
       if (data[name]) {
       // eslint-disable-next-line no-param-reassign
         prev[name] = data[name];
       }
       return prev;
     }, {});
+    return ret;
   }
   // just return the request parameters
   const data = new URLSearchParams(new URL(request.url).search);
@@ -63,7 +64,7 @@ function getToken({ headers }) {
 
 function wrap(func, required, ...configs) {
   return async (request, context) => {
-    const { owner, repo, ref } = getData(request, 'owner', 'repo', 'ref');
+    const { owner, repo, ref } = await getData(request, 'owner', 'repo', 'ref');
     const {
       transactionId,
     } = context.invocation;
@@ -76,8 +77,9 @@ function wrap(func, required, ...configs) {
 
     // init is a helper function in helix-fetch that makes it easy
     // to recreate a request by returning the inital options
-    const newreq = new Request(request.url, request.init());
+    const newreq = new Request(request.url, request.init);
 
+    context.config = {};
     if (!!owner && !!repo && !!ref) {
       try {
         const config = await configs
@@ -86,9 +88,14 @@ function wrap(func, required, ...configs) {
             const conf = await confp;
             try {
               conf[name] = await new loaders[name]()
-                .withTransactionId(transactionId)
+                .withTransactionID(transactionId)
                 .withRepo(owner, repo, ref, options)
+                .withLogger(context.log)
                 .init();
+
+              if (!conf[name].source) {
+                throw new Error(`${name} config is empty`);
+              }
             } catch (e) {
               if (required) {
                 throw new Error(`Unable to load ${name} config for ${owner}, ${repo}, ${ref}: ${e.message}`);
@@ -128,7 +135,7 @@ function requiredConfig(func, ...configs) {
 }
 
 function optionalConfig(func, ...configs) {
-  return wrap(func, true, ...configs);
+  return wrap(func, false, ...configs);
 }
 
 module.exports = {
