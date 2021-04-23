@@ -1,0 +1,25 @@
+{
+  "name": "@adobe/helix-shared-wrap",
+  "version": "7.21.0",
+  "description": "Shared modules of the Helix Project - wrap",
+  "main": "src/wrap.js",
+  "types": "src/wrap.d.ts",
+  "scripts": {
+    "semantic-release": "semantic-release",
+    "docs": "npx jsonschema2md -d src/schemas -o docs -x docs -f yaml &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
+    "test": "nyc mocha",
+    "test-ci": "nyc mocha --reporter xunit --reporter-options output=./junit/test-results.xml && codecov",
+    "lint": "./node_modules/.bin/eslint .",
+    "junit": "mocha --exit -R mocha-junit-reporter"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme"
+}

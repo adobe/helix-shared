@@ -3,11 +3,12 @@
   "version": "7.21.0",
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
-  "types": "src/index..d.ts",
+  "types": "src/index.d.ts",
   "scripts": {
     "semantic-release": "semantic-release",
     "docs": "npx jsonschema2md -d src/schemas -o docs -x docs -f yaml &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
-    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 94 --statements 98 --lines 98 mocha",
+    "test": "nyc mocha",
+    "test-ci": "nyc mocha --reporter xunit --reporter-options output=./junit/test-results.xml && codecov",
     "lint": "./node_modules/.bin/eslint .",
     "junit": "mocha --exit -R mocha-junit-reporter"
   },
@@ -23,6 +24,7 @@
   "homepage": "https://github.com/adobe/helix-shared#readme",
   "dependencies": {
     "@adobe/helix-shared-utils": "*",
+    "@adobe/helix-shared-wrap": "*",
     "@adobe/helix-shared-git": "*",
     "@adobe/helix-fetch": "2.1.6",
     "@adobe/helix-log": "5.0.0",

@@ -11,6 +11,7 @@
  */
 const { GitUrl } = require('@adobe/helix-shared-git');
 const { utils } = require('@adobe/helix-shared-utils');
+const wrap = require('@adobe/helix-shared-utils');
 const HelixConfig = require('./HelixConfig.js');
 const IndexConfig = require('./IndexConfig');
 const MountConfig = require('./MountConfig');
@@ -21,7 +22,6 @@ const dom = require('./dom.js');
 const Async = require('./async.js');
 const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
-const wrap = require('./wrap.js');
 
 module.exports = {
   GitUrl,
