@@ -95,20 +95,20 @@ function wrap(func, required, ...configs) {
       }
     } else {
       try {
-        const config = await configs
+        const pairs = await Promise.all(configs
           .filter((name) => !!loaders[name])
-          .reduce(async (confp, name) => {
-            const conf = await confp;
+          .map(async (name) => {
             try {
-              conf[name] = await new loaders[name]()
+              const configuration = await new loaders[name]()
                 .withTransactionID(transactionId)
                 .withRepo(owner, repo, ref, options)
                 .withLogger(context.log)
                 .init();
 
-              if (!conf[name].source) {
+              if (!configuration.source) {
                 throw new Error(`${name} config is empty`);
               }
+              return [name, configuration];
             } catch (e) {
               if (required) {
                 throw new Error(`Unable to load ${name} config for ${owner}, ${repo}, ${ref}: ${e.message}`);
@@ -116,8 +116,16 @@ function wrap(func, required, ...configs) {
                 context.log.warn(`Unable to load ${name} config for ${owner}, ${repo}, ${ref}: ${e.message}`);
               }
             }
-            return conf;
-          }, {});
+            return [];
+          }));
+
+        const config = pairs.reduce((conf, [name, configuration]) => {
+          if (name && configuration) {
+            // eslint-disable-next-line no-param-reassign
+            conf[name] = configuration;
+          }
+          return conf;
+        }, {});
 
         context.config = config;
       } catch (e) {
