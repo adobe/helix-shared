@@ -23,6 +23,7 @@ const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
 const wrap = require('./wrap.js');
 const processQueue = require('./process-queue.js');
+const bodyData = require('./body-data-wrapper');
 
 module.exports = {
   GitUrl,
@@ -39,4 +40,5 @@ module.exports = {
   Condition,
   wrap,
   processQueue,
+  bodyData,
 };
