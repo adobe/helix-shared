@@ -23,6 +23,7 @@ const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
 const wrap = require('./wrap.js');
 const { optionalConfig, requiredConfig } = require('./config-wrapper');
+const processQueue = require('./process-queue.js');
 
 module.exports = {
   GitUrl,
@@ -40,4 +41,5 @@ module.exports = {
   wrap,
   optionalConfig,
   requiredConfig,
+  processQueue,
 };
