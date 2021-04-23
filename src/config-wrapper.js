@@ -77,6 +77,8 @@ function wrap(func, required, ...configs) {
 
     // init is a helper function in helix-fetch that makes it easy
     // to recreate a request by returning the inital options
+    // the request needs to be re-created because `getData` consumed
+    // the body
     const newreq = new Request(request.url, request.init);
 
     context.config = {};

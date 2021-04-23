@@ -105,6 +105,30 @@ describe('Optional Config Loading Wrapper', () => {
     assert.equal(response.status, 200, 'universal function should be executed');
   });
 
+  it('Unloadable optional config is ignored', async function get() {
+    const { server } = this.polly;
+    server.get('https://raw.githubusercontent.com/:path').intercept((req, res) => {
+      res.send(500);
+    });
+
+    const universalfunct = async () => new Response('ok');
+
+    const actualfunct = wrap(universalfunct).with(optionalConfig, 'redirect');
+    const response = await actualfunct(new Request('http://localhost', {
+      body: '{"owner": "adobe", "repo": "theblog", "ref": "non-existing"}',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }), {
+      log,
+      invocation: {
+
+      },
+    });
+    assert.equal(response.status, 200, 'universal function should be executed');
+  });
+
   it('Config is loaded when request is a JSON body', async () => {
     const universalfunct = async (request, context) => {
       assert.ok(context.config.redirect, 'redirect config should be available if loaded');
