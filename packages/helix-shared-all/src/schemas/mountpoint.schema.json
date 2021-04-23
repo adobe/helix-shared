@@ -14,7 +14,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Mount Point",
   "description": "Defines the target URL where content should be retrieved from.",
-  
+
   "oneOf": [
     {
       "type": "string",
@@ -33,6 +33,13 @@
         "fallbackPath": {
           "type": "string",
           "description": "Specifies the fallback path if the requested item cannot be found. The fallback path is relative to the basepath of the item originally requested, so if the requested item is `/foo/bar.md` and the `fallbackPath` is `baz.md`, then `/foo/baz.md` will be the fallback item. "
+        },
+        "credentials": {
+          "type": "array",
+          "description": "encrypted credentials.",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }

@@ -7,10 +7,9 @@ https://ns.adobe.com/helix/shared/runtimestrain#/properties/directoryIndex
 Name of the resource to use for requests to directories (no extension).
 When a request is made by the browser to `/help` and `directoryIndex=README.html`, then the request will be treated as if it was made to `/help/README.html`. Slashes (`/`) are not allowed in the directory index.
 
-
-| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                      |
-| :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | ------------------------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [runtimestrain.schema.json\*](runtimestrain.schema.json "open original schema") |
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                     |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [runtimestrain.schema.json*](runtimestrain.schema.json "open original schema") |
 
 ## directoryIndex Type
 

@@ -57,6 +57,7 @@ class DynamicRedirect {
     this._data = null;
     this._logger = logger;
     this._transactionID = null;
+    this._githubToken = null;
   }
 
   withTransactionID(id) {
@@ -64,30 +65,43 @@ class DynamicRedirect {
     return this;
   }
 
-  async match(path) {
+  withGithubToken(token) {
+    this._githubToken = token;
+    return this;
+  }
+
+  async fetch() {
     if (!this._data) {
       try {
         let url = new URL(this._src);
         if (!this._src.endsWith('.json')) {
-          // load via runtime (todo: do this via a plugin)
-          // eslint-disable-next-line no-underscore-dangle
-          const namespace = process.env.__OW_NAMESPACE || 'helix';
-          url = new URL(`https://adobeioruntime.net/api/v1/web/${namespace}/helix-services/data-embed@v1`);
+        // load via universal runtime (todo: do this via a plugin)
+          url = new URL('https://helix-pages.anywhere.run/helix-services/data-embed@v2');
           url.searchParams.append('src', this._src);
         }
         const res = await fetch(url.href, {
           headers: {
             'x-request-id': this._transactionID,
+            'x-github-token': this._githubToken,
           },
         });
         const text = await res.text();
         if (res.ok) {
-          this._data = JSON.parse(text).map(clean);
+          this._data = JSON.parse(text);
+          if ('data' in this._data) {
+            this._data = this._data.data;
+          }
+          this._data = this._data.map(clean);
         }
+        this._logger.info(`loaded lookup table from ${this._src}`);
       } catch (e) {
         this._logger.warn(`failed to get ${this._src} ${e.message}`);
       }
     }
+  }
+
+  async match(path) {
+    await this.fetch();
     if (this._data) {
       const hit = this._data.find((entry) => entry.from === path
         || entry.from === path.replace(/[ äӓ]/g, encodeURIComponent));
@@ -97,6 +111,14 @@ class DynamicRedirect {
       } : null;
     }
     return null;
+  }
+
+  async all() {
+    await this.fetch();
+    if (this._data) {
+      return this._data;
+    }
+    return [];
   }
 }
 

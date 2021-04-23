@@ -29,8 +29,9 @@ describe('Redirects Config Loading (from GitHub)', () => {
   it('Retrieves Document from GitHub', async function get() {
     const { server } = this.polly;
 
-    server.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/:path').intercept((req, res) => {
+    server.get('https://helix-pages.anywhere.run/helix-services/:path').intercept((req, res) => {
       assert.equal(req.headers['x-request-id'], 'random');
+      assert.equal(req.headers['x-github-token'], 'fake');
 
       if (req.query.src.startsWith('https://adobe.sharepoint.com/')) {
         return res.status(200).json([
@@ -88,18 +89,19 @@ describe('Redirects Config Loading (from GitHub)', () => {
 
     server.get('https://helix-demo--adobe.hlx.page/redirects.json').intercept((req, res) => {
       assert.equal(req.headers['x-request-id'], 'random');
-      return res.status(200).json([
-        {
+      return res.status(200).json({
+        data: [{
           from: '/en/old',
           to: '/en/new',
-        },
-      ]);
+        }],
+      });
     });
 
     const config = await new RedirectConfig()
       .withCache({ maxSize: 1 })
       .withConfigPath(path.resolve(SPEC_ROOT, 'dynamic.yaml'))
       .withTransactionID('random')
+      .withGithubToken('fake')
       .init();
 
     assert.deepEqual(config.toJSON().redirects, [
@@ -163,6 +165,9 @@ describe('Redirects Config Loading (from GitHub)', () => {
       url: '/en/new',
       type: 'permanent',
     });
+
+    const all = await config.all();
+    assert.equal(all.length, 13);
   }).timeout(10000);
 });
 

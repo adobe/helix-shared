@@ -36,7 +36,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
     assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
   });
 
-  it.skip('Retrieves Document from GitHub with Auth', async function okGithub() {
+  it('Retrieves Document from GitHub with Auth', async function okGithub() {
     const { server } = this.polly;
     let foundtoken;
     let foundid;
@@ -53,7 +53,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
     const config = await new MountConfig()
       .withCache({ maxSize: 1 })
       .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c357-auth', {
-        headers: { Authorization: 'fake' },
+        headers: { authorization: 'token fake' },
       })
       .withTransactionID('random')
       .init();
@@ -61,7 +61,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
     const match = config.match('/');
 
     assert.equal(foundid, 'random');
-    assert.equal(foundtoken, 'fake');
+    assert.equal(foundtoken, 'token fake');
     assert.equal(match.url, 'https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog');
   });
 
@@ -102,7 +102,7 @@ const tests = [
     title: 'fails with a broken config',
     config: 'broken.yaml',
     result: null,
-    error: 'Error: data should NOT have additional properties',
+    error: 'Error: data must NOT have additional properties',
   },
   {
     title: 'loads a theblog example',
@@ -267,5 +267,13 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m14.relPath, '/foo');
 
     assert.equal(cfg.match('/mssoft'), null, 'requires trailing slash in matches');
+
+    // with credentials
+    const m15 = cfg.match('/creds');
+    assert.deepEqual(m15.credentials, ['abcd']);
+
+    // with multiple credentials
+    const m16 = cfg.match('/multicreds');
+    assert.deepEqual(m16.credentials, ['abcd', 'efgh']);
   });
 });

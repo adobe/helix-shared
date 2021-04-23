@@ -107,6 +107,15 @@ class Utils {
   logLevelForStatusCode(status) {
     return lookupBackendResponses(status).level;
   }
+
+  /**
+   * Cleans up a header value by stripping invalid characters and truncating to 1024 chars
+   * @param {string} value a header value
+   * @returns a valid header value
+   */
+  cleanupHeaderValue(value) {
+    return value.replace(/[^\t\u0020-\u007E\u0080-\u00FF]/g, '').substr(0, 1024);
+  }
 }
 
 module.exports = new Utils();

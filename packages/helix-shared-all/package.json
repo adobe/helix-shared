@@ -3,6 +3,7 @@
   "version": "7.21.0",
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
+  "types": "src/index..d.ts",
   "scripts": {
     "semantic-release": "semantic-release",
     "docs": "npx jsonschema2md -d src/schemas -o docs -x docs -f yaml &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",

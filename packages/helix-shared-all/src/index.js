@@ -21,6 +21,7 @@ const dom = require('./dom.js');
 const Async = require('./async.js');
 const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
+const wrap = require('./wrap.js');
 
 module.exports = {
   GitUrl,
@@ -35,4 +36,5 @@ module.exports = {
   MarkupConfig,
   async: Async,
   Condition,
+  wrap,
 };

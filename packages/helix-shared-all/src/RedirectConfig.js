@@ -45,9 +45,19 @@ class RedirectConfig extends SchemaDerivedConfig {
     return this;
   }
 
+  withGithubToken(token) {
+    this.rrhandler.withGithubToken(token);
+    return this;
+  }
+
   async match(path) {
     const resolved = await Promise.all(this.redirects.map((redirect) => redirect.match(path)));
     return resolved.find((o) => o);
+  }
+
+  async all() {
+    const resolved = await Promise.all(this.redirects.map((redirect) => redirect.all()));
+    return resolved.flat();
   }
 }
 

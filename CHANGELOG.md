@@ -1,3 +1,177 @@
+## [7.26.3](https://github.com/adobe/helix-shared/compare/v7.26.2...v7.26.3) (2021-04-20)
+
+
+### Bug Fixes
+
+* **renovate:** ignore ESM only dependencies ([#487](https://github.com/adobe/helix-shared/issues/487)) ([499c6f1](https://github.com/adobe/helix-shared/commit/499c6f189f59f362b0b8d210c3b3cd6713e1d0e6))
+
+## [7.26.2](https://github.com/adobe/helix-shared/compare/v7.26.1...v7.26.2) (2021-04-20)
+
+
+### Bug Fixes
+
+* **config:** update npm token ([#486](https://github.com/adobe/helix-shared/issues/486)) ([1c88759](https://github.com/adobe/helix-shared/commit/1c88759db9d83dedc5de00b9920d30d793fd75d3))
+
+## [7.26.1](https://github.com/adobe/helix-shared/compare/v7.26.0...v7.26.1) (2021-04-17)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([ed92cb0](https://github.com/adobe/helix-shared/commit/ed92cb0586cb2107eb331a1d0d200d8c250c6371))
+
+# [7.26.0](https://github.com/adobe/helix-shared/compare/v7.25.1...v7.26.0) (2021-04-16)
+
+
+### Bug Fixes
+
+* **redirects:** use universal runtime for non-json data sources ([5b4155d](https://github.com/adobe/helix-shared/commit/5b4155db2f45df6d1fdaa87d6bab28ae730687a5)), closes [#480](https://github.com/adobe/helix-shared/issues/480)
+
+
+### Features
+
+* **redirects:** pass github token to data sources ([16aacf0](https://github.com/adobe/helix-shared/commit/16aacf04457351a81bf8e23c5e710808db9ebca4)), closes [#480](https://github.com/adobe/helix-shared/issues/480)
+
+## [7.25.1](https://github.com/adobe/helix-shared/compare/v7.25.0...v7.25.1) (2021-04-15)
+
+
+### Bug Fixes
+
+* make some properties required ([#479](https://github.com/adobe/helix-shared/issues/479)) ([cad4af3](https://github.com/adobe/helix-shared/commit/cad4af3b5e4ed23573e841cef1817fc9f42eb7f1))
+
+# [7.25.0](https://github.com/adobe/helix-shared/compare/v7.24.0...v7.25.0) (2021-04-14)
+
+
+### Features
+
+* **fstab:** add support for credentials ([#478](https://github.com/adobe/helix-shared/issues/478)) ([b8ea502](https://github.com/adobe/helix-shared/commit/b8ea502b9c9851ab50e60a0b8d9f98b9383d4c37))
+
+# [7.24.0](https://github.com/adobe/helix-shared/compare/v7.23.1...v7.24.0) (2021-04-12)
+
+
+### Features
+
+* **redirect:** add RedirectConfig.all method that lists all redirects ([e79a62b](https://github.com/adobe/helix-shared/commit/e79a62b57986651d2c5b41d2a5093d79e2a9a3c5)), closes [adobe/helix-redirect#201](https://github.com/adobe/helix-redirect/issues/201)
+
+## [7.23.1](https://github.com/adobe/helix-shared/compare/v7.23.0...v7.23.1) (2021-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([c06942e](https://github.com/adobe/helix-shared/commit/c06942e3a0d0ca6d3567bf063259584070ce4963))
+
+# [7.23.0](https://github.com/adobe/helix-shared/compare/v7.22.0...v7.23.0) (2021-04-09)
+
+
+### Features
+
+* **wrap:** add wrap function ([#473](https://github.com/adobe/helix-shared/issues/473)) ([3b75a76](https://github.com/adobe/helix-shared/commit/3b75a76671e240e224025d17d40afe78d800976d))
+
+# [7.22.0](https://github.com/adobe/helix-shared/compare/v7.21.14...v7.22.0) (2021-04-07)
+
+
+### Features
+
+* **utils:** add headercleanup helper function ([4d28f25](https://github.com/adobe/helix-shared/commit/4d28f25fdbad11cbc1fef8ad4dc31fd1db15d8bc)), closes [adobe/helix-deploy#201](https://github.com/adobe/helix-deploy/issues/201)
+
+## [7.21.14](https://github.com/adobe/helix-shared/compare/v7.21.13...v7.21.14) (2021-04-03)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([ffe3ef7](https://github.com/adobe/helix-shared/commit/ffe3ef71f5e4a1fcf76a2a2462be53d1f6bde1a3))
+
+## [7.21.13](https://github.com/adobe/helix-shared/compare/v7.21.12...v7.21.13) (2021-04-02)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([face32f](https://github.com/adobe/helix-shared/commit/face32f3ea8cfdfc9454e6f38cd491df5f98e400))
+
+## [7.21.12](https://github.com/adobe/helix-shared/compare/v7.21.11...v7.21.12) (2021-04-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v5.0.1 ([acd024d](https://github.com/adobe/helix-shared/commit/acd024d5b5137eae3eb1d651dec2eb28458d0f4e))
+
+## [7.21.11](https://github.com/adobe/helix-shared/compare/v7.21.10...v7.21.11) (2021-03-30)
+
+
+### Bug Fixes
+
+* **strains:** better handling of undefined stickiness in strains ([3451440](https://github.com/adobe/helix-shared/commit/3451440f924a31b75118cd15722cfdbb301ed7ff)), closes [#464](https://github.com/adobe/helix-shared/issues/464)
+* **strains:** persist properties with value `false` as well ([3e01ce8](https://github.com/adobe/helix-shared/commit/3e01ce838a37b6ae4f057a52e4684341b3f225e1)), closes [#464](https://github.com/adobe/helix-shared/issues/464)
+
+## [7.21.10](https://github.com/adobe/helix-shared/compare/v7.21.9...v7.21.10) (2021-03-30)
+
+
+### Bug Fixes
+
+* **deps:** update ajv to 8.0.1 ([673b01f](https://github.com/adobe/helix-shared/commit/673b01f3174095896687ece37f923aa2b673b680))
+
+## [7.21.9](https://github.com/adobe/helix-shared/compare/v7.21.8...v7.21.9) (2021-03-27)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([4453caf](https://github.com/adobe/helix-shared/commit/4453caf1328f1853059f4f4b0e01021138bdca42))
+
+## [7.21.8](https://github.com/adobe/helix-shared/compare/v7.21.7...v7.21.8) (2021-03-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.2.0 ([f858f0d](https://github.com/adobe/helix-shared/commit/f858f0d7386c66c000b72d137f774f6617e41970))
+
+## [7.21.7](https://github.com/adobe/helix-shared/compare/v7.21.6...v7.21.7) (2021-03-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.1.9 ([eeffb4d](https://github.com/adobe/helix-shared/commit/eeffb4d021be62728e17b4ac1a9f663380358a36))
+
+## [7.21.6](https://github.com/adobe/helix-shared/compare/v7.21.5...v7.21.6) (2021-03-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.1.8 ([cddcfd4](https://github.com/adobe/helix-shared/commit/cddcfd4924d8e729ba87ef439aacf1adfa7e65e5))
+
+## [7.21.5](https://github.com/adobe/helix-shared/compare/v7.21.4...v7.21.5) (2021-03-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ajv to v7.2.3 ([ffaeb50](https://github.com/adobe/helix-shared/commit/ffaeb50882c8e4ec8e35e558e76eed70758d277f))
+
+## [7.21.4](https://github.com/adobe/helix-shared/compare/v7.21.3...v7.21.4) (2021-03-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yaml to v1.10.2 ([3f159b8](https://github.com/adobe/helix-shared/commit/3f159b8d8ffe472a27f376d6be1f849e58a802ef))
+
+## [7.21.3](https://github.com/adobe/helix-shared/compare/v7.21.2...v7.21.3) (2021-03-13)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([c7ebb3d](https://github.com/adobe/helix-shared/commit/c7ebb3d595ec756d384b354acf85f93027f3d1d1))
+
+## [7.21.2](https://github.com/adobe/helix-shared/compare/v7.21.1...v7.21.2) (2021-03-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.1.7 ([a81375c](https://github.com/adobe/helix-shared/commit/a81375c1e28fd25918a532e6b40f1ed539c7f5a7))
+
+## [7.21.1](https://github.com/adobe/helix-shared/compare/v7.21.0...v7.21.1) (2021-03-03)
+
+
+### Bug Fixes
+
+* **redirect:** fix dynamic redirects via json ([#446](https://github.com/adobe/helix-shared/issues/446)) ([2124b60](https://github.com/adobe/helix-shared/commit/2124b60a05ae44b52b4d154947ae687b886959b2)), closes [#445](https://github.com/adobe/helix-shared/issues/445)
+
 # [7.21.0](https://github.com/adobe/helix-shared/compare/v7.20.0...v7.21.0) (2021-03-02)
 
 

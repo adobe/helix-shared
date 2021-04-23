@@ -6,10 +6,9 @@ https://ns.adobe.com/helix/shared/version-lock#/properties/version-lock
 
 
 
-
-| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                  |
-| :------------------ | ---------- | -------------- | ----------------------- | :---------------- | --------------------- | ------------------- | --------------------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [proxystrain.schema.json\*](proxystrain.schema.json "open original schema") |
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                 |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :------------------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [proxystrain.schema.json*](proxystrain.schema.json "open original schema") |
 
 ## version-lock Type
 
@@ -23,11 +22,11 @@ helix-data-embed: ci999
 
 ```
 
-# Version Lock Properties
+# version-lock Properties
 
-| Property              | Type     | Required | Nullable       | Defined by                                                                                                                  |
-| :-------------------- | -------- | -------- | -------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| Additional Properties | `string` | Optional | cannot be null | [Version Lock](version-lock-service-version.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/additionalProperties") |
+| Property              | Type     | Required | Nullable       | Defined by                                                                                                             |
+| :-------------------- | :------- | :------- | :------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| Additional Properties | `string` | Optional | cannot be null | [Version Lock](version-lock-service-version.md "https://ns.adobe.com/helix/shared/version-lock#/additionalProperties") |
 
 ## Additional Properties
 
@@ -35,11 +34,13 @@ Additional properties are allowed, as long as they follow this schema:
 
 A version number string
 
+*   is optional
 
--   is optional
--   Type: `string` ([Service Version](version-lock-service-version.md))
--   cannot be null
--   defined in: [Version Lock](version-lock-service-version.md "https&#x3A;//ns.adobe.com/helix/shared/version-lock#/additionalProperties")
+*   Type: `string` ([Service Version](version-lock-service-version.md))
+
+*   cannot be null
+
+*   defined in: [Version Lock](version-lock-service-version.md "https://ns.adobe.com/helix/shared/version-lock#/additionalProperties")
 
 ### additionalProperties Type
 

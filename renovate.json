@@ -7,8 +7,28 @@
   "branchPrefix": "renovate-",
   "packageRules": [
     {
-      "packageNames": ["webpack"],
-      "allowedVersions": "<5.0.0"
+      "packageNames": ["unist-util-inspect"],
+      "allowedVersions": "<7.0.0"
+    },
+    {
+      "packageNames": ["unist-builder"],
+      "allowedVersions": "<3.0.0"
+    },
+    {
+      "packageNames": ["unist-util-inspect"],
+      "allowedVersions": "<7.0.0"
+    },
+    {
+      "packageNames": ["unist-util-map"],
+      "allowedVersions": "<3.0.0"
+    },
+    {
+      "packageNames": ["unist-util-remove"],
+      "allowedVersions": "<3.0.0"
+    },
+    {
+      "packageNames": ["unist-util-visit-parents"],
+      "allowedVersions": "<4.0.0"
     },
     {
       "packageNames": ["quick-lru"],
@@ -51,6 +71,6 @@
     }
   ],
   "encrypted": {
-    "npmToken": "mk0AasloZFiNy0v8xIYJ4b5pMkY2dpGMCWBXY+vFtlG+X74ENpf2MxYGmJR4Ljel12RkflYffjPuCvCQLTkKVaOwLqnXBROZj+ZXL66dBw/Lj8HnPt8NeBJ2iY6tzBtMxKKp3qpa6nAYuVQ1aBdusKAe5cgm2RU9/4JG/p1l5r05CI11+oGVQptNnuHCD67bcGPLWqLwedbNFztOdUhr1W9pNP6aSq1FpAOFWsx4P4NRNbX1CmqbOe57gyDi3C8bpjTjMRqBfbWPTReZqZXiTsjLskEY2RUah0GbP2RZ3jWZV3KurW/yxFIXaJXNGmH0KJzKKBGxTZ90Qm5r8/l1Jw=="
+    "npmToken": "ohOXR8y4hdfHs/2go7YBdEwkhCFA+atc0qqw0UdLoAkKITfpmD538MiXVQf1ZgRFfnmVyHy9uf9KV9DH0fSHl4QDbOZ/+0Y4JgalbaC0LgpWrvZIa3JRarMhfEq8oM2ZVCZrJQehLyh2zKTnkeiTRQWMQwNPOIbByJAqhRwzwCJWjHQk8ztC6T2DyJPO6KvkOusTRY2SN19FmkccUBRyAWdR6IkHels3zlQOnKPNx+FJRp9J1RLzHMlFmJ7878wrAoFBrSKRq6fSWfCro4q5iPe7xih2JvRzZmPX2vi/7KBktzBVr+1Pjr8C4XPX9I6NNztDEGlAJNLLQX2da6ZTjg=="
   }
 }

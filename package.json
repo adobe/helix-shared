@@ -1,8 +1,9 @@
 {
   "name": "@adobe/helix-shared",
-  "version": "7.21.0",
+  "version": "7.26.3",
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "test": "lerna run test --stream",
     "lint": "lerna run lint"
@@ -17,6 +18,5 @@
     "url": "https://github.com/adobe/helix-shared/issues"
   },
   "homepage": "https://github.com/adobe/helix-shared#readme",
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
