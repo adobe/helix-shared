@@ -78,9 +78,11 @@ function wrap(func, required, ...configs) {
       transactionId,
     } = context.invocation;
 
+    const authorization = getToken(request);
+
     const options = {
       headers: {
-        authorization: getToken(request),
+        ...(authorization ? { authorization } : authorization),
       },
     };
 
