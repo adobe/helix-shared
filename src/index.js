@@ -22,6 +22,7 @@ const Async = require('./async.js');
 const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
 const wrap = require('./wrap.js');
+const processQueue = require('./process-queue.js');
 
 module.exports = {
   GitUrl,
@@ -37,4 +38,5 @@ module.exports = {
   async: Async,
   Condition,
   wrap,
+  processQueue,
 };
