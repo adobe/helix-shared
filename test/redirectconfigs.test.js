@@ -262,7 +262,7 @@ describe('Redirect Config Loading', () => {
     assert.equal((await cfg.match('/tags/news/feed/')).url, '/feed.xml');
   });
 
-  it.only('Spark Redirects Config gets loaded from YAML', async () => {
+  it('Spark Redirects Config gets loaded from YAML', async () => {
     const cfg = new RedirectConfig()
       .withSource(fs.readFileSync(path.resolve(SPEC_ROOT, 'spark.yaml')).toString());
     await cfg.init();
