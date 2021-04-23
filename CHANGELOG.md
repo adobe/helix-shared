@@ -1,3 +1,24 @@
+## [7.26.3](https://github.com/adobe/helix-shared/compare/v7.26.2...v7.26.3) (2021-04-20)
+
+
+### Bug Fixes
+
+* **renovate:** ignore ESM only dependencies ([#487](https://github.com/adobe/helix-shared/issues/487)) ([499c6f1](https://github.com/adobe/helix-shared/commit/499c6f189f59f362b0b8d210c3b3cd6713e1d0e6))
+
+## [7.26.2](https://github.com/adobe/helix-shared/compare/v7.26.1...v7.26.2) (2021-04-20)
+
+
+### Bug Fixes
+
+* **config:** update npm token ([#486](https://github.com/adobe/helix-shared/issues/486)) ([1c88759](https://github.com/adobe/helix-shared/commit/1c88759db9d83dedc5de00b9920d30d793fd75d3))
+
+## [7.26.1](https://github.com/adobe/helix-shared/compare/v7.26.0...v7.26.1) (2021-04-17)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([ed92cb0](https://github.com/adobe/helix-shared/commit/ed92cb0586cb2107eb331a1d0d200d8c250c6371))
+
 # [7.26.0](https://github.com/adobe/helix-shared/compare/v7.25.1...v7.26.0) (2021-04-16)
 
 
