@@ -141,5 +141,5 @@ function optionalConfig(func, ...configs) {
 }
 
 module.exports = {
-  requiredConfig, optionalConfig,
+  requiredConfig, optionalConfig, getData,
 };

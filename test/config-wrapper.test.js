@@ -16,6 +16,7 @@ process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 const assert = require('assert');
 const { Response, Request } = require('@adobe/helix-fetch');
 const { wrap, optionalConfig, requiredConfig } = require('../src/index');
+const { getData } = require('../src/config-wrapper');
 const { setupPolly } = require('./utils.js');
 
 const log = {
@@ -24,6 +25,52 @@ const log = {
   error: console.error,
   debug: console.log,
 };
+
+describe('Unit tests for getData()', () => {
+  it('Form Data', async () => {
+    const formrequest = new Request('http://localhost', {
+      body: 'owner=adobe&repo=theblog&ref=non-existing&version=1',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    assert.deepStrictEqual(await getData(formrequest, 'owner', 'repo', 'ref', 'version', 'name'), {
+      owner: 'adobe',
+      repo: 'theblog',
+      ref: 'non-existing',
+      version: 1,
+    });
+  });
+  it('JSON Data', async () => {
+    const jsonrequest = new Request('http://localhost', {
+      body: '{"owner": "adobe", "repo": "theblog", "ref": "non-existing", "version": 1}',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    assert.deepStrictEqual(await getData(jsonrequest, 'owner', 'repo', 'ref', 'version', 'name'), {
+      owner: 'adobe',
+      repo: 'theblog',
+      ref: 'non-existing',
+      version: 1,
+    });
+  });
+  it('URL Data', async () => {
+    const getrequest = new Request('http://localhost?owner=adobe&repo=theblog&ref=non-existing&version=1', {
+      method: 'GET',
+    });
+
+    assert.deepStrictEqual(await getData(getrequest, 'owner', 'repo', 'ref', 'version', 'name'), {
+      owner: 'adobe',
+      repo: 'theblog',
+      ref: 'non-existing',
+      version: 1,
+    });
+  });
+});
 
 describe('Required Config Loading Wrapper', () => {
   setupPolly({
@@ -68,6 +115,7 @@ describe('Required Config Loading Wrapper', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: 'token none',
       },
     }), {
       log,
@@ -119,6 +167,7 @@ describe('Optional Config Loading Wrapper', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Github-Token': 'none',
       },
     }), {
       log,

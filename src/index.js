@@ -22,7 +22,7 @@ const Async = require('./async.js');
 const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
 const wrap = require('./wrap.js');
-const wrappers = require('./config-wrapper');
+const { optionalConfig, requiredConfig } = require('./config-wrapper');
 
 module.exports = {
   GitUrl,
@@ -38,5 +38,6 @@ module.exports = {
   async: Async,
   Condition,
   wrap,
-  ...wrappers,
+  optionalConfig,
+  requiredConfig,
 };
