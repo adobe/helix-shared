@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const { Request, Response } = require('@adobe/helix-fetch');
+const { cleanupHeaderValue } = require('./utils');
 const redirect = require('./RedirectConfig');
 const helix = require('./HelixConfig');
 const fstab = require('./MountConfig');
@@ -141,7 +142,7 @@ function wrap(func, required, ...configs) {
           status: 502,
           headers: {
             'Content-Type': 'text/plain',
-            'x-error': e.message,
+            'x-error': cleanupHeaderValue(e.message),
           },
         });
       }
