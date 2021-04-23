@@ -1,3 +1,10 @@
+## [7.27.1](https://github.com/adobe/helix-shared/compare/v7.27.0...v7.27.1) (2021-04-23)
+
+
+### Bug Fixes
+
+* **redirects:** do not pass github token if undefined ([ab94258](https://github.com/adobe/helix-shared/commit/ab94258d239c4db56c04754357ce648470f1edb5))
+
 # [7.27.0](https://github.com/adobe/helix-shared/compare/v7.26.3...v7.27.0) (2021-04-23)
 
 
