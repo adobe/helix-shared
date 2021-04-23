@@ -7,7 +7,7 @@
   "scripts": {
     "semantic-release": "semantic-release",
     "docs": "npx jsonschema2md -d src/schemas -o docs -x docs -f yaml &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
-    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 95 --statements 98 --lines 98 mocha",
+    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 94 --statements 98 --lines 98 mocha",
     "lint": "./node_modules/.bin/eslint .",
     "junit": "mocha --exit -R mocha-junit-reporter"
   },
@@ -26,9 +26,9 @@
     "@adobe/helix-shared-git": "*",
     "@adobe/helix-fetch": "2.1.6",
     "@adobe/helix-log": "5.0.0",
-    "ajv": "7.1.1",
-    "ajv-formats": "1.5.1",
-    "ferrum": "1.7.0",
+    "ajv": "8.1.0",
+    "ajv-formats": "2.0.2",
+    "ferrum": "1.9.0",
     "fs-extra": "9.1.0",
     "lru-cache": "6.0.0",
     "object-hash": "2.1.1",

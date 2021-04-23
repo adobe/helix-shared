@@ -612,6 +612,11 @@ describe('GitUrl from object tests', () => {
     assert.ok(!url0.equalsIgnoreTransport(url1));
   });
 
+  it('not equalsIgnoreTransport to undefined', () => {
+    const url0 = new GitUrl('https://localhost/owner/repo.git#master');
+    assert.ok(!url0.equalsIgnoreTransport());
+  });
+
   it('to minimal json', () => {
     const url = new GitUrl({
       owner: 'company',
@@ -633,6 +638,56 @@ describe('GitUrl from object tests', () => {
       owner: 'company',
       repo: 'repository',
       ref: 'master',
+    });
+  });
+
+  it('to json with keepFormat from object', () => {
+    const url = new GitUrl({
+      owner: 'company',
+      repo: 'repository',
+      ref: 'master',
+    });
+    assert.deepEqual(url.toJSON({ keepFormat: true }), {
+      host: 'github.com',
+      hostname: 'github.com',
+      owner: 'company',
+      path: '',
+      port: '',
+      protocol: 'https',
+      ref: 'master',
+      repo: 'repository',
+    });
+  });
+
+  it('to json with keepFormat from string', () => {
+    const url = new GitUrl('http://git.example.com:1234/company/repository.git/docs/main');
+    assert.deepEqual(url.toJSON({ keepFormat: true }), 'http://git.example.com:1234/company/repository.git/docs/main');
+  });
+
+  it('to yaml node from string', () => {
+    const url = new GitUrl('http://git.example.com:1234/company/repository.git/docs/main');
+    assert.deepEqual(url.toYAMLNode().value, 'http://git.example.com:1234/company/repository.git/docs/main');
+  });
+
+  it('to yaml node from object', () => {
+    const url = new GitUrl({
+      owner: 'company',
+      repo: 'repository',
+      ref: 'master',
+    });
+    assert.deepEqual(url.toYAMLNode().toJSON(), {
+      owner: 'company',
+      ref: 'master',
+      repo: 'repository',
+    });
+  });
+
+  it('to yaml node from string (forced)', () => {
+    const url = new GitUrl('http://git.example.com:1234/company/repository.git/docs/main');
+    assert.deepEqual(url.toYAMLNode(true).toJSON(), {
+      owner: 'company',
+      path: '/docs/main',
+      repo: 'repository',
     });
   });
 });
