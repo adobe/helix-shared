@@ -82,7 +82,18 @@ function wrap(func, required, ...configs) {
     const newreq = new Request(request.url, request.init);
 
     context.config = {};
-    if (!!owner && !!repo && !!ref) {
+    if (!owner || !repo || !ref) {
+      if (required) {
+        return new Response('Unable to load configuration, owner, repo, ref not provided', {
+          status: 400,
+          headers: {
+            'x-error': 'Unable to load configuration, owner, repo, ref not provided',
+          },
+        });
+      } else if (context.log) {
+        context.log.warn('expected owner, repo, ref to load config, proceeding without configurations');
+      }
+    } else {
       try {
         const config = await configs
           .filter((name) => !!loaders[name])
@@ -118,15 +129,6 @@ function wrap(func, required, ...configs) {
           },
         });
       }
-    } else if (required) {
-      return new Response('Unable to load configuration, owner, repo, ref not provided', {
-        status: 400,
-        headers: {
-          'x-error': 'Unable to load configuration, owner, repo, ref not provided',
-        },
-      });
-    } else if (context.log) {
-      context.log.warn('expected owner, repo, ref to load config, proceeding without configurations');
     }
     return func(newreq, context);
   };
