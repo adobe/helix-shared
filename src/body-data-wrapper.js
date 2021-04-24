@@ -12,13 +12,26 @@
 /* eslint-disable no-param-reassign */
 const { Request } = require('@adobe/helix-fetch');
 
-async function getData(request, { coerceNumber, coerceInt, coerceBoolean }) {
+/**
+ * Extracts the _data_ from the given request. The data can be provided either as request
+ * parameters, url-encoded form data body, or a json body.
+ *
+ * Note that for post body requests, the body is consumed from the request and is no longer
+ * available.
+ *
+ * @param {Request} request The universal request
+ * @param {BodyDataOptions} [opts] Options
+ * @returns {Promise<object>} the parsed data object.
+ */
+async function getData(request, opts) {
+  const { coerceNumber, coerceInt, coerceBoolean } = opts;
   if (/json/.test(request.headers.get('content-type'))) {
-    const retval = await request.json();
-    return retval;
+    // eslint-disable-next-line no-return-await
+    return await request.json();
   }
-  let data = new URLSearchParams(new URL(request.url).search);
+  let data = new URL(request.url).searchParams;
   if (/^application\/x-www-form-urlencoded/.test(request.headers.get('content-type'))) {
+    // todo: combine urlencoded and request params
     data = new URLSearchParams(await request.text());
   }
   return Array.from(data.entries()).reduce((alldata, [key, value]) => {
@@ -54,12 +67,21 @@ async function getData(request, { coerceNumber, coerceInt, coerceBoolean }) {
   }, {});
 }
 
-function wrap(func, { coerceNumber, coerceInt, coerceBoolean } = {}) {
+/**
+ * Wraps a function with a body data middleware that extracts the request data.
+ *
+ * @param {UniversalFunction} func the universal function
+ * @param {BodyDataOptions} [opts] Options
+ * @returns {UniversalFunction} an universal function with the added middleware.
+ */
+function bodyData(func, opts = {}) {
   return async (request, context) => {
-    context.data = await getData(request, { coerceNumber, coerceInt, coerceBoolean });
+    context.data = await getData(request, opts);
     const newreq = new Request(request.url, request.init);
     return func(newreq, context);
   };
 }
 
-module.exports.bodyData = wrap;
+module.exports = {
+  bodyData,
+};

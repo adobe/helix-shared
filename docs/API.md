@@ -127,6 +127,15 @@ and their <a href="https://github.com/nodejs/node/blob/v6.x/doc/topics/event-loo
 };
 </code></pre>
 </dd>
+<dt><a href="#getData">getData(request, [opts])</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
+<dd><p>Extracts the <em>data</em> from the given request. The data can be provided either as request
+parameters, url-encoded form data body, or a json body.</p>
+<p>Note that for post body requests, the body is consumed from the request and is no longer
+available.</p>
+</dd>
+<dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
+<dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
+</dd>
 <dt><a href="#isNodeType">isNodeType()</a></dt>
 <dd><p>Check whether the given type is the type of a dom node.  Note that, in
 order to support various dom implementations, this function uses a heuristic
@@ -238,6 +247,10 @@ but provides better error messages.</p>
 <dt><a href="#dumpDOM">dumpDOM(actual, expected, level)</a></dt>
 <dd><p>prints dom in order for changes to be more discernible.</p>
 </dd>
+<dt><a href="#processQueue">processQueue(queue, fn, [maxConcurrent])</a> ⇒</dt>
+<dd><p>Processes the given queue concurrently. The handler functions can add more items to the queue
+if needed.</p>
+</dd>
 <dt><a href="#multiline">multiline()</a></dt>
 <dd><p>This is a helper for declaring multiline strings.</p>
 <pre><code>const s = multiline(`
@@ -319,6 +332,7 @@ Note: the execution order is that the last wrapper added will be executed first.
 * [BaseConfig](#BaseConfig)
     * [new BaseConfig(name)](#new_BaseConfig_new)
     * [.withCache(options)](#BaseConfig+withCache)
+    * [.withGithubToken()](#BaseConfig+withGithubToken)
     * [.withRepo(owner, repo, ref, options)](#BaseConfig+withRepo)
     * [.withRepoURL(url, options)](#BaseConfig+withRepoURL)
     * [.saveConfig()](#BaseConfig+saveConfig) ⇒ <code>Promise.&lt;void&gt;</code>
@@ -343,6 +357,14 @@ Reset the cache with a new cache size
 | options | <code>object</code> | cache options |
 | options.maxSize | <code>number</code> |  |
 
+<a name="BaseConfig+withGithubToken"></a>
+
+### baseConfig.withGithubToken()
+Empty method to allow subclasses to intercept setting the
+GitHub token, if authentication option are provided in the
+repo options.
+
+**Kind**: instance method of [<code>BaseConfig</code>](#BaseConfig)  
 <a name="BaseConfig+withRepo"></a>
 
 ### baseConfig.withRepo(owner, repo, ref, options)
@@ -946,6 +968,36 @@ const mAsyncFn = () => {
 
 **Kind**: global function  
 **Returns**: <code>promise</code> - A promise that will resolve during the next tick.  
+<a name="getData"></a>
+
+## getData(request, [opts]) ⇒ <code>Promise.&lt;object&gt;</code>
+Extracts the _data_ from the given request. The data can be provided either as request
+parameters, url-encoded form data body, or a json body.
+
+Note that for post body requests, the body is consumed from the request and is no longer
+available.
+
+**Kind**: global function  
+**Returns**: <code>Promise.&lt;object&gt;</code> - the parsed data object.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>Request</code> | The universal request |
+| [opts] | <code>BodyDataOptions</code> | Options |
+
+<a name="bodyData"></a>
+
+## bodyData(func, [opts]) ⇒ <code>UniversalFunction</code>
+Wraps a function with a body data middleware that extracts the request data.
+
+**Kind**: global function  
+**Returns**: <code>UniversalFunction</code> - an universal function with the added middleware.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| func | <code>UniversalFunction</code> | the universal function |
+| [opts] | <code>BodyDataOptions</code> | Options |
+
 <a name="isNodeType"></a>
 
 ## isNodeType()
@@ -1131,6 +1183,21 @@ prints dom in order for changes to be more discernible.
 | actual | <code>object</code> |  | node from original page |
 | expected | <code>object</code> |  | node from test domain page |
 | level | <code>number</code> | <code>0</code> | current level in recursion tree return dump of dom that is indented at every level by level*2 spaces |
+
+<a name="processQueue"></a>
+
+## processQueue(queue, fn, [maxConcurrent]) ⇒
+Processes the given queue concurrently. The handler functions can add more items to the queue
+if needed.
+
+**Kind**: global function  
+**Returns**: the results  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| queue | <code>Array.&lt;\*&gt;</code> |  | A list of tasks |
+| fn | <code>function</code> |  | A handler function `fn(task:any, queue:array, results:array)` |
+| [maxConcurrent] | <code>number</code> | <code>8</code> | Concurrency level |
 
 <a name="multiline"></a>
 
