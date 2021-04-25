@@ -1,7 +1,7 @@
 {
   "name": "@adobe/helix-shared-utils",
   "version": "7.21.0",
-  "description": "Shared modules of the Helix Project",
+  "description": "Shared modules of the Helix Project - Utils",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc mocha",
