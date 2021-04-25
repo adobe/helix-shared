@@ -7,7 +7,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test --stream",
-    "test-ci": "lerna run test-ci --stream",
+    "test-ci": "lerna run test-ci",
     "lint": "lerna run lint --stream"
   },
   "repository": {
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/adobe/helix-shared#readme",
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
+    "codecov": "3.8.1",
     "commitizen": "4.2.3",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "7.25.0",
