@@ -31,6 +31,7 @@ describe('Index tests', () => {
       'async',
       'Condition',
       'wrap',
+      'processQueue',
     ];
     assert.deepEqual(Object.keys(index), exports);
     assert.deepEqual(exports.filter((name) => (!(name in index))), []);

@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/adobe/helix-shared/issues"
   },
-  "homepage": "https://github.com/adobe/helix-shared#readme"
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "devDependencies": {
+    "@adobe/helix-shared-git": "*"
+  }
 }
