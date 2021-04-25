@@ -81,13 +81,13 @@ class DynamicRedirect {
         }
         const res = await fetch(url.href, {
           headers: {
-            'x-request-id': this._transactionID,
-            'x-github-token': this._githubToken,
+            ...(this._transactionID ? { 'x-request-id': this._transactionID } : {}),
+            ...(this._githubToken ? { 'x-github-token': this._githubToken } : {}),
           },
         });
-        const text = await res.text();
+        const data = await res.json();
         if (res.ok) {
-          this._data = JSON.parse(text);
+          this._data = data;
           if ('data' in this._data) {
             this._data = this._data.data;
           }
