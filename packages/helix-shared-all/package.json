@@ -22,6 +22,7 @@
   "dependencies": {
     "@adobe/helix-shared-utils": "*",
     "@adobe/helix-shared-wrap": "*",
+    "@adobe/helix-shared-process-queue": "*",
     "@adobe/helix-shared-git": "*",
     "@adobe/helix-fetch": "2.1.6",
     "@adobe/helix-log": "5.0.0",

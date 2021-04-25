@@ -12,6 +12,7 @@
 const { GitUrl } = require('@adobe/helix-shared-git');
 const { utils } = require('@adobe/helix-shared-utils');
 const wrap = require('@adobe/helix-shared-utils');
+const processQueue = require('@adobe/helix-shared-process-queue');
 const HelixConfig = require('./HelixConfig.js');
 const IndexConfig = require('./IndexConfig');
 const MountConfig = require('./MountConfig');
@@ -22,7 +23,6 @@ const dom = require('./dom.js');
 const Async = require('./async.js');
 const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
-const processQueue = require('./process-queue.js');
 
 module.exports = {
   GitUrl,
