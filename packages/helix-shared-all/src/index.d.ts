@@ -10,3 +10,4 @@
  * governing permissions and limitations under the License.
  */
 export * from '@adobe/helix-shared-utils';
+export * from './process-queue';
