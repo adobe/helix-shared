@@ -23,7 +23,7 @@ commands:
         name: Installing Dependencies
         command: npm install
     - run:
-        name: Bootstram Lerna
+        name: Bootstrap Lerna
         command: npm run bootstrap
     - save_cache:
         paths:
@@ -47,9 +47,13 @@ jobs:
         name: Getting Code Coverage
         command: npm run test-ci
     - store_test_results:
-        path: junit
-    - store_artifacts:
-        path: junit
+        path: packages/helix-shared-all/junit
+    - store_test_results:
+        path: packages/helix-shared-git/junit
+    - store_test_results:
+        path: packages/helix-shared-utils/junit
+    - store_test_results:
+        path: packages/helix-shared-wrap/junit
 
 workflows:
   version: 2

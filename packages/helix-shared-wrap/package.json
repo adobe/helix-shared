@@ -5,12 +5,9 @@
   "main": "src/wrap.js",
   "types": "src/wrap.d.ts",
   "scripts": {
-    "semantic-release": "semantic-release",
-    "docs": "npx jsonschema2md -d src/schemas -o docs -x docs -f yaml &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
     "test": "nyc mocha",
-    "test-ci": "nyc mocha --reporter xunit --reporter-options output=./junit/test-results.xml && codecov",
-    "lint": "eslint .",
-    "junit": "mocha --exit -R mocha-junit-reporter"
+    "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
