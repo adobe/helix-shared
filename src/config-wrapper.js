@@ -25,6 +25,12 @@ const loaders = {
   markup,
 };
 
+/**
+ * Exported only for testisg
+ * @param {Request} request a fetch-API Request
+ * @param  {...string} names the parameter names to extract
+ * @returns {object} an object with the provided parameter names as keys
+ */
 async function getData(request, ...names) {
   if (/^application\/x-www-form-urlencoded/.test(request.headers.get('content-type'))) {
     const data = new URLSearchParams(await request.text());
