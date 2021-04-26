@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 export * from './wrap';
+export * from './config-wrapper';
 export * from './process-queue';
 export * from './body-data-wrapper';
