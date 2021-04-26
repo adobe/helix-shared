@@ -22,6 +22,7 @@ const Async = require('./async.js');
 const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
 const wrap = require('./wrap.js');
+const { optionalConfig, requiredConfig } = require('./config-wrapper');
 const processQueue = require('./process-queue.js');
 
 module.exports = {
@@ -38,5 +39,7 @@ module.exports = {
   async: Async,
   Condition,
   wrap,
+  optionalConfig,
+  requiredConfig,
   processQueue,
 };
