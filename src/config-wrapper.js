@@ -67,7 +67,7 @@ async function getData(request, ...names) {
   }, {});
 }
 
-function getToken({ headers }) {
+function getAuthHeaderValue({ headers }) {
   if (headers.get('authorization')) {
     return headers.get('authorization');
   }
@@ -84,13 +84,15 @@ function wrap(func, required, ...configs) {
       transactionId,
     } = context.invocation;
 
-    const authorization = getToken(request);
+    const authorization = getAuthHeaderValue(request);
 
     const options = {
       headers: {
-        ...(authorization ? { authorization } : authorization),
       },
     };
+    if (authorization) {
+      options.headers.authorization = authorization;
+    }
 
     // init is a helper function in helix-fetch that makes it easy
     // to recreate a request by returning the inital options
