@@ -66,6 +66,8 @@
 
 *   [Performance](./proxystrain-properties-performance.md "Performance testing details") – `https://ns.adobe.com/helix/shared/performance#/properties/perf`
 
+*   [Properties](./index-properties-properties.md "The properties to add to the index") – `https://ns.adobe.com/helix/shared/index#/properties/properties`
+
 *   [Property](./index-properties-properties-property.md) – `https://ns.adobe.com/helix/shared/property#/properties/properties/additionalProperties`
 
 *   [Proxy Strain](./strains-definitions-anystrain-oneof-proxy-strain.md "A strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/proxystrain#/definitions/anystrain/oneOf/0`

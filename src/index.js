@@ -24,6 +24,7 @@ const Condition = require('./Condition.js');
 const wrap = require('./wrap.js');
 const { optionalConfig, requiredConfig } = require('./config-wrapper');
 const processQueue = require('./process-queue.js');
+const { bodyData } = require('./body-data-wrapper');
 
 module.exports = {
   GitUrl,
@@ -42,4 +43,5 @@ module.exports = {
   optionalConfig,
   requiredConfig,
   processQueue,
+  bodyData,
 };
