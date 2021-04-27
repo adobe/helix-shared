@@ -1,3 +1,10 @@
+## [7.29.1](https://github.com/adobe/helix-shared/compare/v7.29.0...v7.29.1) (2021-04-27)
+
+
+### Bug Fixes
+
+* context.invocation might be missing ([#496](https://github.com/adobe/helix-shared/issues/496)) ([8d3c797](https://github.com/adobe/helix-shared/commit/8d3c7973d700a58d36d18df0a4d6e7b325134269))
+
 # [7.29.0](https://github.com/adobe/helix-shared/compare/v7.28.0...v7.29.0) (2021-04-27)
 
 
