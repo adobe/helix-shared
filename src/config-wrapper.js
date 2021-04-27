@@ -82,7 +82,7 @@ function wrap(func, required, ...configs) {
     const { owner, repo, ref } = await getData(request, 'owner', 'repo', 'ref');
     const {
       transactionId,
-    } = context.invocation;
+    } = context.invocation || {};
 
     const authorization = getAuthHeaderValue(request);
 
