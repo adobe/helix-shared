@@ -1,7 +1,7 @@
 {
   "name": "@adobe/helix-shared-monorepo",
   "private": true,
-  "version": "7.27.1",
+  "version": "7.29.1",
   "description": "Shared modules of the Helix Project - monorepo",
   "scripts": {
     "docs:schema": "jsonschema2md -d packages/helix-shared-all/src/schemas -o docs -x docs -f yaml",

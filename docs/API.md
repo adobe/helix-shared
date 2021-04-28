@@ -127,6 +127,15 @@ and their <a href="https://github.com/nodejs/node/blob/v6.x/doc/topics/event-loo
 };
 </code></pre>
 </dd>
+<dt><a href="#getData">getData(request, [opts])</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
+<dd><p>Extracts the <em>data</em> from the given request. The data can be provided either as request
+parameters, url-encoded form data body, or a json body.</p>
+<p>Note that for post body requests, the body is consumed from the request and is no longer
+available.</p>
+</dd>
+<dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
+<dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
+</dd>
 <dt><a href="#isNodeType">isNodeType()</a></dt>
 <dd><p>Check whether the given type is the type of a dom node.  Note that, in
 order to support various dom implementations, this function uses a heuristic
@@ -959,6 +968,36 @@ const mAsyncFn = () => {
 
 **Kind**: global function  
 **Returns**: <code>promise</code> - A promise that will resolve during the next tick.  
+<a name="getData"></a>
+
+## getData(request, [opts]) ⇒ <code>Promise.&lt;object&gt;</code>
+Extracts the _data_ from the given request. The data can be provided either as request
+parameters, url-encoded form data body, or a json body.
+
+Note that for post body requests, the body is consumed from the request and is no longer
+available.
+
+**Kind**: global function  
+**Returns**: <code>Promise.&lt;object&gt;</code> - the parsed data object.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>Request</code> | The universal request |
+| [opts] | <code>BodyDataOptions</code> | Options |
+
+<a name="bodyData"></a>
+
+## bodyData(func, [opts]) ⇒ <code>UniversalFunction</code>
+Wraps a function with a body data middleware that extracts the request data.
+
+**Kind**: global function  
+**Returns**: <code>UniversalFunction</code> - an universal function with the added middleware.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| func | <code>UniversalFunction</code> | the universal function |
+| [opts] | <code>BodyDataOptions</code> | Options |
+
 <a name="isNodeType"></a>
 
 ## isNodeType()

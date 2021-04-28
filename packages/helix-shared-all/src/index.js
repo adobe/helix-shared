@@ -23,6 +23,8 @@ const dom = require('./dom.js');
 const Async = require('./async.js');
 const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
+const { optionalConfig, requiredConfig } = require('./config-wrapper');
+const { bodyData } = require('./body-data-wrapper');
 
 module.exports = {
   GitUrl,
@@ -38,5 +40,8 @@ module.exports = {
   async: Async,
   Condition,
   wrap,
+  optionalConfig,
+  requiredConfig,
   processQueue,
+  bodyData,
 };

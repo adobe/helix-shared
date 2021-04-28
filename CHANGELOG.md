@@ -1,3 +1,31 @@
+## [7.29.1](https://github.com/adobe/helix-shared/compare/v7.29.0...v7.29.1) (2021-04-27)
+
+
+### Bug Fixes
+
+* context.invocation might be missing ([#496](https://github.com/adobe/helix-shared/issues/496)) ([8d3c797](https://github.com/adobe/helix-shared/commit/8d3c7973d700a58d36d18df0a4d6e7b325134269))
+
+# [7.29.0](https://github.com/adobe/helix-shared/compare/v7.28.0...v7.29.0) (2021-04-27)
+
+
+### Features
+
+* **wrappers:** add new wrapper for extracting data from request body or url parameters ([d83448f](https://github.com/adobe/helix-shared/commit/d83448f06ecdf69e46241444ded13ab8f88dd7d2)), closes [#490](https://github.com/adobe/helix-shared/issues/490)
+
+# [7.28.0](https://github.com/adobe/helix-shared/compare/v7.27.1...v7.28.0) (2021-04-26)
+
+
+### Bug Fixes
+
+* **config:** cleanup x-error header values ([dff1a4e](https://github.com/adobe/helix-shared/commit/dff1a4e0ca50d6e4391ca0d5f89fb71282ba0255))
+
+
+### Features
+
+* **config:** add support for helix, fstab, index, and markup configs to config wrapper ([d6d77e0](https://github.com/adobe/helix-shared/commit/d6d77e0c8ac031953c8d90c987c3adf1bd32a2fe))
+* **config:** provide a wrapper for universal serverless functions that loads the config for a repo ([1bbe8f8](https://github.com/adobe/helix-shared/commit/1bbe8f8cd9315e880287f4854754c644a84dcfaf))
+* **wrapper:** add required and optional config wrappers ([438a00c](https://github.com/adobe/helix-shared/commit/438a00c55a8f1ef828ae1676831357d5bc42f2a1))
+
 ## [7.27.1](https://github.com/adobe/helix-shared/compare/v7.27.0...v7.27.1) (2021-04-23)
 
 
