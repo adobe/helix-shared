@@ -35,9 +35,6 @@ module.exports.main = wrap(main)
 <dt><a href="#Condition">Condition</a></dt>
 <dd><p>Condition class</p>
 </dd>
-<dt><a href="#GitUrl">GitUrl</a></dt>
-<dd><p>Represents a GIT url.</p>
-</dd>
 <dt><a href="#Performance">Performance</a></dt>
 <dd><p>Performance Definition</p>
 </dd>
@@ -55,6 +52,9 @@ module.exports.main = wrap(main)
 </dd>
 <dt><a href="#Strains">Strains</a></dt>
 <dd><p>Strains</p>
+</dd>
+<dt><a href="#GitUrl">GitUrl</a></dt>
+<dd><p>Represents a GIT url.</p>
 </dd>
 </dl>
 
@@ -444,169 +444,6 @@ Gets a list of all preflight headers used in this condition
 
 **Kind**: instance property of [<code>Condition</code>](#Condition)  
 **Returns**: String[]  
-<a name="GitUrl"></a>
-
-## GitUrl
-Represents a GIT url.
-
-**Kind**: global class  
-
-* [GitUrl](#GitUrl)
-    * [new GitUrl(url, defaults)](#new_GitUrl_new)
-    * _instance_
-        * [.raw](#GitUrl+raw) : <code>String</code>
-        * [.rawRoot](#GitUrl+rawRoot) : <code>String</code>
-        * [.apiRoot](#GitUrl+apiRoot) : <code>String</code>
-        * [.protocol](#GitUrl+protocol) : <code>String</code>
-        * [.hostname](#GitUrl+hostname) : <code>String</code>
-        * [.host](#GitUrl+host) : <code>String</code>
-        * [.port](#GitUrl+port) : <code>String</code>
-        * [.owner](#GitUrl+owner) : <code>String</code>
-        * [.repo](#GitUrl+repo) : <code>String</code>
-        * [.ref](#GitUrl+ref) : <code>String</code>
-        * [.path](#GitUrl+path) : <code>String</code>
-        * [.isLocal](#GitUrl+isLocal) ⇒ <code>boolean</code>
-        * [.equalsIgnoreTransport(other)](#GitUrl+equalsIgnoreTransport) ⇒ <code>boolean</code>
-        * [.toString()](#GitUrl+toString) ⇒ <code>String</code>
-        * [.toJSON()](#GitUrl+toJSON) ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
-    * _inner_
-        * [~JSON](#GitUrl..JSON) : <code>Object</code>
-
-<a name="new_GitUrl_new"></a>
-
-### new GitUrl(url, defaults)
-Creates a new GitUrl either from a String URL or from a serialized object. The string must be
-of the format "<scheme>://<hostname>[:<port>]/<owner>/<repo>.git[/<path>][#ref>]".
-
-see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| url | <code>String</code> \| [<code>JSON</code>](#GitUrl..JSON) | URL or object defining the new git url. |
-| defaults | [<code>JSON</code>](#GitUrl..JSON) | Defaults for missing properties in the `url` param. |
-
-<a name="GitUrl+raw"></a>
-
-### gitUrl.raw : <code>String</code>
-The raw github url in the form 'https://raw.github.com/owner/repo/ref`. In case the
-[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/raw/owner/repo/ref`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+rawRoot"></a>
-
-### gitUrl.rawRoot : <code>String</code>
-Root of the raw github url in the form 'https://raw.github.com`. In case the
-[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/raw`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+apiRoot"></a>
-
-### gitUrl.apiRoot : <code>String</code>
-Root of the github api in the form 'https://api.github.com`. In case the
-[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/api`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+protocol"></a>
-
-### gitUrl.protocol : <code>String</code>
-Protocol of the URL. eg `https`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+hostname"></a>
-
-### gitUrl.hostname : <code>String</code>
-Hostname of the repository provider. eg `github.com`
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+host"></a>
-
-### gitUrl.host : <code>String</code>
-Host of the repository provider. eg `localhost:44245`
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+port"></a>
-
-### gitUrl.port : <code>String</code>
-Port of the repository provider.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+owner"></a>
-
-### gitUrl.owner : <code>String</code>
-Repository owner.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+repo"></a>
-
-### gitUrl.repo : <code>String</code>
-Repository name (without .git extension).
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+ref"></a>
-
-### gitUrl.ref : <code>String</code>
-Repository ref, such as `master`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+path"></a>
-
-### gitUrl.path : <code>String</code>
-Resource path. eg `/README.md`
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+isLocal"></a>
-
-### gitUrl.isLocal ⇒ <code>boolean</code>
-Checks if this git url is _local_. A git-url is considered local if hostname is `localhost` and
-the owner is `local` and the repo name is `default`. This is specific to helix.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+equalsIgnoreTransport"></a>
-
-### gitUrl.equalsIgnoreTransport(other) ⇒ <code>boolean</code>
-Tests if this GitUrl is equal to `other` but ignores transport properties, such as protocol,
-user and password.
-
-**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| other | [<code>GitUrl</code>](#GitUrl) | the url to compare to |
-
-<a name="GitUrl+toString"></a>
-
-### gitUrl.toString() ⇒ <code>String</code>
-String representation of the git url.
-
-**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
-**Returns**: <code>String</code> - url.  
-<a name="GitUrl+toJSON"></a>
-
-### gitUrl.toJSON() ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
-Returns a plain object representation.
-
-**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
-**Returns**: [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code> - A plain object suitable for serialization.  
-<a name="GitUrl..JSON"></a>
-
-### GitUrl~JSON : <code>Object</code>
-JSON Serialization of GitUrl
-
-**Kind**: inner typedef of [<code>GitUrl</code>](#GitUrl)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| protocol | <code>String</code> | Transport protocol |
-| hostname | <code>String</code> | Repository provider host name |
-| port | <code>String</code> | Repository provider port |
-| host | <code>String</code> | Repository provider hostname and port. |
-| owner | <code>String</code> | Repository owner |
-| repo | <code>String</code> | Repository name |
-| ref | <code>String</code> | Repository reference, such as `master` |
-| path | <code>String</code> | Relative path to the resource |
-
 <a name="Performance"></a>
 
 ## Performance
@@ -849,6 +686,169 @@ Creates the strains from a yaml node
 | Param | Type |
 | --- | --- |
 | node | <code>YAMLSeq</code> | 
+
+<a name="GitUrl"></a>
+
+## GitUrl
+Represents a GIT url.
+
+**Kind**: global class  
+
+* [GitUrl](#GitUrl)
+    * [new GitUrl(url, defaults)](#new_GitUrl_new)
+    * _instance_
+        * [.raw](#GitUrl+raw) : <code>String</code>
+        * [.rawRoot](#GitUrl+rawRoot) : <code>String</code>
+        * [.apiRoot](#GitUrl+apiRoot) : <code>String</code>
+        * [.protocol](#GitUrl+protocol) : <code>String</code>
+        * [.hostname](#GitUrl+hostname) : <code>String</code>
+        * [.host](#GitUrl+host) : <code>String</code>
+        * [.port](#GitUrl+port) : <code>String</code>
+        * [.owner](#GitUrl+owner) : <code>String</code>
+        * [.repo](#GitUrl+repo) : <code>String</code>
+        * [.ref](#GitUrl+ref) : <code>String</code>
+        * [.path](#GitUrl+path) : <code>String</code>
+        * [.isLocal](#GitUrl+isLocal) ⇒ <code>boolean</code>
+        * [.equalsIgnoreTransport(other)](#GitUrl+equalsIgnoreTransport) ⇒ <code>boolean</code>
+        * [.toString()](#GitUrl+toString) ⇒ <code>String</code>
+        * [.toJSON()](#GitUrl+toJSON) ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
+    * _inner_
+        * [~JSON](#GitUrl..JSON) : <code>Object</code>
+
+<a name="new_GitUrl_new"></a>
+
+### new GitUrl(url, defaults)
+Creates a new GitUrl either from a String URL or from a serialized object. The string must be
+of the format "<scheme>://<hostname>[:<port>]/<owner>/<repo>.git[/<path>][#ref>]".
+
+see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>String</code> \| [<code>JSON</code>](#GitUrl..JSON) | URL or object defining the new git url. |
+| defaults | [<code>JSON</code>](#GitUrl..JSON) | Defaults for missing properties in the `url` param. |
+
+<a name="GitUrl+raw"></a>
+
+### gitUrl.raw : <code>String</code>
+The raw github url in the form 'https://raw.github.com/owner/repo/ref`. In case the
+[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/raw/owner/repo/ref`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+rawRoot"></a>
+
+### gitUrl.rawRoot : <code>String</code>
+Root of the raw github url in the form 'https://raw.github.com`. In case the
+[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/raw`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+apiRoot"></a>
+
+### gitUrl.apiRoot : <code>String</code>
+Root of the github api in the form 'https://api.github.com`. In case the
+[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/api`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+protocol"></a>
+
+### gitUrl.protocol : <code>String</code>
+Protocol of the URL. eg `https`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+hostname"></a>
+
+### gitUrl.hostname : <code>String</code>
+Hostname of the repository provider. eg `github.com`
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+host"></a>
+
+### gitUrl.host : <code>String</code>
+Host of the repository provider. eg `localhost:44245`
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+port"></a>
+
+### gitUrl.port : <code>String</code>
+Port of the repository provider.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+owner"></a>
+
+### gitUrl.owner : <code>String</code>
+Repository owner.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+repo"></a>
+
+### gitUrl.repo : <code>String</code>
+Repository name (without .git extension).
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+ref"></a>
+
+### gitUrl.ref : <code>String</code>
+Repository ref, such as `master`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+path"></a>
+
+### gitUrl.path : <code>String</code>
+Resource path. eg `/README.md`
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+isLocal"></a>
+
+### gitUrl.isLocal ⇒ <code>boolean</code>
+Checks if this git url is _local_. A git-url is considered local if hostname is `localhost` and
+the owner is `local` and the repo name is `default`. This is specific to helix.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+equalsIgnoreTransport"></a>
+
+### gitUrl.equalsIgnoreTransport(other) ⇒ <code>boolean</code>
+Tests if this GitUrl is equal to `other` but ignores transport properties, such as protocol,
+user and password.
+
+**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| other | [<code>GitUrl</code>](#GitUrl) | the url to compare to |
+
+<a name="GitUrl+toString"></a>
+
+### gitUrl.toString() ⇒ <code>String</code>
+String representation of the git url.
+
+**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
+**Returns**: <code>String</code> - url.  
+<a name="GitUrl+toJSON"></a>
+
+### gitUrl.toJSON() ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
+Returns a plain object representation.
+
+**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
+**Returns**: [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code> - A plain object suitable for serialization.  
+<a name="GitUrl..JSON"></a>
+
+### GitUrl~JSON : <code>Object</code>
+JSON Serialization of GitUrl
+
+**Kind**: inner typedef of [<code>GitUrl</code>](#GitUrl)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| protocol | <code>String</code> | Transport protocol |
+| hostname | <code>String</code> | Repository provider host name |
+| port | <code>String</code> | Repository provider port |
+| host | <code>String</code> | Repository provider hostname and port. |
+| owner | <code>String</code> | Repository owner |
+| repo | <code>String</code> | Repository name |
+| ref | <code>String</code> | Repository reference, such as `master` |
+| path | <code>String</code> | Relative path to the resource |
 
 <a name="configMapper"></a>
 
