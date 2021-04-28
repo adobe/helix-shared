@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable no-param-reassign */
-const { Request } = require('@adobe/helix-universal');
+const { Request } = require('@adobe/helix-fetch');
 
 /**
  * Extracts the _data_ from the given request. The data can be provided either as request

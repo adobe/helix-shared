@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { Request, Response, UniversalContext, UniversalFunction } from '@adobe/helix-universal';
+import { UniversalFunction } from '@adobe/helix-universal';
 
 /**
  * Options for the wrap function

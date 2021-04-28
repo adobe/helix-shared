@@ -23,7 +23,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/helix-universal": "1.2.1",
+    "@adobe/helix-fetch": "2.1.6",
     "@adobe/helix-shared-wrap": "*"
+  },
+  "optionalDependencies": {
+    "@adobe/helix-universal": "1.2.1"
   }
 }
