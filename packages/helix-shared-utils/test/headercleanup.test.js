@@ -13,7 +13,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const { cleanupHeaderValue } = require('../src/index.js').utils;
+const { cleanupHeaderValue } = require('../src/index.js');
 
 describe('Test Header Cleanup', () => {
   it('Invalid characters', () => {

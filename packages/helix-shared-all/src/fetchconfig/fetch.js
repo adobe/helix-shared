@@ -11,7 +11,7 @@
  */
 
 const fetchAPI = require('@adobe/helix-fetch');
-const { utils } = require('@adobe/helix-shared-utils');
+const utils = require('@adobe/helix-shared-utils');
 const cache = require('./cache');
 
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1

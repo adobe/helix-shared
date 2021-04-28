@@ -11,7 +11,7 @@
  */
 
 const YAML = require('yaml');
-const { utils } = require('@adobe/helix-shared-utils');
+const { pruneEmptyValues } = require('@adobe/helix-shared-utils');
 
 /**
  * Performance Definition
@@ -67,7 +67,7 @@ class Performance {
       ...this.thresholds,
     };
     if (opts && opts.minimal) {
-      return utils.pruneEmptyValues(json);
+      return pruneEmptyValues(json);
     }
     return json;
   }

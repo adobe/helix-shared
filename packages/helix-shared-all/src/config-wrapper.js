@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const { Request, Response } = require('@adobe/helix-fetch');
-const { cleanupHeaderValue } = require('./utils');
+const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
 const redirect = require('./RedirectConfig');
 const helix = require('./HelixConfig');
 const fstab = require('./MountConfig');

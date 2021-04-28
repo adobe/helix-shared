@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 const { GitUrl } = require('@adobe/helix-shared-git');
-const { utils } = require('@adobe/helix-shared-utils');
-const wrap = require('@adobe/helix-shared-utils');
+const utils = require('@adobe/helix-shared-utils');
+const wrap = require('@adobe/helix-shared-wrap');
 const processQueue = require('@adobe/helix-shared-process-queue');
 const HelixConfig = require('./HelixConfig.js');
 const IndexConfig = require('./IndexConfig');

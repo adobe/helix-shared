@@ -13,7 +13,7 @@
 /* eslint-disable max-classes-per-file */
 const { parse } = require('url');
 const YAML = require('yaml');
-const { utils } = require('@adobe/helix-shared-utils');
+const { pruneEmptyValues } = require('@adobe/helix-shared-utils');
 
 // To avoid forward referencing the transformer function
 let transform;
@@ -516,7 +516,7 @@ class Condition {
   toJSON(opts) {
     const json = this._top ? this._top.toJSON() : null;
     if (json && opts && opts.minimal) {
-      return utils.pruneEmptyValues(json);
+      return pruneEmptyValues(json);
     }
     return json;
   }

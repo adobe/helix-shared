@@ -13,7 +13,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const { propagateStatusCode, logLevelForStatusCode } = require('../src/index.js').utils;
+const { propagateStatusCode, logLevelForStatusCode } = require('../src/index.js');
 
 describe('Test Log Level Determination', () => {
   it('2xx responses', () => {

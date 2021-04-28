@@ -14,7 +14,7 @@ const { Pair } = require('yaml/types');
 
 const EventEmitter = require('events');
 const { GitUrl } = require('@adobe/helix-shared-git');
-const { utils } = require('@adobe/helix-shared-utils');
+const utils = require('@adobe/helix-shared-utils');
 
 /**
  * Static content handling

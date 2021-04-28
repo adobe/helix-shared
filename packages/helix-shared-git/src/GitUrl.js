@@ -12,7 +12,7 @@
 
 const { URL } = require('url');
 const YAML = require('yaml');
-const { utils } = require('@adobe/helix-shared-utils');
+const utils = require('@adobe/helix-shared-utils');
 
 const RAW_TYPE = 'raw';
 const API_TYPE = 'api';

@@ -11,7 +11,7 @@
  */
 const URI = require('uri-js');
 const hash = require('object-hash');
-const { utils } = require('@adobe/helix-shared-utils');
+const { pruneEmptyValues } = require('@adobe/helix-shared-utils');
 
 class Origin {
   constructor(cfg) {
@@ -150,7 +150,7 @@ class Origin {
     const json = this.toFastlyJSON();
     json.path = this.path;
     if (opts && opts.minimal) {
-      return utils.pruneEmptyValues(json);
+      return pruneEmptyValues(json);
     }
     return json;
   }

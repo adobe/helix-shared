@@ -13,7 +13,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const { pruneEmptyValues } = require('../src/index.js').utils;
+const { pruneEmptyValues } = require('../src/index.js');
 
 describe('Prune Empty Values Test', () => {
   it('removes empty values', () => {

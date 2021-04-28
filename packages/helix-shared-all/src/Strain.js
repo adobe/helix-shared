@@ -14,7 +14,7 @@ const URI = require('uri-js');
 const YAML = require('yaml');
 const { YAMLMap, Pair } = require('yaml/types');
 const { GitUrl } = require('@adobe/helix-shared-git');
-const { utils } = require('@adobe/helix-shared-utils');
+const { pruneEmptyValues } = require('@adobe/helix-shared-utils');
 const Origin = require('./Origin.js');
 const Static = require('./Static.js');
 const Performance = require('./Performance.js');
@@ -255,7 +255,7 @@ class Strain {
       ...json,
     };
     if (opts && opts.minimal) {
-      return utils.pruneEmptyValues(ret);
+      return pruneEmptyValues(ret);
     }
     return ret;
   }
