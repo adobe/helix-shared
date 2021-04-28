@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-wrap",
-  "version": "7.21.0",
+  "version": "0.0.9",
   "description": "Shared modules of the Helix Project - wrap",
   "main": "src/wrap.js",
   "types": "src/wrap.d.ts",
@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/adobe/helix-shared/issues"
   },
-  "homepage": "https://github.com/adobe/helix-shared#readme"
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }

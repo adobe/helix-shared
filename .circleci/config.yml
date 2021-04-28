@@ -54,6 +54,8 @@ jobs:
         path: packages/helix-shared-utils/junit
     - store_test_results:
         path: packages/helix-shared-wrap/junit
+    - store_test_results:
+        path: packages/helix-shared-process-queue/junit
 
 workflows:
   version: 2

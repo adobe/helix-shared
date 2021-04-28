@@ -1,7 +1,7 @@
 {
   "name": "@adobe/helix-shared-monorepo",
   "private": true,
-  "version": "7.29.1",
+  "version": "1.0.0",
   "description": "Shared modules of the Helix Project - monorepo",
   "scripts": {
     "docs:schema": "jsonschema2md -d packages/helix-shared-all/src/schemas -o docs -x docs -f yaml",
@@ -10,7 +10,8 @@
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test --stream",
     "test-ci": "lerna run test-ci --stream",
-    "lint": "lerna run lint --stream"
+    "lint": "lerna run lint --stream",
+    "semantic-release": "lerna publish --conventional-commits --create-release github --yes"
   },
   "repository": {
     "type": "git",

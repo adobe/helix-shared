@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-git",
-  "version": "7.21.0",
+  "version": "0.0.9",
   "description": "Shared modules of the Helix Project - Git Utils",
   "main": "src/index.js",
   "scripts": {
@@ -19,6 +19,9 @@
     "url": "https://github.com/adobe/helix-shared/issues"
   },
   "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@adobe/helix-shared-utils": "*",
     "yaml": "1.10.0"

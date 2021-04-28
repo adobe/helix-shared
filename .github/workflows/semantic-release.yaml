@@ -11,14 +11,28 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          persist-credentials: false
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          fetch-depth: 0
       - name: Use Node.js 12.x
         uses: actions/setup-node@v2
         with:
           node-version: '12.x'
-      - run: npm install
+      - name: Configure Git User
+        run: |
+          git config --global user.email "ci@example.com"
+          git config --global user.name "Github Build"
+      - name: Authenticate with Registry
+        run: |
+          echo "registry=https://registry.npmjs.org/" > .npmrc
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
+      - run: npm ci
+      - run: npm run bootstrap
+      - run: npm run lint
       - run: npm test
       - run: npm run semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
