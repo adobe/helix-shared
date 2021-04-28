@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,13 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+/* eslint-disable no-console */
+
 /* eslint-env mocha */
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
 const assert = require('assert');
-const { Response, Request } = require('@adobe/helix-fetch');
-const { bodyData } = require('../src/body-data-wrapper');
-const { wrap } = require('../src/index');
+const { Response, Request } = require('@adobe/helix-universal');
+const wrap = require('@adobe/helix-shared-wrap');
+const bodyData = require('../src/body-data-wrapper');
 
 const log = {
   info: console.log,

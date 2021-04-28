@@ -127,14 +127,8 @@ and their <a href="https://github.com/nodejs/node/blob/v6.x/doc/topics/event-loo
 };
 </code></pre>
 </dd>
-<dt><a href="#getData">getData(request, [opts])</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
-<dd><p>Extracts the <em>data</em> from the given request. The data can be provided either as request
-parameters, url-encoded form data body, or a json body.</p>
-<p>Note that for post body requests, the body is consumed from the request and is no longer
-available.</p>
-</dd>
-<dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
-<dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
+<dt><a href="#getData">getData(request, ...names)</a> ⇒ <code>object</code></dt>
+<dd><p>Exported only for testisg</p>
 </dd>
 <dt><a href="#isNodeType">isNodeType()</a></dt>
 <dd><p>Check whether the given type is the type of a dom node.  Note that, in
@@ -247,10 +241,6 @@ but provides better error messages.</p>
 <dt><a href="#dumpDOM">dumpDOM(actual, expected, level)</a></dt>
 <dd><p>prints dom in order for changes to be more discernible.</p>
 </dd>
-<dt><a href="#processQueue">processQueue(queue, fn, [maxConcurrent])</a> ⇒</dt>
-<dd><p>Processes the given queue concurrently. The handler functions can add more items to the queue
-if needed.</p>
-</dd>
 <dt><a href="#multiline">multiline()</a></dt>
 <dd><p>This is a helper for declaring multiline strings.</p>
 <pre><code>const s = multiline(`
@@ -269,6 +259,19 @@ strips the first &amp; last lines if they are empty.</p>
 whitespace prefix length (number of space 0x20 characters
 at the start of the line). This prefix is simply removed
 from each line...</p>
+</dd>
+<dt><a href="#getData">getData(request, [opts])</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
+<dd><p>Extracts the <em>data</em> from the given request. The data can be provided either as request
+parameters, url-encoded form data body, or a json body.</p>
+<p>Note that for post body requests, the body is consumed from the request and is no longer
+available.</p>
+</dd>
+<dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
+<dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
+</dd>
+<dt><a href="#processQueue">processQueue(queue, fn, [maxConcurrent])</a> ⇒</dt>
+<dd><p>Processes the given queue concurrently. The handler functions can add more items to the queue
+if needed.</p>
 </dd>
 <dt><a href="#lookupBackendResponses">lookupBackendResponses(status)</a> ⇒ <code>Object</code></dt>
 <dd><p>A glorified lookup table that translates backend errors into the appropriate
@@ -970,33 +973,16 @@ const mAsyncFn = () => {
 **Returns**: <code>promise</code> - A promise that will resolve during the next tick.  
 <a name="getData"></a>
 
-## getData(request, [opts]) ⇒ <code>Promise.&lt;object&gt;</code>
-Extracts the _data_ from the given request. The data can be provided either as request
-parameters, url-encoded form data body, or a json body.
-
-Note that for post body requests, the body is consumed from the request and is no longer
-available.
+## getData(request, ...names) ⇒ <code>object</code>
+Exported only for testisg
 
 **Kind**: global function  
-**Returns**: <code>Promise.&lt;object&gt;</code> - the parsed data object.  
+**Returns**: <code>object</code> - an object with the provided parameter names as keys  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| request | <code>Request</code> | The universal request |
-| [opts] | <code>BodyDataOptions</code> | Options |
-
-<a name="bodyData"></a>
-
-## bodyData(func, [opts]) ⇒ <code>UniversalFunction</code>
-Wraps a function with a body data middleware that extracts the request data.
-
-**Kind**: global function  
-**Returns**: <code>UniversalFunction</code> - an universal function with the added middleware.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| func | <code>UniversalFunction</code> | the universal function |
-| [opts] | <code>BodyDataOptions</code> | Options |
+| request | <code>Request</code> | a fetch-API Request |
+| ...names | <code>string</code> | the parameter names to extract |
 
 <a name="isNodeType"></a>
 
@@ -1184,21 +1170,6 @@ prints dom in order for changes to be more discernible.
 | expected | <code>object</code> |  | node from test domain page |
 | level | <code>number</code> | <code>0</code> | current level in recursion tree return dump of dom that is indented at every level by level*2 spaces |
 
-<a name="processQueue"></a>
-
-## processQueue(queue, fn, [maxConcurrent]) ⇒
-Processes the given queue concurrently. The handler functions can add more items to the queue
-if needed.
-
-**Kind**: global function  
-**Returns**: the results  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| queue | <code>Array.&lt;\*&gt;</code> |  | A list of tasks |
-| fn | <code>function</code> |  | A handler function `fn(task:any, queue:array, results:array)` |
-| [maxConcurrent] | <code>number</code> | <code>8</code> | Concurrency level |
-
 <a name="multiline"></a>
 
 ## multiline()
@@ -1225,6 +1196,51 @@ at the start of the line). This prefix is simply removed
 from each line...
 
 **Kind**: global function  
+<a name="getData"></a>
+
+## getData(request, [opts]) ⇒ <code>Promise.&lt;object&gt;</code>
+Extracts the _data_ from the given request. The data can be provided either as request
+parameters, url-encoded form data body, or a json body.
+
+Note that for post body requests, the body is consumed from the request and is no longer
+available.
+
+**Kind**: global function  
+**Returns**: <code>Promise.&lt;object&gt;</code> - the parsed data object.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>Request</code> | The universal request |
+| [opts] | <code>BodyDataOptions</code> | Options |
+
+<a name="bodyData"></a>
+
+## bodyData(func, [opts]) ⇒ <code>UniversalFunction</code>
+Wraps a function with a body data middleware that extracts the request data.
+
+**Kind**: global function  
+**Returns**: <code>UniversalFunction</code> - an universal function with the added middleware.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| func | <code>UniversalFunction</code> | the universal function |
+| [opts] | <code>BodyDataOptions</code> | Options |
+
+<a name="processQueue"></a>
+
+## processQueue(queue, fn, [maxConcurrent]) ⇒
+Processes the given queue concurrently. The handler functions can add more items to the queue
+if needed.
+
+**Kind**: global function  
+**Returns**: the results  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| queue | <code>Array.&lt;\*&gt;</code> |  | A list of tasks |
+| fn | <code>function</code> |  | A handler function `fn(task:any, queue:array, results:array)` |
+| [maxConcurrent] | <code>number</code> | <code>8</code> | Concurrency level |
+
 <a name="lookupBackendResponses"></a>
 
 ## lookupBackendResponses(status) ⇒ <code>Object</code>

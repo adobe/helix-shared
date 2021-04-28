@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable no-param-reassign */
-const { Request } = require('@adobe/helix-fetch');
+const { Request } = require('@adobe/helix-universal');
 
 /**
  * Extracts the _data_ from the given request. The data can be provided either as request
@@ -82,6 +82,4 @@ function bodyData(func, opts = {}) {
   };
 }
 
-module.exports = {
-  bodyData,
-};
+module.exports = bodyData;

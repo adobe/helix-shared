@@ -14,7 +14,7 @@
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
 const assert = require('assert');
-const { Response, Request } = require('@adobe/helix-fetch');
+const { Response, Request } = require('@adobe/helix-universal');
 const { wrap, optionalConfig, requiredConfig } = require('../src/index');
 const { getData } = require('../src/config-wrapper');
 const { setupPolly } = require('./utils.js');

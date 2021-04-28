@@ -10,25 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/**
- * Fetch Request
- */
-declare class Request {}
-
-/**
- * Fetch Response
- */
-declare class Response {}
-
-/**
- * Universal context
- */
-declare interface UniversalContext {}
-
-/**
- * Helix Universal Function
- */
-declare type UniversalFunction = (req: Request, context: UniversalContext) => Response;
+import { Request, Response, UniversalContext, UniversalFunction } from '@adobe/helix-universal';
 
 /**
  * Options for the wrap function
