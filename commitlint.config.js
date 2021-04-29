@@ -18,8 +18,11 @@ module.exports = {
       [
         // workspace packages
         'helix-shared-all',
+        'helix-shared-body-data',
         'helix-shared-git',
+        'helix-shared-process-queue',
         'helix-shared-utils',
+        'helix-shared-wrap',
         'eslint',
         '*',
       ],
