@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-async",
-  "version": "0.0.10",
+  "version": "1.0.0",
   "description": "Shared modules of the Helix Project - async",
   "main": "src/async.js",
   "scripts": {

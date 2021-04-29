@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-wrap",
-  "version": "0.0.10",
+  "version": "1.0.0",
   "description": "Shared modules of the Helix Project - wrap",
   "main": "src/wrap.js",
   "types": "src/wrap.d.ts",
