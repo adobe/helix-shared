@@ -108,12 +108,6 @@ match zero, one or many dom nodes in the given node to test.</p>
 ## Functions
 
 <dl>
-<dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
-<dd></dd>
-<dt><a href="#stripQuery">stripQuery(m, ...specialparams)</a> ⇒ <code>object</code></dt>
-<dd><p>Cleans up the URL by removing parameters that are deemed special. These
-special parameters will be returned in the return object instead.</p>
-</dd>
 <dt><a href="#nextTick">nextTick()</a> ⇒ <code>promise</code></dt>
 <dd><p>Await the next tick;</p>
 <p>NOTE: Internally this uses setImmediate, not process.nextTick.
@@ -126,6 +120,21 @@ and their <a href="https://github.com/nodejs/node/blob/v6.x/doc/topics/event-loo
   ...
 };
 </code></pre>
+</dd>
+<dt><a href="#getData">getData(request, [opts])</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
+<dd><p>Extracts the <em>data</em> from the given request. The data can be provided either as request
+parameters, url-encoded form data body, or a json body.</p>
+<p>Note that for post body requests, the body is consumed from the request and is no longer
+available.</p>
+</dd>
+<dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
+<dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
+</dd>
+<dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
+<dd></dd>
+<dt><a href="#stripQuery">stripQuery(m, ...specialparams)</a> ⇒ <code>object</code></dt>
+<dd><p>Cleans up the URL by removing parameters that are deemed special. These
+special parameters will be returned in the return object instead.</p>
 </dd>
 <dt><a href="#getData">getData(request, ...names)</a> ⇒ <code>object</code></dt>
 <dd><p>Exported only for testisg</p>
@@ -241,6 +250,14 @@ but provides better error messages.</p>
 <dt><a href="#dumpDOM">dumpDOM(actual, expected, level)</a></dt>
 <dd><p>prints dom in order for changes to be more discernible.</p>
 </dd>
+<dt><a href="#processQueue">processQueue(queue, fn, [maxConcurrent])</a> ⇒</dt>
+<dd><p>Processes the given queue concurrently. The handler functions can add more items to the queue
+if needed.</p>
+</dd>
+<dt><a href="#pruneEmptyValues">pruneEmptyValues(obj)</a> ⇒ <code>object</code></dt>
+<dd><p>Iterates over the properties of the given object and removes all empty values.
+A value is considered empty, if it&#39;s not truthy or an empty array.</p>
+</dd>
 <dt><a href="#multiline">multiline()</a></dt>
 <dd><p>This is a helper for declaring multiline strings.</p>
 <pre><code>const s = multiline(`
@@ -260,22 +277,35 @@ whitespace prefix length (number of space 0x20 characters
 at the start of the line). This prefix is simply removed
 from each line...</p>
 </dd>
-<dt><a href="#getData">getData(request, [opts])</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
-<dd><p>Extracts the <em>data</em> from the given request. The data can be provided either as request
-parameters, url-encoded form data body, or a json body.</p>
-<p>Note that for post body requests, the body is consumed from the request and is no longer
-available.</p>
-</dd>
-<dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
-<dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
-</dd>
-<dt><a href="#processQueue">processQueue(queue, fn, [maxConcurrent])</a> ⇒</dt>
-<dd><p>Processes the given queue concurrently. The handler functions can add more items to the queue
-if needed.</p>
-</dd>
 <dt><a href="#lookupBackendResponses">lookupBackendResponses(status)</a> ⇒ <code>Object</code></dt>
 <dd><p>A glorified lookup table that translates backend errors into the appropriate
 HTTP status codes and log levels for your service.</p>
+</dd>
+<dt><a href="#computeSurrogateKey">computeSurrogateKey(url)</a> ⇒ <code>string</code></dt>
+<dd><p>Computes the caching Surrogate-Key for the given url. The computation uses a hmac_sha256
+with a fixed key: {@code &quot;helix&quot;}. the result is base64 encoded and truncated to 16 characters.
+This algorithm is chosen, because similar functionality exists in Fastly&#39;s VCL api:</p>
+<pre><code>declare local var.key STRING;
+set var.key = digest.hmac_sha256_base64(&quot;helix&quot;, &quot;input&quot;);
+set var.key = regsub(var.key, &quot;(.{16}).*&quot;, &quot;\1&quot;);
+</code></pre>
+</dd>
+<dt><a href="#propagateStatusCode">propagateStatusCode(status)</a> ⇒ <code>int</code></dt>
+<dd><p>What is the appropriate status code to use in your service when your backend
+responds with <code>status</code>? This function provides a standardized lookup function
+to map backend responses to gateway responses, assuming you are implementing
+the gateway.</p>
+</dd>
+<dt><a href="#logLevelForStatusCode">logLevelForStatusCode(status)</a> ⇒ <code>string</code></dt>
+<dd><p>What is the appropriate log level for logging HTTP responses you are getting
+from a backend when the backend responds with <code>status</code>? This function provides
+a standardized lookup function of backend status codes to log levels.</p>
+<p>You can use it like this:</p>
+<pre><code class="language-javascript">logger[logLevelForStatusCode(response.status)](response.message);
+</code></pre>
+</dd>
+<dt><a href="#cleanupHeaderValue">cleanupHeaderValue(value)</a> ⇒</dt>
+<dd><p>Cleans up a header value by stripping invalid characters and truncating to 1024 chars</p>
 </dd>
 </dl>
 
@@ -924,6 +954,58 @@ match zero, one or many dom nodes in the given node to test.
 | node | <code>DomNode</code> | 
 | pattern | <code>DomNode</code> | 
 
+<a name="nextTick"></a>
+
+## nextTick() ⇒ <code>promise</code>
+Await the next tick;
+
+NOTE: Internally this uses setImmediate, not process.nextTick.
+This is because process.nextTick and setImmediate are horribly named
+and their [names should be swapped](https://github.com/nodejs/node/blob/v6.x/doc/topics/event-loop-timers-and-nexttick.md).
+
+
+
+```js
+const mAsyncFn = () => {
+  const page1 = await request('https://example.com/1');
+  await nextTick();
+  const page2 = await request('https://example.com/2');
+  ...
+};
+```
+
+**Kind**: global function  
+**Returns**: <code>promise</code> - A promise that will resolve during the next tick.  
+<a name="getData"></a>
+
+## getData(request, [opts]) ⇒ <code>Promise.&lt;object&gt;</code>
+Extracts the _data_ from the given request. The data can be provided either as request
+parameters, url-encoded form data body, or a json body.
+
+Note that for post body requests, the body is consumed from the request and is no longer
+available.
+
+**Kind**: global function  
+**Returns**: <code>Promise.&lt;object&gt;</code> - the parsed data object.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>Request</code> | The universal request |
+| [opts] | <code>BodyDataOptions</code> | Options |
+
+<a name="bodyData"></a>
+
+## bodyData(func, [opts]) ⇒ <code>UniversalFunction</code>
+Wraps a function with a body data middleware that extracts the request data.
+
+**Kind**: global function  
+**Returns**: <code>UniversalFunction</code> - an universal function with the added middleware.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| func | <code>UniversalFunction</code> | the universal function |
+| [opts] | <code>BodyDataOptions</code> | Options |
+
 <a name="ResolveFn"></a>
 
 ## ResolveFn(left, right)
@@ -949,28 +1031,6 @@ special parameters will be returned in the return object instead.
 | m.url | <code>string</code> | mount point URL |
 | ...specialparams | <code>string</code> | list of special parameters that should be removed from the URL and returned in the object |
 
-<a name="nextTick"></a>
-
-## nextTick() ⇒ <code>promise</code>
-Await the next tick;
-
-NOTE: Internally this uses setImmediate, not process.nextTick.
-This is because process.nextTick and setImmediate are horribly named
-and their [names should be swapped](https://github.com/nodejs/node/blob/v6.x/doc/topics/event-loop-timers-and-nexttick.md).
-
-
-
-```js
-const mAsyncFn = () => {
-  const page1 = await request('https://example.com/1');
-  await nextTick();
-  const page2 = await request('https://example.com/2');
-  ...
-};
-```
-
-**Kind**: global function  
-**Returns**: <code>promise</code> - A promise that will resolve during the next tick.  
 <a name="getData"></a>
 
 ## getData(request, ...names) ⇒ <code>object</code>
@@ -1170,6 +1230,34 @@ prints dom in order for changes to be more discernible.
 | expected | <code>object</code> |  | node from test domain page |
 | level | <code>number</code> | <code>0</code> | current level in recursion tree return dump of dom that is indented at every level by level*2 spaces |
 
+<a name="processQueue"></a>
+
+## processQueue(queue, fn, [maxConcurrent]) ⇒
+Processes the given queue concurrently. The handler functions can add more items to the queue
+if needed.
+
+**Kind**: global function  
+**Returns**: the results  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| queue | <code>Array.&lt;\*&gt;</code> |  | A list of tasks |
+| fn | <code>function</code> |  | A handler function `fn(task:any, queue:array, results:array)` |
+| [maxConcurrent] | <code>number</code> | <code>8</code> | Concurrency level |
+
+<a name="pruneEmptyValues"></a>
+
+## pruneEmptyValues(obj) ⇒ <code>object</code>
+Iterates over the properties of the given object and removes all empty values.
+A value is considered empty, if it's not truthy or an empty array.
+
+**Kind**: global function  
+**Returns**: <code>object</code> - the input object or {@code null} if the object is empty.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>object</code> | The object to prune. |
+
 <a name="multiline"></a>
 
 ## multiline()
@@ -1196,51 +1284,6 @@ at the start of the line). This prefix is simply removed
 from each line...
 
 **Kind**: global function  
-<a name="getData"></a>
-
-## getData(request, [opts]) ⇒ <code>Promise.&lt;object&gt;</code>
-Extracts the _data_ from the given request. The data can be provided either as request
-parameters, url-encoded form data body, or a json body.
-
-Note that for post body requests, the body is consumed from the request and is no longer
-available.
-
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;object&gt;</code> - the parsed data object.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| request | <code>Request</code> | The universal request |
-| [opts] | <code>BodyDataOptions</code> | Options |
-
-<a name="bodyData"></a>
-
-## bodyData(func, [opts]) ⇒ <code>UniversalFunction</code>
-Wraps a function with a body data middleware that extracts the request data.
-
-**Kind**: global function  
-**Returns**: <code>UniversalFunction</code> - an universal function with the added middleware.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| func | <code>UniversalFunction</code> | the universal function |
-| [opts] | <code>BodyDataOptions</code> | Options |
-
-<a name="processQueue"></a>
-
-## processQueue(queue, fn, [maxConcurrent]) ⇒
-Processes the given queue concurrently. The handler functions can add more items to the queue
-if needed.
-
-**Kind**: global function  
-**Returns**: the results  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| queue | <code>Array.&lt;\*&gt;</code> |  | A list of tasks |
-| fn | <code>function</code> |  | A handler function `fn(task:any, queue:array, results:array)` |
-| [maxConcurrent] | <code>number</code> | <code>8</code> | Concurrency level |
-
 <a name="lookupBackendResponses"></a>
 
 ## lookupBackendResponses(status) ⇒ <code>Object</code>
@@ -1253,4 +1296,71 @@ HTTP status codes and log levels for your service.
 | Param | Type | Description |
 | --- | --- | --- |
 | status | <code>int</code> | the HTTP status code you've been getting from the backend |
+
+<a name="computeSurrogateKey"></a>
+
+## computeSurrogateKey(url) ⇒ <code>string</code>
+Computes the caching Surrogate-Key for the given url. The computation uses a hmac_sha256
+with a fixed key: {@code "helix"}. the result is base64 encoded and truncated to 16 characters.
+This algorithm is chosen, because similar functionality exists in Fastly's VCL api:
+
+```
+declare local var.key STRING;
+set var.key = digest.hmac_sha256_base64("helix", "input");
+set var.key = regsub(var.key, "(.{16}).*", "\1");
+```
+
+**Kind**: global function  
+**Returns**: <code>string</code> - The computed key.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>\*</code> | The input url. |
+
+<a name="propagateStatusCode"></a>
+
+## propagateStatusCode(status) ⇒ <code>int</code>
+What is the appropriate status code to use in your service when your backend
+responds with `status`? This function provides a standardized lookup function
+to map backend responses to gateway responses, assuming you are implementing
+the gateway.
+
+**Kind**: global function  
+**Returns**: <code>int</code> - the appropriate HTTP status code for your app  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| status | <code>int</code> | the backend HTTP status code |
+
+<a name="logLevelForStatusCode"></a>
+
+## logLevelForStatusCode(status) ⇒ <code>string</code>
+What is the appropriate log level for logging HTTP responses you are getting
+from a backend when the backend responds with `status`? This function provides
+a standardized lookup function of backend status codes to log levels.
+
+You can use it like this:
+
+```javascript
+logger[logLevelForStatusCode(response.status)](response.message);
+```
+
+**Kind**: global function  
+**Returns**: <code>string</code> - the correct log level  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| status | <code>int</code> | the HTTP status code from your backend |
+
+<a name="cleanupHeaderValue"></a>
+
+## cleanupHeaderValue(value) ⇒
+Cleans up a header value by stripping invalid characters and truncating to 1024 chars
+
+**Kind**: global function  
+**Returns**: a valid header value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | a header value |
 

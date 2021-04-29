@@ -15,7 +15,7 @@
 const assert = require('assert');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { GitUrl } = require('@adobe/helix-shared-git');
-const { computeSurrogateKey } = require('../src/index.js');
+const { computeSurrogateKey } = require('../src/utils.js');
 
 describe('Surrogate Test', () => {
   it('computes a string', () => {

@@ -11,20 +11,24 @@
  */
 const { GitUrl } = require('@adobe/helix-shared-git');
 const utils = require('@adobe/helix-shared-utils');
+const prune = require('@adobe/helix-shared-prune');
 const wrap = require('@adobe/helix-shared-wrap');
+const Async = require('@adobe/helix-shared-async');
+const string = require('@adobe/helix-shared-string');
+const dom = require('@adobe/helix-shared-dom');
 const processQueue = require('@adobe/helix-shared-process-queue');
 const bodyData = require('@adobe/helix-shared-body-data');
-const HelixConfig = require('./HelixConfig.js');
-const IndexConfig = require('./IndexConfig');
-const MountConfig = require('./MountConfig');
-const RedirectConfig = require('./RedirectConfig');
-const Strain = require('./Strain.js');
-const string = require('./string.js');
-const dom = require('./dom.js');
-const Async = require('./async.js');
-const MarkupConfig = require('./MarkupConfig');
-const Condition = require('./Condition.js');
-const { optionalConfig, requiredConfig } = require('./config-wrapper');
+const {
+  HelixConfig,
+  IndexConfig,
+  MountConfig,
+  RedirectConfig,
+  Strain,
+  MarkupConfig,
+  Condition,
+  optionalConfig,
+  requiredConfig,
+} = require('@adobe/helix-shared-config');
 
 module.exports = {
   GitUrl,
@@ -35,7 +39,10 @@ module.exports = {
   Strain,
   string,
   dom,
-  utils,
+  utils: {
+    ...utils,
+    pruneEmptyValues: prune,
+  },
   MarkupConfig,
   async: Async,
   Condition,
@@ -44,4 +51,5 @@ module.exports = {
   requiredConfig,
   processQueue,
   bodyData,
+  prune,
 };

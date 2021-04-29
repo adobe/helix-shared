@@ -2,7 +2,7 @@
   "name": "@adobe/helix-shared-utils",
   "version": "0.0.9",
   "description": "Shared modules of the Helix Project - Utils",
-  "main": "src/index.js",
+  "main": "src/utils.js",
   "scripts": {
     "test": "nyc mocha",
     "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",

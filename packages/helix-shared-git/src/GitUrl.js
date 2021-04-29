@@ -12,7 +12,7 @@
 
 const { URL } = require('url');
 const YAML = require('yaml');
-const utils = require('@adobe/helix-shared-utils');
+const prune = require('@adobe/helix-shared-prune');
 
 const RAW_TYPE = 'raw';
 const API_TYPE = 'api';
@@ -285,7 +285,7 @@ class GitUrl {
       return this.toString();
     }
     if (opts && opts.minimal) {
-      return utils.pruneEmptyValues({
+      return prune({
         protocol: this._protocol,
         host: this._host,
         port: this._port,

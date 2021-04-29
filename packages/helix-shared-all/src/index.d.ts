@@ -11,6 +11,6 @@
  */
 export * from '@adobe/helix-shared-utils';
 export * from '@adobe/helix-shared-process-queue';
+export * from '@adobe/helix-shared-config';
 export * from '@adobe/helix-shared-wrap';
 export * from '@adobe/helix-shared-body-data';
-export * from './config-wrapper';

@@ -23,31 +23,15 @@
     "access": "public"
   },
   "dependencies": {
+    "@adobe/helix-shared-async": "*",
     "@adobe/helix-shared-body-data": "*",
     "@adobe/helix-shared-utils": "*",
+    "@adobe/helix-shared-prune": "*",
+    "@adobe/helix-shared-dom": "*",
+    "@adobe/helix-shared-config": "*",
+    "@adobe/helix-shared-string": "*",
     "@adobe/helix-shared-wrap": "*",
     "@adobe/helix-shared-process-queue": "*",
-    "@adobe/helix-shared-git": "*",
-    "@adobe/helix-fetch": "2.1.6",
-    "@adobe/helix-log": "5.0.0",
-    "ajv": "8.1.0",
-    "ajv-formats": "2.0.2",
-    "ferrum": "1.9.0",
-    "fs-extra": "9.1.0",
-    "lru-cache": "6.0.0",
-    "object-hash": "2.1.1",
-    "uri-js": "4.4.1",
-    "yaml": "1.10.0"
-  },
-  "devDependencies": {
-    "@adobe/helix-testutils": "0.4.3",
-    "@pollyjs/adapter-node-http": "5.1.0",
-    "@pollyjs/core": "5.1.0",
-    "@pollyjs/persister-fs": "5.0.0",
-    "jsdom": "16.4.0",
-    "nock": "13.0.9"
-  },
-  "optionalDependencies": {
-    "@adobe/helix-universal": "1.2.1"
+    "@adobe/helix-shared-git": "*"
   }
 }

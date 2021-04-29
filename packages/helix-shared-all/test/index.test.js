@@ -35,8 +35,21 @@ describe('Index tests', () => {
       'requiredConfig',
       'processQueue',
       'bodyData',
+      'prune',
     ];
     assert.deepEqual(Object.keys(index), exports);
     assert.deepEqual(exports.filter((name) => (!(name in index))), []);
+  });
+
+  it('exports utils', () => {
+    const exports = [
+      'computeSurrogateKey',
+      'propagateStatusCode',
+      'logLevelForStatusCode',
+      'cleanupHeaderValue',
+      'pruneEmptyValues',
+    ];
+    assert.deepEqual(Object.keys(index.utils), exports);
+    assert.deepEqual(exports.filter((name) => (!(name in index.utils))), []);
   });
 });

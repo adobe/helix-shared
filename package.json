@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Shared modules of the Helix Project - monorepo",
   "scripts": {
-    "docs:schema": "jsonschema2md -d packages/helix-shared-all/src/schemas -o docs -x docs -f yaml",
+    "docs:schema": "jsonschema2md -d packages/helix-shared-config/src/schemas -o docs -x docs -f yaml",
     "docs:api": "jsdoc2md -c .jsdoc.json --files packages/*/src/*.js > docs/API.md",
     "docs": "npm run docs:schema && npm run docs:api",
     "bootstrap": "lerna bootstrap",

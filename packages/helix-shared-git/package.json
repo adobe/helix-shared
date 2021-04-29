@@ -23,7 +23,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/helix-shared-utils": "*",
+    "@adobe/helix-shared-prune": "*",
     "yaml": "1.10.0"
   }
 }

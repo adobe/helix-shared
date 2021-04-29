@@ -11,8 +11,6 @@
  */
 const crypto = require('crypto');
 
-/* eslint-disable class-methods-use-this */
-
 /**
  * A glorified lookup table that translates backend errors into the appropriate
  * HTTP status codes and log levels for your service.
@@ -38,84 +36,67 @@ function lookupBackendResponses(status) {
   return { status, level: 'error' };
 }
 
-class Utils {
-  /**
-   * Iterates over the properties of the given object and removes all empty values.
-   * A value is considered empty, if it's not truthy or an empty array.
-   *
-   * @param {object} obj - The object to prune.
-   * @returns {object} the input object or {@code null} if the object is empty.
-   */
-  pruneEmptyValues(obj) {
-    const keys = Object.keys(obj);
-    let i = 0;
-    keys.forEach((k) => {
-      if (!obj[k] || (Array.isArray(obj[k]) && obj[k].length === 0)) {
-        // eslint-disable-next-line no-param-reassign
-        delete obj[k];
-        i += 1;
-      }
-    });
-    return keys.length === i ? null : obj;
-  }
-
-  /**
-   * Computes the caching Surrogate-Key for the given url. The computation uses a hmac_sha256
-   * with a fixed key: {@code "helix"}. the result is base64 encoded and truncated to 16 characters.
-   * This algorithm is chosen, because similar functionality exists in Fastly's VCL api:
-   *
-   * ```
-   * declare local var.key STRING;
-   * set var.key = digest.hmac_sha256_base64("helix", "input");
-   * set var.key = regsub(var.key, "(.{16}).*", "\1");
-   * ```
-   *
-   * @param {*} url - The input url.
-   * @returns {string} The computed key.
-   */
-  computeSurrogateKey(url) {
-    const hmac = crypto.createHmac('sha256', 'helix'); // lgtm [js/hardcoded-credentials]
-    hmac.update(String(url));
-    return hmac.digest('base64').substring(0, 16);
-  }
-
-  /**
-   * What is the appropriate status code to use in your service when your backend
-   * responds with `status`? This function provides a standardized lookup function
-   * to map backend responses to gateway responses, assuming you are implementing
-   * the gateway.
-   * @param {int} status the backend HTTP status code
-   * @returns {int} the appropriate HTTP status code for your app
-   */
-  propagateStatusCode(status) {
-    return lookupBackendResponses(status).status;
-  }
-
-  /**
-   * What is the appropriate log level for logging HTTP responses you are getting
-   * from a backend when the backend responds with `status`? This function provides
-   * a standardized lookup function of backend status codes to log levels.
-   *
-   * You can use it like this:
-   *
-   * ```javascript
-   * logger[logLevelForStatusCode(response.status)](response.message);
-   * ```
-   * @param {int} status the HTTP status code from your backend
-   * @returns {string} the correct log level
-   */
-  logLevelForStatusCode(status) {
-    return lookupBackendResponses(status).level;
-  }
-
-  /**
-   * Cleans up a header value by stripping invalid characters and truncating to 1024 chars
-   * @param {string} value a header value
-   * @returns a valid header value
-   */
-  cleanupHeaderValue(value) {
-    return value.replace(/[^\t\u0020-\u007E\u0080-\u00FF]/g, '').substr(0, 1024);
-  }
+/**
+ * Computes the caching Surrogate-Key for the given url. The computation uses a hmac_sha256
+ * with a fixed key: {@code "helix"}. the result is base64 encoded and truncated to 16 characters.
+ * This algorithm is chosen, because similar functionality exists in Fastly's VCL api:
+ *
+ * ```
+ * declare local var.key STRING;
+ * set var.key = digest.hmac_sha256_base64("helix", "input");
+ * set var.key = regsub(var.key, "(.{16}).*", "\1");
+ * ```
+ *
+ * @param {*} url - The input url.
+ * @returns {string} The computed key.
+ */
+function computeSurrogateKey(url) {
+  const hmac = crypto.createHmac('sha256', 'helix'); // lgtm [js/hardcoded-credentials]
+  hmac.update(String(url));
+  return hmac.digest('base64').substring(0, 16);
 }
 
-module.exports = new Utils();
+/**
+ * What is the appropriate status code to use in your service when your backend
+ * responds with `status`? This function provides a standardized lookup function
+ * to map backend responses to gateway responses, assuming you are implementing
+ * the gateway.
+ * @param {int} status the backend HTTP status code
+ * @returns {int} the appropriate HTTP status code for your app
+ */
+function propagateStatusCode(status) {
+  return lookupBackendResponses(status).status;
+}
+
+/**
+ * What is the appropriate log level for logging HTTP responses you are getting
+ * from a backend when the backend responds with `status`? This function provides
+ * a standardized lookup function of backend status codes to log levels.
+ *
+ * You can use it like this:
+ *
+ * ```javascript
+ * logger[logLevelForStatusCode(response.status)](response.message);
+ * ```
+ * @param {int} status the HTTP status code from your backend
+ * @returns {string} the correct log level
+ */
+function logLevelForStatusCode(status) {
+  return lookupBackendResponses(status).level;
+}
+
+/**
+ * Cleans up a header value by stripping invalid characters and truncating to 1024 chars
+ * @param {string} value a header value
+ * @returns a valid header value
+ */
+function cleanupHeaderValue(value) {
+  return value.replace(/[^\t\u0020-\u007E\u0080-\u00FF]/g, '').substr(0, 1024);
+}
+
+module.exports = {
+  computeSurrogateKey,
+  propagateStatusCode,
+  logLevelForStatusCode,
+  cleanupHeaderValue,
+};
