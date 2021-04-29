@@ -22,6 +22,9 @@ commands:
     - run:
         name: Installing Dependencies
         command: npm install
+    - run:
+        name: Bootstrap Lerna
+        command: npm run bootstrap
     - save_cache:
         paths:
         - node_modules
@@ -40,19 +43,21 @@ jobs:
     - run:
         name: Lint
         command: npm run lint
-
-    # test & get code coverage
     - run:
         name: Getting Code Coverage
-        command: circleci tests glob test/test*.js | circleci tests split --split-by=timings | xargs ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R mocha-junit-reporter --exit && npx codecov
-        environment:
-          MOCHA_FILE: junit/test-results.xml
-
+        command: npm run test-ci
     - store_test_results:
-        path: junit
-
-    - store_artifacts:
-        path: junit
+        path: packages/helix-shared-all/junit
+    - store_test_results:
+        path: packages/helix-shared-git/junit
+    - store_test_results:
+        path: packages/helix-shared-utils/junit
+    - store_test_results:
+        path: packages/helix-shared-wrap/junit
+    - store_test_results:
+        path: packages/helix-shared-process-queue/junit
+    - store_test_results:
+        path: packages/helix-shared-body-data/junit
 
 workflows:
   version: 2

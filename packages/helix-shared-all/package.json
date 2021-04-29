@@ -1,0 +1,37 @@
+{
+  "name": "@adobe/helix-shared",
+  "version": "7.21.0",
+  "description": "Shared modules of the Helix Project",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "test": "nyc mocha",
+    "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@adobe/helix-shared-async": "*",
+    "@adobe/helix-shared-body-data": "*",
+    "@adobe/helix-shared-utils": "*",
+    "@adobe/helix-shared-prune": "*",
+    "@adobe/helix-shared-dom": "*",
+    "@adobe/helix-shared-config": "*",
+    "@adobe/helix-shared-string": "*",
+    "@adobe/helix-shared-wrap": "*",
+    "@adobe/helix-shared-process-queue": "*",
+    "@adobe/helix-shared-git": "*"
+  }
+}

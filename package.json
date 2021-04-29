@@ -1,16 +1,17 @@
 {
-  "name": "@adobe/helix-shared",
-  "version": "7.29.1",
-  "description": "Shared modules of the Helix Project",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
+  "name": "@adobe/helix-shared-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Shared modules of the Helix Project - monorepo",
   "scripts": {
-    "semantic-release": "semantic-release",
-    "commit": "git-cz",
-    "docs": "npx jsonschema2md -d src/schemas -o docs -x docs -f yaml &&  npx jsdoc2md -c .jsdoc.json --files src/*.js > docs/API.md",
-    "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 95 --statements 98 --lines 98 mocha",
-    "lint": "./node_modules/.bin/eslint .",
-    "junit": "mocha --exit -R mocha-junit-reporter"
+    "docs:schema": "jsonschema2md -d packages/helix-shared-config/src/schemas -o docs -x docs -f yaml",
+    "docs:api": "jsdoc2md -c .jsdoc.json --files packages/*/src/*.js > docs/API.md",
+    "docs": "npm run docs:schema && npm run docs:api",
+    "bootstrap": "lerna bootstrap",
+    "test": "lerna run test --stream",
+    "test-ci": "lerna run test-ci --stream",
+    "lint": "lerna run lint --stream",
+    "semantic-release": "lerna publish --conventional-commits --create-release github --yes"
   },
   "repository": {
     "type": "git",
@@ -22,27 +23,9 @@
     "url": "https://github.com/adobe/helix-shared/issues"
   },
   "homepage": "https://github.com/adobe/helix-shared#readme",
-  "dependencies": {
-    "@adobe/helix-fetch": "2.2.0",
-    "@adobe/helix-log": "5.0.3",
-    "ajv": "8.1.0",
-    "ajv-formats": "2.0.2",
-    "ferrum": "1.9.0",
-    "fs-extra": "9.1.0",
-    "lru-cache": "6.0.0",
-    "object-hash": "2.1.1",
-    "uri-js": "4.4.1",
-    "yaml": "1.10.2"
-  },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
-    "@adobe/helix-testutils": "0.4.5",
     "@adobe/jsonschema2md": "6.0.2",
-    "@pollyjs/adapter-node-http": "5.1.0",
-    "@pollyjs/core": "5.1.0",
-    "@pollyjs/persister-fs": "5.0.0",
-    "@semantic-release/changelog": "5.0.1",
-    "@semantic-release/git": "9.0.0",
     "codecov": "3.8.1",
     "commitizen": "4.2.3",
     "cz-conventional-changelog": "3.3.0",
@@ -50,17 +33,12 @@
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-import": "2.22.1",
     "ghooks": "2.0.4",
-    "istanbul": "1.1.0-alpha.1",
-    "js-yaml": "4.1.0",
     "jsdoc-to-markdown": "7.0.1",
-    "jsdom": "16.5.3",
-    "junit-report-builder": "3.0.0",
+    "lerna": "4.0.0",
     "lint-staged": "10.5.4",
     "mocha": "8.3.2",
-    "mocha-junit-reporter": "2.0.0",
-    "nock": "13.0.11",
-    "nyc": "15.1.0",
-    "semantic-release": "17.4.2"
+    "mocha-multi-reporters": "1.5.1",
+    "nyc": "15.1.0"
   },
   "lint-staged": {
     "*.js": "eslint"

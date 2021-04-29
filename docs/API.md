@@ -35,9 +35,6 @@ module.exports.main = wrap(main)
 <dt><a href="#Condition">Condition</a></dt>
 <dd><p>Condition class</p>
 </dd>
-<dt><a href="#GitUrl">GitUrl</a></dt>
-<dd><p>Represents a GIT url.</p>
-</dd>
 <dt><a href="#Performance">Performance</a></dt>
 <dd><p>Performance Definition</p>
 </dd>
@@ -55,6 +52,9 @@ module.exports.main = wrap(main)
 </dd>
 <dt><a href="#Strains">Strains</a></dt>
 <dd><p>Strains</p>
+</dd>
+<dt><a href="#GitUrl">GitUrl</a></dt>
+<dd><p>Represents a GIT url.</p>
 </dd>
 </dl>
 
@@ -108,12 +108,6 @@ match zero, one or many dom nodes in the given node to test.</p>
 ## Functions
 
 <dl>
-<dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
-<dd></dd>
-<dt><a href="#stripQuery">stripQuery(m, ...specialparams)</a> ⇒ <code>object</code></dt>
-<dd><p>Cleans up the URL by removing parameters that are deemed special. These
-special parameters will be returned in the return object instead.</p>
-</dd>
 <dt><a href="#nextTick">nextTick()</a> ⇒ <code>promise</code></dt>
 <dd><p>Await the next tick;</p>
 <p>NOTE: Internally this uses setImmediate, not process.nextTick.
@@ -135,6 +129,15 @@ available.</p>
 </dd>
 <dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
 <dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
+</dd>
+<dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
+<dd></dd>
+<dt><a href="#stripQuery">stripQuery(m, ...specialparams)</a> ⇒ <code>object</code></dt>
+<dd><p>Cleans up the URL by removing parameters that are deemed special. These
+special parameters will be returned in the return object instead.</p>
+</dd>
+<dt><a href="#getData">getData(request, ...names)</a> ⇒ <code>object</code></dt>
+<dd><p>Exported only for testisg</p>
 </dd>
 <dt><a href="#isNodeType">isNodeType()</a></dt>
 <dd><p>Check whether the given type is the type of a dom node.  Note that, in
@@ -251,6 +254,10 @@ but provides better error messages.</p>
 <dd><p>Processes the given queue concurrently. The handler functions can add more items to the queue
 if needed.</p>
 </dd>
+<dt><a href="#pruneEmptyValues">pruneEmptyValues(obj)</a> ⇒ <code>object</code></dt>
+<dd><p>Iterates over the properties of the given object and removes all empty values.
+A value is considered empty, if it&#39;s not truthy or an empty array.</p>
+</dd>
 <dt><a href="#multiline">multiline()</a></dt>
 <dd><p>This is a helper for declaring multiline strings.</p>
 <pre><code>const s = multiline(`
@@ -273,6 +280,32 @@ from each line...</p>
 <dt><a href="#lookupBackendResponses">lookupBackendResponses(status)</a> ⇒ <code>Object</code></dt>
 <dd><p>A glorified lookup table that translates backend errors into the appropriate
 HTTP status codes and log levels for your service.</p>
+</dd>
+<dt><a href="#computeSurrogateKey">computeSurrogateKey(url)</a> ⇒ <code>string</code></dt>
+<dd><p>Computes the caching Surrogate-Key for the given url. The computation uses a hmac_sha256
+with a fixed key: {@code &quot;helix&quot;}. the result is base64 encoded and truncated to 16 characters.
+This algorithm is chosen, because similar functionality exists in Fastly&#39;s VCL api:</p>
+<pre><code>declare local var.key STRING;
+set var.key = digest.hmac_sha256_base64(&quot;helix&quot;, &quot;input&quot;);
+set var.key = regsub(var.key, &quot;(.{16}).*&quot;, &quot;\1&quot;);
+</code></pre>
+</dd>
+<dt><a href="#propagateStatusCode">propagateStatusCode(status)</a> ⇒ <code>int</code></dt>
+<dd><p>What is the appropriate status code to use in your service when your backend
+responds with <code>status</code>? This function provides a standardized lookup function
+to map backend responses to gateway responses, assuming you are implementing
+the gateway.</p>
+</dd>
+<dt><a href="#logLevelForStatusCode">logLevelForStatusCode(status)</a> ⇒ <code>string</code></dt>
+<dd><p>What is the appropriate log level for logging HTTP responses you are getting
+from a backend when the backend responds with <code>status</code>? This function provides
+a standardized lookup function of backend status codes to log levels.</p>
+<p>You can use it like this:</p>
+<pre><code class="language-javascript">logger[logLevelForStatusCode(response.status)](response.message);
+</code></pre>
+</dd>
+<dt><a href="#cleanupHeaderValue">cleanupHeaderValue(value)</a> ⇒</dt>
+<dd><p>Cleans up a header value by stripping invalid characters and truncating to 1024 chars</p>
 </dd>
 </dl>
 
@@ -444,169 +477,6 @@ Gets a list of all preflight headers used in this condition
 
 **Kind**: instance property of [<code>Condition</code>](#Condition)  
 **Returns**: String[]  
-<a name="GitUrl"></a>
-
-## GitUrl
-Represents a GIT url.
-
-**Kind**: global class  
-
-* [GitUrl](#GitUrl)
-    * [new GitUrl(url, defaults)](#new_GitUrl_new)
-    * _instance_
-        * [.raw](#GitUrl+raw) : <code>String</code>
-        * [.rawRoot](#GitUrl+rawRoot) : <code>String</code>
-        * [.apiRoot](#GitUrl+apiRoot) : <code>String</code>
-        * [.protocol](#GitUrl+protocol) : <code>String</code>
-        * [.hostname](#GitUrl+hostname) : <code>String</code>
-        * [.host](#GitUrl+host) : <code>String</code>
-        * [.port](#GitUrl+port) : <code>String</code>
-        * [.owner](#GitUrl+owner) : <code>String</code>
-        * [.repo](#GitUrl+repo) : <code>String</code>
-        * [.ref](#GitUrl+ref) : <code>String</code>
-        * [.path](#GitUrl+path) : <code>String</code>
-        * [.isLocal](#GitUrl+isLocal) ⇒ <code>boolean</code>
-        * [.equalsIgnoreTransport(other)](#GitUrl+equalsIgnoreTransport) ⇒ <code>boolean</code>
-        * [.toString()](#GitUrl+toString) ⇒ <code>String</code>
-        * [.toJSON()](#GitUrl+toJSON) ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
-    * _inner_
-        * [~JSON](#GitUrl..JSON) : <code>Object</code>
-
-<a name="new_GitUrl_new"></a>
-
-### new GitUrl(url, defaults)
-Creates a new GitUrl either from a String URL or from a serialized object. The string must be
-of the format "<scheme>://<hostname>[:<port>]/<owner>/<repo>.git[/<path>][#ref>]".
-
-see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| url | <code>String</code> \| [<code>JSON</code>](#GitUrl..JSON) | URL or object defining the new git url. |
-| defaults | [<code>JSON</code>](#GitUrl..JSON) | Defaults for missing properties in the `url` param. |
-
-<a name="GitUrl+raw"></a>
-
-### gitUrl.raw : <code>String</code>
-The raw github url in the form 'https://raw.github.com/owner/repo/ref`. In case the
-[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/raw/owner/repo/ref`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+rawRoot"></a>
-
-### gitUrl.rawRoot : <code>String</code>
-Root of the raw github url in the form 'https://raw.github.com`. In case the
-[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/raw`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+apiRoot"></a>
-
-### gitUrl.apiRoot : <code>String</code>
-Root of the github api in the form 'https://api.github.com`. In case the
-[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/api`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+protocol"></a>
-
-### gitUrl.protocol : <code>String</code>
-Protocol of the URL. eg `https`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+hostname"></a>
-
-### gitUrl.hostname : <code>String</code>
-Hostname of the repository provider. eg `github.com`
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+host"></a>
-
-### gitUrl.host : <code>String</code>
-Host of the repository provider. eg `localhost:44245`
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+port"></a>
-
-### gitUrl.port : <code>String</code>
-Port of the repository provider.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+owner"></a>
-
-### gitUrl.owner : <code>String</code>
-Repository owner.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+repo"></a>
-
-### gitUrl.repo : <code>String</code>
-Repository name (without .git extension).
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+ref"></a>
-
-### gitUrl.ref : <code>String</code>
-Repository ref, such as `master`.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+path"></a>
-
-### gitUrl.path : <code>String</code>
-Resource path. eg `/README.md`
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+isLocal"></a>
-
-### gitUrl.isLocal ⇒ <code>boolean</code>
-Checks if this git url is _local_. A git-url is considered local if hostname is `localhost` and
-the owner is `local` and the repo name is `default`. This is specific to helix.
-
-**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
-<a name="GitUrl+equalsIgnoreTransport"></a>
-
-### gitUrl.equalsIgnoreTransport(other) ⇒ <code>boolean</code>
-Tests if this GitUrl is equal to `other` but ignores transport properties, such as protocol,
-user and password.
-
-**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| other | [<code>GitUrl</code>](#GitUrl) | the url to compare to |
-
-<a name="GitUrl+toString"></a>
-
-### gitUrl.toString() ⇒ <code>String</code>
-String representation of the git url.
-
-**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
-**Returns**: <code>String</code> - url.  
-<a name="GitUrl+toJSON"></a>
-
-### gitUrl.toJSON() ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
-Returns a plain object representation.
-
-**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
-**Returns**: [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code> - A plain object suitable for serialization.  
-<a name="GitUrl..JSON"></a>
-
-### GitUrl~JSON : <code>Object</code>
-JSON Serialization of GitUrl
-
-**Kind**: inner typedef of [<code>GitUrl</code>](#GitUrl)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| protocol | <code>String</code> | Transport protocol |
-| hostname | <code>String</code> | Repository provider host name |
-| port | <code>String</code> | Repository provider port |
-| host | <code>String</code> | Repository provider hostname and port. |
-| owner | <code>String</code> | Repository owner |
-| repo | <code>String</code> | Repository name |
-| ref | <code>String</code> | Repository reference, such as `master` |
-| path | <code>String</code> | Relative path to the resource |
-
 <a name="Performance"></a>
 
 ## Performance
@@ -850,6 +720,169 @@ Creates the strains from a yaml node
 | --- | --- |
 | node | <code>YAMLSeq</code> | 
 
+<a name="GitUrl"></a>
+
+## GitUrl
+Represents a GIT url.
+
+**Kind**: global class  
+
+* [GitUrl](#GitUrl)
+    * [new GitUrl(url, defaults)](#new_GitUrl_new)
+    * _instance_
+        * [.raw](#GitUrl+raw) : <code>String</code>
+        * [.rawRoot](#GitUrl+rawRoot) : <code>String</code>
+        * [.apiRoot](#GitUrl+apiRoot) : <code>String</code>
+        * [.protocol](#GitUrl+protocol) : <code>String</code>
+        * [.hostname](#GitUrl+hostname) : <code>String</code>
+        * [.host](#GitUrl+host) : <code>String</code>
+        * [.port](#GitUrl+port) : <code>String</code>
+        * [.owner](#GitUrl+owner) : <code>String</code>
+        * [.repo](#GitUrl+repo) : <code>String</code>
+        * [.ref](#GitUrl+ref) : <code>String</code>
+        * [.path](#GitUrl+path) : <code>String</code>
+        * [.isLocal](#GitUrl+isLocal) ⇒ <code>boolean</code>
+        * [.equalsIgnoreTransport(other)](#GitUrl+equalsIgnoreTransport) ⇒ <code>boolean</code>
+        * [.toString()](#GitUrl+toString) ⇒ <code>String</code>
+        * [.toJSON()](#GitUrl+toJSON) ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
+    * _inner_
+        * [~JSON](#GitUrl..JSON) : <code>Object</code>
+
+<a name="new_GitUrl_new"></a>
+
+### new GitUrl(url, defaults)
+Creates a new GitUrl either from a String URL or from a serialized object. The string must be
+of the format "<scheme>://<hostname>[:<port>]/<owner>/<repo>.git[/<path>][#ref>]".
+
+see https://www.git-scm.com/docs/git-clone#_git_urls_a_id_urls_a
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>String</code> \| [<code>JSON</code>](#GitUrl..JSON) | URL or object defining the new git url. |
+| defaults | [<code>JSON</code>](#GitUrl..JSON) | Defaults for missing properties in the `url` param. |
+
+<a name="GitUrl+raw"></a>
+
+### gitUrl.raw : <code>String</code>
+The raw github url in the form 'https://raw.github.com/owner/repo/ref`. In case the
+[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/raw/owner/repo/ref`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+rawRoot"></a>
+
+### gitUrl.rawRoot : <code>String</code>
+Root of the raw github url in the form 'https://raw.github.com`. In case the
+[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/raw`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+apiRoot"></a>
+
+### gitUrl.apiRoot : <code>String</code>
+Root of the github api in the form 'https://api.github.com`. In case the
+[#host](#host) is an IP, the returned url is of the form 'https://xxx.xxx.xxx.xxx/api`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+protocol"></a>
+
+### gitUrl.protocol : <code>String</code>
+Protocol of the URL. eg `https`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+hostname"></a>
+
+### gitUrl.hostname : <code>String</code>
+Hostname of the repository provider. eg `github.com`
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+host"></a>
+
+### gitUrl.host : <code>String</code>
+Host of the repository provider. eg `localhost:44245`
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+port"></a>
+
+### gitUrl.port : <code>String</code>
+Port of the repository provider.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+owner"></a>
+
+### gitUrl.owner : <code>String</code>
+Repository owner.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+repo"></a>
+
+### gitUrl.repo : <code>String</code>
+Repository name (without .git extension).
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+ref"></a>
+
+### gitUrl.ref : <code>String</code>
+Repository ref, such as `master`.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+path"></a>
+
+### gitUrl.path : <code>String</code>
+Resource path. eg `/README.md`
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+isLocal"></a>
+
+### gitUrl.isLocal ⇒ <code>boolean</code>
+Checks if this git url is _local_. A git-url is considered local if hostname is `localhost` and
+the owner is `local` and the repo name is `default`. This is specific to helix.
+
+**Kind**: instance property of [<code>GitUrl</code>](#GitUrl)  
+<a name="GitUrl+equalsIgnoreTransport"></a>
+
+### gitUrl.equalsIgnoreTransport(other) ⇒ <code>boolean</code>
+Tests if this GitUrl is equal to `other` but ignores transport properties, such as protocol,
+user and password.
+
+**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| other | [<code>GitUrl</code>](#GitUrl) | the url to compare to |
+
+<a name="GitUrl+toString"></a>
+
+### gitUrl.toString() ⇒ <code>String</code>
+String representation of the git url.
+
+**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
+**Returns**: <code>String</code> - url.  
+<a name="GitUrl+toJSON"></a>
+
+### gitUrl.toJSON() ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
+Returns a plain object representation.
+
+**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
+**Returns**: [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code> - A plain object suitable for serialization.  
+<a name="GitUrl..JSON"></a>
+
+### GitUrl~JSON : <code>Object</code>
+JSON Serialization of GitUrl
+
+**Kind**: inner typedef of [<code>GitUrl</code>](#GitUrl)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| protocol | <code>String</code> | Transport protocol |
+| hostname | <code>String</code> | Repository provider host name |
+| port | <code>String</code> | Repository provider port |
+| host | <code>String</code> | Repository provider hostname and port. |
+| owner | <code>String</code> | Repository owner |
+| repo | <code>String</code> | Repository name |
+| ref | <code>String</code> | Repository reference, such as `master` |
+| path | <code>String</code> | Relative path to the resource |
+
 <a name="configMapper"></a>
 
 ## configMapper
@@ -921,31 +954,6 @@ match zero, one or many dom nodes in the given node to test.
 | node | <code>DomNode</code> | 
 | pattern | <code>DomNode</code> | 
 
-<a name="ResolveFn"></a>
-
-## ResolveFn(left, right)
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| left | [<code>Strain</code>](#Strain) | the current candidate strain (can be undefined) |
-| right | [<code>Strain</code>](#Strain) | the alternative candidate strain (can be undefined) |
-
-<a name="stripQuery"></a>
-
-## stripQuery(m, ...specialparams) ⇒ <code>object</code>
-Cleans up the URL by removing parameters that are deemed special. These
-special parameters will be returned in the return object instead.
-
-**Kind**: global function  
-**Returns**: <code>object</code> - an object with a clean URL and extracted parameters  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| m | <code>object</code> | the mount point |
-| m.url | <code>string</code> | mount point URL |
-| ...specialparams | <code>string</code> | list of special parameters that should be removed from the URL and returned in the object |
-
 <a name="nextTick"></a>
 
 ## nextTick() ⇒ <code>promise</code>
@@ -997,6 +1005,44 @@ Wraps a function with a body data middleware that extracts the request data.
 | --- | --- | --- |
 | func | <code>UniversalFunction</code> | the universal function |
 | [opts] | <code>BodyDataOptions</code> | Options |
+
+<a name="ResolveFn"></a>
+
+## ResolveFn(left, right)
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| left | [<code>Strain</code>](#Strain) | the current candidate strain (can be undefined) |
+| right | [<code>Strain</code>](#Strain) | the alternative candidate strain (can be undefined) |
+
+<a name="stripQuery"></a>
+
+## stripQuery(m, ...specialparams) ⇒ <code>object</code>
+Cleans up the URL by removing parameters that are deemed special. These
+special parameters will be returned in the return object instead.
+
+**Kind**: global function  
+**Returns**: <code>object</code> - an object with a clean URL and extracted parameters  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| m | <code>object</code> | the mount point |
+| m.url | <code>string</code> | mount point URL |
+| ...specialparams | <code>string</code> | list of special parameters that should be removed from the URL and returned in the object |
+
+<a name="getData"></a>
+
+## getData(request, ...names) ⇒ <code>object</code>
+Exported only for testisg
+
+**Kind**: global function  
+**Returns**: <code>object</code> - an object with the provided parameter names as keys  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>Request</code> | a fetch-API Request |
+| ...names | <code>string</code> | the parameter names to extract |
 
 <a name="isNodeType"></a>
 
@@ -1199,6 +1245,19 @@ if needed.
 | fn | <code>function</code> |  | A handler function `fn(task:any, queue:array, results:array)` |
 | [maxConcurrent] | <code>number</code> | <code>8</code> | Concurrency level |
 
+<a name="pruneEmptyValues"></a>
+
+## pruneEmptyValues(obj) ⇒ <code>object</code>
+Iterates over the properties of the given object and removes all empty values.
+A value is considered empty, if it's not truthy or an empty array.
+
+**Kind**: global function  
+**Returns**: <code>object</code> - the input object or {@code null} if the object is empty.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>object</code> | The object to prune. |
+
 <a name="multiline"></a>
 
 ## multiline()
@@ -1237,4 +1296,71 @@ HTTP status codes and log levels for your service.
 | Param | Type | Description |
 | --- | --- | --- |
 | status | <code>int</code> | the HTTP status code you've been getting from the backend |
+
+<a name="computeSurrogateKey"></a>
+
+## computeSurrogateKey(url) ⇒ <code>string</code>
+Computes the caching Surrogate-Key for the given url. The computation uses a hmac_sha256
+with a fixed key: {@code "helix"}. the result is base64 encoded and truncated to 16 characters.
+This algorithm is chosen, because similar functionality exists in Fastly's VCL api:
+
+```
+declare local var.key STRING;
+set var.key = digest.hmac_sha256_base64("helix", "input");
+set var.key = regsub(var.key, "(.{16}).*", "\1");
+```
+
+**Kind**: global function  
+**Returns**: <code>string</code> - The computed key.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>\*</code> | The input url. |
+
+<a name="propagateStatusCode"></a>
+
+## propagateStatusCode(status) ⇒ <code>int</code>
+What is the appropriate status code to use in your service when your backend
+responds with `status`? This function provides a standardized lookup function
+to map backend responses to gateway responses, assuming you are implementing
+the gateway.
+
+**Kind**: global function  
+**Returns**: <code>int</code> - the appropriate HTTP status code for your app  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| status | <code>int</code> | the backend HTTP status code |
+
+<a name="logLevelForStatusCode"></a>
+
+## logLevelForStatusCode(status) ⇒ <code>string</code>
+What is the appropriate log level for logging HTTP responses you are getting
+from a backend when the backend responds with `status`? This function provides
+a standardized lookup function of backend status codes to log levels.
+
+You can use it like this:
+
+```javascript
+logger[logLevelForStatusCode(response.status)](response.message);
+```
+
+**Kind**: global function  
+**Returns**: <code>string</code> - the correct log level  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| status | <code>int</code> | the HTTP status code from your backend |
+
+<a name="cleanupHeaderValue"></a>
+
+## cleanupHeaderValue(value) ⇒
+Cleans up a header value by stripping invalid characters and truncating to 1024 chars
+
+**Kind**: global function  
+**Returns**: a valid header value  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | a header value |
 

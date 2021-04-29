@@ -1,0 +1,48 @@
+{
+  "name": "@adobe/helix-shared-config",
+  "version": "7.21.0",
+  "description": "Shared modules of the Helix Project - config",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "test": "nyc mocha",
+    "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@adobe/helix-fetch": "2.1.6",
+    "@adobe/helix-shared-prune": "*",
+    "@adobe/helix-shared-git": "*",
+    "@adobe/helix-shared-utils": "*",
+    "ajv": "8.1.0",
+    "ajv-formats": "2.0.2",
+    "ferrum": "1.9.0",
+    "fs-extra": "9.1.0",
+    "lru-cache": "6.0.0",
+    "object-hash": "2.1.1",
+    "uri-js": "4.4.1",
+    "yaml": "1.10.0"
+  },
+  "devDependencies": {
+    "@adobe/helix-shared-wrap": "*",
+    "@adobe/helix-log": "5.0.0",
+    "@adobe/helix-testutils": "0.4.3",
+    "@pollyjs/adapter-node-http": "5.1.0",
+    "@pollyjs/core": "5.1.0",
+    "@pollyjs/persister-fs": "5.0.0",
+    "nock": "13.0.9"
+  }
+}
