@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-config",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared modules of the Helix Project - config",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "@adobe/helix-fetch": "2.2.0",
-    "@adobe/helix-shared-git": "^1.0.0",
+    "@adobe/helix-shared-git": "^1.0.1",
     "@adobe/helix-shared-prune": "^1.0.0",
-    "@adobe/helix-shared-utils": "^1.0.0",
+    "@adobe/helix-shared-utils": "^1.0.1",
     "ajv": "8.1.0",
     "ajv-formats": "2.0.2",
     "ferrum": "1.9.0",

@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared modules of the Helix Project - Utils",
   "main": "src/utils.js",
   "scripts": {
@@ -22,6 +22,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@adobe/helix-shared-git": "^1.0.0"
+    "@adobe/helix-shared-git": "^1.0.1"
   }
 }
