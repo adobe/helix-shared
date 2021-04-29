@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared",
-  "version": "7.21.0",
+  "version": "7.21.1",
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -23,15 +23,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/helix-shared-async": "*",
-    "@adobe/helix-shared-body-data": "*",
-    "@adobe/helix-shared-utils": "*",
-    "@adobe/helix-shared-prune": "*",
-    "@adobe/helix-shared-dom": "*",
-    "@adobe/helix-shared-config": "*",
-    "@adobe/helix-shared-string": "*",
-    "@adobe/helix-shared-wrap": "*",
-    "@adobe/helix-shared-process-queue": "*",
-    "@adobe/helix-shared-git": "*"
+    "@adobe/helix-shared-async": "^0.0.10",
+    "@adobe/helix-shared-body-data": "^0.0.10",
+    "@adobe/helix-shared-config": "^7.21.1",
+    "@adobe/helix-shared-dom": "^0.0.10",
+    "@adobe/helix-shared-git": "^0.0.10",
+    "@adobe/helix-shared-process-queue": "^0.0.10",
+    "@adobe/helix-shared-prune": "^0.0.10",
+    "@adobe/helix-shared-string": "^0.0.10",
+    "@adobe/helix-shared-utils": "^0.0.10",
+    "@adobe/helix-shared-wrap": "^0.0.10"
   }
 }

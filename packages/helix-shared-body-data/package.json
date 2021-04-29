@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-body-data",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Shared modules of the Helix Project - body-data",
   "main": "src/body-data-wrapper.js",
   "types": "src/body-data-wrapper.d.ts",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@adobe/helix-fetch": "2.1.6",
-    "@adobe/helix-shared-wrap": "*"
+    "@adobe/helix-shared-wrap": "^0.0.10"
   },
   "optionalDependencies": {
     "@adobe/helix-universal": "1.2.1"
