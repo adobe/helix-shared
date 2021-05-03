@@ -27,14 +27,14 @@
     "@adobe/helix-shared-git": "^1.0.2",
     "@adobe/helix-shared-prune": "^1.0.0",
     "@adobe/helix-shared-utils": "^1.0.2",
-    "ajv": "8.1.0",
+    "ajv": "8.2.0",
     "ajv-formats": "2.0.2",
     "ferrum": "1.9.0",
     "fs-extra": "9.1.0",
     "lru-cache": "6.0.0",
     "object-hash": "2.1.1",
     "uri-js": "4.4.1",
-    "yaml": "1.10.0"
+    "yaml": "1.10.2"
   },
   "devDependencies": {
     "@adobe/helix-log": "5.0.3",
@@ -43,6 +43,6 @@
     "@pollyjs/adapter-node-http": "5.1.0",
     "@pollyjs/core": "5.1.0",
     "@pollyjs/persister-fs": "5.0.0",
-    "nock": "13.0.9"
+    "nock": "13.0.11"
   }
 }
