@@ -79,7 +79,9 @@ function getAuthHeaderValue({ headers }) {
 
 function wrap(func, required, ...configs) {
   return async (request, context) => {
-    const { owner, repo, ref } = await getData(request, 'owner', 'repo', 'ref');
+    const { owner, repo, ref } = context.data
+      ? context.data
+      : await getData(request, 'owner', 'repo', 'ref');
     const {
       transactionId,
     } = context.invocation || {};
