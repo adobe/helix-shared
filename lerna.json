@@ -6,7 +6,11 @@
   "command": {
     "version": {
       "message": "chore(release): publish new version(s) [skip ci]",
-      "allowBranch": "main"
+      "allowBranch": "main",
+      "ignoreChanges": [
+        "package-lock.json",
+        "**/package-lock.json"
+      ]
     }
   }
 }
