@@ -55,6 +55,18 @@
       "allowedVersions": "<6.0.0"
     },
     {
+      "packageNames": ["hast-util-from-dom"],
+      "allowedVersions": "<4.0.0"
+    },
+    {
+      "packageNames": ["hast-util-to-html"],
+      "allowedVersions": "<8.0.0"
+    },
+    {
+      "packageNames": ["hastscript"],
+      "allowedVersions": "<7.0.0"
+    },
+    {
       "groupName": "adobe fixes",
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
