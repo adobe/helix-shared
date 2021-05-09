@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.0.3...@adobe/helix-shared-config@1.0.4) (2021-05-09)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#506](https://github.com/adobe/helix-shared/issues/506)) ([6f237fe](https://github.com/adobe/helix-shared/commit/6f237fe13e87015265a31e0ce2ce3e0dc9d43c4d))
+
+
+
+
+
 ## [1.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.0.2...@adobe/helix-shared-config@1.0.3) (2021-05-03)
 
 
