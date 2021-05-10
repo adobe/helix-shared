@@ -17,19 +17,20 @@
   "meta:status": "stabilizing",
   "description": "A JSON representation of an Excel or Google Sheets workbook containing multiple sheets.",
   "properties": {
-    "type": {
+    ":type": {
       "const": "multi-sheet",
       "description": "The response type, depending on the presence of the `sheet` request parameter."
     },
-    "names": {
+    ":names": {
       "type": "array",
       "description": "The list of sheet names that exist in the workbook response.",
       "items": {
         "type": "string",
-        "description": "The sheet name"
+        "description": "The sheet name. Sheet names may not start with `:`",
+        "pattern": "^[^:].*"
       }
     },
-    "version": {
+    ":version": {
       "type": "number",
       "enum": [
         3
@@ -38,10 +39,11 @@
       "description": "The workbook response format version"
     }
   },
-  "additionalProperties": {
-    "$ref": "https://ns.adobe.com/helix/data-embed/sheet"
+  "patternProperties": {
+    "^[^:].*": { "$ref": "https://ns.adobe.com/helix/data-embed/sheet" }
   },
+  "additionalProperties": false,
   "required": [
-    "names"
+    ":names"
   ]
 }

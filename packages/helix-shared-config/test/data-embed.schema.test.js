@@ -30,8 +30,8 @@ describe('Data Embed Schema', () => {
   it('Accepts empty single sheet response', () => {
     const vali = new DataEmbedValidator();
     vali.assertValid({
-      version: 3,
-      type: 'sheet',
+      ':version': 3,
+      ':type': 'sheet',
       data: [],
       limit: 0,
       offset: 0,
@@ -42,9 +42,9 @@ describe('Data Embed Schema', () => {
   it('Accepts empty multi sheet response', () => {
     const vali = new DataEmbedValidator();
     vali.assertValid({
-      version: 3,
-      type: 'multi-sheet',
-      names: ['one'],
+      ':version': 3,
+      ':type': 'multi-sheet',
+      ':names': ['one'],
       one: {
         data: [],
         limit: 0,
@@ -59,9 +59,30 @@ describe('Data Embed Schema', () => {
 
     try {
       vali.assertValid({
-        type: 'multi-sheet',
-        names: ['one'],
+        ':type': 'multi-sheet',
+        ':names': ['one'],
         one: {
+          data: [],
+          limit: 0,
+          offset: 0,
+          total: 0,
+        },
+      });
+      assert.fail('This should throw');
+    } catch (e) {
+      assert.notEqual(e.message, 'This should throw');
+    }
+  });
+
+  it('Rejects prefixed properties (multi)', () => {
+    const vali = new DataEmbedValidator();
+
+    try {
+      vali.assertValid({
+        ':version': 3,
+        ':type': 'multi-sheet',
+        ':names': [':one'],
+        ':one': {
           data: [],
           limit: 0,
           offset: 0,
@@ -79,7 +100,7 @@ describe('Data Embed Schema', () => {
 
     try {
       vali.assertValid({
-        type: 'sheet',
+        ':type': 'sheet',
         data: [],
         limit: 0,
         offset: 0,
@@ -96,8 +117,8 @@ describe('Data Embed Schema', () => {
 
     try {
       vali.assertValid({
-        version: 3,
-        type: 'beet',
+        ':version': 3,
+        ':type': 'beet',
         data: [],
         limit: 0,
         offset: 0,

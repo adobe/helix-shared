@@ -17,7 +17,7 @@
   "meta:status": "stabilizing",
   "description": "A JSON representation of an Excel or Google Sheets worksheet containing rows and columns.",
   "properties": {
-    "type": {
+    ":type": {
       "const": "sheet",
       "description": "The response type, depending on the presence of the `sheet` request parameter."
     },
@@ -43,7 +43,7 @@
         "$ref": "https://ns.adobe.com/helix/data-embed/row"
       }
     },
-    "version": {
+    ":version": {
       "type": "number",
       "enum": [3],
       "default": 3,
