@@ -28,6 +28,14 @@
         "type": "string",
         "description": "The sheet name"
       }
+    },
+    "version": {
+      "type": "number",
+      "enum": [
+        3
+      ],
+      "default": 3,
+      "description": "The workbook response format version"
     }
   },
   "additionalProperties": {
