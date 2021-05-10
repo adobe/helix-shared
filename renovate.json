@@ -67,6 +67,10 @@
       "allowedVersions": "<7.0.0"
     },
     {
+      "packageNames": ["circleci/node"],
+      "allowedVersions": "12"
+    },
+    {
       "groupName": "adobe fixes",
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
