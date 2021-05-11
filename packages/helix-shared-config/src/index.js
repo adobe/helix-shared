@@ -17,6 +17,7 @@ const Strain = require('./Strain.js');
 const MarkupConfig = require('./MarkupConfig');
 const Condition = require('./Condition.js');
 const { optionalConfig, requiredConfig } = require('./config-wrapper');
+const DataEmbedValidator = require('./DataEmbedValidator.js');
 
 module.exports = {
   HelixConfig,
@@ -28,4 +29,5 @@ module.exports = {
   Condition,
   optionalConfig,
   requiredConfig,
+  DataEmbedValidator,
 };
