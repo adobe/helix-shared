@@ -40,6 +40,10 @@
 
 *   [Redirects Configuration](./redirects.md "This configuration file enables the creation of programmatic redirects, rewrites, and vanity URLs") – `https://ns.adobe.com/helix/shared/redirects`
 
+*   [Response](./data-embed-response.md "The Helix Data Embed Response format") – `https://ns.adobe.com/helix/data-embed/response`
+
+*   [Row](./row.md "A JSON representation of an Excel or Google Sheets data row") – `https://ns.adobe.com/helix/data-embed/row`
+
 *   [Runtime Strain](./runtimestrain.md "A runtime strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/runtimestrain`
 
 *   [Strains](./strains.md) – `https://ns.adobe.com/helix/shared/strains`
@@ -47,6 +51,10 @@
 *   [Vanity URL mapping](./vanity.md) – `https://ns.adobe.com/helix/shared/vanity`
 
 *   [Version Lock](./version-lock.md "The version-lock property allows pinning of specific services to a particular version number") – `https://ns.adobe.com/helix/shared/version-lock`
+
+*   [Workbook](./workbook.md "A JSON representation of an Excel or Google Sheets workbook containing multiple sheets") – `https://ns.adobe.com/helix/data-embed/workbook`
+
+*   [Worksheet](./sheet.md "A JSON representation of an Excel or Google Sheets worksheet containing rows and columns") – `https://ns.adobe.com/helix/data-embed/sheet`
 
 ## Other Schemas
 
@@ -78,6 +86,8 @@
 
 *   [Redirect Rule](./proxystrain-properties-redirects-redirect-rule.md "A strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/redirectrule#/properties/redirects/items`
 
+*   [Row](./sheet-properties-data-row.md "A JSON representation of an Excel or Google Sheets data row") – `https://ns.adobe.com/helix/data-embed/row#/properties/data/items`
+
 *   [Runtime Strain](./strains-definitions-anystrain-oneof-runtime-strain.md "A runtime strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/runtimestrain#/definitions/anystrain/oneOf/1`
 
 *   [Single-Value Property](./property-oneof-single-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/0`
@@ -105,6 +115,10 @@
 *   [Vanity URL mapping](./redirects-properties-vanity-url-extractor-vanity-url-mapping.md) – `https://ns.adobe.com/helix/shared/vanity#/properties/vanity/additionalProperties`
 
 *   [Version Lock](./proxystrain-properties-version-lock.md) – `https://ns.adobe.com/helix/shared/version-lock#/properties/version-lock`
+
+*   [Workbook](./data-embed-response-allof-0-oneof-workbook.md "A JSON representation of an Excel or Google Sheets workbook containing multiple sheets") – `https://ns.adobe.com/helix/data-embed/workbook#/allOf/0/oneOf/1`
+
+*   [Worksheet](./data-embed-response-allof-0-oneof-worksheet.md "A JSON representation of an Excel or Google Sheets worksheet containing rows and columns") – `https://ns.adobe.com/helix/data-embed/sheet#/allOf/0/oneOf/0`
 
 ### Arrays
 
@@ -161,6 +175,14 @@
 *   [Untitled array in Strains](./strains-oneof-0.md "A list of strains") – `https://ns.adobe.com/helix/shared/strains#/oneOf/0`
 
 *   [Untitled array in Strains](./strains-oneof-0.md "A list of strains") – `https://ns.adobe.com/helix/shared/strains#/oneOf/0`
+
+*   [Untitled array in Workbook](./workbook-properties-names.md "The list of sheet names that exist in the workbook response") – `https://ns.adobe.com/helix/data-embed/workbook#/properties/:names`
+
+*   [Untitled array in Workbook](./workbook-properties-names.md "The list of sheet names that exist in the workbook response") – `https://ns.adobe.com/helix/data-embed/workbook#/properties/:names`
+
+*   [Untitled array in Worksheet](./sheet-properties-data.md "The data rows that are part of the result set") – `https://ns.adobe.com/helix/data-embed/sheet#/properties/data`
+
+*   [Untitled array in Worksheet](./sheet-properties-data.md "The data rows that are part of the result set") – `https://ns.adobe.com/helix/data-embed/sheet#/properties/data`
 
 ## Version Note
 
