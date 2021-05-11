@@ -63,8 +63,16 @@
       "allowedVersions": "<8.0.0"
     },
     {
+      "packageNames": ["hast-util-to-mdast"],
+      "allowedVersions": "<8.0.0"
+    },
+    {
       "packageNames": ["hastscript"],
       "allowedVersions": "<7.0.0"
+    },
+    {
+      "packageNames": ["escape-string-regexp"],
+      "allowedVersions": "<5.0.0"
     },
     {
       "packageNames": ["circleci/node"],

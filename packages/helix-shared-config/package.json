@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-config",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Shared modules of the Helix Project - config",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -30,7 +30,7 @@
     "ajv": "8.3.0",
     "ajv-formats": "2.1.0",
     "ferrum": "1.9.0",
-    "fs-extra": "9.1.0",
+    "fs-extra": "10.0.0",
     "lru-cache": "6.0.0",
     "object-hash": "2.1.1",
     "uri-js": "4.4.1",
