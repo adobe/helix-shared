@@ -67,6 +67,10 @@
       "allowedVersions": "<7.0.0"
     },
     {
+      "packageNames": ["escape-string-regexp"],
+      "allowedVersions": "<5.0.0"
+    },
+    {
       "packageNames": ["circleci/node"],
       "allowedVersions": "12"
     },
