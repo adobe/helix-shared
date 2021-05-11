@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.0.5...@adobe/helix-shared-config@1.1.0) (2021-05-11)
+
+
+### Features
+
+* **schema:** add schemas for helix-data-embed ([#507](https://github.com/adobe/helix-shared/issues/507)) ([4563e25](https://github.com/adobe/helix-shared/commit/4563e25994656bd0c64a0047c4304d06843897cb)), closes [/github.com/adobe/helix-data-embed/pull/356#issuecomment-836357581](https://github.com//github.com/adobe/helix-data-embed/pull/356/issues/issuecomment-836357581)
+
+
+
+
+
 ## [1.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.0.4...@adobe/helix-shared-config@1.0.5) (2021-05-11)
 
 **Note:** Version bump only for package @adobe/helix-shared-config
