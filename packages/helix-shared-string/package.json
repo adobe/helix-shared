@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-string",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Shared modules of the Helix Project - string",
   "main": "src/string.js",
   "scripts": {

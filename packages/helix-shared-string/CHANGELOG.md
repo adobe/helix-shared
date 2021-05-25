@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string@1.0.2...@adobe/helix-shared-string@1.0.3) (2021-05-25)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([ad49a64](https://github.com/adobe/helix-shared/commit/ad49a64bfdadcea4e4475ec6a36c9bfee14b62dc))
+* **deps:** update external fixes ([#498](https://github.com/adobe/helix-shared/issues/498)) ([8e99853](https://github.com/adobe/helix-shared/commit/8e99853cd5458b3009ad9679247fe2c0f0b34617))
+
+
+
+
+
 ## [1.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string@1.0.1...@adobe/helix-shared-string@1.0.2) (2021-05-02)
 
 **Note:** Version bump only for package @adobe/helix-shared-string
