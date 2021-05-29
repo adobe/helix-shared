@@ -32,7 +32,7 @@
     "ferrum": "1.9.2",
     "fs-extra": "10.0.0",
     "lru-cache": "6.0.0",
-    "object-hash": "2.1.1",
+    "object-hash": "2.2.0",
     "uri-js": "4.4.1",
     "yaml": "1.10.2"
   },
