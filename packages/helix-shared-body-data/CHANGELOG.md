@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.7...@adobe/helix-shared-body-data@1.0.8) (2021-06-03)
+
+**Note:** Version bump only for package @adobe/helix-shared-body-data
+
+
+
+
+
 ## [1.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.6...@adobe/helix-shared-body-data@1.0.7) (2021-05-31)
 
 
