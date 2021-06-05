@@ -40,9 +40,9 @@
     "@adobe/helix-log": "5.0.3",
     "@adobe/helix-shared-wrap": "^1.0.0",
     "@adobe/helix-testutils": "0.4.5",
-    "@pollyjs/adapter-node-http": "5.1.0",
-    "@pollyjs/core": "5.1.0",
-    "@pollyjs/persister-fs": "5.0.0",
-    "nock": "13.0.11"
+    "@pollyjs/adapter-node-http": "5.1.1",
+    "@pollyjs/core": "5.1.1",
+    "@pollyjs/persister-fs": "5.1.1",
+    "nock": "13.1.0"
   }
 }
