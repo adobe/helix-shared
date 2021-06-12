@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.4...@adobe/helix-shared-config@1.1.5) (2021-06-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ajv to v8.6.0 ([2cbd4d3](https://github.com/adobe/helix-shared/commit/2cbd4d30eaa99909422c2b5700cec691120ced52))
+
+
+
+
+
 ## [1.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.3...@adobe/helix-shared-config@1.1.4) (2021-06-05)
 
 **Note:** Version bump only for package @adobe/helix-shared-config
