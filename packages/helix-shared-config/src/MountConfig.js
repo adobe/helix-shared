@@ -87,6 +87,7 @@ const githubDecorator = {
       ref,
       path: m.path,
       basePath: path,
+      url: m.url,
     };
     return ret;
   },
