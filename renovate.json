@@ -35,6 +35,10 @@
       "allowedVersions": "<11.0.0"
     },
     {
+      "packageNames": ["mdast-util-to-markdown"],
+      "allowedVersions": "<1.0.0"
+    },
+    {
       "packageNames": ["mdast-util-to-string"],
       "allowedVersions": "<3.0.0"
     },
