@@ -87,6 +87,10 @@
       "allowedVersions": "<8.0.0"
     },
     {
+      "packageNames": ["retext-smartypants"],
+      "allowedVersions": "<5.0.0"
+    },
+    {
       "packageNames": ["circleci/node"],
       "allowedVersions": "12"
     },
