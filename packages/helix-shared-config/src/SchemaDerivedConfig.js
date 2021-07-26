@@ -12,6 +12,7 @@
 const Ajv = require('ajv').default;
 const ajvFormats = require('ajv-formats');
 const BaseConfig = require('./BaseConfig.js');
+const ValidationError = require('./ValidationError.js');
 
 /**
  * A Helix Config that is based on a (number of) JSON Schema(s).
@@ -66,7 +67,7 @@ class SchemaDerivedConfig extends BaseConfig {
     if (res) {
       return res;
     }
-    throw new Error(ajv.errorsText());
+    throw new ValidationError(ajv.errorsText(), ajv.errors);
   }
 
   /**
