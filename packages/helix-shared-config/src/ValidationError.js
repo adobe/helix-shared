@@ -9,44 +9,39 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+/* eslint-disable max-classes-per-file */
 
 class ValidationError extends Error {
-  constructor(msg, errors = []) {
-    function prettyname(path, schema) {
-      if (path) {
-        if (path.startsWith('.strains')) {
-          return `${schema.title || 'Invalid Strain'} ${path.replace(/\.strains(\.|\[')(.*)/, '$2').replace(/'.*/, '')}`;
-        }
-        return `${schema.title || schema.$id} ${path}`;
-      }
-      return `${schema.title || schema.$id}`;
-    }
-
-    const detail = errors.map(({
-      keyword, dataPath, message, data, params, parentSchema,
-    }) => {
-      if (keyword === 'additionalProperties') {
-        return `${prettyname(dataPath, parentSchema)} has unknown property '${params.additionalProperty}'`;
-      }
-      if (keyword === 'required' && dataPath === '') {
-        return 'A set of strains and a default strain are missing.';
-      }
-      if (keyword === 'required' && dataPath === '.strains') {
-        return 'A default strain is missing.';
-      }
-      if (keyword === 'required') {
-        return `${prettyname(dataPath, parentSchema)} ${message}`;
-      }
-      if (keyword === 'oneOf' && dataPath.startsWith('.strains')) {
-        return `${prettyname(dataPath, parentSchema)} must be either a Runtime Strain or a Proxy Strain`;
-      }
-      return `${prettyname(dataPath, parentSchema)} ${message}: ${keyword}(${JSON.stringify(data)}, ${JSON.stringify(params)})`;
-    }).join('\n');
+  constructor(msg, errors = [], mapError = ValidationError.mapError) {
+    const detail = errors.map((e) => mapError(e)).join('\n');
     super(`Invalid configuration:
 ${detail}
 
 ${msg}`);
     this._errors = errors;
+  }
+
+  static prettyname(path, schema) {
+    if (path) {
+      if (path.startsWith('.strains')) {
+        return `${schema.title || 'Invalid Strain'} ${path.replace(/\.strains(\.|\[')(.*)/, '$2').replace(/'.*/, '')}`;
+      }
+      return `${schema.title || schema.$id} ${path}`;
+    }
+    return `${schema.title || schema.$id}`;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  static mapError({
+    keyword, dataPath, message, data, params, parentSchema,
+  }) {
+    if (keyword === 'additionalProperties') {
+      return `${ValidationError.prettyname(dataPath, parentSchema)} has unknown property '${params.additionalProperty}'`;
+    }
+    if (keyword === 'required') {
+      return `${ValidationError.prettyname(dataPath, parentSchema)} ${message}`;
+    }
+    return `${ValidationError.prettyname(dataPath, parentSchema)} ${message}: ${keyword}(${JSON.stringify(data)}, ${JSON.stringify(params)})`;
   }
 }
 
