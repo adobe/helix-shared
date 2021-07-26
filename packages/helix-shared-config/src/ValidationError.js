@@ -12,8 +12,10 @@
 /* eslint-disable max-classes-per-file */
 
 class ValidationError extends Error {
-  constructor(msg, errors = [], mapError = ValidationError.mapError) {
-    const detail = errors.map((e) => mapError(e)).join('\n');
+  constructor(
+    msg, errors = [], mapError = ValidationError.mapError, prettyname = ValidationError.prettyname,
+  ) {
+    const detail = errors.map((e) => mapError(e, prettyname)).join('\n');
     super(`Invalid configuration:
 ${detail}
 
@@ -22,26 +24,19 @@ ${msg}`);
   }
 
   static prettyname(path, schema) {
-    if (path) {
-      if (path.startsWith('.strains')) {
-        return `${schema.title || 'Invalid Strain'} ${path.replace(/\.strains(\.|\[')(.*)/, '$2').replace(/'.*/, '')}`;
-      }
-      return `${schema.title || schema.$id} ${path}`;
-    }
-    return `${schema.title || schema.$id}`;
+    return path ? `${schema.title || schema.$id} ${path}` : `${schema.title || schema.$id}`;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   static mapError({
     keyword, dataPath, message, data, params, parentSchema,
-  }) {
+  }, prettyname) {
     if (keyword === 'additionalProperties') {
-      return `${ValidationError.prettyname(dataPath, parentSchema)} has unknown property '${params.additionalProperty}'`;
+      return `${prettyname(dataPath, parentSchema)} has unknown property '${params.additionalProperty}'`;
     }
     if (keyword === 'required') {
-      return `${ValidationError.prettyname(dataPath, parentSchema)} ${message}`;
+      return `${prettyname(dataPath, parentSchema)} ${message}`;
     }
-    return `${ValidationError.prettyname(dataPath, parentSchema)} ${message}: ${keyword}(${JSON.stringify(data)}, ${JSON.stringify(params)})`;
+    return `${prettyname(dataPath, parentSchema)} ${message}: ${keyword}(${JSON.stringify(data)}, ${JSON.stringify(params)})`;
   }
 }
 

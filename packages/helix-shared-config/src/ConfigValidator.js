@@ -34,12 +34,19 @@ const schemas = [
 
 class HelixConfigValidationError extends ValidationError {
   constructor(msg, errors = []) {
-    super(msg, errors, HelixConfigValidationError.mapError);
+    super(msg, errors, HelixConfigValidationError.mapError, HelixConfigValidationError.prettyname);
+  }
+
+  static prettyname(path, schema) {
+    if (path && path.startsWith('.strains')) {
+      return `${schema.title || 'Invalid Strain'} ${path.replace(/\.strains(\.|\[')(.*)/, '$2').replace(/'.*/, '')}`;
+    }
+    return ValidationError.prettyname(path, schema);
   }
 
   static mapError({
     keyword, dataPath, message, data, params, parentSchema,
-  }) {
+  }, prettyname) {
     if (keyword === 'required' && dataPath === '') {
       return 'A set of strains and a default strain are missing.';
     }
@@ -47,7 +54,7 @@ class HelixConfigValidationError extends ValidationError {
       return 'A default strain is missing.';
     }
     if (keyword === 'oneOf' && dataPath.startsWith('.strains')) {
-      return `${ValidationError.prettyname(dataPath, parentSchema)} must be either a Runtime Strain or a Proxy Strain`;
+      return `${prettyname(dataPath, parentSchema)} must be either a Runtime Strain or a Proxy Strain`;
     }
     return ValidationError.mapError(keyword, dataPath, message, data, params, parentSchema);
   }
