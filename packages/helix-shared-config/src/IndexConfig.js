@@ -114,6 +114,16 @@ class IndexConfig extends SchemaDerivedConfig {
     }
     return undefined;
   }
+
+  /**
+   * Initialize the configuration
+   */
+  async init() {
+    await super.init();
+
+    this._version = this._cfg.version;
+    return this;
+  }
 }
 
 module.exports = IndexConfig;
