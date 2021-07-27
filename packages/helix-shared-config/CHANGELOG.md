@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.9...@adobe/helix-shared-config@1.1.10) (2021-07-27)
+
+
+### Bug Fixes
+
+* use and export ValidationError ([#532](https://github.com/adobe/helix-shared/issues/532)) ([0c11d92](https://github.com/adobe/helix-shared/commit/0c11d928e902571c4d5e19deed6a4824afe9ef0f))
+
+
+
+
+
 ## [1.1.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.8...@adobe/helix-shared-config@1.1.9) (2021-07-18)
 
 
