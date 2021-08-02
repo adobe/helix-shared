@@ -87,6 +87,10 @@
       "allowedVersions": "<8.0.0"
     },
     {
+      "packageNames": ["rehype-stringify"],
+      "allowedVersions": "<9.0.0"
+    },
+    {
       "packageNames": ["retext"],
       "allowedVersions": "<8.0.0"
     },
