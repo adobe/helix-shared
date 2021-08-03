@@ -99,6 +99,10 @@
       "allowedVersions": "<5.0.0"
     },
     {
+      "packageNames": ["remark-parse"],
+      "allowedVersions": "<10.0.0"
+    },
+    {
       "packageNames": ["circleci/node"],
       "allowedVersions": "12"
     },
