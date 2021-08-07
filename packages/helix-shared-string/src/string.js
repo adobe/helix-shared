@@ -10,10 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-const {
-  filter, map, count, foldl, join, pipe, size,
-} = require('ferrum');
-
 /**
  * Helpers for working with strings.
  */
@@ -49,24 +45,19 @@ const multiline = (str) => {
   if (lines[0].match(/^\s*$/)) {
     lines.shift();
   }
-  if (size(lines) > 0 && lines[size(lines) - 1].match(/^\s*$/)) {
+  if (lines.length > 0 && lines[lines.length - 1].match(/^\s*$/)) {
     lines.pop();
   }
 
   // Find the prefix length
-  const prefixLen = pipe(
-    lines,
-    filter((l) => !l.match(/^\s*$/)), // Disregarding empty lines
-    map((l) => l.match(/^ */)[0]), // Extract prefixes
-    map(count), // calculate length
-    foldl(Infinity, (a, b) => Math.min(a, b)),
-  ); // minimum
+  const prefixLen = lines
+    .filter((l) => !l.match(/^\s*$/)) // Disregarding empty lines
+    .map((l) => l.match(/^ */)[0].length) // Extract prefixes length
+    .reduce((a, b) => Math.min(a, b), Infinity); // minimum
 
-  return pipe(
-    lines,
-    map((l) => l.slice(prefixLen)), // discard prefixes
-    join('\n'),
-  );
+  return lines
+    .map((l) => l.slice(prefixLen)) // discard prefixes
+    .join('\n');
 };
 
 module.exports = { multiline };
