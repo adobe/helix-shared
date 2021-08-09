@@ -99,7 +99,19 @@
       "allowedVersions": "<5.0.0"
     },
     {
+      "packageNames": ["remark"],
+      "allowedVersions": "<10.0.0"
+    },
+    {
+      "packageNames": ["remark-gfm"],
+      "allowedVersions": "<2.0.0"
+    },
+    {
       "packageNames": ["remark-parse"],
+      "allowedVersions": "<10.0.0"
+    },
+    {
+      "packageNames": ["remark-stringify"],
       "allowedVersions": "<10.0.0"
     },
     {
