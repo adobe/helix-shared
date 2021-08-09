@@ -75,6 +75,10 @@
       "allowedVersions": "<7.0.0"
     },
     {
+      "packageNames": ["callsites"],
+      "allowedVersions": "<4.0.0"
+    },
+    {
       "packageNames": ["escape-string-regexp"],
       "allowedVersions": "<5.0.0"
     },
@@ -117,6 +121,10 @@
     {
       "packageNames": ["remark-rehype"],
       "allowedVersions": "<9.0.0"
+    },
+    {
+      "packageNames": ["strip-markdown"],
+      "allowedVersions": "<5.0.0"
     },
     {
       "packageNames": ["circleci/node"],
