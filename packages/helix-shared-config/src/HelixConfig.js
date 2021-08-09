@@ -10,9 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-const {
-  concat, uniq, foldl, pipe,
-} = require('ferrum');
 const Strain = require('./Strain.js');
 const Strains = require('./Strains.js');
 const ConfigValidator = require('./ConfigValidator.js');
@@ -52,11 +49,9 @@ class HelixConfig extends BaseConfig {
       return acceptedstrains;
     };
 
-    this._strains = pipe( // in the following order:
-      concat(other.strains.keys(), this.strains.keys()), // create a full list of strain names
-      uniq, // remove duplicates
-      foldl(new Strains(), accept), // use the accept function above to fill the new strain list
-    );
+    this._strains = [...new Set([...other.strains.keys(), ...this.strains.keys()]).keys()]
+      .reduce(accept, new Strains());
+
     return this;
   }
 
