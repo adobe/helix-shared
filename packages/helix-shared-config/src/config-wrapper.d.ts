@@ -17,6 +17,7 @@ declare enum ConfigType {
   fstab = 'fstab',
   index = 'index',
   markup = 'markup',
+  ignore = 'ignore',
 }
 
 /**

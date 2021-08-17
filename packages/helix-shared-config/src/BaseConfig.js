@@ -35,6 +35,7 @@ class BaseConfig {
     this._source = '';
     this._cfg = null;
     this._document = null;
+    this._parser = null;
     this._logger = console;
     this._version = '';
     this._value = null;
@@ -176,14 +177,22 @@ class BaseConfig {
         this._source = await fs.readFile(this.configPath, 'utf8');
       }
     }
-    if (this._source.indexOf('\t') >= 0) {
-      throw Error('Tabs not allowed in YAML');
+
+    if (this._parser) {
+      this._document = this._parser.parse(this._source);
+      if (this._parser.outputs('json')) {
+        this._cfg = this._parser.as('json');
+      }
+    } else {
+      if (this._source.indexOf('\t') >= 0) {
+        throw Error('Tabs not allowed in YAML');
+      }
+      this._document = YAML.parseDocument(this._source, {
+        merge: true,
+        schema: 'core',
+      });
+      this._cfg = this._document.toJSON() || {};
     }
-    this._document = YAML.parseDocument(this._source, {
-      merge: true,
-      schema: 'core',
-    });
-    this._cfg = this._document.toJSON() || {};
   }
 
   /**
