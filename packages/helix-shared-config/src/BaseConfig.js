@@ -180,9 +180,6 @@ class BaseConfig {
 
     if (this._parser) {
       this._document = this._parser.parse(this._source);
-      if (this._parser.outputs('json')) {
-        this._cfg = this._parser.as('json');
-      }
     } else {
       if (this._source.indexOf('\t') >= 0) {
         throw Error('Tabs not allowed in YAML');
