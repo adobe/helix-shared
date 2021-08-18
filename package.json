@@ -50,8 +50,5 @@
     "ghooks": {
       "pre-commit": "npx lint-staged"
     }
-  },
-  "workspaces": [
-    "./packages/*"
-  ]
+  }
 }
