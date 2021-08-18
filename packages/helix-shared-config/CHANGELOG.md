@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.15...@adobe/helix-shared-config@1.2.0) (2021-08-18)
+
+
+### Features
+
+* **config:** add ignore config, parser ([#542](https://github.com/adobe/helix-shared/issues/542)) ([c95ca88](https://github.com/adobe/helix-shared/commit/c95ca88991aa0a8369520459dfe5f599fe25c7f6))
+
+
+
+
+
 ## [1.1.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.14...@adobe/helix-shared-config@1.1.15) (2021-08-18)
 
 
