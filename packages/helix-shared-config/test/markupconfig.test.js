@@ -41,6 +41,20 @@ describe('Markup Config Loading', () => {
     assert.equal(cfg.markup[2].attribute['data-type'], 'footer');
   });
 
+  it('loads feature flags', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'feature-flags.yaml'), 'utf-8');
+    const cfg = await new MarkupConfig()
+      .withSource(source)
+      .init();
+    assert.ok(cfg);
+    assert.ok(!cfg.markup);
+    assert.ok(cfg.features);
+    assert.equal(cfg.features.length, 2);
+
+    assert.equal(cfg.features[0], 'foo-bar');
+    assert.ok(cfg.features.includes('baz'));
+  });
+
   it('rejects tabs', async () => {
     const source = await fs.readFile(path.resolve(SPEC_ROOT, 'very-invalid.yaml'), 'utf-8');
     try {

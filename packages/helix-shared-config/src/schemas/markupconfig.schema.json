@@ -30,9 +30,18 @@
     },
     "markup": {
       "$ref": "https://ns.adobe.com/helix/shared/markup"
+    },
+    "features": {
+      "type": "array",
+      "title": "Feature Flags",
+      "description": "A list of feature flags, each feature flag is a simple lowercase string",
+      "items": {
+        "type": "string",
+        "pattern": "[a-z0-9_.-]",
+        "examples": [
+          "custom-elements"
+        ]
+      }
     }
-  },
-  "required": [
-    "markup"
-  ]
+  }
 }

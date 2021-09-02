@@ -1,0 +1,8 @@
+#
+# markup configuration for theblog
+#
+version: 1
+
+features:
+  - foo-bar
+  - baz
