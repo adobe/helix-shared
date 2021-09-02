@@ -102,7 +102,7 @@ const tests = [
     title: 'fails with a broken config',
     config: 'broken.yaml',
     result: null,
-    error: 'Error: data must NOT have additional properties',
+    error: 'Error: Invalid configuration:\nFSTab (Mount Points) has unknown property \'mounts\'\n\ndata must NOT have additional properties',
   },
   {
     title: 'loads a theblog example',
@@ -249,6 +249,7 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m12.repo, 'helix-shared');
     assert.equal(m12.ref, undefined);
     assert.equal(m12.relPath, '/foo');
+    assert.equal(m12.url, 'https://github.com/adobe/helix-shared');
 
     // github with path
     const m13 = cfg.match('/github-path/foo');
@@ -257,6 +258,7 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m13.repo, 'helix-shared');
     assert.equal(m13.ref, 'main');
     assert.equal(m13.relPath, '/foo');
+    assert.equal(m13.url, 'https://github.com/adobe/helix-shared/tree/main/src');
 
     // github with branch
     const m14 = cfg.match('/github-branch/foo');
@@ -265,6 +267,7 @@ describe('Mount Point Config Loading', () => {
     assert.equal(m14.repo, 'helix-shared');
     assert.equal(m14.ref, 'downloader');
     assert.equal(m14.relPath, '/foo');
+    assert.equal(m14.url, 'https://github.com/adobe/helix-shared/tree/downloader');
 
     assert.equal(cfg.match('/mssoft'), null, 'requires trailing slash in matches');
 

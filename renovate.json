@@ -35,6 +35,10 @@
       "allowedVersions": "<11.0.0"
     },
     {
+      "packageNames": ["mdast-util-to-markdown"],
+      "allowedVersions": "<1.0.0"
+    },
+    {
       "packageNames": ["mdast-util-to-string"],
       "allowedVersions": "<3.0.0"
     },
@@ -63,8 +67,64 @@
       "allowedVersions": "<8.0.0"
     },
     {
+      "packageNames": ["hast-util-to-mdast"],
+      "allowedVersions": "<8.0.0"
+    },
+    {
       "packageNames": ["hastscript"],
       "allowedVersions": "<7.0.0"
+    },
+    {
+      "packageNames": ["callsites"],
+      "allowedVersions": "<4.0.0"
+    },
+    {
+      "packageNames": ["escape-string-regexp"],
+      "allowedVersions": "<5.0.0"
+    },
+    {
+      "packageNames": ["unified"],
+      "allowedVersions": "<10.0.0"
+    },
+    {
+      "packageNames": ["rehype-parse"],
+      "allowedVersions": "<8.0.0"
+    },
+    {
+      "packageNames": ["rehype-stringify"],
+      "allowedVersions": "<9.0.0"
+    },
+    {
+      "packageNames": ["retext"],
+      "allowedVersions": "<8.0.0"
+    },
+    {
+      "packageNames": ["retext-smartypants"],
+      "allowedVersions": "<5.0.0"
+    },
+    {
+      "packageNames": ["remark"],
+      "allowedVersions": "<10.0.0"
+    },
+    {
+      "packageNames": ["remark-gfm"],
+      "allowedVersions": "<2.0.0"
+    },
+    {
+      "packageNames": ["remark-parse"],
+      "allowedVersions": "<10.0.0"
+    },
+    {
+      "packageNames": ["remark-stringify"],
+      "allowedVersions": "<10.0.0"
+    },
+    {
+      "packageNames": ["remark-rehype"],
+      "allowedVersions": "<9.0.0"
+    },
+    {
+      "packageNames": ["strip-markdown"],
+      "allowedVersions": "<5.0.0"
     },
     {
       "packageNames": ["circleci/node"],

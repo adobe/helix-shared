@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-config",
-  "version": "1.0.4",
+  "version": "1.2.2",
   "description": "Shared modules of the Helix Project - config",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -23,16 +23,16 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/helix-fetch": "2.2.0",
+    "@adobe/helix-fetch": "2.4.2",
     "@adobe/helix-shared-git": "^1.0.3",
     "@adobe/helix-shared-prune": "^1.0.0",
     "@adobe/helix-shared-utils": "^1.0.3",
-    "ajv": "8.3.0",
-    "ajv-formats": "2.1.0",
-    "ferrum": "1.9.0",
-    "fs-extra": "9.1.0",
+    "ajv": "8.6.2",
+    "ajv-formats": "2.1.1",
+    "fs-extra": "10.0.0",
+    "ignore": "5.1.8",
     "lru-cache": "6.0.0",
-    "object-hash": "2.1.1",
+    "object-hash": "2.2.0",
     "uri-js": "4.4.1",
     "yaml": "1.10.2"
   },
@@ -40,9 +40,9 @@
     "@adobe/helix-log": "5.0.3",
     "@adobe/helix-shared-wrap": "^1.0.0",
     "@adobe/helix-testutils": "0.4.5",
-    "@pollyjs/adapter-node-http": "5.1.0",
-    "@pollyjs/core": "5.1.0",
-    "@pollyjs/persister-fs": "5.0.0",
-    "nock": "13.0.11"
+    "@pollyjs/adapter-node-http": "5.1.1",
+    "@pollyjs/core": "5.1.1",
+    "@pollyjs/persister-fs": "5.1.1",
+    "nock": "13.1.3"
   }
 }

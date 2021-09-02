@@ -3,6 +3,238 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.35](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.34...@adobe/helix-shared@8.0.35) (2021-09-02)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.34](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.33...@adobe/helix-shared@8.0.34) (2021-08-28)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.33](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.32...@adobe/helix-shared@8.0.33) (2021-08-21)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.32](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.31...@adobe/helix-shared@8.0.32) (2021-08-18)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.31](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.30...@adobe/helix-shared@8.0.31) (2021-08-18)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.30](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.29...@adobe/helix-shared@8.0.30) (2021-08-18)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.29](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.28...@adobe/helix-shared@8.0.29) (2021-08-17)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.28](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.27...@adobe/helix-shared@8.0.28) (2021-08-14)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.27](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.26...@adobe/helix-shared@8.0.27) (2021-08-09)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.26](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.25...@adobe/helix-shared@8.0.26) (2021-08-07)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.25](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.24...@adobe/helix-shared@8.0.25) (2021-07-31)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.24](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.23...@adobe/helix-shared@8.0.24) (2021-07-27)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.23](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.22...@adobe/helix-shared@8.0.23) (2021-07-27)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.22](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.21...@adobe/helix-shared@8.0.22) (2021-07-18)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.21](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.20...@adobe/helix-shared@8.0.21) (2021-07-14)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.20](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.19...@adobe/helix-shared@8.0.20) (2021-07-13)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.19](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.18...@adobe/helix-shared@8.0.19) (2021-07-07)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.18](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.17...@adobe/helix-shared@8.0.18) (2021-07-05)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.17](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.16...@adobe/helix-shared@8.0.17) (2021-06-13)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.16](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.15...@adobe/helix-shared@8.0.16) (2021-06-12)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.14...@adobe/helix-shared@8.0.15) (2021-06-05)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.13...@adobe/helix-shared@8.0.14) (2021-06-03)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.12...@adobe/helix-shared@8.0.13) (2021-05-31)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.12](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.11...@adobe/helix-shared@8.0.12) (2021-05-29)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.10...@adobe/helix-shared@8.0.11) (2021-05-27)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.9...@adobe/helix-shared@8.0.10) (2021-05-25)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.8...@adobe/helix-shared@8.0.9) (2021-05-17)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.7...@adobe/helix-shared@8.0.8) (2021-05-11)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
+## [8.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.6...@adobe/helix-shared@8.0.7) (2021-05-11)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
 ## [8.0.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.5...@adobe/helix-shared@8.0.6) (2021-05-09)
 
 **Note:** Version bump only for package @adobe/helix-shared

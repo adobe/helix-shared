@@ -81,7 +81,7 @@ describe('Markup Config Loading', () => {
       if (e instanceof AssertionError) {
         throw e;
       }
-      assert.equal(e.message, 'data/markup/images-in-gallery must have required property \'match\', data/markup/last-section must NOT have additional properties');
+      assert.equal(e.message, 'Invalid configuration:\nMarkup Mapping must have required property \'match\'\nMarkup Mapping has unknown property \'invalid\'\n\ndata/markup/images-in-gallery must have required property \'match\', data/markup/last-section must NOT have additional properties');
     }
   });
 });

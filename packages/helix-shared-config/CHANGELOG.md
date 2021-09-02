@@ -3,6 +3,209 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.2.1...@adobe/helix-shared-config@1.2.2) (2021-08-28)
+
+**Note:** Version bump only for package @adobe/helix-shared-config
+
+
+
+
+
+## [1.2.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.2.0...@adobe/helix-shared-config@1.2.1) (2021-08-21)
+
+**Note:** Version bump only for package @adobe/helix-shared-config
+
+
+
+
+
+# [1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.15...@adobe/helix-shared-config@1.2.0) (2021-08-18)
+
+
+### Features
+
+* **config:** add ignore config, parser ([#542](https://github.com/adobe/helix-shared/issues/542)) ([c95ca88](https://github.com/adobe/helix-shared/commit/c95ca88991aa0a8369520459dfe5f599fe25c7f6))
+
+
+
+
+
+## [1.1.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.14...@adobe/helix-shared-config@1.1.15) (2021-08-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.4.2 ([#543](https://github.com/adobe/helix-shared/issues/543)) ([d06e0c4](https://github.com/adobe/helix-shared/commit/d06e0c4179aee49827ed36256525138a8cea5200))
+
+
+
+
+
+## [1.1.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.13...@adobe/helix-shared-config@1.1.14) (2021-08-14)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([f055338](https://github.com/adobe/helix-shared/commit/f0553387ba74ffd1eae0457afca7a46beef5d376))
+
+
+
+
+
+## [1.1.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.12...@adobe/helix-shared-config@1.1.13) (2021-08-09)
+
+
+### Bug Fixes
+
+* reduce dependencies ([#537](https://github.com/adobe/helix-shared/issues/537)) ([289942b](https://github.com/adobe/helix-shared/commit/289942b37ad32560501d8e9a8d6bf2bb10c19429))
+
+
+
+
+
+## [1.1.12](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.11...@adobe/helix-shared-config@1.1.12) (2021-07-31)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([0e2b0a5](https://github.com/adobe/helix-shared/commit/0e2b0a59cbcc86653b3294d84e13e1dcada508ee))
+
+
+
+
+
+## [1.1.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.10...@adobe/helix-shared-config@1.1.11) (2021-07-27)
+
+
+### Bug Fixes
+
+* fetch and source should be optional ([#533](https://github.com/adobe/helix-shared/issues/533)) ([a962662](https://github.com/adobe/helix-shared/commit/a962662a2413582b06383b84719fab2ff1bf975c))
+
+
+
+
+
+## [1.1.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.9...@adobe/helix-shared-config@1.1.10) (2021-07-27)
+
+
+### Bug Fixes
+
+* use and export ValidationError ([#532](https://github.com/adobe/helix-shared/issues/532)) ([0c11d92](https://github.com/adobe/helix-shared/commit/0c11d928e902571c4d5e19deed6a4824afe9ef0f))
+
+
+
+
+
+## [1.1.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.8...@adobe/helix-shared-config@1.1.9) (2021-07-18)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([94dbdfd](https://github.com/adobe/helix-shared/commit/94dbdfd8efddc3dae1facae99a21b9b629c22aec))
+
+
+
+
+
+## [1.1.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.7...@adobe/helix-shared-config@1.1.8) (2021-07-13)
+
+
+### Bug Fixes
+
+* add url to github mount ([#526](https://github.com/adobe/helix-shared/issues/526)) ([5f989bf](https://github.com/adobe/helix-shared/commit/5f989bf8494ba42c895e96c9e5c2d33b2ae67e80))
+
+
+
+
+
+## [1.1.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.6...@adobe/helix-shared-config@1.1.7) (2021-07-05)
+
+**Note:** Version bump only for package @adobe/helix-shared-config
+
+
+
+
+
+## [1.1.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.5...@adobe/helix-shared-config@1.1.6) (2021-06-13)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([#520](https://github.com/adobe/helix-shared/issues/520)) ([6fae196](https://github.com/adobe/helix-shared/commit/6fae19681be8058d3a236b94b638b24c314282ab))
+
+
+
+
+
+## [1.1.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.4...@adobe/helix-shared-config@1.1.5) (2021-06-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ajv to v8.6.0 ([2cbd4d3](https://github.com/adobe/helix-shared/commit/2cbd4d30eaa99909422c2b5700cec691120ced52))
+
+
+
+
+
+## [1.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.3...@adobe/helix-shared-config@1.1.4) (2021-06-05)
+
+**Note:** Version bump only for package @adobe/helix-shared-config
+
+
+
+
+
+## [1.1.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.2...@adobe/helix-shared-config@1.1.3) (2021-05-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency object-hash to v2.2.0 ([07b40d1](https://github.com/adobe/helix-shared/commit/07b40d13748a3256c80ef19fc77d1236d5c88597))
+
+
+
+
+
+## [1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.1...@adobe/helix-shared-config@1.1.2) (2021-05-25)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([067f1bb](https://github.com/adobe/helix-shared/commit/067f1bbe8433e18484647b239318636519797947))
+* **deps:** update external fixes ([ad49a64](https://github.com/adobe/helix-shared/commit/ad49a64bfdadcea4e4475ec6a36c9bfee14b62dc))
+
+
+
+
+
+## [1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.1.0...@adobe/helix-shared-config@1.1.1) (2021-05-17)
+
+**Note:** Version bump only for package @adobe/helix-shared-config
+
+
+
+
+
+# [1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.0.5...@adobe/helix-shared-config@1.1.0) (2021-05-11)
+
+
+### Features
+
+* **schema:** add schemas for helix-data-embed ([#507](https://github.com/adobe/helix-shared/issues/507)) ([4563e25](https://github.com/adobe/helix-shared/commit/4563e25994656bd0c64a0047c4304d06843897cb)), closes [/github.com/adobe/helix-data-embed/pull/356#issuecomment-836357581](https://github.com//github.com/adobe/helix-data-embed/pull/356/issues/issuecomment-836357581)
+
+
+
+
+
+## [1.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.0.4...@adobe/helix-shared-config@1.0.5) (2021-05-11)
+
+**Note:** Version bump only for package @adobe/helix-shared-config
+
+
+
+
+
 ## [1.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.0.3...@adobe/helix-shared-config@1.0.4) (2021-05-09)
 
 

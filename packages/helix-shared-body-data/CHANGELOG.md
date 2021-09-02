@@ -3,6 +3,118 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.14...@adobe/helix-shared-body-data@1.0.15) (2021-09-02)
+
+**Note:** Version bump only for package @adobe/helix-shared-body-data
+
+
+
+
+
+## [1.0.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.13...@adobe/helix-shared-body-data@1.0.14) (2021-08-18)
+
+**Note:** Version bump only for package @adobe/helix-shared-body-data
+
+
+
+
+
+## [1.0.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.12...@adobe/helix-shared-body-data@1.0.13) (2021-08-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.4.2 ([#543](https://github.com/adobe/helix-shared/issues/543)) ([d06e0c4](https://github.com/adobe/helix-shared/commit/d06e0c4179aee49827ed36256525138a8cea5200))
+
+
+
+
+
+## [1.0.12](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.11...@adobe/helix-shared-body-data@1.0.12) (2021-07-31)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([0e2b0a5](https://github.com/adobe/helix-shared/commit/0e2b0a59cbcc86653b3294d84e13e1dcada508ee))
+* **deps:** update external fixes ([94dbdfd](https://github.com/adobe/helix-shared/commit/94dbdfd8efddc3dae1facae99a21b9b629c22aec))
+
+
+
+
+
+## [1.0.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.10...@adobe/helix-shared-body-data@1.0.11) (2021-07-14)
+
+**Note:** Version bump only for package @adobe/helix-shared-body-data
+
+
+
+
+
+## [1.0.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.9...@adobe/helix-shared-body-data@1.0.10) (2021-07-07)
+
+**Note:** Version bump only for package @adobe/helix-shared-body-data
+
+
+
+
+
+## [1.0.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.8...@adobe/helix-shared-body-data@1.0.9) (2021-06-13)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([#520](https://github.com/adobe/helix-shared/issues/520)) ([6fae196](https://github.com/adobe/helix-shared/commit/6fae19681be8058d3a236b94b638b24c314282ab))
+
+
+
+
+
+## [1.0.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.7...@adobe/helix-shared-body-data@1.0.8) (2021-06-03)
+
+**Note:** Version bump only for package @adobe/helix-shared-body-data
+
+
+
+
+
+## [1.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.6...@adobe/helix-shared-body-data@1.0.7) (2021-05-31)
+
+
+### Bug Fixes
+
+* **deps:** update dependency object-hash to v2.2.0 ([07b40d1](https://github.com/adobe/helix-shared/commit/07b40d13748a3256c80ef19fc77d1236d5c88597))
+
+
+
+
+
+## [1.0.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.5...@adobe/helix-shared-body-data@1.0.6) (2021-05-27)
+
+**Note:** Version bump only for package @adobe/helix-shared-body-data
+
+
+
+
+
+## [1.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.4...@adobe/helix-shared-body-data@1.0.5) (2021-05-25)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([067f1bb](https://github.com/adobe/helix-shared/commit/067f1bbe8433e18484647b239318636519797947))
+
+
+
+
+
+## [1.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.3...@adobe/helix-shared-body-data@1.0.4) (2021-05-11)
+
+**Note:** Version bump only for package @adobe/helix-shared-body-data
+
+
+
+
+
 ## [1.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.0.2...@adobe/helix-shared-body-data@1.0.3) (2021-05-03)
 
 

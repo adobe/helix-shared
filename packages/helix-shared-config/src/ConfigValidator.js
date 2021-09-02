@@ -14,6 +14,7 @@
 
 const Ajv = require('ajv').default;
 const ajvFormats = require('ajv-formats');
+const ValidationError = require('./ValidationError.js');
 
 const schemas = [
   /* eslint-disable global-require */
@@ -31,40 +32,31 @@ const schemas = [
   /* eslint-enable global-require */
 ];
 
-class ValidationError extends Error {
+class HelixConfigValidationError extends ValidationError {
   constructor(msg, errors = []) {
-    function prettyname(path, schema) {
-      if (path.startsWith('.strains')) {
-        return `${schema.title || 'Invalid Strain'} ${path.replace(/\.strains(\.|\[')(.*)/, '$2').replace(/'.*/, '')}`;
-      }
-      return `${schema.title || schema.$id} ${path}`;
+    super(msg, errors, HelixConfigValidationError.mapError, HelixConfigValidationError.prettyname);
+  }
+
+  static prettyname(path, schema) {
+    if (path && path.startsWith('.strains')) {
+      return `${schema.title || 'Invalid Strain'} ${path.replace(/\.strains(\.|\[')(.*)/, '$2').replace(/'.*/, '')}`;
     }
+    return ValidationError.prettyname(path, schema);
+  }
 
-    const detail = errors.map(({
-      keyword, dataPath, message, data, params, parentSchema,
-    }) => {
-      if (keyword === 'additionalProperties') {
-        return `${prettyname(dataPath, parentSchema)} has unknown property '${params.additionalProperty}'`;
-      }
-      if (keyword === 'required' && dataPath === '') {
-        return 'A set of strains and a default strain are missing.';
-      }
-      if (keyword === 'required' && dataPath === '.strains') {
-        return 'A default strain is missing.';
-      }
-      if (keyword === 'required') {
-        return `${prettyname(dataPath, parentSchema)} ${message}`;
-      }
-      if (keyword === 'oneOf' && dataPath.startsWith('.strains')) {
-        return `${prettyname(dataPath, parentSchema)} must be either a Runtime Strain or a Proxy Strain`;
-      }
-      return `${prettyname(dataPath, parentSchema)} ${message}: ${keyword}(${JSON.stringify(data)}, ${JSON.stringify(params)})`;
-    }).join('\n');
-    super(`Invalid configuration:
-${detail}
-
-${msg}`);
-    this._errors = errors;
+  static mapError({
+    keyword, dataPath, message, data, params, parentSchema,
+  }, prettyname) {
+    if (keyword === 'required' && dataPath === '') {
+      return 'A set of strains and a default strain are missing.';
+    }
+    if (keyword === 'required' && dataPath === '.strains') {
+      return 'A default strain is missing.';
+    }
+    if (keyword === 'oneOf' && dataPath.startsWith('.strains')) {
+      return `${prettyname(dataPath, parentSchema)} must be either a Runtime Strain or a Proxy Strain`;
+    }
+    return ValidationError.mapError(keyword, dataPath, message, data, params, parentSchema);
   }
 }
 
@@ -91,11 +83,11 @@ class ConfigValidator {
     if (!config.strains
       || ((config.strains.find && !config.strains.find((s) => s.name === 'default'))
         && !config.strains.default)) {
-      throw new ValidationError('A list of strains and a strain with the name "default" is required.');
+      throw new HelixConfigValidationError('A list of strains and a strain with the name "default" is required.');
     }
     const valid = this.validate(config);
     if (!valid) {
-      throw new ValidationError(this._ajv.errorsText(), this._ajv.errors);
+      throw new HelixConfigValidationError(this._ajv.errorsText(), this._ajv.errors);
     }
   }
 }

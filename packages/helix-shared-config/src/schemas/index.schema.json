@@ -49,8 +49,6 @@
     }
   },
   "required": [
-    "source",
-    "fetch",
     "properties"
   ]
 }
