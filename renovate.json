@@ -132,7 +132,7 @@
     },
     {
       "packageNames": ["@aws-sdk/client-s3"],
-      "allowedVersions": "!3.29.0"
+      "allowedVersions": "!/3\\.29\\.0/"
     },
     {
       "groupName": "adobe fixes",
