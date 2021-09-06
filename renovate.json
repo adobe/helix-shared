@@ -131,6 +131,10 @@
       "allowedVersions": "12"
     },
     {
+      "packageNames": ["@aws-sdk/client-s3"],
+      "allowedVersions": "!3.29.0"
+    },
+    {
       "groupName": "adobe fixes",
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
