@@ -27,6 +27,6 @@
     "@adobe/helix-shared-wrap": "^1.0.0"
   },
   "optionalDependencies": {
-    "@adobe/helix-universal": "1.6.10"
+    "@adobe/helix-universal": "1.6.12"
   }
 }
