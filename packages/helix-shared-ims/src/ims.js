@@ -11,7 +11,7 @@
  */
 const { Response } = require('@adobe/helix-universal');
 const fetchAPI = require('@adobe/helix-fetch');
-const { serialize } = require('cookie');
+const { parse, serialize } = require('cookie');
 
 const { context: fetchContext, ALPN_HTTP1_1 } = fetchAPI;
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
@@ -191,6 +191,12 @@ function imsWrapper(func, opts = {}) {
       routeLogout: '/logout',
       ...opts,
     };
+
+    // add cookies if not already present
+    if (!ctx.cookies) {
+      const hdr = req.headers.get('cookie');
+      ctx.cookies = hdr ? parse(hdr) : {};
+    }
 
     ctx.ims = {
       config,

@@ -16,7 +16,6 @@ const wrap = require('@adobe/helix-shared-wrap');
 const assert = require('assert');
 const { Request, Response } = require('@adobe/helix-universal');
 const { Nock } = require('./utils.js');
-const cookie = require('../src/cookie.js');
 const ims = require('../src/ims.js');
 
 const DEFAULT_CONTEXT = (suffix = '/') => ({
@@ -66,7 +65,7 @@ describe('IMS Wrapper test', () => {
   });
 
   it('ignores missing tokens by default', async () => {
-    const fn = wrap(main).with(ims, { clientId: 'my-id' }).with(cookie);
+    const fn = wrap(main).with(ims, { clientId: 'my-id' });
     const resp = await fn(new Request('https://www.example.com/'), DEFAULT_CONTEXT());
 
     assert.strictEqual(resp.status, 200);
@@ -80,7 +79,7 @@ describe('IMS Wrapper test', () => {
     const fn = wrap(main).with(ims, {
       clientId: 'my-id',
       forceAuth: true,
-    }).with(cookie);
+    });
     const resp = await fn(new Request('https://www.example.com/'), DEFAULT_CONTEXT());
 
     assert.strictEqual(resp.status, 401);
@@ -94,7 +93,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/'), DEFAULT_CONTEXT('/login'));
       assert.strictEqual(resp.status, 302);
@@ -109,7 +108,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack'),
@@ -128,7 +127,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack'),
@@ -146,7 +145,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack2'),
@@ -165,7 +164,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack2'),
@@ -187,7 +186,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
         ...DEFAULT_CONTEXT('/logout'),
@@ -210,7 +209,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), DEFAULT_CONTEXT('/logout'));
 
@@ -230,7 +229,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
         ...DEFAULT_CONTEXT('/logout'),
@@ -250,7 +249,7 @@ describe('IMS Wrapper test', () => {
         clientId: 'my-id',
         forceAuth: true,
         apiHost: '/foo',
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
         ...DEFAULT_CONTEXT('/logout'),
@@ -275,7 +274,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
         ...DEFAULT_CONTEXT(),
@@ -303,13 +302,41 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo', {
         headers: {
           cookie: 'ims_access_token=foo',
         },
       }), DEFAULT_CONTEXT());
+
+      assert.strictEqual(resp.status, 200);
+      assert.deepStrictEqual(await resp.json(), {
+        name: 'Test User',
+        email: 'test@example.com',
+        userId: '112233',
+      });
+      assert.deepStrictEqual(resp.headers.plain(), {
+        'content-type': 'application/json',
+      });
+    });
+
+    it('fetches profile with provided token (existing cookie)', async () => {
+      nock('https://ims-na1-stg1.adobelogin.com')
+        .post('/ims/profile/v1')
+        .reply(imsProfileHandler());
+
+      const fn = wrap(main).with(ims, {
+        clientId: 'my-id',
+        forceAuth: true,
+      });
+
+      const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
+        ...DEFAULT_CONTEXT(),
+        cookies: {
+          ims_access_token: 'foo',
+        },
+      });
 
       assert.strictEqual(resp.status, 200);
       assert.deepStrictEqual(await resp.json(), {
@@ -330,7 +357,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo', {
         headers: {
@@ -352,7 +379,7 @@ describe('IMS Wrapper test', () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
         forceAuth: true,
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo', {
         headers: {
@@ -371,7 +398,7 @@ describe('IMS Wrapper test', () => {
         clientId: 'my-id',
         forceAuth: true,
         apiHost: '/foo',
-      }).with(cookie);
+      });
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo', {
         headers: {
