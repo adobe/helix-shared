@@ -193,15 +193,29 @@ async function logout(ctx) {
  * request parameter with the same name.
  *
  * @param {UniversalFunction} func the universal function
- * @param {IMSConfig} [opts] Options
+ * @param {IMSConfig} [options] Options
  * @returns {UniversalFunction} an universal function with the added middleware.
  */
-function imsWrapper(func, opts = {}) {
-  if (!opts.clientId) {
-    throw new Error('ims wrapper missing config property \'clientId\'.');
-  }
+function imsWrapper(func, options = {}) {
   return async (req, ctx) => {
     const { data = {} } = ctx;
+
+    // support dynamic envs
+    const opts = Object.entries(options).reduce((prev, [key, value]) => {
+      if (typeof value === 'function') {
+        // eslint-disable-next-line no-param-reassign
+        prev[key] = value(req, ctx);
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        prev[key] = value;
+      }
+      return prev;
+    }, {});
+
+    if (!opts.clientId) {
+      throw new Error('ims wrapper missing config property \'clientId\'.');
+    }
+
     const imsEnv = opts.env || 'stage';
     const config = {
       env: imsEnv,
@@ -215,6 +229,7 @@ function imsWrapper(func, opts = {}) {
       routeLoginRedirect: '/login/ack',
       routeLoginRedirectPrompt: '/login/ack2',
       routeLogout: '/logout',
+      routeLoginSuccess: '/',
       ...opts,
     };
 
@@ -265,7 +280,7 @@ function imsWrapper(func, opts = {}) {
         headers: {
           'cache-control': 'no-store, private, must-revalidate',
           'set-cookie': serialize('ims_access_token', newToken, { path: config.rootPath || '/', httpOnly: true, secure: true }),
-          location: config.rootPath || '/',
+          location: `${config.rootPath}${config.routeLoginSuccess}`,
         },
       });
     }
