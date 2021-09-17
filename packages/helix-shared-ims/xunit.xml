@@ -1,0 +1,19 @@
+<testsuite name="Mocha Tests" tests="17" failures="0" errors="0" skipped="0" timestamp="Fri, 17 Sep 2021 10:27:46 GMT" time="0.201">
+<testcase classname="IMS Wrapper test" name="requires clientId" time="0.001"/>
+<testcase classname="IMS Wrapper test" name="ignores missing tokens by default" time="0.005"/>
+<testcase classname="IMS Wrapper test" name="responds with 401 for enforced auth" time="0.001"/>
+<testcase classname="IMS Wrapper test login" name="responds with login redirect" time="0.001"/>
+<testcase classname="IMS Wrapper test login" name="accepts redirect response and sets cookie" time="0.001"/>
+<testcase classname="IMS Wrapper test login" name="rejects redirect response and sends 2nd login redirect" time="0.001"/>
+<testcase classname="IMS Wrapper test login" name="accepts 2nd redirect response and sets cookie" time="0"/>
+<testcase classname="IMS Wrapper test login" name="rejects 2nd redirect response and responds with 401" time="0"/>
+<testcase classname="IMS Wrapper test logout" name="sends logout request and responds with 200" time="0.151"/>
+<testcase classname="IMS Wrapper test logout" name="sends logout even with not token" time="0.004"/>
+<testcase classname="IMS Wrapper test logout" name="handles error from logout" time="0.005"/>
+<testcase classname="IMS Wrapper test logout" name="handles fetch errors during logout" time="0.001"/>
+<testcase classname="IMS Wrapper test profile" name="fetches profile with provided token (params)" time="0.005"/>
+<testcase classname="IMS Wrapper test profile" name="fetches profile with provided token (cookie)" time="0.005"/>
+<testcase classname="IMS Wrapper test profile" name="responds with 401 if profile could not be fetched due to error" time="0.005"/>
+<testcase classname="IMS Wrapper test profile" name="responds with 401 if profile could not be fetched due to 401" time="0.003"/>
+<testcase classname="IMS Wrapper test profile" name="responds with 401 if profile could not be fetched due fetch error" time="0"/>
+</testsuite>

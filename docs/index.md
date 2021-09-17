@@ -18,8 +18,8 @@ https://ns.adobe.com/helix/shared/index
 
 | Property                  | Type     | Required | Nullable       | Defined by                                                                                               |
 | :------------------------ | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------- |
-| [source](#source)         | `string` | Required | cannot be null | [Index](index-properties-source.md "https://ns.adobe.com/helix/shared/index#/properties/source")         |
-| [fetch](#fetch)           | `string` | Required | cannot be null | [Index](index-properties-fetch.md "https://ns.adobe.com/helix/shared/index#/properties/fetch")           |
+| [source](#source)         | `string` | Optional | cannot be null | [Index](index-properties-source.md "https://ns.adobe.com/helix/shared/index#/properties/source")         |
+| [fetch](#fetch)           | `string` | Optional | cannot be null | [Index](index-properties-fetch.md "https://ns.adobe.com/helix/shared/index#/properties/fetch")           |
 | [target](#target)         | `string` | Optional | cannot be null | [Index](index-properties-target.md "https://ns.adobe.com/helix/shared/index#/properties/target")         |
 | [properties](#properties) | `object` | Required | cannot be null | [Index](index-properties-properties.md "https://ns.adobe.com/helix/shared/index#/properties/properties") |
 | [queries](#queries)       | `object` | Optional | cannot be null | [Index](index-properties-queries.md "https://ns.adobe.com/helix/shared/index#/properties/queries")       |
@@ -30,7 +30,7 @@ The source representation to be used by the indexer to extract values
 
 `source`
 
-*   is required
+*   is optional
 
 *   Type: `string` ([Source](index-properties-source.md))
 
@@ -57,7 +57,7 @@ The source document to retrieve values from. Known variables in the URI Template
 
 `fetch`
 
-*   is required
+*   is optional
 
 *   Type: `string`
 
