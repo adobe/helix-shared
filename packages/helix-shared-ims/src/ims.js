@@ -28,6 +28,32 @@ const IMS_ENDPOINTS = {
 };
 
 /**
+ * Wrapper function to easily perform adobe IMS authentication
+ *
+ * **Usage:**
+ *
+ * ```js
+ * const wrap = require('@adobe/helix-shared-wrap');
+ * const bodyData = require('@adobe/helix-shared-body-data');
+ * const ims = require('@adobe/helix-shared-ims');
+ *
+ * async main(req, context) {
+ *   // …my action code…
+ *   if (context.ims.profile) {
+ *     // do authenticated stuff
+ *   }
+ * }
+ *
+ * module.exports.main = wrap(main)
+ *   .with(ims, { clientId: 'my-client' })
+ *   .with(bodyData)
+ *   .with(logger);
+ * ```
+ *
+ * @module ims
+ */
+
+/**
  * Calculates the login redirect response
  * @param {UniversalContextWithIMS} ctx universal context
  * @param {boolean} noPrompt flag indicating if the login should be silent
