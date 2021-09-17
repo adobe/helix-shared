@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.2.3...@adobe/helix-shared-config@1.3.0) (2021-09-17)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#567](https://github.com/adobe/helix-shared/issues/567)) ([0ce7d79](https://github.com/adobe/helix-shared/commit/0ce7d79342e070b7ad933582fcec8b9b4c60a465))
+
+
+### Features
+
+* add IMS wrapper ([bb52f86](https://github.com/adobe/helix-shared/commit/bb52f86b741e9d43b51076c66a767c35028b6169))
+
+
+
+
+
 ## [1.2.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.2.2...@adobe/helix-shared-config@1.2.3) (2021-09-02)
 
 **Note:** Version bump only for package @adobe/helix-shared-config
