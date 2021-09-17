@@ -1,0 +1,44 @@
+{
+  "name": "@adobe/helix-shared-ims",
+  "version": "1.0.0",
+  "description": "Shared modules of the Helix Project - ims",
+  "main": "src/ims.js",
+  "types": "src/ims.d.ts",
+  "scripts": {
+    "test": "nyc mocha",
+    "test-ci": "nyc mocha && codecov",
+    "lint": "eslint ."
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": {
+      "configFile": ".mocha-multi.json"
+    },
+    "require": "test/setup-env.js",
+    "spec": "test/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@adobe/helix-fetch": "2.4.2",
+    "@adobe/helix-shared-body-data": "^1.0.15",
+    "@adobe/helix-shared-utils": "^1.0.3",
+    "@adobe/helix-shared-wrap": "^1.0.0",
+    "@adobe/helix-universal": "1.6.8",
+    "cookie": "0.4.0"
+  },
+  "devDependencies": {
+    "nock": "13.1.3"
+  }
+}

@@ -59,6 +59,8 @@ jobs:
     - store_test_results:
         path: packages/helix-shared-git/junit
     - store_test_results:
+        path: packages/helix-shared-ims/junit
+    - store_test_results:
         path: packages/helix-shared-process-queue/junit
     - store_test_results:
         path: packages/helix-shared-prune/junit

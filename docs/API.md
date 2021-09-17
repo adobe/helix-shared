@@ -1,6 +1,26 @@
 ## Modules
 
 <dl>
+<dt><a href="#module_ims">ims</a></dt>
+<dd><p>Wrapper function to easily perform adobe IMS authentication</p>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-js">const wrap = require(&#39;@adobe/helix-shared-wrap&#39;);
+const bodyData = require(&#39;@adobe/helix-shared-body-data&#39;);
+const ims = require(&#39;@adobe/helix-shared-ims&#39;);
+
+async main(req, context) {
+  // …my action code…
+  if (context.ims.profile) {
+    // do authenticated stuff
+  }
+}
+
+module.exports.main = wrap(main)
+  .with(ims, { clientId: &#39;my-client&#39; })
+  .with(bodyData)
+  .with(logger);
+</code></pre>
+</dd>
 <dt><a href="#module_wrap">wrap</a></dt>
 <dd><p>Helper function to easily chain functions.</p>
 <p><strong>Usage:</strong></p>
@@ -308,6 +328,116 @@ a standardized lookup function of backend status codes to log levels.</p>
 <dd><p>Cleans up a header value by stripping invalid characters and truncating to 1024 chars</p>
 </dd>
 </dl>
+
+<a name="module_ims"></a>
+
+## ims
+Wrapper function to easily perform adobe IMS authentication
+
+**Usage:**
+
+```js
+const wrap = require('@adobe/helix-shared-wrap');
+const bodyData = require('@adobe/helix-shared-body-data');
+const ims = require('@adobe/helix-shared-ims');
+
+async main(req, context) {
+  // …my action code…
+  if (context.ims.profile) {
+    // do authenticated stuff
+  }
+}
+
+module.exports.main = wrap(main)
+  .with(ims, { clientId: 'my-client' })
+  .with(bodyData)
+  .with(logger);
+```
+
+
+* [ims](#module_ims)
+    * [~redirectToLogin(ctx, noPrompt)](#module_ims..redirectToLogin) ⇒ <code>Response</code>
+    * [~fetchProfile(ctx)](#module_ims..fetchProfile) ⇒ <code>Promise.&lt;(IMSProfile\|null)&gt;</code>
+    * [~logout(ctx)](#module_ims..logout) ⇒ <code>Promise.&lt;Response&gt;</code>
+    * [~imsWrapper(func, [opts])](#module_ims..imsWrapper) ⇒ <code>UniversalFunction</code>
+
+<a name="module_ims..redirectToLogin"></a>
+
+### ims~redirectToLogin(ctx, noPrompt) ⇒ <code>Response</code>
+Calculates the login redirect response
+
+**Kind**: inner method of [<code>ims</code>](#module_ims)  
+**Returns**: <code>Response</code> - redirect response  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ctx | <code>UniversalContextWithIMS</code> | universal context |
+| noPrompt | <code>boolean</code> | flag indicating if the login should be silent |
+
+<a name="module_ims..fetchProfile"></a>
+
+### ims~fetchProfile(ctx) ⇒ <code>Promise.&lt;(IMSProfile\|null)&gt;</code>
+Fetches the ims profile
+
+**Kind**: inner method of [<code>ims</code>](#module_ims)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ctx | <code>UniversalContextWithIMS</code> | the context of the universal serverless function |
+
+<a name="module_ims..logout"></a>
+
+### ims~logout(ctx) ⇒ <code>Promise.&lt;Response&gt;</code>
+Sends the logout request to IMS and clears the access token cookie.
+
+**Kind**: inner method of [<code>ims</code>](#module_ims)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ctx | <code>UniversalContextWithIMS</code> | the context of the universal serverless function |
+
+<a name="module_ims..imsWrapper"></a>
+
+### ims~imsWrapper(func, [opts]) ⇒ <code>UniversalFunction</code>
+Wraps a function with an ims authorization middle ware. If the request is authenticated, the
+`context.ims` will contain a `profile` object, representing the authenticated user profile.
+
+The wrapper claims several routes:
+
+The `IMSConfig.routeLogin` (default '/login') is used
+to respond with a redirect to the IMS login page in 'no-prompt' mode. i.e. the IMS page will
+not provide username/password fields to login the user, but tries instead to silently login.
+After authentication the IMS login page redirects back to `IMSConfig.routeLoginRedirect`.
+
+The `IMSConfig.routeLoginRedirect` (default '/login/ack') route handles the response from the
+first, silent login attempt. The the login was successful, it will respond with a redirect to
+the root `/`.
+if not successful, it will respond with a redirect again to the IMS login page in
+normal mode, i.e. where the IMS page provides means to login. After login, the IMS login
+page redirects back to `IMSConfig.routeLoginRedirectPrompt`.
+
+The `IMSConfig.routeLoginRedirectPrompt` (default '/login/ack2') route handles the response from
+the second login attempt.
+The the login was successful, it will respond with a redirect to the root `/`,
+otherwise the request remains unauthenticated.
+
+After a successful login, a `ims_access_token` cookie is set on the response, which is
+then used for subsequent requests.
+
+The `IMSConfig.routeLogout` (default '/logout') is used to logout the user. It sends a
+request to the IMS logout endpoint and subsequently clears the `ims_access_token` cookie.
+The response is always be a 200.
+
+The IMS access token can either be provided via the `ims_access_token` cookie, or a
+request parameter with the same name.
+
+**Kind**: inner method of [<code>ims</code>](#module_ims)  
+**Returns**: <code>UniversalFunction</code> - an universal function with the added middleware.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| func | <code>UniversalFunction</code> | the universal function |
+| [opts] | <code>IMSConfig</code> | Options |
 
 <a name="module_wrap"></a>
 
