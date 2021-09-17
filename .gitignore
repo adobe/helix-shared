@@ -7,3 +7,4 @@ logs
 .DS_Store
 test-results.xml
 lerna-debug.log
+.npmrc

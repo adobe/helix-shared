@@ -11,9 +11,7 @@
   },
   "mocha": {
     "reporter": "mocha-multi-reporters",
-    "reporter-options": {
-      "configFile": ".mocha-multi.json"
-    },
+    "reporter-options": "configFile=.mocha-multi.json",
     "require": "test/setup-env.js",
     "spec": "test/*.test.js"
   },
