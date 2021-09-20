@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.3.0...@adobe/helix-shared-config@1.3.1) (2021-09-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ferrum to v1.9.3 ([#568](https://github.com/adobe/helix-shared/issues/568)) ([2f7516f](https://github.com/adobe/helix-shared/commit/2f7516fb3ba5aa4041e6d55069f307cef6bf823a))
+
+
+
+
+
 # [1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.2.3...@adobe/helix-shared-config@1.3.0) (2021-09-17)
 
 
