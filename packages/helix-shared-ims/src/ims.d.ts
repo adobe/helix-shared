@@ -101,6 +101,12 @@ export declare interface IMSConfig {
   routeLoginRedirectPrompt?:string;
 
   /**
+   * Redirect route after login was successful.
+   * @default '/'
+   */
+  routeLoginSuccess?:string;
+
+  /**
    * Route that initiates the logout
    * @default '/logout'
    */

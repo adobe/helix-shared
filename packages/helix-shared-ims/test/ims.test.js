@@ -61,11 +61,26 @@ describe('IMS Wrapper test', () => {
   });
 
   it('requires clientId', async () => {
-    assert.throws(() => ims(main), new Error('ims wrapper missing config property \'clientId\'.'));
+    const fn = wrap(main).with(ims);
+    await assert.rejects(
+      fn(new Request('https://www.example.com/'), DEFAULT_CONTEXT()),
+      new Error('ims wrapper missing config property \'clientId\'.'),
+    );
   });
 
   it('ignores missing tokens by default', async () => {
     const fn = wrap(main).with(ims, { clientId: 'my-id' });
+    const resp = await fn(new Request('https://www.example.com/'), DEFAULT_CONTEXT());
+
+    assert.strictEqual(resp.status, 200);
+    assert.deepStrictEqual(await resp.json(), null);
+    assert.deepStrictEqual(resp.headers.plain(), {
+      'content-type': 'application/json',
+    });
+  });
+
+  it('supports dynamic options', async () => {
+    const fn = wrap(main).with(ims, { clientId: () => 'my-id' });
     const resp = await fn(new Request('https://www.example.com/'), DEFAULT_CONTEXT());
 
     assert.strictEqual(resp.status, 200);
@@ -157,6 +172,27 @@ describe('IMS Wrapper test', () => {
         location: '/',
         'content-type': 'text/plain; charset=utf-8',
         'set-cookie': 'ims_access_token=foo; Path=/; HttpOnly; Secure',
+      });
+    });
+
+    it('accepts 2nd redirect to configured route', async () => {
+      const fn = wrap(main).with(ims, {
+        clientId: 'my-id',
+        forceAuth: true,
+        rootPath: '/myapi',
+        routeLoginSuccess: '/profile',
+      });
+
+      const resp = await fn(new Request('https://www.example.com/'), {
+        ...DEFAULT_CONTEXT('/login/ack2'),
+        data: { access_token: 'foo' },
+      });
+      assert.strictEqual(resp.status, 302);
+      assert.deepStrictEqual(resp.headers.plain(), {
+        'cache-control': 'no-store, private, must-revalidate',
+        location: '/myapi/profile',
+        'content-type': 'text/plain; charset=utf-8',
+        'set-cookie': 'ims_access_token=foo; Path=/myapi; HttpOnly; Secure',
       });
     });
 
