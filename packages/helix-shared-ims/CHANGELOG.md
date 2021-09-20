@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.1.2...@adobe/helix-shared-ims@1.2.0) (2021-09-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ferrum to v1.9.3 ([#568](https://github.com/adobe/helix-shared/issues/568)) ([2f7516f](https://github.com/adobe/helix-shared/commit/2f7516fb3ba5aa4041e6d55069f307cef6bf823a))
+
+
+### Features
+
+* support dynamic options ([#566](https://github.com/adobe/helix-shared/issues/566)) ([8a3aff1](https://github.com/adobe/helix-shared/commit/8a3aff1be380a7c7fb1710bd22ca508d4ca63352))
+
+
+
+
+
 ## [1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.1.1...@adobe/helix-shared-ims@1.1.2) (2021-09-17)
 
 
