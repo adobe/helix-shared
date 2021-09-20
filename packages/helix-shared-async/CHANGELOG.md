@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-async@1.0.3...@adobe/helix-shared-async@1.1.0) (2021-09-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal to v1.6.12 ([#565](https://github.com/adobe/helix-shared/issues/565)) ([f3e7468](https://github.com/adobe/helix-shared/commit/f3e74689b944418c17b3fb8afcdd29fab7082758))
+* **deps:** update dependency ferrum to v1.9.3 ([#568](https://github.com/adobe/helix-shared/issues/568)) ([2f7516f](https://github.com/adobe/helix-shared/commit/2f7516fb3ba5aa4041e6d55069f307cef6bf823a))
+
+
+### Features
+
+* **config:** add ignore config, parser ([#542](https://github.com/adobe/helix-shared/issues/542)) ([c95ca88](https://github.com/adobe/helix-shared/commit/c95ca88991aa0a8369520459dfe5f599fe25c7f6))
+
+
+
+
+
 ## [1.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-async@1.0.2...@adobe/helix-shared-async@1.0.3) (2021-05-25)
 
 
