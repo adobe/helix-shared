@@ -131,6 +131,10 @@
       "allowedVersions": "<5.0.0"
     },
     {
+      "packageNames": ["p-limit"],
+      "allowedVersions": "<4.0.0"
+    },
+    {
       "packageNames": ["circleci/node"],
       "allowedVersions": "12"
     },
