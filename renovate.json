@@ -71,6 +71,10 @@
       "allowedVersions": "<8.0.0"
     },
     {
+      "packageNames": ["hast-util-is-element"],
+      "allowedVersions": "<2.0.0"
+    },
+    {
       "packageNames": ["hastscript"],
       "allowedVersions": "<7.0.0"
     },
