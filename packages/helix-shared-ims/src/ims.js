@@ -15,6 +15,7 @@ const { parse, serialize } = require('cookie');
 
 const { context: fetchContext, ALPN_HTTP1_1 } = fetchAPI;
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
+  /* istanbul ignore next */
   ? fetchContext({
     alpnProtocols: [ALPN_HTTP1_1],
     userAgent: 'helix-fetch', // static user agent for test recordings
