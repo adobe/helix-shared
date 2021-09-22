@@ -14,6 +14,7 @@ const fetchAPI = require('@adobe/helix-fetch');
 const { parse, serialize } = require('cookie');
 
 const { context: fetchContext, ALPN_HTTP1_1 } = fetchAPI;
+/* istanbul ignore next */
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
   /* istanbul ignore next */
   ? fetchContext({
