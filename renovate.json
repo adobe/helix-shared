@@ -143,6 +143,10 @@
       "allowedVersions": "!/3\\.29\\.0/"
     },
     {
+      "packageNames": ["@adobe/helix-cli"],
+      "allowedVersions": "<14>"
+    },
+    {
       "groupName": "adobe fixes",
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
