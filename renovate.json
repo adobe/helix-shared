@@ -144,7 +144,7 @@
     },
     {
       "packageNames": ["@adobe/helix-cli"],
-      "allowedVersions": "<14>"
+      "allowedVersions": "<14"
     },
     {
       "groupName": "adobe fixes",
