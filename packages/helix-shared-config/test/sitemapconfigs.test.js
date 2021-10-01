@@ -27,6 +27,11 @@ const tests = [
     result: 'simple.json',
   },
   {
+    title: 'loads an example with multiple languages',
+    config: 'multilang.yaml',
+    result: 'multilang.json',
+  },
+  {
     title: 'loads a broken example',
     config: 'broken.yaml',
     error: `Error: Invalid configuration:
