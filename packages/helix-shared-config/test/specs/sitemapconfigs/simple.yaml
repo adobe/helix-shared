@@ -1,0 +1,7 @@
+version: 1
+
+sitemaps:
+  simple:
+    origin: https://www.example.com
+    source: /query-index.json
+    destination: /sitemap-en.xml
