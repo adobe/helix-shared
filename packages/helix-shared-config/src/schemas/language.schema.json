@@ -23,7 +23,7 @@
     "destination": {
       "type": "string",
       "title": "Path",
-      "description": "The destination contentbus path to store sitemap to."
+      "description": "The destination resource path to store sitemap to."
     },
     "hreflang": {
       "type": "string",
