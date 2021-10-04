@@ -18,7 +18,7 @@
     "source": {
       "type": "string",
       "title": "Source",
-      "description": "The source contentbus path to get records from. These records should at least contain a path property."
+      "description": "The source resource path to get records from. These records should at least contain a path property."
     },
     "origin": {
       "type": "string",
