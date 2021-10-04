@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.3.2...@adobe/helix-shared-config@1.4.0) (2021-10-04)
+
+
+### Features
+
+* introduce helix-sitemap.yaml ([#575](https://github.com/adobe/helix-shared/issues/575)) ([900fe9f](https://github.com/adobe/helix-shared/commit/900fe9fdde4989cdb444b7b4d2ae3aa98965af3e))
+
+
+
+
+
 ## [1.3.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.3.1...@adobe/helix-shared-config@1.3.2) (2021-09-27)
 
 **Note:** Version bump only for package @adobe/helix-shared-config
