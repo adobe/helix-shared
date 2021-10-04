@@ -14,7 +14,7 @@ const { NamedMapHandler } = require('./NamedMapHandler');
 
 const sitemapConfigSchema = require('./schemas/sitemapconfig.schema.json');
 const sitemapSchema = require('./schemas/sitemap.schema.json');
-const languageSchema = require('./schemas/language.schema.json');
+const languageSchema = require('./schemas/sitemap-language.schema.json');
 
 class SitemapConfig extends SchemaDerivedConfig {
   constructor() {

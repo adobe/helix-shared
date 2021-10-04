@@ -35,8 +35,8 @@ const tests = [
     title: 'loads a broken example',
     config: 'broken.yaml',
     error: `Error: Invalid configuration:
-Language must have required property 'destination'
-Language must have required property 'hreflang'
+Sitemap Language must have required property 'destination'
+Sitemap Language must have required property 'hreflang'
 
 data/sitemaps/broken/languages/en must have required property 'destination', data/sitemaps/broken/languages/en must have required property 'hreflang'`,
   },

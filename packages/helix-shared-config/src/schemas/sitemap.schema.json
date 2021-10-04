@@ -37,10 +37,10 @@
     },
     "languages": {
       "type": "object",
-      "title": "Languages",
+      "title": "Sitemap Languages",
       "description": "The languages to add to the sitemap",
       "additionalProperties": {
-        "$ref": "https://ns.adobe.com/helix/shared/language"
+        "$ref": "https://ns.adobe.com/helix/shared/sitemap-language"
       }
     }
   },
