@@ -7,7 +7,8 @@
   "scripts": {
     "test": "nyc mocha",
     "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build-types": "node build-types.js"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
     "@pollyjs/adapter-node-http": "5.1.1",
     "@pollyjs/core": "5.1.1",
     "@pollyjs/persister-fs": "5.1.1",
+    "json-schema-to-typescript": "10.1.5",
     "nock": "13.1.3"
   }
 }

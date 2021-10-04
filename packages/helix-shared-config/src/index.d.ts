@@ -10,3 +10,22 @@
  * governing permissions and limitations under the License.
  */
 export * from './config-wrapper';
+import { Config } from './types/config';
+import { RedirectsConfiguration } from './types/redirects';
+import { SitemapConfiguration } from './types/sitemapconfig';
+
+/**
+ * Augmented universal context
+ */
+interface UniversalContextConfig extends Config  {
+  redirect?: RedirectsConfiguration
+  sitemaps?: SitemapConfiguration
+}
+
+declare module '@adobe/helix-universal' {
+  namespace Helix {
+    export interface UniversalContext {
+      config: UniversalContextConfig;
+    }
+  }
+}

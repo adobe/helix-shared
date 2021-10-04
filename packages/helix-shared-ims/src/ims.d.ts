@@ -143,3 +143,9 @@ export declare interface UniversalContextWithIMS extends UniversalContext {
   ims:IMSContext;
 }
 
+declare module '@adobe/helix-universal' {
+  namespace Helix {
+    export interface UniversalContext extends UniversalContextWithIMS {
+    }
+  }
+}

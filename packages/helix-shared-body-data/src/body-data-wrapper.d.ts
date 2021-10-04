@@ -61,3 +61,11 @@ export declare interface BodyDataOptions {
  * @returns {UniversalFunction} a new function that wraps the original one.
  */
 export declare function bodyData(fn: UniversalFunction, opts: BodyDataOptions): UniversalFunction;
+
+declare module '@adobe/helix-universal' {
+  namespace Helix {
+    export interface UniversalContext {
+      data: any;
+    }
+  }
+}
