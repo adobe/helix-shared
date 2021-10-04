@@ -359,7 +359,7 @@ module.exports.main = wrap(main)
     * [~redirectToLogin(ctx, noPrompt)](#module_ims..redirectToLogin) ⇒ <code>Response</code>
     * [~fetchProfile(ctx)](#module_ims..fetchProfile) ⇒ <code>Promise.&lt;(IMSProfile\|null)&gt;</code>
     * [~logout(ctx)](#module_ims..logout) ⇒ <code>Promise.&lt;Response&gt;</code>
-    * [~imsWrapper(func, [opts])](#module_ims..imsWrapper) ⇒ <code>UniversalFunction</code>
+    * [~imsWrapper(func, [options])](#module_ims..imsWrapper) ⇒ <code>UniversalFunction</code>
 
 <a name="module_ims..redirectToLogin"></a>
 
@@ -398,7 +398,7 @@ Sends the logout request to IMS and clears the access token cookie.
 
 <a name="module_ims..imsWrapper"></a>
 
-### ims~imsWrapper(func, [opts]) ⇒ <code>UniversalFunction</code>
+### ims~imsWrapper(func, [options]) ⇒ <code>UniversalFunction</code>
 Wraps a function with an ims authorization middle ware. If the request is authenticated, the
 `context.ims` will contain a `profile` object, representing the authenticated user profile.
 
@@ -437,7 +437,7 @@ request parameter with the same name.
 | Param | Type | Description |
 | --- | --- | --- |
 | func | <code>UniversalFunction</code> | the universal function |
-| [opts] | <code>IMSConfig</code> | Options |
+| [options] | <code>IMSConfig</code> | Options |
 
 <a name="module_wrap"></a>
 
