@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.4.0...@adobe/helix-shared-config@1.4.1) (2021-10-05)
+
+
+### Bug Fixes
+
+* export SitemapConfig ([5074666](https://github.com/adobe/helix-shared/commit/5074666d3bdc867e07aac556addd5956be0103e6))
+
+
+
+
+
 # [1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.3.2...@adobe/helix-shared-config@1.4.0) (2021-10-04)
 
 
