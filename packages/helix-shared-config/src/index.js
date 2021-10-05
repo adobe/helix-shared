@@ -20,6 +20,7 @@ const { optionalConfig, requiredConfig } = require('./config-wrapper');
 const DataEmbedValidator = require('./DataEmbedValidator.js');
 const ValidationError = require('./ValidationError.js');
 const IgnoreConfig = require('./IgnoreConfig.js');
+const SitemapConfig = require('./SitemapConfig.js');
 
 module.exports = {
   HelixConfig,
@@ -29,6 +30,7 @@ module.exports = {
   Strain,
   MarkupConfig,
   IgnoreConfig,
+  SitemapConfig,
   Condition,
   optionalConfig,
   requiredConfig,
