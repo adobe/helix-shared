@@ -6,7 +6,8 @@
   "scripts": {
     "docs:schema": "jsonschema2md -d packages/helix-shared-config/src/schemas -o docs -x docs -f yaml",
     "docs:api": "jsdoc2md -c .jsdoc.json --files packages/*/src/*.js > docs/API.md",
-    "docs": "npm run docs:schema && npm run docs:api",
+    "docs": "npm run docs:schema && npm run docs:api && npm run build-types",
+    "build-types": "lerna run build-types",
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test --stream",
     "test-ci": "lerna run test-ci --stream",
