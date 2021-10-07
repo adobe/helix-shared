@@ -76,4 +76,4 @@ const opts = {
     });
 
   await Promise.all(p);
-})(); // Wrap in parenthesis and call now
+})();

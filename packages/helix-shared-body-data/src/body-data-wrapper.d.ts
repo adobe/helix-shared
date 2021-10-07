@@ -65,7 +65,21 @@ export declare function bodyData(fn: UniversalFunction, opts: BodyDataOptions): 
 declare module '@adobe/helix-universal' {
   namespace Helix {
     export interface UniversalContext {
-      data: any;
+      /**
+       * 1. When the req has a content-type of `application/json`, 
+       * `any` applies as the body is JSON parsed to some object.
+       * 
+       * 2. For `application/x-www-form-urlencoded` content-types,
+       * the keys are derived from form data.
+       * 
+       * 3. Otherwise, the URL search parameter keys are used.
+       * 
+       * The values in cases 2 & 3 are either coerced to a type or 
+       * left as strings, depending on the `opts: BodyDataOptions` param.
+       */
+      data: {
+        [key: string]: number | string | boolean | any;
+      }
     }
   }
 }
