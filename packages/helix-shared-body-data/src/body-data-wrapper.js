@@ -44,7 +44,7 @@ async function getData(request, opts) {
     const values = (isArray ? [value] : data.getAll(key))
       .map((v) => (coerceBoolean && (v === 'true' || v === 'false') ? v === 'true' : v))
       .map((v) => (coerceInt && /^-?[0-9]+$/.test(v) ? Number.parseInt(v, 10) : v))
-      .map((v) => (coerceNumber && !Number.isNaN(parseFloat(v)) ? parseFloat(v) : v));
+      .map((v) => (coerceNumber && /^[0-9.]+([eE][+-]?[0-9]*)?$/.test(v) && !Number.isNaN(parseFloat(v)) ? parseFloat(v) : v));
     if (values.length === 1 && isArray && Number.isNaN(arrayIndex)) {
       // this means foo[] = 'bar'
       if (!Array.isArray(alldata[cleanKey])) {
