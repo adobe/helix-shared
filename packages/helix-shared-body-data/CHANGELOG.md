@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.1...@adobe/helix-shared-body-data@1.1.2) (2021-10-07)
+
+
+### Bug Fixes
+
+* **body-data:** reduce eagerness to coerce numbers ([6926f34](https://github.com/adobe/helix-shared/commit/6926f34d642f8f736bea048266852fd21ef4596a)), closes [#580](https://github.com/adobe/helix-shared/issues/580)
+
+
+
+
+
 ## [1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.0...@adobe/helix-shared-body-data@1.1.1) (2021-09-27)
 
 
