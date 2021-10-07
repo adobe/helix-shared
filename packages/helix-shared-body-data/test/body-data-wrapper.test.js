@@ -105,12 +105,14 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
 
   it('Coerces Numbers from URL Parameters', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: 10, bar: 10.0, baz: 1.5 });
+      assert.deepStrictEqual(context.data, {
+        foo: 10, bar: 10.0, baz: 1.5, date: '2021-09-30:13:00:00',
+      });
       return new Response('ok');
     };
 
     const actualfunct = wrap(universalfunct).with(bodyData, { coerceNumber: true });
-    const response = await actualfunct(new Request('http://localhost?foo=10&bar=10.0&baz=1.5', {
+    const response = await actualfunct(new Request('http://localhost?foo=10&bar=10.0&baz=1.5&date=2021-09-30:13:00:00', {
     }), {
       log,
       invocation: {
