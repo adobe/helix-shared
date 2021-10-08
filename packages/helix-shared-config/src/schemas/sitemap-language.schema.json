@@ -33,7 +33,12 @@
     "alternate": {
       "type": "string",
       "title": "Alternate",
-      "description": "How to compute the respective path in that language. If not present, paths do not contain a language specific part."
+      "description": "How to compute the respective path in that language. If not present, paths do not contain a language specific part.",
+      "examples": [
+        "/{path}",
+        "/en/{path}",
+        "/german/{path}"
+      ]
     }
   },
   "required": [
