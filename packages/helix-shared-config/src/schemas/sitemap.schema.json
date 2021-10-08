@@ -33,7 +33,11 @@
     "lastmod": {
       "type": "string",
       "title": "Lastmod",
-      "description": "The format to use for last modification of a location. If not present, no last modification is added."
+      "description": "The format to use for last modification of a location. If not present, no last modification is added.",
+      "examples": [
+        "YYYY-MM-DD",
+        "YYYY-MM-DD hh:mm:ss"
+      ]
     },
     "languages": {
       "type": "object",
