@@ -29,7 +29,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/helix-fetch": "2.4.2",
+    "@adobe/helix-fetch": "3.0.0",
     "@adobe/helix-shared-body-data": "^1.1.2",
     "@adobe/helix-shared-utils": "^1.0.3",
     "@adobe/helix-shared-wrap": "^1.0.0",
