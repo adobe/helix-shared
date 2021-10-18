@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.2...@adobe/helix-shared-body-data@1.1.3) (2021-10-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v3 ([bb7b3d4](https://github.com/adobe/helix-shared/commit/bb7b3d45ff1ddb0681628903a65b7973a64533bc))
+
+
+
+
+
 ## [1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.1...@adobe/helix-shared-body-data@1.1.2) (2021-10-07)
 
 
