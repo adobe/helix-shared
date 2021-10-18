@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-config",
-  "version": "1.4.1",
+  "version": "1.4.3",
   "description": "Shared modules of the Helix Project - config",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -24,7 +24,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/helix-fetch": "2.4.2",
+    "@adobe/helix-fetch": "3.0.0",
     "@adobe/helix-shared-git": "^1.0.3",
     "@adobe/helix-shared-prune": "^1.0.0",
     "@adobe/helix-shared-utils": "^1.0.3",

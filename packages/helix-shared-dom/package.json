@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-dom",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Shared modules of the Helix Project - dom",
   "main": "src/dom.js",
   "scripts": {
@@ -25,6 +25,6 @@
     "ferrum": "1.9.3"
   },
   "devDependencies": {
-    "jsdom": "17.0.0"
+    "jsdom": "18.0.0"
   }
 }
