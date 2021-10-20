@@ -39,7 +39,7 @@
   "devDependencies": {
     "@adobe/helix-log": "5.0.5",
     "@adobe/helix-shared-wrap": "^1.0.0",
-    "@adobe/helix-testutils": "0.4.5",
+    "@adobe/helix-testutils": "0.4.10",
     "@pollyjs/adapter-node-http": "5.1.1",
     "@pollyjs/core": "5.1.1",
     "@pollyjs/persister-fs": "5.1.1",
