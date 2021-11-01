@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-dom@1.1.1...@adobe/helix-shared-dom@1.1.2) (2021-11-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal to v1.8.1 ([#587](https://github.com/adobe/helix-shared/issues/587)) ([7c05aea](https://github.com/adobe/helix-shared/commit/7c05aea00f8ce00134e7df2619f30a511e524ef6))
+
+
+
+
+
 ## [1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-dom@1.1.0...@adobe/helix-shared-dom@1.1.1) (2021-10-18)
 
 **Note:** Version bump only for package @adobe/helix-shared-dom
