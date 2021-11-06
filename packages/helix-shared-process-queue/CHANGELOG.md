@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue@1.0.0...@adobe/helix-shared-process-queue@1.0.1) (2021-11-06)
+
+**Note:** Version bump only for package @adobe/helix-shared-process-queue
+
+
+
+
+
 # [1.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue@0.0.10...@adobe/helix-shared-process-queue@1.0.0) (2021-04-29)
 
 **Note:** Version bump only for package @adobe/helix-shared-process-queue
