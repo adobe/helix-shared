@@ -56,7 +56,8 @@ describe('Performance Config', () => {
       visually_complete_85: 1,
     });
 
-    assert.deepStrictEqual(p.thresholds,
+    assert.deepStrictEqual(
+      p.thresholds,
       {
         asset_count: 1,
         'consistently-interactive': 1,
@@ -91,6 +92,7 @@ describe('Performance Config', () => {
         'time-to-first-byte': 1,
         visually_complete: 1,
         visually_complete_85: 1,
-      });
+      },
+    );
   });
 });

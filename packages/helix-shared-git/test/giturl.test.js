@@ -502,17 +502,18 @@ describe('GitUrl from object tests', () => {
   });
 
   it('Full example with defaults', () => {
-    const url = new GitUrl({
-    },
-    {
-      protocol: 'http',
-      hostname: 'git.example.com',
-      owner: 'company',
-      path: '/docs/main',
-      port: '1234',
-      ref: 'products/v2',
-      repo: 'repository',
-    });
+    const url = new GitUrl(
+      {},
+      {
+        protocol: 'http',
+        hostname: 'git.example.com',
+        owner: 'company',
+        path: '/docs/main',
+        port: '1234',
+        ref: 'products/v2',
+        repo: 'repository',
+      },
+    );
     assert.equal(url.protocol, 'http');
     assert.equal(url.hostname, 'git.example.com');
     assert.equal(url.port, '1234');

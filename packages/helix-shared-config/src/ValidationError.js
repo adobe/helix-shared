@@ -13,7 +13,10 @@
 
 class ValidationError extends Error {
   constructor(
-    msg, errors = [], mapError = ValidationError.mapError, prettyname = ValidationError.prettyname,
+    msg,
+    errors = [],
+    mapError = ValidationError.mapError,
+    prettyname = ValidationError.prettyname,
   ) {
     const detail = errors.map((e) => mapError(e, prettyname)).join('\n');
     super(`Invalid configuration:
