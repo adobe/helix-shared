@@ -98,37 +98,58 @@ describe('equalizeNode()', () => {
 
   ck('empty dom is noop', '', '');
   ck('empty dom containing space has space trimmed', '   \n  ', '');
-  ck('removes comments',
+  ck(
+    'removes comments',
     '<!-- Hello World -->',
-    '');
-  ck('normalizes class names',
+    '',
+  );
+  ck(
+    'normalizes class names',
     '<div class="foo bar"></div>',
-    '<div class="bar foo"></div>');
-  ck('normalizes spaces in class names',
+    '<div class="bar foo"></div>',
+  );
+  ck(
+    'normalizes spaces in class names',
     '<div class="foo  bar"></div>',
-    '<div class="bar foo"></div>');
-  ck('normalizes tabs in class names',
+    '<div class="bar foo"></div>',
+  );
+  ck(
+    'normalizes tabs in class names',
     '<div class="foo\tbar"></div>',
-    '<div class="bar foo"></div>');
-  ck('normalizes line breaks in class names',
+    '<div class="bar foo"></div>',
+  );
+  ck(
+    'normalizes line breaks in class names',
     '<div class="foo\nbar"></div>',
-    '<div class="bar foo"></div>');
-  ck('normalizes duplicates in class names',
+    '<div class="bar foo"></div>',
+  );
+  ck(
+    'normalizes duplicates in class names',
     '<div class="foo foo foo bar"></div>',
-    '<div class="bar foo"></div>');
-  ck('removes comments buried deep',
+    '<div class="bar foo"></div>',
+  );
+  ck(
+    'removes comments buried deep',
     '<div><span><div><!-- Hello World --></div></span></div>',
-    '<div><span><div></div></span></div>');
-  ck('space in text is collapsed',
+    '<div><span><div></div></span></div>',
+  );
+  ck(
+    'space in text is collapsed',
     'Foo\n  \n \tBar',
-    'Foo Bar');
-  ck('text is trimmed',
+    'Foo Bar',
+  );
+  ck(
+    'text is trimmed',
     '   Foo\n  \n \tBar   ',
-    'Foo Bar');
-  ck('collapses whitespace inside elements',
+    'Foo Bar',
+  );
+  ck(
+    'collapses whitespace inside elements',
     '<div>   foo <div>\n   bar <div\n> baz   \n bang',
-    '<div>foo<div>bar<div>baz bang</div></div></div>');
-  ck('preserves one collapsed space across inline elements (left)',
+    '<div>foo<div>bar<div>baz bang</div></div></div>',
+  );
+  ck(
+    'preserves one collapsed space across inline elements (left)',
     '<div>   foo <b> hello  </b> </div>   ',
     '<div>foo<b> hello',
     '<div>foo <b>hello',
@@ -137,16 +158,21 @@ describe('equalizeNode()', () => {
     '<div>foo\n<b>hello',
     '<div>foo\t<b>hello',
     '<div>foo\t<b>\thello',
-    '<div>foo <b>hello</b></div>');
-  ck('preserves one collapsed space across inline elements (right)', '<div>   <em> hello</em> foo ',
+    '<div>foo <b>hello</b></div>',
+  );
+  ck(
+    'preserves one collapsed space across inline elements (right)',
+    '<div>   <em> hello</em> foo ',
     '<div><em> hello </em>  foo',
     '<div> <em>hello\n</em> foo',
     '<div><em>\nhello</em>\nfoo',
     '<div>\n<em>\nhello\n</em>\nfoo',
     '<div>\n<em>hello</em>\tfoo',
     '<div>\t<em>hello\n</em> foo',
-    '<div><em>hello</em> foo</div>');
-  ck('preserves one collapsed space across inline elements (both)',
+    '<div><em>hello</em> foo</div>',
+  );
+  ck(
+    'preserves one collapsed space across inline elements (both)',
     '<div> foo   <span> hello</span> foo ',
     '<div> foo<span> hello </span>  foo',
     '<div> foo <span>hello\n</span> foo',
@@ -154,8 +180,10 @@ describe('equalizeNode()', () => {
     '<div> foo\n<span>\nhello\n</span>\nfoo',
     '<div> foo\n<span>hello</span>\tfoo',
     '<div> foo\t<span>hello\n</span> foo',
-    '<div>foo <span>hello</span> foo</div>');
-  ck('preserves one collapsed space across inline elements (parent)',
+    '<div>foo <span>hello</span> foo</div>',
+  );
+  ck(
+    'preserves one collapsed space across inline elements (parent)',
     '<a>Hello \t\n </a>   \n   <span>  \n\t  world',
     '<a>Hello \t\n </a><span>  \n\t  world',
     '<a>Hello</a><span>  \n\t  world',
@@ -164,80 +192,119 @@ describe('equalizeNode()', () => {
     '<a>Hello</a><span>  world',
     '<a>Hello</a><span>\nworld',
     '<a>Hello\n</a><span>\nworld',
-    '<a>Hello</a> <span>world</span>');
-  ck('preserves one collapsed space across inline elements (parent, unbalanced, nested)',
+    '<a>Hello</a> <span>world</span>',
+  );
+  ck(
+    'preserves one collapsed space across inline elements (parent, unbalanced, nested)',
     '<a><span><b>foo</b>\n</span></a><b>hello</b>',
-    '<a><span><b>foo</b></span></a> <b>hello</b>');
-  ck('cuts space around block elements',
+    '<a><span><b>foo</b></span></a> <b>hello</b>',
+  );
+  ck(
+    'cuts space around block elements',
     ' foo \n<div></div> bar',
-    'foo<div></div>bar');
-  ck('leaves <pre> alone',
+    'foo<div></div>bar',
+  );
+  ck(
+    'leaves <pre> alone',
     ' foo <pre> \n \t   </pre> bar ',
-    'foo<pre> \n \t   </pre>bar');
-  ck('can deal with inline css',
+    'foo<pre> \n \t   </pre>bar',
+  );
+  ck(
+    'can deal with inline css',
     'foo <span style="display: block; white-space: pre;"> \n \t   </span> bar',
-    'foo<span style="display: block; white-space: pre;"> \n \t   </span>bar');
-  ck('can deal with external css',
+    'foo<span style="display: block; white-space: pre;"> \n \t   </span>bar',
+  );
+  ck(
+    'can deal with external css',
     '<style>.foo { white-space: pre; }</style>'
      + '   <span class="foo">     hello world   </span> ',
-    '<span class="foo">     hello world   </span>');
-  ck('preserves collapsed space around inline pre',
+    '<span class="foo">     hello world   </span>',
+  );
+  ck(
+    'preserves collapsed space around inline pre',
     ' foo \n<pre style="display: inline"> \n \t   </pre>\tbar ',
-    'foo <pre style="display: inline"> \n \t   </pre> bar');
-  ck('preserves collapsed space inside non-pre inside pre',
+    'foo <pre style="display: inline"> \n \t   </pre> bar',
+  );
+  ck(
+    'preserves collapsed space inside non-pre inside pre',
     '   <pre><span style="white-space: normal">    \t hello \n</span></pre> \n',
-    '<pre><span style="white-space: normal"> hello </span></pre>');
-  ck('strips spaces between two divs',
+    '<pre><span style="white-space: normal"> hello </span></pre>',
+  );
+  ck(
+    'strips spaces between two divs',
     '<div> foo </div> \n <div> bar \n </div>',
-    '<div>foo</div><div>bar</div>');
-  ck('strips spaces after nested div',
+    '<div>foo</div><div>bar</div>',
+  );
+  ck(
+    'strips spaces after nested div',
     '<div>   <div> Hello World </div>    </div>',
-    '<div><div>Hello World</div></div>');
-  ck('strips spaces between inline elements inside div',
+    '<div><div>Hello World</div></div>',
+  );
+  ck(
+    'strips spaces between inline elements inside div',
     '<div>  <a > foo </a><span>  \n<em> borg</em></span><b>  <em> baz </em>  </b> </div>',
-    '<div><a>foo</a> <span><em>borg</em></span> <b><em>baz</em></b></div>');
-  ck('allows empy inline element inside pre',
+    '<div><a>foo</a> <span><em>borg</em></span> <b><em>baz</em></b></div>',
+  );
+  ck(
+    'allows empy inline element inside pre',
     '<pre> <span></span> </pre>',
-    '<pre> <span></span> </pre>');
-  ck('collapses spaces inside inline element inside pre',
+    '<pre> <span></span> </pre>',
+  );
+  ck(
+    'collapses spaces inside inline element inside pre',
     '<pre> <span>   \n </span> </pre>',
-    '<pre> <span> </span> </pre>');
+    '<pre> <span> </span> </pre>',
+  );
 
-  ck('deals with inline pre',
+  ck(
+    'deals with inline pre',
     '<span style="white-space: pre"></span>',
-    '<span style="white-space: pre"></span>');
-  ck('deals with inline pre side by side',
+    '<span style="white-space: pre"></span>',
+  );
+  ck(
+    'deals with inline pre side by side',
     '<span style="white-space: pre"></span><span style="white-space: pre"></span>',
-    '<span style="white-space: pre"></span><span style="white-space: pre"></span>');
-  ck('deals with inline pre side by side with space',
+    '<span style="white-space: pre"></span><span style="white-space: pre"></span>',
+  );
+  ck(
+    'deals with inline pre side by side with space',
     `
       <span style="white-space: pre">         </span>  
       <span style="white-space: pre">     </span>   
     `,
-    '<span style="white-space: pre">         </span> <span style="white-space: pre">     </span>');
-  ck('deals with inline pre side by side wrapped in span left',
+    '<span style="white-space: pre">         </span> <span style="white-space: pre">     </span>',
+  );
+  ck(
+    'deals with inline pre side by side wrapped in span left',
     `
       <span>  <span style="white-space: pre">         </span>    </span>
       <span style="white-space: pre">     </span>
     `,
-    '<span><span style="white-space: pre">         </span></span> <span style="white-space: pre">     </span>');
-  ck('deals with inline pre side by side wrapped in span right',
+    '<span><span style="white-space: pre">         </span></span> <span style="white-space: pre">     </span>',
+  );
+  ck(
+    'deals with inline pre side by side wrapped in span right',
     `
       <span style="white-space: pre">         </span>
       <span>  <span style="white-space: pre">     </span>  </span>
     `,
-    '<span style="white-space: pre">         </span> <span><span style="white-space: pre">     </span></span>');
-  ck('collapses spaces between inline pre and text at the end of a div',
+    '<span style="white-space: pre">         </span> <span><span style="white-space: pre">     </span></span>',
+  );
+  ck(
+    'collapses spaces between inline pre and text at the end of a div',
     '<div>foo</div><div>   <pre style="display: inline"> hello</pre>  \n \n \t foo </div>',
-    '<div>foo</div><div><pre style="display: inline"> hello</pre> foo</div>');
+    '<div>foo</div><div><pre style="display: inline"> hello</pre> foo</div>',
+  );
 
   // regression test
-  ck('works with forms',
+  ck(
+    'works with forms',
     `<form>
         <textarea id="rating-comments" name="rating-comments"></textarea>
         <input type="submit" value="Send">
     </form>`,
-    '<form><textarea id="rating-comments" name="rating-comments"></textarea> <input type="submit" value="Send"></form>');
+    '<form><textarea id="rating-comments" name="rating-comments"></textarea> <input type="submit" value="Send"></form>',
+  );
 
   const style = `
     <style>
@@ -305,10 +372,13 @@ describe('equalizeNode()', () => {
       + '<span style="white-space: pre">         </span> <span><span style="white-space: pre">     </span></span>'
     + '</div>';
 
-  ck('grand test with all features combined', `
+  ck(
+    'grand test with all features combined',
+    `
       <head>${style}</head>
       <body>${grandBody}  ${grandBody} ${grandBody}  </body>  `,
-  `${grandResult}${grandResult}${grandResult}`);
+    `${grandResult}${grandResult}${grandResult}`,
+  );
 
   it('Rejects invalid inputs', () => {
     const dom = new JSDOM('');
@@ -427,14 +497,18 @@ describe('nodeMatches()', () => {
   const containers = [(x) => `<div>${x}</div>`];
 
   it('Supports multiple wildcards with text and normalized space', () => {
-    ck('  Hello  World Foo  Bar',
+    ck(
+      '  Hello  World Foo  Bar',
       'Hello<match:any></match:any>\tWorld F'
        + '<match:any></match:any>oo<match:any></match:any><match:any></match:any>'
-       + '\nBar<match:any></match:any>');
-    ckNot('  Hello  World Foo  Bar',
+       + '\nBar<match:any></match:any>',
+    );
+    ckNot(
+      '  Hello  World Foo  Bar',
       'Hello<match:any></match:any>\tWorld F'
        + '<match:any></match:any>oXo<match:any></match:any><match:any></match:any>'
-       + '\nBar<match:any></match:any>');
+       + '\nBar<match:any></match:any>',
+    );
   });
 
   it('Supports wildcard at root', () => {

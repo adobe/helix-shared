@@ -22,7 +22,9 @@ let maxConcurrency = 0;
 async function testFunction({ time, number, error }, queue, results) {
   concurrency += 1;
   maxConcurrency = Math.max(maxConcurrency, concurrency);
-  await new Promise((resolve) => setTimeout(resolve, time));
+  await new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
   concurrency -= 1;
   if (error) {
     throw error;
