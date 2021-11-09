@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.4.6...@adobe/helix-shared-config@1.4.7) (2021-11-09)
+
+**Note:** Version bump only for package @adobe/helix-shared-config
+
+
+
+
+
 ## [1.4.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.4.5...@adobe/helix-shared-config@1.4.6) (2021-11-06)
 
 **Note:** Version bump only for package @adobe/helix-shared-config

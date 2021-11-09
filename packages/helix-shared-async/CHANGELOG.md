@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-async@1.1.0...@adobe/helix-shared-async@1.1.1) (2021-11-09)
+
+**Note:** Version bump only for package @adobe/helix-shared-async
+
+
+
+
+
 # [1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-async@1.0.3...@adobe/helix-shared-async@1.1.0) (2021-09-20)
 
 

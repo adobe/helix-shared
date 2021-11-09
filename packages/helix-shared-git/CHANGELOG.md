@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git@1.0.3...@adobe/helix-shared-git@1.1.0) (2021-11-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal to v1.6.12 ([#565](https://github.com/adobe/helix-shared/issues/565)) ([f3e7468](https://github.com/adobe/helix-shared/commit/f3e74689b944418c17b3fb8afcdd29fab7082758))
+
+
+### Features
+
+* **config:** add ignore config, parser ([#542](https://github.com/adobe/helix-shared/issues/542)) ([c95ca88](https://github.com/adobe/helix-shared/commit/c95ca88991aa0a8369520459dfe5f599fe25c7f6))
+
+
+
+
+
 ## [1.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git@1.0.2...@adobe/helix-shared-git@1.0.3) (2021-05-03)
 
 
