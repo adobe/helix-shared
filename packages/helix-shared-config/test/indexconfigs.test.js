@@ -102,7 +102,7 @@ describe('Index Config Loading', () => {
     const cfg = new IndexConfig()
       .withJSON(fs.readJSONSync(path.resolve(SPEC_ROOT, 'query.json')));
     await cfg.init();
-    assert.equal(cfg.indices.length, 2);
+    assert.equal(cfg.indices.length, 1);
     assert.ok(Array.isArray(cfg.indices));
     assert.equal(cfg.indices[0].name, 'blog-posts');
     // eslint-disable-next-line no-template-curly-in-string
@@ -120,7 +120,7 @@ describe('Index Config Loading', () => {
     const cfg = new IndexConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'));
     await cfg.init();
-    assert.equal(cfg.indices.length, 2);
+    assert.equal(cfg.indices.length, 1);
     assert.ok(Array.isArray(cfg.indices));
     assert.equal(cfg.indices[0].name, 'blog-posts');
     // eslint-disable-next-line no-template-curly-in-string
