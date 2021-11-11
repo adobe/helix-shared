@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.4.7...@adobe/helix-shared-config@1.5.0) (2021-11-11)
+
+
+### Features
+
+* target URI should be allowed relative ([#597](https://github.com/adobe/helix-shared/issues/597)) ([d8327c3](https://github.com/adobe/helix-shared/commit/d8327c34bd3770a2e8151f74555312c18e129b27))
+
+
+
+
+
 ## [1.4.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.4.6...@adobe/helix-shared-config@1.4.7) (2021-11-09)
 
 **Note:** Version bump only for package @adobe/helix-shared-config
