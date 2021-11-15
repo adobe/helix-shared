@@ -16,25 +16,26 @@ const processQueue = require('../src/process-queue.js');
 
 const nop = () => {};
 
-let concurrency = 0;
-let maxConcurrency = 0;
-
-async function testFunction({ time, number, error }, queue, results) {
-  concurrency += 1;
-  maxConcurrency = Math.max(maxConcurrency, concurrency);
-  await new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-  concurrency -= 1;
-  if (error) {
-    throw error;
-  }
-  results.push(number * number);
-}
-
 describe('Process Queue', () => {
+  let concurrency = 0;
+  let maxConcurrency = 0;
+
+  async function testFunction({ time, number, error }, queue, results) {
+    concurrency += 1;
+    maxConcurrency = Math.max(maxConcurrency, concurrency);
+    await new Promise((resolve) => {
+      setTimeout(resolve, time);
+    });
+    concurrency -= 1;
+    if (error) {
+      throw error;
+    }
+    results.push(number * number);
+  }
+
   beforeEach(() => {
     maxConcurrency = 0;
+    concurrency = 0;
   });
 
   it('works with empty queue', async () => {
@@ -56,6 +57,17 @@ describe('Process Queue', () => {
       number: 3,
     }], testFunction);
     assert.deepEqual(result, [9, 16]);
+  });
+
+  it('processes queue can add more items to the queue', async () => {
+    const result = await processQueue([2, 7, 3, 10], (n, queue, results) => {
+      if (n > 0) {
+        queue.push(n - 1);
+      } else {
+        results.push(0);
+      }
+    });
+    assert.deepEqual(result, [0, 0, 0, 0]);
   });
 
   it('respects concurrency', async () => {
@@ -82,5 +94,48 @@ describe('Process Queue', () => {
       number: 3,
       error: new Error('aborted'),
     }], testFunction));
+  });
+
+  it('rejects error for non object', async () => {
+    await assert.rejects(processQueue(1), Error('invalid queue argument: iterable expected'));
+  });
+
+  it('rejects error for non iterable', async () => {
+    await assert.rejects(processQueue({ }), Error('invalid queue argument: iterable expected'));
+  });
+
+  it('works with iterators', async () => {
+    function* counter() {
+      for (let i = 0; i < 5; i += 1) {
+        yield {
+          time: i + 10 + 5,
+          number: i,
+        };
+      }
+    }
+
+    const result = await processQueue(counter(), testFunction);
+    assert.deepEqual(result, [0, 1, 4, 9, 16]);
+    assert.deepEqual(maxConcurrency, 5);
+  });
+
+  it('iterators respect concurrency', async () => {
+    function* fibonacci() {
+      let a = 1;
+      let b = 1;
+      while (a < 50) {
+        const c = a + b;
+        a = b;
+        b = c;
+        yield {
+          time: 10,
+          number: c,
+        };
+      }
+    }
+
+    const result = await processQueue(fibonacci(), testFunction, 4);
+    assert.deepEqual(result, [4, 9, 25, 64, 169, 441, 1156, 3025, 7921]);
+    assert.deepEqual(maxConcurrency, 4);
   });
 });
