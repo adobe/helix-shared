@@ -43,7 +43,7 @@ async function processQueue(queue, fn, maxConcurrent = 8) {
   if (Array.isArray(queue)) {
     while (queue.length || running.length) {
       if (running.length < maxConcurrent && queue.length) {
-        handler(queue.shift(), queue, results);
+        handler(queue.shift());
       } else {
         // eslint-disable-next-line no-await-in-loop
         await Promise.race(running);
@@ -56,7 +56,7 @@ async function processQueue(queue, fn, maxConcurrent = 8) {
     let next = queue.next();
     while (!next.done || running.length) {
       if (running.length < maxConcurrent && !next.done) {
-        handler(next.value, queue, results);
+        handler(next.value);
         next = queue.next();
       } else {
         // eslint-disable-next-line no-await-in-loop
