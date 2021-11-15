@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.7...@adobe/helix-shared-ims@1.2.8) (2021-11-15)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([a8dc79e](https://github.com/adobe/helix-shared/commit/a8dc79ee25573553aa5747478b66080888df2240))
+
+
+
+
+
 ## [1.2.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.6...@adobe/helix-shared-ims@1.2.7) (2021-11-09)
 
 **Note:** Version bump only for package @adobe/helix-shared-ims
