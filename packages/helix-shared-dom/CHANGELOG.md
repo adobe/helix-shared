@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-dom@1.1.4...@adobe/helix-shared-dom@1.1.5) (2021-11-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lint-staged to v12 ([#599](https://github.com/adobe/helix-shared/issues/599)) ([5ccc345](https://github.com/adobe/helix-shared/commit/5ccc3452dd9830f26f90d59d2067eea163dd8173))
+* **deps:** update external fixes ([2d80dbd](https://github.com/adobe/helix-shared/commit/2d80dbd0a32dba90d83f91cfe403055835647c1e))
+
+
+
+
+
 ## [1.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-dom@1.1.3...@adobe/helix-shared-dom@1.1.4) (2021-11-15)
 
 
