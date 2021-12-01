@@ -4,6 +4,8 @@ indices:
     source: html
     fetch: https://${repo}-${owner}.project-helix.page/${path}
     target: /query-index.xlsx
+    include:
+      - /blog/**
     properties:
       author:
         select: main > div:nth-of-type(3) > p:nth-of-type(1)

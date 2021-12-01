@@ -135,7 +135,7 @@ function getDOMValue(elements, expression, log, vars) {
  *
  * @param {URL} url of document retrieved
  * @param {object} response response containing body and headers
- * @param {object} config indexing configuration
+ * @param {Index} config indexing configuration
  * @param {Logger} log logger
  * @return {object} extracted properties
  */

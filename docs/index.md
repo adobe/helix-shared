@@ -23,6 +23,8 @@ https://ns.adobe.com/helix/shared/index
 | [target](#target)         | `string` | Optional | cannot be null | [Index](index-properties-target.md "https://ns.adobe.com/helix/shared/index#/properties/target")         |
 | [properties](#properties) | `object` | Required | cannot be null | [Index](index-properties-properties.md "https://ns.adobe.com/helix/shared/index#/properties/properties") |
 | [queries](#queries)       | `object` | Optional | cannot be null | [Index](index-properties-queries.md "https://ns.adobe.com/helix/shared/index#/properties/queries")       |
+| [include](#include)       | `array`  | Optional | cannot be null | [Index](index-properties-include.md "https://ns.adobe.com/helix/shared/index#/properties/include")       |
+| [exclude](#exclude)       | `array`  | Optional | cannot be null | [Index](index-properties-exclude.md "https://ns.adobe.com/helix/shared/index#/properties/exclude")       |
 
 ## source
 
@@ -93,7 +95,7 @@ The data sink to store the extracted data in. This can be an Excel or Google spr
 
 ### target Constraints
 
-**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
+**URI reference**: the string must be a URI reference, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
 
 ## properties
 
@@ -130,3 +132,39 @@ Named queries that can be executed against this index
 ### queries Type
 
 `object` ([Queries](index-properties-queries.md))
+
+## include
+
+Glob patterns for paths where this index is used.
+
+`include`
+
+*   is optional
+
+*   Type: `string[]`
+
+*   cannot be null
+
+*   defined in: [Index](index-properties-include.md "https://ns.adobe.com/helix/shared/index#/properties/include")
+
+### include Type
+
+`string[]`
+
+## exclude
+
+Glob patterns for paths where this index must not be used.
+
+`exclude`
+
+*   is optional
+
+*   Type: `string[]`
+
+*   cannot be null
+
+*   defined in: [Index](index-properties-exclude.md "https://ns.adobe.com/helix/shared/index#/properties/exclude")
+
+### exclude Type
+
+`string[]`

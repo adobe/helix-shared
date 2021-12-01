@@ -4,7 +4,7 @@
 https://ns.adobe.com/helix/shared/sitemap#/properties/destination
 ```
 
-The destination contentbus path to store sitemap to.
+The destination resource path to store sitemap to.
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                         |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------- |

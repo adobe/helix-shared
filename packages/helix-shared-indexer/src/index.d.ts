@@ -11,13 +11,19 @@
  */
 import { Headers } from '@adobe/helix-fetch'
 
-export declare interface IndexConfig {}
+export declare interface Index {
+  include: Array<string>,
+  exclude: Array<string>,
+}
+
+export declare interface IndexConfig {
+  index: Array<Index>,
+}
 
 export declare interface Logger {}
 
 export declare interface HTMLResponse {
   headers: Headers,
-
   body: string,
 }
 
@@ -29,8 +35,20 @@ export declare interface HTMLResponse {
  *
  * @param {URL} url of document retrieved
  * @param {HTMLResponse} response response containing body and headers
- * @param {IndexConfig} config indexing configuration
+ * @param {Index} config indexing configuration
  * @param {Logger} log logger
  * @return {object} indexed properties
  */
-export declare function indexResource(url: URL, response: HTMLResponse, config: IndexConfig, log: Logger): object;
+export declare function indexResource(url: URL, response: HTMLResponse, config: Index, log: Logger): object;
+
+/**
+ * Return a flag indicating whether a particular path is contained
+ * in the indexing configuration (include or exclude element). This
+ * is true if a path is included and *not* excluded.
+ *
+ * @param {Index} cfg indexing configuration's
+ * @param {string} path path to check
+ *
+ * @returns {boolean} whether path is included in configuration
+ */
+export declare function contains(cfg: Index, path: string): boolean;

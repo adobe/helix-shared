@@ -4,7 +4,7 @@
 https://ns.adobe.com/helix/shared/sitemap#/properties/source
 ```
 
-The source contentbus path to get records from. These records should at least contain a path property.
+The source resource path to get records from. These records should at least contain a path property.
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                         |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------- |
