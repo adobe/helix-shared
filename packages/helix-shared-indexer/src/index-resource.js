@@ -133,17 +133,15 @@ function getDOMValue(elements, expression, log, vars) {
  * value(s) to process. If we get multiple values, we return an
  * array.
  *
- * @param {URL} url of document retrieved
+ * @param {string} path Path of document retrieved
  * @param {object} response response containing body and headers
  * @param {Index} config indexing configuration
  * @param {Logger} log logger
  * @return {object} extracted properties
  */
-function indexResource(url, response, config, log) {
+function indexResource(path, response, config, log) {
   const { body, headers } = response;
   const { document } = new JSDOM(body).window;
-  const path = url.pathname;
-
   const record = { };
 
   /* Walk through all index properties */

@@ -144,11 +144,8 @@ const BODY = `
 describe('Index Resource Tests', () => {
   it('indexing a resource', async () => {
     const config = await new IndexConfig().withSource(INDEX).init();
-
-    const url = new URL('https://www.example.com/path');
     const headers = new Headers({ 'last-modified': 'Mon, 22 Feb 2021 15:28:00 GMT' });
-
-    const record = indexResource(url, { body: BODY, headers }, config.indices[0], console);
+    const record = indexResource('/path', { body: BODY, headers }, config.indices[0], console);
     assert.deepStrictEqual(record, {
       author: 'Max',
       'call-unknown-function': '',

@@ -281,7 +281,7 @@ is true if a path is included and <em>not</em> excluded.</p>
 <dt><a href="#getDOMValue">getDOMValue(elements, expression, log, vars)</a></dt>
 <dd><p>Return a value in the DOM by evaluating an expression</p>
 </dd>
-<dt><a href="#indexResource">indexResource(url, response, config, log)</a> ⇒ <code>object</code></dt>
+<dt><a href="#indexResource">indexResource(path, response, config, log)</a> ⇒ <code>object</code></dt>
 <dd><p>Given a response, extract a value and evaluate an expression
 on it. The index contains the CSS selector that will select the
 value(s) to process. If we get multiple values, we return an
@@ -1422,7 +1422,7 @@ Return a value in the DOM by evaluating an expression
 
 <a name="indexResource"></a>
 
-## indexResource(url, response, config, log) ⇒ <code>object</code>
+## indexResource(path, response, config, log) ⇒ <code>object</code>
 Given a response, extract a value and evaluate an expression
 on it. The index contains the CSS selector that will select the
 value(s) to process. If we get multiple values, we return an
@@ -1433,7 +1433,7 @@ array.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>URL</code> | of document retrieved |
+| path | <code>string</code> | Path of document retrieved |
 | response | <code>object</code> | response containing body and headers |
 | config | <code>Index</code> | indexing configuration |
 | log | <code>Logger</code> | logger |

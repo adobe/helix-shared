@@ -33,13 +33,13 @@ export declare interface HTMLResponse {
  * value(s) to process. If we get multiple values, we return an
  * array.
  *
- * @param {URL} url of document retrieved
+ * @param {string} path path of document retrieved
  * @param {HTMLResponse} response response containing body and headers
  * @param {Index} config indexing configuration
  * @param {Logger} log logger
  * @return {object} indexed properties
  */
-export declare function indexResource(url: URL, response: HTMLResponse, config: Index, log: Logger): object;
+export declare function indexResource(path: string, response: HTMLResponse, config: Index, log: Logger): object;
 
 /**
  * Return a flag indicating whether a particular path is contained
