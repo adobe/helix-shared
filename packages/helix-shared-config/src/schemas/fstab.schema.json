@@ -24,6 +24,16 @@
           "$ref": "https://ns.adobe.com/helix/shared/mountpoint"
         }
       }
+    },
+    "folders": {
+      "type": "object",
+      "default": {},
+      "description": "Mapping from subtrees to single sources for catch-all folder support.",
+      "patternProperties": {
+        "^/.*[^/]$": {
+          "type": "string"
+        }
+      }
     }
   },
   "additionalProperties": false,

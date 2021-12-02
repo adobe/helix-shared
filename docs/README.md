@@ -86,6 +86,8 @@
 
 *   [Untitled object in FSTab (Mount Points)](./fstab-properties-mountpoints.md) – `https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints`
 
+*   [Untitled object in FSTab (Mount Points)](./fstab-properties-folders.md "Mapping from subtrees to single sources for catch-all folder support") – `https://ns.adobe.com/helix/shared/fstab#/properties/folders`
+
 *   [Untitled object in Index Configuration](./indexconfig-properties-indices.md) – `https://ns.adobe.com/helix/shared/indexconfig#/properties/indices`
 
 *   [Untitled object in Markup Mapping](./markupmapping-properties-attribute.md "create new attributes for each key value pair below this property") – `https://ns.adobe.com/helix/shared/markupmapping#/properties/attribute`
