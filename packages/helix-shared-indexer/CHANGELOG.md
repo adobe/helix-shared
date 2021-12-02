@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.1.0...@adobe/helix-shared-indexer@0.2.0) (2021-12-02)
+
+
+### Features
+
+* add contains method and improve index config schema ([97c5134](https://github.com/adobe/helix-shared/commit/97c51341ad95ca90eba67d7ae61f322dcd3c0d4a))
+
+
+
+
+
 # 0.1.0 (2021-11-30)
 
 

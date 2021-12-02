@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-indexer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared modules of the Helix Project - Indexer",
   "main": "src/index-resource.js",
   "types": "src/index-resource.d.ts",
@@ -30,6 +30,6 @@
   },
   "devDependencies": {
     "@adobe/helix-fetch": "3.0.0",
-    "@adobe/helix-shared-config": "1.5.3"
+    "@adobe/helix-shared-config": "^1.6.0"
   }
 }
