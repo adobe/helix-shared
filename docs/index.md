@@ -151,6 +151,18 @@ Glob patterns for paths where this index is used.
 
 `string[]`
 
+### include Examples
+
+```yaml
+/blog/**
+
+```
+
+```yaml
+/en/publish/*/*/*/*
+
+```
+
 ## exclude
 
 Glob patterns for paths where this index must not be used.
@@ -168,3 +180,10 @@ Glob patterns for paths where this index must not be used.
 ### exclude Type
 
 `string[]`
+
+### exclude Examples
+
+```yaml
+/drafts/**
+
+```

@@ -13,3 +13,10 @@ Glob patterns for paths where this index must not be used.
 ## exclude Type
 
 `string[]`
+
+## exclude Examples
+
+```yaml
+/drafts/**
+
+```

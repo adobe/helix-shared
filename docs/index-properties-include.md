@@ -13,3 +13,15 @@ Glob patterns for paths where this index is used.
 ## include Type
 
 `string[]`
+
+## include Examples
+
+```yaml
+/blog/**
+
+```
+
+```yaml
+/en/publish/*/*/*/*
+
+```
