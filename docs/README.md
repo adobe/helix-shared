@@ -18,8 +18,6 @@
 
 *   [Index Configuration](./indexconfig.md) – `https://ns.adobe.com/helix/shared/indexconfig`
 
-*   [Language](./language.md) – `https://ns.adobe.com/helix/shared/language`
-
 *   [Markup Configuration](./markup.md "A container for markup mappings") – `https://ns.adobe.com/helix/shared/markup`
 
 *   [Markup Mapping](./markupmapping.md "A markup mapping defines how Helix should generate markup for certain Markdown or DOM patterns") – `https://ns.adobe.com/helix/shared/markupmapping`
@@ -48,9 +46,11 @@
 
 *   [Runtime Strain](./runtimestrain.md "A runtime strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/runtimestrain`
 
-*   [Sitemap](./sitemap.md) – `https://ns.adobe.com/helix/shared/sitemap`
+*   [Sitemap](./sitemap.md "The sitemap configuration for a Project Helix website") – `https://ns.adobe.com/helix/shared/sitemap`
 
 *   [Sitemap Configuration](./sitemapconfig.md) – `https://ns.adobe.com/helix/shared/sitemapconfig`
+
+*   [Sitemap Language](./sitemap-language.md "The sitemap language configuration for a sitemap") – `https://ns.adobe.com/helix/shared/sitemap-language`
 
 *   [Strains](./strains.md) – `https://ns.adobe.com/helix/shared/strains`
 
@@ -66,41 +66,19 @@
 
 ### Objects
 
-*   [Git URL](./runtimestrain-properties-code-oneof-git-url.md "Representation of the fragments of a Git URL") – `https://ns.adobe.com/helix/shared/giturl#/properties/code/oneOf/1`
-
-*   [Git URL](./runtimestrain-properties-static-oneof-git-url.md "Representation of the fragments of a Git URL") – `https://ns.adobe.com/helix/shared/staticgiturl#/properties/static/oneOf/1`
-
-*   [Languages](./sitemap-properties-languages.md "The languages to add to the sitemap") – `https://ns.adobe.com/helix/shared/sitemap#/properties/languages`
-
-*   [Markup Mapping](./markup-markup-mapping.md) – `https://ns.adobe.com/helix/shared/markupmapping#/additionalProperties`
-
 *   [Multi-Value Property](./property-oneof-multi-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/1`
 
 *   [Multi-Value Property](./property-oneof-multi-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/1`
-
-*   [Origin](./proxystrain-properties-origin-anyof-origin.md "Representation of a origin host for a proxy strain") – `https://ns.adobe.com/helix/shared/origin#/properties/origin/anyOf/1`
-
-*   [Performance](./proxystrain-properties-performance.md "Performance testing details") – `https://ns.adobe.com/helix/shared/performance#/properties/perf`
 
 *   [Properties](./index-properties-properties.md "The properties to add to the index") – `https://ns.adobe.com/helix/shared/index#/properties/properties`
 
-*   [Property](./index-properties-properties-property.md) – `https://ns.adobe.com/helix/shared/property#/properties/properties/additionalProperties`
-
-*   [Proxy Strain](./strains-definitions-anystrain-oneof-proxy-strain.md "A strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/proxystrain#/definitions/anystrain/oneOf/0`
-
 *   [Queries](./index-properties-queries.md "Named queries that can be executed against this index") – `https://ns.adobe.com/helix/shared/index#/properties/queries`
 
-*   [Query](./index-properties-queries-query.md "A named query that can be run against an index") – `https://ns.adobe.com/helix/shared/query#/properties/queries/additionalProperties`
-
-*   [Redirect Rule](./proxystrain-properties-redirects-redirect-rule.md "A strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/redirectrule#/properties/redirects/items`
-
-*   [Row](./sheet-properties-data-row.md "A JSON representation of an Excel or Google Sheets data row") – `https://ns.adobe.com/helix/data-embed/row#/properties/data/items`
-
-*   [Runtime Strain](./strains-definitions-anystrain-oneof-runtime-strain.md "A runtime strain is a combination of code and content that enables the creation of a digital experience") – `https://ns.adobe.com/helix/shared/runtimestrain#/definitions/anystrain/oneOf/1`
-
 *   [Single-Value Property](./property-oneof-single-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/0`
 
 *   [Single-Value Property](./property-oneof-single-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/0`
+
+*   [Sitemap Languages](./sitemap-properties-sitemap-languages.md "The languages to add to the sitemap") – `https://ns.adobe.com/helix/shared/sitemap#/properties/languages`
 
 *   [Untitled object in Configuration](./config-properties-definitions.md "A container for referencable objects that can be re-used elsewhere in the configuration") – `https://ns.adobe.com/helix/shared/config#/properties/definitions`
 
@@ -122,15 +100,11 @@
 
 *   [Vanity URL extractor](./redirects-properties-vanity-url-extractor.md "Configure one or multiple vanity URL extractors, each extractor is a property of this object") – `https://ns.adobe.com/helix/shared/redirects#/properties/vanity`
 
-*   [Vanity URL mapping](./redirects-properties-vanity-url-extractor-vanity-url-mapping.md) – `https://ns.adobe.com/helix/shared/vanity#/properties/vanity/additionalProperties`
-
-*   [Version Lock](./proxystrain-properties-version-lock.md) – `https://ns.adobe.com/helix/shared/version-lock#/properties/version-lock`
-
-*   [Workbook](./data-embed-response-allof-0-oneof-workbook.md "A JSON representation of an Excel or Google Sheets workbook containing multiple sheets") – `https://ns.adobe.com/helix/data-embed/workbook#/allOf/0/oneOf/1`
-
-*   [Worksheet](./data-embed-response-allof-0-oneof-worksheet.md "A JSON representation of an Excel or Google Sheets worksheet containing rows and columns") – `https://ns.adobe.com/helix/data-embed/sheet#/allOf/0/oneOf/0`
-
 ### Arrays
+
+*   [Exclude](./index-properties-exclude.md "Glob patterns for paths where this index must not be used") – `https://ns.adobe.com/helix/shared/index#/properties/exclude`
+
+*   [Include](./index-properties-include.md "Glob patterns for paths where this index is used") – `https://ns.adobe.com/helix/shared/index#/properties/include`
 
 *   [Untitled array in Conditions](./conditions-properties-and.md "All conditions in this list must be met") – `https://ns.adobe.com/helix/shared/conditions#/properties/and`
 

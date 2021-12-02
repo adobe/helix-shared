@@ -4,7 +4,9 @@
 https://ns.adobe.com/helix/shared/sitemap
 ```
 
+The sitemap configuration for a Project Helix website.
 
+The formatting options for `lastmod` are described here: <https://momentjs.com/docs/#/displaying/format/>
 
 | Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                        |
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :---------------------------------------------------------------- |
@@ -16,17 +18,17 @@ https://ns.adobe.com/helix/shared/sitemap
 
 # Sitemap Properties
 
-| Property                    | Type     | Required | Nullable       | Defined by                                                                                                   |
-| :-------------------------- | :------- | :------- | :------------- | :----------------------------------------------------------------------------------------------------------- |
-| [source](#source)           | `string` | Optional | cannot be null | [Sitemap](sitemap-properties-source.md "https://ns.adobe.com/helix/shared/sitemap#/properties/source")       |
-| [origin](#origin)           | `string` | Optional | cannot be null | [Sitemap](sitemap-properties-origin.md "https://ns.adobe.com/helix/shared/sitemap#/properties/origin")       |
-| [destination](#destination) | `string` | Optional | cannot be null | [Sitemap](sitemap-properties-path.md "https://ns.adobe.com/helix/shared/sitemap#/properties/destination")    |
-| [lastmod](#lastmod)         | `string` | Optional | cannot be null | [Sitemap](sitemap-properties-lastmod.md "https://ns.adobe.com/helix/shared/sitemap#/properties/lastmod")     |
-| [languages](#languages)     | `object` | Optional | cannot be null | [Sitemap](sitemap-properties-languages.md "https://ns.adobe.com/helix/shared/sitemap#/properties/languages") |
+| Property                    | Type     | Required | Nullable       | Defined by                                                                                                           |
+| :-------------------------- | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------- |
+| [source](#source)           | `string` | Optional | cannot be null | [Sitemap](sitemap-properties-source.md "https://ns.adobe.com/helix/shared/sitemap#/properties/source")               |
+| [origin](#origin)           | `string` | Optional | cannot be null | [Sitemap](sitemap-properties-origin.md "https://ns.adobe.com/helix/shared/sitemap#/properties/origin")               |
+| [destination](#destination) | `string` | Optional | cannot be null | [Sitemap](sitemap-properties-path.md "https://ns.adobe.com/helix/shared/sitemap#/properties/destination")            |
+| [lastmod](#lastmod)         | `string` | Optional | cannot be null | [Sitemap](sitemap-properties-lastmod.md "https://ns.adobe.com/helix/shared/sitemap#/properties/lastmod")             |
+| [languages](#languages)     | `object` | Optional | cannot be null | [Sitemap](sitemap-properties-sitemap-languages.md "https://ns.adobe.com/helix/shared/sitemap#/properties/languages") |
 
 ## source
 
-The source contentbus path to get records from. These records should at least contain a path property.
+The source resource path to get records from. These records should at least contain a path property.
 
 `source`
 
@@ -62,7 +64,7 @@ The origin to prepend to paths found in the source.
 
 ## destination
 
-The destination contentbus path to store sitemap to.
+The destination resource path to store sitemap to.
 
 `destination`
 
@@ -96,6 +98,18 @@ The format to use for last modification of a location. If not present, no last m
 
 `string` ([Lastmod](sitemap-properties-lastmod.md))
 
+### lastmod Examples
+
+```yaml
+YYYY-MM-DD
+
+```
+
+```yaml
+YYYY-MM-DD hh:mm:ss
+
+```
+
 ## languages
 
 The languages to add to the sitemap
@@ -104,12 +118,12 @@ The languages to add to the sitemap
 
 *   is optional
 
-*   Type: `object` ([Languages](sitemap-properties-languages.md))
+*   Type: `object` ([Sitemap Languages](sitemap-properties-sitemap-languages.md))
 
 *   cannot be null
 
-*   defined in: [Sitemap](sitemap-properties-languages.md "https://ns.adobe.com/helix/shared/sitemap#/properties/languages")
+*   defined in: [Sitemap](sitemap-properties-sitemap-languages.md "https://ns.adobe.com/helix/shared/sitemap#/properties/languages")
 
 ### languages Type
 
-`object` ([Languages](sitemap-properties-languages.md))
+`object` ([Sitemap Languages](sitemap-properties-sitemap-languages.md))

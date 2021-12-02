@@ -46,6 +46,29 @@
       "additionalProperties": {
         "$ref": "https://ns.adobe.com/helix/shared/query"
       }
+    },
+    "include": {
+      "type": "array",
+      "title": "Include",
+      "description": "Glob patterns for paths where this index is used.",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        "/blog/**",
+        "/en/publish/*/*/*/*"
+      ]
+    },
+    "exclude": {
+      "type": "array",
+      "title": "Exclude",
+      "description": "Glob patterns for paths where this index must not be used.",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        "/drafts/**"
+      ]
     }
   },
   "required": [

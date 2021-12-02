@@ -13,3 +13,15 @@ The format to use for last modification of a location. If not present, no last m
 ## lastmod Type
 
 `string` ([Lastmod](sitemap-properties-lastmod.md))
+
+## lastmod Examples
+
+```yaml
+YYYY-MM-DD
+
+```
+
+```yaml
+YYYY-MM-DD hh:mm:ss
+
+```

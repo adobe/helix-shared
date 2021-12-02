@@ -4,6 +4,9 @@
       "name": "blog-posts",
       "fetch": "https://${repo}-${owner}.project-helix.page/${path}",
       "target": "/query-index.xlsx",
+      "include": [
+        "/blog/**"
+      ],
       "properties": {
         "author": {
           "faceted": true,

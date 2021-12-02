@@ -123,6 +123,7 @@ describe('Index Config Loading', () => {
     assert.equal(cfg.indices.length, 1);
     assert.ok(Array.isArray(cfg.indices));
     assert.equal(cfg.indices[0].name, 'blog-posts');
+    assert.deepStrictEqual(cfg.indices[0].include, ['/blog/**']);
     // eslint-disable-next-line no-template-curly-in-string
     assert.equal(cfg.indices[0].fetch, 'https://${repo}-${owner}.project-helix.page/${path}');
     assert.equal(cfg.indices[0].properties.length, 5);

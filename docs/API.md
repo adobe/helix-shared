@@ -270,6 +270,23 @@ but provides better error messages.</p>
 <dt><a href="#dumpDOM">dumpDOM(actual, expected, level)</a></dt>
 <dd><p>prints dom in order for changes to be more discernible.</p>
 </dd>
+<dt><a href="#match">match(globs, path, defaultValue)</a> ⇒ <code>boolean</code></dt>
+<dd><p>Return a flag indicating whether a particular path is matches all given glob patterns.</p>
+</dd>
+<dt><a href="#contains">contains(cfg, path)</a> ⇒ <code>boolean</code></dt>
+<dd><p>Return a flag indicating whether a particular path is contained
+in the indexing configuration (include or exclude element). This
+is true if a path is included and <em>not</em> excluded.</p>
+</dd>
+<dt><a href="#getDOMValue">getDOMValue(elements, expression, log, vars)</a></dt>
+<dd><p>Return a value in the DOM by evaluating an expression</p>
+</dd>
+<dt><a href="#indexResource">indexResource(path, response, config, log)</a> ⇒ <code>object</code></dt>
+<dd><p>Given a response, extract a value and evaluate an expression
+on it. The index contains the CSS selector that will select the
+value(s) to process. If we get multiple values, we return an
+array.</p>
+</dd>
 <dt><a href="#processQueue">processQueue(queue, fn, [maxConcurrent])</a> ⇒</dt>
 <dd><p>Processes the given queue concurrently. The handler functions can add more items to the queue
 if needed.</p>
@@ -1360,6 +1377,67 @@ prints dom in order for changes to be more discernible.
 | expected | <code>object</code> |  | node from test domain page |
 | level | <code>number</code> | <code>0</code> | current level in recursion tree return dump of dom that is indented at every level by level*2 spaces |
 
+<a name="match"></a>
+
+## match(globs, path, defaultValue) ⇒ <code>boolean</code>
+Return a flag indicating whether a particular path is matches all given glob patterns.
+
+**Kind**: global function  
+**Returns**: <code>boolean</code> - whether path matches the globs  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| globs | <code>Array.&lt;string&gt;</code> | globbing patterns |
+| path | <code>string</code> | path to check |
+| defaultValue | <code>boolean</code> | what to return if `globs` is undefined |
+
+<a name="contains"></a>
+
+## contains(cfg, path) ⇒ <code>boolean</code>
+Return a flag indicating whether a particular path is contained
+in the indexing configuration (include or exclude element). This
+is true if a path is included and *not* excluded.
+
+**Kind**: global function  
+**Returns**: <code>boolean</code> - whether path is included in configuration  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cfg | <code>Index</code> | indexing configuration's |
+| path | <code>string</code> | path to check |
+
+<a name="getDOMValue"></a>
+
+## getDOMValue(elements, expression, log, vars)
+Return a value in the DOM by evaluating an expression
+
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| elements | <code>Array.&lt;HTMLElement&gt;</code> | 
+| expression | <code>string</code> | 
+| log | <code>Logger</code> | 
+| vars | <code>object</code> | 
+
+<a name="indexResource"></a>
+
+## indexResource(path, response, config, log) ⇒ <code>object</code>
+Given a response, extract a value and evaluate an expression
+on it. The index contains the CSS selector that will select the
+value(s) to process. If we get multiple values, we return an
+array.
+
+**Kind**: global function  
+**Returns**: <code>object</code> - extracted properties  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| path | <code>string</code> | Path of document retrieved |
+| response | <code>object</code> | response containing body and headers |
+| config | <code>Index</code> | indexing configuration |
+| log | <code>Logger</code> | logger |
+
 <a name="processQueue"></a>
 
 ## processQueue(queue, fn, [maxConcurrent]) ⇒
@@ -1371,8 +1449,8 @@ if needed.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| queue | <code>Array.&lt;\*&gt;</code> |  | A list of tasks |
-| fn | <code>function</code> |  | A handler function `fn(task:any, queue:array, results:array)` |
+| queue | <code>Iterable</code> \| <code>Array</code> |  | A list of tasks |
+| fn | <code>ProcessQueueHandler</code> |  | A handler function `fn(task:any, queue:array, results:array)` |
 | [maxConcurrent] | <code>number</code> | <code>8</code> | Concurrency level |
 
 <a name="pruneEmptyValues"></a>
