@@ -1,4 +1,4 @@
-# Untitled object in FSTab (Mount Points) Schema
+# Folders Schema
 
 ```txt
 https://ns.adobe.com/helix/shared/fstab#/properties/folders
@@ -12,7 +12,7 @@ Mapping from subtrees to single sources for catch-all folder support.
 
 ## folders Type
 
-`object` ([Details](fstab-properties-folders.md))
+`object` ([Folders](fstab-properties-folders.md))
 
 ## folders Default Value
 

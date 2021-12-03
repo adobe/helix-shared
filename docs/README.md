@@ -66,6 +66,8 @@
 
 ### Objects
 
+*   [Folders](./fstab-properties-folders.md "Mapping from subtrees to single sources for catch-all folder support") – `https://ns.adobe.com/helix/shared/fstab#/properties/folders`
+
 *   [Multi-Value Property](./property-oneof-multi-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/1`
 
 *   [Multi-Value Property](./property-oneof-multi-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/1`
@@ -85,8 +87,6 @@
 *   [Untitled object in Configuration](./markupconfig-properties-definitions.md "A container for referencable objects that can be re-used elsewhere in the configuration") – `https://ns.adobe.com/helix/shared/markupconfig#/properties/definitions`
 
 *   [Untitled object in FSTab (Mount Points)](./fstab-properties-mountpoints.md) – `https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints`
-
-*   [Untitled object in FSTab (Mount Points)](./fstab-properties-folders.md "Mapping from subtrees to single sources for catch-all folder support") – `https://ns.adobe.com/helix/shared/fstab#/properties/folders`
 
 *   [Untitled object in Index Configuration](./indexconfig-properties-indices.md) – `https://ns.adobe.com/helix/shared/indexconfig#/properties/indices`
 

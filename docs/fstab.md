@@ -74,7 +74,7 @@ Mapping from subtrees to single sources for catch-all folder support.
 
 *   is optional
 
-*   Type: `object` ([Details](fstab-properties-folders.md))
+*   Type: `object` ([Folders](fstab-properties-folders.md))
 
 *   cannot be null
 
@@ -82,7 +82,7 @@ Mapping from subtrees to single sources for catch-all folder support.
 
 ### folders Type
 
-`object` ([Details](fstab-properties-folders.md))
+`object` ([Folders](fstab-properties-folders.md))
 
 ### folders Default Value
 
