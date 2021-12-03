@@ -1,9 +1,9 @@
 {
   "name": "@adobe/helix-shared-indexer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Shared modules of the Helix Project - Indexer",
-  "main": "src/index-resource.js",
-  "types": "src/index-resource.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "test": "nyc mocha",
     "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
