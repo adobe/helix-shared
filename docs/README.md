@@ -66,6 +66,8 @@
 
 ### Objects
 
+*   [Folders](./fstab-properties-folders.md "Mapping from subtrees to single sources for catch-all folder support") – `https://ns.adobe.com/helix/shared/fstab#/properties/folders`
+
 *   [Multi-Value Property](./property-oneof-multi-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/1`
 
 *   [Multi-Value Property](./property-oneof-multi-value-property.md "The property in an index") – `https://ns.adobe.com/helix/shared/property#/oneOf/1`

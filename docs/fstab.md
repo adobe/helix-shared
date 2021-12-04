@@ -26,6 +26,10 @@ mountpoints:
   /ms: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog
   /gd: https://drive.google.com/drive/u/0/folders/123456789
   /foo: https://localhost:4502
+folders:
+  /products: /generic-products.md
+  /articles/: /special/default-article
+  /app: /spa/index.html
 
 ```
 
@@ -34,6 +38,7 @@ mountpoints:
 | Property                    | Type     | Required | Nullable       | Defined by                                                                                                                |
 | :-------------------------- | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------ |
 | [mountpoints](#mountpoints) | `object` | Required | cannot be null | [FSTab (Mount Points)](fstab-properties-mountpoints.md "https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints") |
+| [folders](#folders)         | `object` | Optional | cannot be null | [FSTab (Mount Points)](fstab-properties-folders.md "https://ns.adobe.com/helix/shared/fstab#/properties/folders")         |
 
 ## mountpoints
 
@@ -54,6 +59,32 @@ mountpoints:
 `object` ([Details](fstab-properties-mountpoints.md))
 
 ### mountpoints Default Value
+
+The default value is:
+
+```json
+{}
+```
+
+## folders
+
+Mapping from subtrees to single sources for catch-all folder support.
+
+`folders`
+
+*   is optional
+
+*   Type: `object` ([Folders](fstab-properties-folders.md))
+
+*   cannot be null
+
+*   defined in: [FSTab (Mount Points)](fstab-properties-folders.md "https://ns.adobe.com/helix/shared/fstab#/properties/folders")
+
+### folders Type
+
+`object` ([Folders](fstab-properties-folders.md))
+
+### folders Default Value
 
 The default value is:
 
