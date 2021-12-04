@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.6.0...@adobe/helix-shared-config@1.7.0) (2021-12-04)
+
+
+### Features
+
+* add folders to fstab ([c91fcda](https://github.com/adobe/helix-shared/commit/c91fcdac54cbddff193c047b5730c897d5f5ca26))
+
+
+
+
+
 # [1.6.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.5.3...@adobe/helix-shared-config@1.6.0) (2021-12-02)
 
 
