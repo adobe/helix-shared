@@ -77,7 +77,7 @@ describe('Unit tests for getData()', () => {
 
 describe('Required Config Loading Wrapper', () => {
   setupPolly({
-    recordIfMissing: true,
+    recordIfMissing: false,
     logging: false,
   });
 
@@ -132,7 +132,7 @@ describe('Required Config Loading Wrapper', () => {
 
 describe('Optional Config Loading Wrapper', () => {
   setupPolly({
-    recordIfMissing: true,
+    recordIfMissing: false,
     logging: false,
   });
 
