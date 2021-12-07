@@ -23,7 +23,7 @@
     "access": "public"
   },
   "dependencies": {
-    "jsdom": "18.1.1",
+    "jsdom": "19.0.0",
     "jsep": "1.2.0",
     "micromatch": "4.0.4",
     "moment": "2.29.1"
