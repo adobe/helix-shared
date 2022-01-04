@@ -28,5 +28,8 @@
   },
   "optionalDependencies": {
     "@adobe/helix-universal": "1.9.1"
+  },
+  "devDependencies": {
+    "nock": "13.2.1"
   }
 }
