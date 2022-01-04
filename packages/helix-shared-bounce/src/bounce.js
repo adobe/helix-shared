@@ -9,10 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { fetch } = require('@adobe/helix-fetch');
+const { fetch, timeoutSignal } = require('@adobe/helix-fetch');
 const crypto = require('crypto');
 
-function bounce(func, { responder, timeout = 1000 } = { }) {
+function bounce(func, { responder, timeout = 500 }) {
   return async (request, context) => {
     const id = request.headers.get('x-hlx-bounce-id');
     if (id) {
@@ -24,18 +24,20 @@ function bounce(func, { responder, timeout = 1000 } = { }) {
 
     // generate a new bounce id and add it to the context
     const bounceId = crypto.randomUUID();
-    context.invocation.bounceId = id;
-    // run the quick responder function
-    const holdingResponse = new Promise((resolve) => {
-      setTimeout(resolve, timeout, responder(request, context));
-    });
+    context.invocation.bounceId = bounceId;
 
+    // run the quick responder function
+    const holdingResponse = await responder(request, context);
     // invoke the current function again, via HTTP, with the x-hlx-bounce-id
     // header set, so that we don't get into an endless loop
     request.headers.set('x-hlx-bounce-id', bounceId);
-    const actualResponse = fetch(request);
+    const signal = timeoutSignal(2 * timeout);
+    const actualResponse = fetch(request, {
+      signal,
+    });
 
-    return Promise.race([actualResponse, holdingResponse]);
+    return Promise.race([actualResponse,
+      new Promise((resolve) => setTimeout(resolve, timeout, holdingResponse))]);
   };
 }
 
