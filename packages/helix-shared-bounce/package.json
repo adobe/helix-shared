@@ -1,0 +1,32 @@
+{
+  "name": "@adobe/helix-shared-bounce",
+  "version": "1.1.6",
+  "description": "Shared modules of the Helix Project - bounce",
+  "main": "src/bounce.js",
+  "types": "src/bounce.d.ts",
+  "scripts": {
+    "test": "nyc mocha",
+    "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@adobe/helix-fetch": "3.0.0",
+    "@adobe/helix-shared-wrap": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "@adobe/helix-universal": "1.9.1"
+  }
+}
