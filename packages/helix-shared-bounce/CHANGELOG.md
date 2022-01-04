@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.2.0 (2022-01-04)
+
+
+### Bug Fixes
+
+* **bounce:** add timeout to http request, shorten default timeout ([998d87d](https://github.com/adobe/helix-shared/commit/998d87d48e91101212a28121c716cfc3065b1c17))
+
+
+### Features
+
+* **bounce:** add new middleware to bounce slow running functions and get a fast response ([4b5fe31](https://github.com/adobe/helix-shared/commit/4b5fe3142281185729a90e262eaae42847f828dc))
+
+
+
+
+
 ## [1.1.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.5...@adobe/helix-shared-body-data@1.1.6) (2021-11-26)
 
 
