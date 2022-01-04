@@ -117,8 +117,6 @@ describe('Bounce Wrapper Unit Tests', () => {
       },
     }), {
       log,
-      invocation: {
-      },
     });
     assert.equal(response.status, 200, 'universal function should be executed');
     assert.equal(slowBounceId, fastBounceId);

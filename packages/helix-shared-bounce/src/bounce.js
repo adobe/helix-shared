@@ -24,6 +24,7 @@ function bounce(func, { responder, timeout = 500 }) {
 
     // generate a new bounce id and add it to the context
     const bounceId = crypto.randomUUID();
+    context.invocation = context.invocation || {};
     context.invocation.bounceId = bounceId;
 
     // run the quick responder function
