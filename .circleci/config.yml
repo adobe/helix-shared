@@ -72,6 +72,8 @@ jobs:
         path: packages/helix-shared-wrap/junit
     - store_test_results:
         path: packages/helix-shared-indexer/junit
+    - store_test_results:
+        path: packages/helix-shared-bounce/junit
 
 workflows:
   version: 2
