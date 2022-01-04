@@ -37,7 +37,7 @@ function bounce(func, { responder, timeout = 500 }) {
     });
 
     return Promise.race([actualResponse,
-      new Promise((resolve) => setTimeout(resolve, timeout, holdingResponse))]);
+      new Promise((resolve) => { setTimeout(resolve, timeout, holdingResponse); })]);
   };
 }
 
