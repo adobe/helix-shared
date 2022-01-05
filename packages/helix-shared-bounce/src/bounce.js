@@ -14,7 +14,7 @@ const crypto = require('crypto');
 
 function bounce(func, { responder, timeout = 500 }) {
   return async (request, context) => {
-    const id = request.headers.get('x-hlx-bounce-id');
+    const id = request.headers.get('x-hlx-bounce-id') || process.env.HELIX_DEBOUNCE;
     if (id) {
       // use the provided bounce id
       context.invocation.bounceId = id;
@@ -24,6 +24,7 @@ function bounce(func, { responder, timeout = 500 }) {
 
     // generate a new bounce id and add it to the context
     const bounceId = crypto.randomUUID();
+    context.invocation = context.invocation || {};
     context.invocation.bounceId = bounceId;
 
     // run the quick responder function

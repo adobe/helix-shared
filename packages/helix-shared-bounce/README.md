@@ -21,3 +21,10 @@
  module.exports.main = wrap(main)
    .with(bounce, { responder: fast });
  ```
+
+## Disabling Bouncing for Tests
+
+If you are testing a function that is using `bounce` locally, you might want to disable the bouncing for the duration of the test, because you would otherwise have
+to mock a larger part of the runtime.
+
+To disable bouncing for tests, set the `HELIX_DEBOUNCE` environment variable to any value.
