@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.0...@adobe/helix-shared-bounce@1.3.1) (2022-01-05)
+
+
+### Bug Fixes
+
+* **bounce:** guard against incomplete context ([380cdd0](https://github.com/adobe/helix-shared/commit/380cdd0c2a816b25bcde7e28349a099758c5ab38))
+
+
+
+
+
 # [1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.2.0...@adobe/helix-shared-bounce@1.3.0) (2022-01-05)
 
 
