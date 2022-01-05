@@ -17,6 +17,7 @@ function bounce(func, { responder, timeout = 500 }) {
     const id = request.headers.get('x-hlx-bounce-id') || process.env.HELIX_DEBOUNCE;
     if (id) {
       // use the provided bounce id
+      context.invocation = context.invocation || {};
       context.invocation.bounceId = id;
       // the function has already been bounced, let's just run it
       return func(request, context);
