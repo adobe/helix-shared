@@ -102,8 +102,6 @@ describe('Bounce Wrapper Unit Tests', () => {
 
       const response = await actualfunct(request, {
         log,
-        invocation: {
-        },
       });
       const body = await response.text();
       return [response.status, body];
@@ -119,6 +117,7 @@ describe('Bounce Wrapper Unit Tests', () => {
       log,
     });
     assert.equal(response.status, 200, 'universal function should be executed');
+    console.log(slowBounceId, fastBounceId);
     assert.equal(slowBounceId, fastBounceId);
     assert.ok((await response.text()).startsWith('I am ready soon, check status at '));
   });
