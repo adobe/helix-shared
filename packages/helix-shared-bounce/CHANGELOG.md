@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.2.0...@adobe/helix-shared-bounce@1.3.0) (2022-01-05)
+
+
+### Bug Fixes
+
+* **bounce:** guard against missing `context.invocation` ([e72e5b9](https://github.com/adobe/helix-shared/commit/e72e5b9d2300697e68e6be8fdafca6871b431d57))
+
+
+### Features
+
+* **bounce:** allow debouncing by setting the `HELIX_DEBOUNCE` environment variable ([dea1558](https://github.com/adobe/helix-shared/commit/dea15584100246e2299bf441ab637ce66b882e9b))
+
+
+
+
+
 # 1.2.0 (2022-01-04)
 
 
