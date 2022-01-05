@@ -14,7 +14,7 @@ const crypto = require('crypto');
 
 function bounce(func, { responder, timeout = 500 }) {
   return async (request, context) => {
-    const id = request.headers.get('x-hlx-bounce-id');
+    const id = request.headers.get('x-hlx-bounce-id') || process.env.HELIX_DEBOUNCE;
     if (id) {
       // use the provided bounce id
       context.invocation.bounceId = id;
