@@ -9,8 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { fetch, timeoutSignal } = require('@adobe/helix-fetch');
+const {
+  fetch, timeoutSignal, Response, AbortError,
+} = require('@adobe/helix-fetch');
 const crypto = require('crypto');
+const timer = require('timers/promises');
 
 function bounce(func, { responder, timeout = 500 }) {
   return async (request, context) => {
@@ -29,17 +32,37 @@ function bounce(func, { responder, timeout = 500 }) {
     context.invocation.bounceId = bounceId;
 
     // run the quick responder function
-    const holdingResponse = await responder(request, context);
+    const holdingResponse = (async () => {
+      const res = await responder(request, context);
+      await timer.setTimeout(timeout);
+      return res;
+    })();
     // invoke the current function again, via HTTP, with the x-hlx-bounce-id
     // header set, so that we don't get into an endless loop
     request.headers.set('x-hlx-bounce-id', bounceId);
     const signal = timeoutSignal(2 * timeout);
-    const actualResponse = fetch(request, {
-      signal,
-    });
+    const actualResponse = (async () => {
+      try {
+        const res = await fetch(request, {
+          signal,
+        });
+        return res;
+      } catch (e) {
+        if (e instanceof AbortError) {
+          return new Response(e.message, {
+            // we acted as a gateway, but the upstream was too slow
+            status: 504,
+          });
+        }
+        context.log.warn(`error while bouncing: ${e.message}`);
+        return new Response(e.message, {
+          // we acted as a gateway, but the upstream response was bad
+          status: 502,
+        });
+      }
+    })();
 
-    return Promise.race([actualResponse,
-      new Promise((resolve) => { setTimeout(resolve, timeout, holdingResponse); })]);
+    return Promise.race([actualResponse, holdingResponse]);
   };
 }
 
