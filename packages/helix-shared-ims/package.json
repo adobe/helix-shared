@@ -33,7 +33,7 @@
     "@adobe/helix-shared-body-data": "^1.1.6",
     "@adobe/helix-shared-utils": "^1.0.4",
     "@adobe/helix-shared-wrap": "^1.0.0",
-    "@adobe/helix-universal": "1.9.1",
+    "@adobe/helix-universal": "2.0.0",
     "cookie": "0.4.1"
   },
   "devDependencies": {
