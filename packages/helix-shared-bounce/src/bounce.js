@@ -56,7 +56,7 @@ function bounce(func, { responder, timeout = 500 }) {
         }
         context.log.warn(`error while bouncing: ${e.message}`);
         return new Response(e.message, {
-          // we acted as a gateway, but the upstream response was bad
+          // we acted as a gateway, but there was an error with the network connection
           status: 502,
         });
       }
