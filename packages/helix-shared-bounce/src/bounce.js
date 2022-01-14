@@ -47,10 +47,9 @@ function bounce(func, { responder, timeout = 500 }) {
     const signal = timeoutSignal(2 * timeout);
     const actualResponse = (async () => {
       try {
-        const res = await fetch(request, {
+        return await fetch(request, {
           signal,
         });
-        return res;
       } catch (e) {
         if (e instanceof AbortError) {
           return new Response(e.message, {
