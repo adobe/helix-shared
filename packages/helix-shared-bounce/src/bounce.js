@@ -16,6 +16,7 @@ const crypto = require('crypto');
 
 // polyfill for timers/promise
 const timer = {
+  // eslint-disable-next-line: no-promise-executor-return
   setTimeout: async (delay) => new Promise((resolve) => setTimeout(resolve, delay)),
 };
 
