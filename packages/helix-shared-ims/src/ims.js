@@ -9,11 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { Response } = require('@adobe/helix-universal');
 const fetchAPI = require('@adobe/helix-fetch');
 const { parse, serialize } = require('cookie');
 
-const { context: fetchContext, ALPN_HTTP1_1 } = fetchAPI;
+const { context: fetchContext, ALPN_HTTP1_1, Response } = fetchAPI;
 /* istanbul ignore next */
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
   /* istanbul ignore next */
