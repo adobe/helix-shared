@@ -13,7 +13,11 @@ const {
   fetch, timeoutSignal, Response, AbortError,
 } = require('@adobe/helix-fetch');
 const crypto = require('crypto');
-const timer = require('timers/promises');
+
+// polyfill for timers/promise
+const timer = {
+  setTimeout: async (delay) => new Promise((resolve) => setTimeout(resolve, delay)),
+};
 
 function bounce(func, { responder, timeout = 500 }) {
   return async (request, context) => {
