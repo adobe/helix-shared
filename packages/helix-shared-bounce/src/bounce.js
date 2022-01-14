@@ -38,9 +38,9 @@ function bounce(func, { responder, timeout = 500 }) {
 
     // run the quick responder function
     const holdingResponse = (async () => {
-      const res = responder(request, context);
-      const wait = timer.setTimeout(timeout);
       try {
+        const wait = timer.setTimeout(timeout);
+        const res = responder(request, context);
         const response = await Promise.all([res, wait]);
         return response[0];
       } catch (err) {
