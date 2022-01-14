@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.2...@adobe/helix-shared-bounce@1.3.3) (2022-01-14)
+
+
+### Bug Fixes
+
+* **bounce:** add better error handling for promise rejections in bounce ([0341743](https://github.com/adobe/helix-shared/commit/0341743b99aee69950012655d5587f67acc5dcbe))
+* **bounce:** prevent the process from hanging ([3085161](https://github.com/adobe/helix-shared/commit/3085161a1ef0468179378513d5e79472a8cdd517))
+* **bounce:** quick responder function should wait as little as possible ([0fc4256](https://github.com/adobe/helix-shared/commit/0fc42561d9336c7e6bbee7dbfd60340396769dc8))
+
+
+
+
+
 ## [1.3.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.1...@adobe/helix-shared-bounce@1.3.2) (2022-01-10)
 
 
