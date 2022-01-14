@@ -19,6 +19,7 @@ const assert = require('assert');
 const { Response, Request } = require('@adobe/helix-fetch');
 const wrap = require('@adobe/helix-shared-wrap');
 const nock = require('nock');
+const proxyquire = require('proxyquire');
 const bounce = require('../src/bounce');
 
 const log = {
@@ -120,5 +121,84 @@ describe('Bounce Wrapper Unit Tests', () => {
     console.log(slowBounceId, fastBounceId);
     assert.equal(slowBounceId, fastBounceId);
     assert.ok((await response.text()).startsWith('I am ready soon, check status at '));
+  });
+
+  it('Bounces the slow function, error if pro forma function fails, too', async () => {
+    const slowfunction = async (_, context) => new Promise((resolve) => {
+      setTimeout(resolve, 2000, new Response(`ok, job ${context.invocation.bounceId} completed.`));
+    });
+
+    const fastfunction = async () => {
+      throw new Error('I am so broken');
+    };
+
+    const actualfunct = wrap(slowfunction).with(bounce, { responder: fastfunction });
+
+    nock('http://localhost').post('/').reply(async function fakeruntime(uri, requestBody) {
+      const request = new Request(`http://localhost${uri}`, {
+        headers: this.req.headers,
+        body: JSON.stringify((requestBody)),
+        method: this.req.method,
+      });
+
+      const response = await actualfunct(request, {
+        log,
+      });
+      const body = await response.text();
+      return [response.status, body];
+    });
+
+    const response = await actualfunct(new Request('http://localhost', {
+      body: JSON.stringify({ foo: 'bar' }),
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+    }), {
+      log,
+    });
+    assert.equal(response.status, 500, 'failure in quick response should be error 500');
+    assert.ok((await response.text()).startsWith('Internal Server Error'));
+  });
+
+  it('Bounces the slow function, handles promise rejection in fetch', async () => {
+    const slowfunction = async (_, context) => new Promise((resolve) => {
+      setTimeout(resolve, 2000, new Response(`ok, job ${context.invocation.bounceId} completed.`));
+    });
+
+    const fastfunction = async (_, context) => new Response(`I am ready soon, check status at ${context.invocation.bounceId}`);
+
+    const fakebounce = proxyquire('../src/bounce.js', {
+      '@adobe/helix-fetch': {
+        fetch: () => { throw new Error('something went wrong'); },
+      },
+    });
+
+    const actualfunct = wrap(slowfunction).with(fakebounce, { responder: fastfunction });
+
+    nock('http://localhost').post('/').reply(async function fakeruntime(uri, requestBody) {
+      const request = new Request(`http://localhost${uri}`, {
+        headers: this.req.headers,
+        body: JSON.stringify((requestBody)),
+        method: this.req.method,
+      });
+
+      const response = await actualfunct(request, {
+        log,
+      });
+      const body = await response.text();
+      return [response.status, body];
+    });
+
+    const response = await actualfunct(new Request('http://localhost', {
+      body: JSON.stringify({ foo: 'bar' }),
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+    }), {
+      log,
+    });
+    assert.equal(response.status, 502, 'failing bounce should become 502');
   });
 });
