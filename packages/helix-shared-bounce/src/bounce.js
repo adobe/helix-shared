@@ -40,8 +40,12 @@ function bounce(func, { responder, timeout = 500 }) {
     const holdingResponse = (async () => {
       const res = responder(request, context);
       const wait = timer.setTimeout(timeout);
-      const response = await Promise.all([res, wait]);
-      return response[0];
+      try {
+        const response = await Promise.all([res, wait]);
+        return response[0];
+      } catch (err) {
+        return new Response('Internal Server Error', { status: 500 });
+      }
     })();
     // invoke the current function again, via HTTP, with the x-hlx-bounce-id
     // header set, so that we don't get into an endless loop

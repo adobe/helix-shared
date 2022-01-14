@@ -123,6 +123,44 @@ describe('Bounce Wrapper Unit Tests', () => {
     assert.ok((await response.text()).startsWith('I am ready soon, check status at '));
   });
 
+  it('Bounces the slow function, error if pro forma function fails, too', async () => {
+    const slowfunction = async (_, context) => new Promise((resolve) => {
+      setTimeout(resolve, 2000, new Response(`ok, job ${context.invocation.bounceId} completed.`));
+    });
+
+    const fastfunction = async () => {
+      throw new Error('I am so broken');
+    };
+
+    const actualfunct = wrap(slowfunction).with(bounce, { responder: fastfunction });
+
+    nock('http://localhost').post('/').reply(async function fakeruntime(uri, requestBody) {
+      const request = new Request(`http://localhost${uri}`, {
+        headers: this.req.headers,
+        body: JSON.stringify((requestBody)),
+        method: this.req.method,
+      });
+
+      const response = await actualfunct(request, {
+        log,
+      });
+      const body = await response.text();
+      return [response.status, body];
+    });
+
+    const response = await actualfunct(new Request('http://localhost', {
+      body: JSON.stringify({ foo: 'bar' }),
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+    }), {
+      log,
+    });
+    assert.equal(response.status, 500, 'failure in quick response should be error 500');
+    assert.ok((await response.text()).startsWith('Internal Server Error'));
+  });
+
   it('Bounces the slow function, handles promise rejection in fetch', async () => {
     const slowfunction = async (_, context) => new Promise((resolve) => {
       setTimeout(resolve, 2000, new Response(`ok, job ${context.invocation.bounceId} completed.`));
