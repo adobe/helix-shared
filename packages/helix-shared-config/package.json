@@ -27,7 +27,7 @@
     "@adobe/helix-shared-git": "^1.1.0",
     "@adobe/helix-shared-prune": "^1.0.0",
     "@adobe/helix-shared-utils": "^1.0.4",
-    "ajv": "8.8.2",
+    "ajv": "8.9.0",
     "ajv-formats": "2.1.1",
     "fs-extra": "10.0.0",
     "ignore": "5.2.0",
@@ -42,6 +42,6 @@
     "@pollyjs/adapter-node-http": "6.0.4",
     "@pollyjs/core": "6.0.4",
     "@pollyjs/persister-fs": "6.0.4",
-    "nock": "13.2.1"
+    "nock": "13.2.2"
   }
 }
