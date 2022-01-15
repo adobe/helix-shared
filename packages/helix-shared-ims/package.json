@@ -37,6 +37,6 @@
     "cookie": "0.4.1"
   },
   "devDependencies": {
-    "nock": "13.2.1"
+    "nock": "13.2.2"
   }
 }
