@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.12](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.11...@adobe/helix-shared-ims@1.2.12) (2022-01-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal to v2.0.1 ([#621](https://github.com/adobe/helix-shared/issues/621)) ([fab5d6a](https://github.com/adobe/helix-shared/commit/fab5d6a2b500c767e51ae8be6841b688f7afa490))
+
+
+
+
+
 ## [1.2.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.10...@adobe/helix-shared-ims@1.2.11) (2022-01-15)
 
 

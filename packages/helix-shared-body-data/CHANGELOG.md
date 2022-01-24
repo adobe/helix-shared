@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.7...@adobe/helix-shared-body-data@1.1.8) (2022-01-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal to v2.0.1 ([#621](https://github.com/adobe/helix-shared/issues/621)) ([fab5d6a](https://github.com/adobe/helix-shared/commit/fab5d6a2b500c767e51ae8be6841b688f7afa490))
+* **deps:** update external fixes ([fdbdea1](https://github.com/adobe/helix-shared/commit/fdbdea1b3de6d9323f506766d4a4905f8572700b))
+
+
+
+
+
 ## [1.1.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.6...@adobe/helix-shared-body-data@1.1.7) (2022-01-10)
 
 
