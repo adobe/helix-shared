@@ -53,7 +53,7 @@ function lookupBackendResponses(status) {
 function computeSurrogateKey(url) {
   const hmac = crypto.createHmac('sha256', 'helix'); // lgtm [js/hardcoded-credentials]
   hmac.update(String(url));
-  return hmac.digest('base64').substring(0, 16);
+  return hmac.digest('base64url').substring(0, 16);
 }
 
 /**

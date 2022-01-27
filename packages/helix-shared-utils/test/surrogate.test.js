@@ -19,11 +19,11 @@ const { computeSurrogateKey } = require('../src/utils.js');
 
 describe('Surrogate Test', () => {
   it('computes a string', () => {
-    assert.equal(computeSurrogateKey('input'), 'LryzWp9TSqzkYkz6');
+    assert.strictEqual(computeSurrogateKey('input'), 'LryzWp9TSqzkYkz6');
   });
 
   it('computes a empty string', () => {
-    assert.equal(computeSurrogateKey(''), '+furr1hlvWuvr9Xu');
+    assert.strictEqual(computeSurrogateKey(''), '-furr1hlvWuvr9Xu');
   });
 
   it('computes a git url', () => {
@@ -36,6 +36,6 @@ describe('Surrogate Test', () => {
       ref: 'products/v2',
       repo: 'repository',
     });
-    assert.equal(computeSurrogateKey(url), 'KRBwmXdLOShWtk9P');
+    assert.strictEqual(computeSurrogateKey(url), 'KRBwmXdLOShWtk9P');
   });
 });
