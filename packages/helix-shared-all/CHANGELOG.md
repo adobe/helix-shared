@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.71](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.70...@adobe/helix-shared@8.0.71) (2022-01-27)
+
+**Note:** Version bump only for package @adobe/helix-shared
+
+
+
+
+
 ## [8.0.70](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.69...@adobe/helix-shared@8.0.70) (2022-01-24)
 
 **Note:** Version bump only for package @adobe/helix-shared

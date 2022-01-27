@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils@1.0.4...@adobe/helix-shared-utils@2.0.0) (2022-01-27)
+
+
+### Features
+
+* use base64url encoding for surrogate computation ([#622](https://github.com/adobe/helix-shared/issues/622)) ([8ad0fc0](https://github.com/adobe/helix-shared/commit/8ad0fc097f255c1519a7b8f98027ee65596e1f98))
+
+
+### BREAKING CHANGES
+
+* the encoding for surrogate computation changed from the regular to the url-safe base64 encoding. i.e. '+' -> '-', '/' -> '_'.
+
+
+
+
+
 ## [1.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils@1.0.3...@adobe/helix-shared-utils@1.0.4) (2021-11-09)
 
 **Note:** Version bump only for package @adobe/helix-shared-utils
