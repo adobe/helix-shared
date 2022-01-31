@@ -24,7 +24,11 @@
     },
     {
       "packageNames": ["circleci/node"],
-      "allowedVersions": "14"
+      "allowedVersions": "<15>"
+    },
+    {
+      "packageNames": ["cimg/node"],
+      "allowedVersions": "<15"
     },
     {
       "packageNames": ["@aws-sdk/client-s3"],
