@@ -2,7 +2,7 @@ version: 2.1
 executors:
   node14:
     docker:
-    - image: cimg/node:14.18
+    - image: cimg/node:17.4
     environment:
       NPM_CONFIG_PREFIX: ~/.npm-global
 
