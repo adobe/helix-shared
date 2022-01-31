@@ -24,7 +24,7 @@
     },
     {
       "packageNames": ["circleci/node"],
-      "allowedVersions": "<15>"
+      "allowedVersions": "<15"
     },
     {
       "packageNames": ["cimg/node"],
