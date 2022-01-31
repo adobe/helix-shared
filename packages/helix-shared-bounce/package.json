@@ -27,7 +27,7 @@
     "@adobe/helix-shared-wrap": "^1.0.0"
   },
   "optionalDependencies": {
-    "@adobe/helix-universal": "3.0.0"
+    "@adobe/helix-universal": "3.0.1"
   },
   "devDependencies": {
     "nock": "13.2.2",
