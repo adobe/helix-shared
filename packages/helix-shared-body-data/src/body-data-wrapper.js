@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable no-param-reassign */
-const { Request } = require('@adobe/helix-fetch');
+const { Request, Response } = require('@adobe/helix-fetch');
+
+const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 
 /**
  * Extracts the _data_ from the given request. The data can be provided either as request
@@ -24,16 +26,19 @@ const { Request } = require('@adobe/helix-fetch');
  * @returns {Promise<object>} the parsed data object.
  */
 async function getData(request, opts) {
-  const { coerceNumber, coerceInt, coerceBoolean } = opts;
-  if (/json/.test(request.headers.get('content-type'))) {
-    // eslint-disable-next-line no-return-await
-    return await request.json();
+  const contentType = request.headers.get('content-type');
+  if (/\/json/.test(contentType) && BODY_METHODS.includes(request.method)) {
+    return request.json();
   }
-  let data = new URL(request.url).searchParams;
-  if (/^application\/x-www-form-urlencoded/.test(request.headers.get('content-type'))) {
-    // todo: combine urlencoded and request params
+
+  let data;
+  if (/^application\/x-www-form-urlencoded/.test(contentType) && BODY_METHODS.includes(request.method)) {
     data = new URLSearchParams(await request.text());
+  } else {
+    data = new URL(request.url).searchParams;
   }
+
+  const { coerceNumber, coerceInt, coerceBoolean } = opts;
   return Array.from(data.entries()).reduce((alldata, [key, value]) => {
     const bracketpattern = /\[([0-9]*)\]$/;
     // check for key names like [1] or [0]
@@ -76,7 +81,18 @@ async function getData(request, opts) {
  */
 function bodyData(func, opts = {}) {
   return async (request, context) => {
-    context.data = await getData(request, opts);
+    try {
+      context.data = await getData(request, opts);
+    } catch (e) {
+      const { log = console } = context;
+      log.info(`error parsing post body: ${e.message}`);
+      return new Response('', {
+        status: 400,
+        headers: {
+          'x-error': 'error parsing request body',
+        },
+      });
+    }
     const newreq = new Request(request.url, request.init);
     return func(newreq, context);
   };

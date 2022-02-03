@@ -33,8 +33,10 @@
     "@adobe/helix-shared-body-data": "^1.1.9",
     "@adobe/helix-shared-utils": "^2.0.0",
     "@adobe/helix-shared-wrap": "^1.0.0",
-    "@adobe/helix-universal": "3.0.2",
     "cookie": "0.4.1"
+  },
+  "optionalDependencies": {
+    "@adobe/helix-universal": "3.0.2"
   },
   "devDependencies": {
     "nock": "13.2.2"
