@@ -28,7 +28,28 @@ const log = {
 };
 
 describe('Body Data Wrapper Unit Tests (JSON Body)', () => {
-  it('Loads JSON', async () => {
+  ['POST', 'post', 'PUT', 'PATCH'].forEach((method) => {
+    it(`Loads JSON (${method})`, async () => {
+      const universalfunct = async (request, context) => {
+        assert.deepStrictEqual(context.data, { foo: 'bar' });
+        return new Response('ok');
+      };
+
+      const actualfunct = wrap(universalfunct).with(bodyData);
+      const response = await actualfunct(new Request('http://localhost', {
+        body: JSON.stringify({ foo: 'bar' }),
+        method,
+        headers: {
+          'content-type': 'application/json',
+        },
+      }), {
+        log,
+      });
+      assert.strictEqual(response.status, 200, 'universal function should be executed');
+    });
+  });
+
+  it('Responds with 400 for invalid json body', async () => {
     const universalfunct = async (request, context) => {
       assert.deepStrictEqual(context.data, { foo: 'bar' });
       return new Response('ok');
@@ -36,18 +57,53 @@ describe('Body Data Wrapper Unit Tests (JSON Body)', () => {
 
     const actualfunct = wrap(universalfunct).with(bodyData);
     const response = await actualfunct(new Request('http://localhost', {
-      body: JSON.stringify({ foo: 'bar' }),
+      body: 'this is no jason?',
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.headers.get('x-error'), 'error parsing request body');
+  });
+
+  it('Responds with 400 for invalid json body and handles context with no log', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual(context.data, { foo: 'bar' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost', {
+      body: 'this is no jason?',
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+    }), {
+    });
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.headers.get('x-error'), 'error parsing request body');
+  });
+
+  it('Ignores body for GET requests.', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual(context.data, { });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
   });
 });
 
@@ -62,11 +118,26 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
     const response = await actualfunct(new Request('http://localhost?foo=bar', {
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
+  });
+
+  it('Loads URL Parameters for POST requests', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual(context.data, { foo: 'bar' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost?foo=bar', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/xml',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 
   it('Coerces Boolean from URL Parameters', async () => {
@@ -79,11 +150,8 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
     const response = await actualfunct(new Request('http://localhost?foo=true&bar=untrue', {
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 
   it('Coerces Integers from URL Parameters', async () => {
@@ -96,11 +164,8 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
     const response = await actualfunct(new Request('http://localhost?foo=10&bar=10.0&baz=1.5', {
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 
   it('Coerces Numbers from URL Parameters', async () => {
@@ -115,11 +180,8 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
     const response = await actualfunct(new Request('http://localhost?foo=10&bar=10.0&baz=1.5&date=2021-09-30:13:00:00', {
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 
   it('Loads duplicate URL Parameters into arrays', async () => {
@@ -132,11 +194,8 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
     const response = await actualfunct(new Request('http://localhost?foo=bar&foo=baz', {
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 
   it('Loads indexed URL Parameters into arrays', async () => {
@@ -149,11 +208,8 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
     const response = await actualfunct(new Request('http://localhost?foo[]=bar&foo[]=baz', {
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 
   it('Loads numbered indexed URL Parameters into arrays', async () => {
@@ -169,11 +225,8 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
     const response = await actualfunct(new Request('http://localhost?foo[1]=bar&foo[2]=baz', {
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 });
 
@@ -193,10 +246,25 @@ describe('Body Data Wrapper Unit Tests (Form Data)', () => {
       },
     }), {
       log,
-      invocation: {
-
-      },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
+  });
+
+  it('Ignores Form Data for non POST requests', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual(context.data, { foo: 'zoo' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost?foo=zoo', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 });
