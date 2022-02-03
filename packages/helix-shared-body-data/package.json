@@ -28,5 +28,8 @@
   },
   "optionalDependencies": {
     "@adobe/helix-universal": "3.0.2"
+  },
+  "devDependencies": {
+    "mocha": "^9.2.0"
   }
 }

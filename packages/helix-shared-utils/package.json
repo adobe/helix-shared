@@ -22,7 +22,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@adobe/helix-shared-git": "^1.1.0"
+    "@adobe/helix-shared-git": "^1.1.0",
+    "mocha": "^9.2.0"
   },
   "engines": {
     "node": ">= 14.17"
