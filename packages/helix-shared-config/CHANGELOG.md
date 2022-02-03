@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.7.5...@adobe/helix-shared-config@1.7.6) (2022-02-03)
+
+
+### Bug Fixes
+
+* add mocha ([#631](https://github.com/adobe/helix-shared/issues/631)) ([2849219](https://github.com/adobe/helix-shared/commit/2849219986aff4a31f1c6c3d1e137b1e2732027d))
+* **deps:** update dependency @adobe/helix-universal to v3 ([#625](https://github.com/adobe/helix-shared/issues/625)) ([cd33862](https://github.com/adobe/helix-shared/commit/cd338620a091c4c7b392ee3da685fbde134ba5b5))
+
+
+
+
+
 ## [1.7.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.7.4...@adobe/helix-shared-config@1.7.5) (2022-01-27)
 
 **Note:** Version bump only for package @adobe/helix-shared-config

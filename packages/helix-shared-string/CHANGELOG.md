@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string@1.0.4...@adobe/helix-shared-string@1.0.5) (2022-02-03)
+
+
+### Bug Fixes
+
+* add mocha ([#631](https://github.com/adobe/helix-shared/issues/631)) ([2849219](https://github.com/adobe/helix-shared/commit/2849219986aff4a31f1c6c3d1e137b1e2732027d))
+
+
+
+
+
 ## [1.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string@1.0.3...@adobe/helix-shared-string@1.0.4) (2021-08-09)
 
 
