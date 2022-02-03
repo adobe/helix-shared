@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-ims",
-  "version": "1.2.15",
+  "version": "1.2.16",
   "description": "Shared modules of the Helix Project - ims",
   "main": "src/ims.js",
   "types": "src/ims.d.ts",
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@adobe/helix-fetch": "3.0.2",
-    "@adobe/helix-shared-body-data": "^1.1.10",
+    "@adobe/helix-shared-body-data": "^1.1.11",
     "@adobe/helix-shared-utils": "^2.0.1",
     "@adobe/helix-shared-wrap": "^1.0.1",
     "cookie": "0.4.1"
