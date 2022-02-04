@@ -23,7 +23,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/helix-fetch": "3.0.2",
+    "@adobe/helix-fetch": "3.0.3",
     "@adobe/helix-shared-git": "^1.1.1",
     "@adobe/helix-shared-prune": "^1.0.1",
     "@adobe/helix-shared-utils": "^2.0.1",
