@@ -36,7 +36,7 @@
     "cookie": "0.4.1"
   },
   "optionalDependencies": {
-    "@adobe/helix-universal": "3.0.3"
+    "@adobe/helix-universal": "3.0.4"
   },
   "devDependencies": {
     "mocha": "^9.2.0",
