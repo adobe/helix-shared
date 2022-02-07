@@ -22,10 +22,10 @@
     "access": "public"
   },
   "dependencies": {
-    "ferrum": "1.9.3"
+    "ferrum": "1.9.4"
   },
   "devDependencies": {
     "jsdom": "19.0.0",
-    "mocha": "^9.2.0"
+    "mocha": "9.2.0"
   }
 }
