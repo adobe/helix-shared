@@ -36,7 +36,7 @@ commands:
 jobs:
   build:
     executor: node14
-    parallelism: 5
+    parallelism: 15
 
     steps:
     - setup
