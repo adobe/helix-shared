@@ -29,6 +29,7 @@
     "@adobe/helix-shared-utils": "^2.0.1",
     "ajv": "8.10.0",
     "ajv-formats": "2.1.1",
+    "cookie": "0.4.2",
     "fs-extra": "10.0.0",
     "ignore": "5.2.0",
     "lru-cache": "6.0.0",
