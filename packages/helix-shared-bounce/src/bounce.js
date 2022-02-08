@@ -55,6 +55,7 @@ function bounce(func, { responder, timeout = 500 }) {
       try {
         return await fetch(request.url, {
           ...request.init,
+          headers: request.headers,
           signal,
         });
       } catch (e) {
