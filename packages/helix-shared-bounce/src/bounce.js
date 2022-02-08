@@ -53,7 +53,9 @@ function bounce(func, { responder, timeout = 500 }) {
     const signal = timeoutSignal(2 * timeout);
     const actualResponse = (async () => {
       try {
-        return await fetch(request, {
+        return await fetch(request.url, {
+          ...request.init,
+          headers: request.headers,
           signal,
         });
       } catch (e) {
