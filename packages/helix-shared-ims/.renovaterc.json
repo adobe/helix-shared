@@ -3,11 +3,11 @@
   "packageRules": [
     {
       "packageNames": ["@adobe/helix-fetch"],
-      "pin": false
+      "rangeStrategy": "replace"
     },
     {
       "packageNames": ["@adobe/helix-universal"],
-      "pin": false
+      "rangeStrategy": "replace"
     }
   ]
 }
