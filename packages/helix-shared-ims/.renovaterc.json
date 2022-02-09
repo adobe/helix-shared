@@ -1,0 +1,13 @@
+{
+  "extends": ["github>adobe/helix-shared"],
+  "packageRules": [
+    {
+      "packageNames": ["@adobe/helix-fetch"],
+      "pin": false
+    },
+    {
+      "packageNames": ["@adobe/helix-universal"],
+      "pin": false
+    }
+  ]
+}
