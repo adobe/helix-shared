@@ -36,13 +36,14 @@ commands:
 jobs:
   build:
     executor: node14
+    parallelism: 15
 
     steps:
     - setup
     - run: mkdir junit
     - run:
         name: Lint
-        command: npm run lint
+        command: npm run lint-ci
     - run:
         name: Getting Code Coverage
         command: npm run test-ci
