@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-bounce",
-  "version": "1.3.11",
+  "version": "1.3.12",
   "description": "Shared modules of the Helix Project - bounce",
   "main": "src/bounce.js",
   "types": "src/bounce.d.ts",
