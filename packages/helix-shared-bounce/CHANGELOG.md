@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.9...@adobe/helix-shared-bounce@1.3.10) (2022-02-09)
+
+
+### Bug Fixes
+
+* **bounce:** re-build request from `request.init` ([da0797b](https://github.com/adobe/helix-shared/commit/da0797b7c3658bca2b0c3cd04f32fcf2f47839a6))
+* **bounce:** use modified headers, not just original headers ([e8474cf](https://github.com/adobe/helix-shared/commit/e8474cf3525078dc2902b8ab813e4589e0ec386a))
+* **deps:** update external fixes ([06e6c6e](https://github.com/adobe/helix-shared/commit/06e6c6ebd829422274f49bf11f6bb0613d1635b7))
+
+
+
+
+
 ## [1.3.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.8...@adobe/helix-shared-bounce@1.3.9) (2022-02-04)
 
 **Note:** Version bump only for package @adobe/helix-shared-bounce

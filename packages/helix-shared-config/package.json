@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-config",
-  "version": "1.7.7",
+  "version": "1.7.8",
   "description": "Shared modules of the Helix Project - config",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "@adobe/helix-fetch": "3.0.3",
-    "@adobe/helix-shared-git": "^1.1.1",
-    "@adobe/helix-shared-prune": "^1.0.1",
-    "@adobe/helix-shared-utils": "^2.0.1",
+    "@adobe/helix-shared-git": "^1.1.2",
+    "@adobe/helix-shared-prune": "^1.0.2",
+    "@adobe/helix-shared-utils": "^2.0.2",
     "ajv": "8.10.0",
     "ajv-formats": "2.1.1",
     "cookie": "0.4.2",
@@ -38,7 +38,7 @@
     "yaml": "1.10.2"
   },
   "devDependencies": {
-    "@adobe/helix-shared-wrap": "^1.0.1",
+    "@adobe/helix-shared-wrap": "^1.0.2",
     "@adobe/helix-testutils": "0.4.11",
     "@pollyjs/adapter-node-http": "6.0.4",
     "@pollyjs/core": "6.0.4",
