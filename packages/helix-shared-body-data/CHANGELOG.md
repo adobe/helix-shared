@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.13...@adobe/helix-shared-body-data@1.1.14) (2022-02-09)
+
+
+### Bug Fixes
+
+* don't pin helix-fetch and universal for better deduping ([#639](https://github.com/adobe/helix-shared/issues/639)) ([d4f4060](https://github.com/adobe/helix-shared/commit/d4f40603a1c899e6cfbd51900bb49453a63d32dd))
+
+
+
+
+
 ## [1.1.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data@1.1.12...@adobe/helix-shared-body-data@1.1.13) (2022-02-09)
 
 
