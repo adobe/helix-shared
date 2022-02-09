@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared",
-  "version": "8.0.75",
+  "version": "8.0.76",
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -23,16 +23,16 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/helix-shared-async": "^1.1.2",
-    "@adobe/helix-shared-body-data": "^1.1.12",
-    "@adobe/helix-shared-config": "^1.7.7",
-    "@adobe/helix-shared-dom": "^1.1.7",
-    "@adobe/helix-shared-git": "^1.1.1",
-    "@adobe/helix-shared-process-queue": "^1.1.1",
-    "@adobe/helix-shared-prune": "^1.0.1",
-    "@adobe/helix-shared-string": "^1.0.5",
-    "@adobe/helix-shared-utils": "^2.0.1",
-    "@adobe/helix-shared-wrap": "^1.0.1"
+    "@adobe/helix-shared-async": "^1.1.3",
+    "@adobe/helix-shared-body-data": "^1.1.13",
+    "@adobe/helix-shared-config": "^1.7.8",
+    "@adobe/helix-shared-dom": "^1.1.8",
+    "@adobe/helix-shared-git": "^1.1.2",
+    "@adobe/helix-shared-process-queue": "^1.1.2",
+    "@adobe/helix-shared-prune": "^1.0.2",
+    "@adobe/helix-shared-string": "^1.0.6",
+    "@adobe/helix-shared-utils": "^2.0.2",
+    "@adobe/helix-shared-wrap": "^1.0.2"
   },
   "devDependencies": {
     "mocha": "9.2.0"

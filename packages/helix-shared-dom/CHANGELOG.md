@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-dom@1.1.7...@adobe/helix-shared-dom@1.1.8) (2022-02-09)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([06e6c6e](https://github.com/adobe/helix-shared/commit/06e6c6ebd829422274f49bf11f6bb0613d1635b7))
+
+
+
+
+
 ## [1.1.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-dom@1.1.6...@adobe/helix-shared-dom@1.1.7) (2022-02-03)
 
 
