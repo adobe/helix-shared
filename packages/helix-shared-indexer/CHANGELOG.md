@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.2.13...@adobe/helix-shared-indexer@0.2.14) (2022-02-10)
+
+
+### Bug Fixes
+
+* update renovate config to auto detect pin versions ([#644](https://github.com/adobe/helix-shared/issues/644)) ([3ae0423](https://github.com/adobe/helix-shared/commit/3ae04235dd6791685d9a03e5ed52570b73d5be2a))
+
+
+
+
+
 ## [0.2.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.2.12...@adobe/helix-shared-indexer@0.2.13) (2022-02-09)
 
 **Note:** Version bump only for package @adobe/helix-shared-indexer

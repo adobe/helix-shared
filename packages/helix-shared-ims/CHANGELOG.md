@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.21](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.20...@adobe/helix-shared-ims@1.2.21) (2022-02-10)
+
+
+### Bug Fixes
+
+* update renovate config to auto detect pin versions ([#644](https://github.com/adobe/helix-shared/issues/644)) ([3ae0423](https://github.com/adobe/helix-shared/commit/3ae04235dd6791685d9a03e5ed52570b73d5be2a))
+
+
+
+
+
 ## [1.2.20](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.19...@adobe/helix-shared-ims@1.2.20) (2022-02-09)
 
 **Note:** Version bump only for package @adobe/helix-shared-ims

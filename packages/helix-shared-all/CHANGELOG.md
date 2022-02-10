@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.80](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.79...@adobe/helix-shared@8.0.80) (2022-02-10)
+
+
+### Bug Fixes
+
+* update renovate config to auto detect pin versions ([#644](https://github.com/adobe/helix-shared/issues/644)) ([3ae0423](https://github.com/adobe/helix-shared/commit/3ae04235dd6791685d9a03e5ed52570b73d5be2a))
+
+
+
+
+
 ## [8.0.79](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.78...@adobe/helix-shared@8.0.79) (2022-02-09)
 
 **Note:** Version bump only for package @adobe/helix-shared
