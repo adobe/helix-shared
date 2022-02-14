@@ -13,7 +13,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const cache = require('../src/fetchconfig/cache').options({ maxSize: 10 });
+const cache = require('../src/fetchconfig/cache').options({ max: 10 });
 
 let errcounter = 0;
 const errfn = () => {

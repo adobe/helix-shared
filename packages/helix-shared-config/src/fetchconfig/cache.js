@@ -12,7 +12,7 @@
 
 const LRU = require('lru-cache');
 
-let lru = new LRU({ maxSize: 1000, maxAge: 60 * 1000 });
+let lru = new LRU({ max: 1000, maxAge: 60 * 1000 });
 
 /**
  * Returns a memoized version of the function `fn`.
@@ -71,7 +71,7 @@ function cache(fn, opts = {}) {
  * Resets the QuickLRU cache with new options. Existing cache entries
  * will be cleared.
  * @param {object} opts options
- * @param {number} opts.maxSize maximum size of the cache
+ * @param {number} opts.max maximum size of the cache
  */
 cache.options = (opts) => {
   lru = new LRU(opts);
