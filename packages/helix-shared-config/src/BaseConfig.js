@@ -52,10 +52,20 @@ class BaseConfig {
   /**
    * Reset the cache with a new cache size
    * @param {object} options cache options
-   * @param {number} options.maxSize
+   * @param {number} options.max
    */
   withCache(options) {
-    cache.options(options);
+    // be backward compatible
+    if (!options.max && options.maxSize) {
+      const opts = {
+        ...options,
+        max: options.maxSize,
+      };
+      delete opts.maxSize;
+      cache.options(opts);
+    } else {
+      cache.options(options);
+    }
     return this;
   }
 

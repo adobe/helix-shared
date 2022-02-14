@@ -27,7 +27,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
 
   it('Retrieves Document from GitHub', async () => {
     const config = await new MountConfig()
-      .withCache({ maxSize: 1 })
+      .withCache({ max: 1 })
       .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733c36')
       .init();
 
@@ -51,7 +51,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
       });
 
     const config = await new MountConfig()
-      .withCache({ maxSize: 1 })
+      .withCache({ max: 1 })
       .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c357-auth', {
         headers: { authorization: 'token fake' },
       })
@@ -67,7 +67,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
 
   it('Missing File from GitHub treated as empty', async () => {
     const config = await new MountConfig()
-      .withCache({ maxSize: 1 })
+      .withCache({ max: 1 })
       .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733-missing')
       .init();
 
@@ -85,7 +85,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
 
     try {
       await new MountConfig()
-        .withCache({ maxSize: 1 })
+        .withCache({ max: 1 })
         .withRepo('adobe', 'theblog', '7f65c0399b1b925ececf55becd4b150c35733-broken')
         .init();
       assert.fail('This should have thrown');
