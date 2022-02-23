@@ -39,7 +39,7 @@
     "@adobe/helix-universal": "^3.0.4"
   },
   "devDependencies": {
-    "mocha": "9.2.0",
+    "mocha": "9.2.1",
     "nock": "13.2.4"
   }
 }
