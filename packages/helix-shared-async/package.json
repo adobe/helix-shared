@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "ferrum": "1.9.4",
-    "mocha": "9.2.0"
+    "mocha": "9.2.1"
   }
 }

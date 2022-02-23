@@ -22,6 +22,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "mocha": "9.2.0"
+    "mocha": "9.2.1"
   }
 }
