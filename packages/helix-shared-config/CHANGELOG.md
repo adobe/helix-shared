@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.7.14...@adobe/helix-shared-config@1.7.15) (2022-02-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency object-hash to v3 ([d79b768](https://github.com/adobe/helix-shared/commit/d79b768d7bc0ba5df1e97606bb6ed870804434ad))
+
+
+
+
+
 ## [1.7.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.7.13...@adobe/helix-shared-config@1.7.14) (2022-02-14)
 
 
