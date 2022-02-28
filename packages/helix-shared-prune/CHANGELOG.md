@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-prune@1.0.2...@adobe/helix-shared-prune@1.0.3) (2022-02-28)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([cdddbc5](https://github.com/adobe/helix-shared/commit/cdddbc590c52d6ebf336e7943387d8fb393c6524))
+* update renovate config to auto detect pin versions ([#644](https://github.com/adobe/helix-shared/issues/644)) ([3ae0423](https://github.com/adobe/helix-shared/commit/3ae04235dd6791685d9a03e5ed52570b73d5be2a))
+
+
+
+
+
 ## [1.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-prune@1.0.1...@adobe/helix-shared-prune@1.0.2) (2022-02-09)
 
 

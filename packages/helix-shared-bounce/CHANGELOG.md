@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.13...@adobe/helix-shared-bounce@1.3.14) (2022-02-28)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([cdddbc5](https://github.com/adobe/helix-shared/commit/cdddbc590c52d6ebf336e7943387d8fb393c6524))
+
+
+
+
+
 ## [1.3.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.12...@adobe/helix-shared-bounce@1.3.13) (2022-02-10)
 
 
