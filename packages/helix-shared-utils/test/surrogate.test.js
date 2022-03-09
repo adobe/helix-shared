@@ -18,15 +18,15 @@ const { GitUrl } = require('@adobe/helix-shared-git');
 const { computeSurrogateKey } = require('../src/utils.js');
 
 describe('Surrogate Test', () => {
-  it('computes a string', () => {
-    assert.strictEqual(computeSurrogateKey('input'), 'LryzWp9TSqzkYkz6');
+  it('computes a string', async () => {
+    assert.strictEqual(await computeSurrogateKey('input'), 'LryzWp9TSqzkYkz6');
   });
 
-  it('computes a empty string', () => {
-    assert.strictEqual(computeSurrogateKey(''), '-furr1hlvWuvr9Xu');
+  it('computes a empty string', async () => {
+    assert.strictEqual(await computeSurrogateKey(''), '-furr1hlvWuvr9Xu');
   });
 
-  it('computes a git url', () => {
+  it('computes a git url', async () => {
     const url = new GitUrl({
       protocol: 'http',
       hostname: 'git.example.com',
@@ -36,6 +36,6 @@ describe('Surrogate Test', () => {
       ref: 'products/v2',
       repo: 'repository',
     });
-    assert.strictEqual(computeSurrogateKey(url), 'KRBwmXdLOShWtk9P');
+    assert.strictEqual(await computeSurrogateKey(url), 'KRBwmXdLOShWtk9P');
   });
 });
