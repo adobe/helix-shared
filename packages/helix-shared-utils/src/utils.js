@@ -9,7 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const crypto = require('crypto');
+/* istanbul ignore next */
+// eslint-disable-next-line no-undef
+const cryptoImpl = typeof crypto === 'undefined' ? require('crypto') : crypto;
 
 /**
  * A glorified lookup table that translates backend errors into the appropriate
@@ -48,12 +50,38 @@ function lookupBackendResponses(status) {
  * ```
  *
  * @param {*} url - The input url.
- * @returns {string} The computed key.
+ * @returns  {Promise<string>} A promise with the computed key.
  */
-function computeSurrogateKey(url) {
-  const hmac = crypto.createHmac('sha256', 'helix'); // lgtm [js/hardcoded-credentials]
-  hmac.update(String(url));
-  return hmac.digest('base64url').substring(0, 16);
+async function computeSurrogateKey(url) {
+  /* istanbul ignore next */
+  const subtle = cryptoImpl?.webcrypto?.subtle // WebCrypto (node >= v15)
+     || cryptoImpl?.subtle; // WebcCypto (browser, service worker)
+
+  /* istanbul ignore next */
+  if (subtle) {
+    // WebCrypto API
+    const key = await subtle.importKey('raw', 'helix', { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
+    const signature = await subtle.sign('HMAC', key, String(url));
+    if (typeof Buffer === 'undefined') {
+      // non-node runtime
+      return btoa(String.fromCharCode(...new Uint8Array(signature)))
+        // make it url save
+        .replace(/=/g, '')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .substring(0, 16);
+    } else {
+      // node runtime
+      return Buffer.from(signature)
+        .toString('base64url')
+        .substring(0, 16);
+    }
+  } else {
+    // legacy node (< v15)
+    const hmac = cryptoImpl.createHmac('sha256', 'helix'); // lgtm [js/hardcoded-credentials]
+    hmac.update(String(url));
+    return hmac.digest('base64url').substring(0, 16);
+  }
 }
 
 /**
