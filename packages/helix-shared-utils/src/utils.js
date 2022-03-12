@@ -60,8 +60,8 @@ async function computeSurrogateKey(url) {
   /* istanbul ignore next */
   if (subtle) {
     // WebCrypto API
-    const key = await subtle.importKey('raw', 'helix', { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
-    const signature = await subtle.sign('HMAC', key, String(url));
+    const key = await subtle.importKey('raw', new TextEncoder('utf-8').encode('helix').buffer, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
+    const signature = await subtle.sign('HMAC', key, new TextEncoder('utf-8').encode(url).buffer);
     if (typeof Buffer === 'undefined') {
       // non-node runtime
       return btoa(String.fromCharCode(...new Uint8Array(signature)))
