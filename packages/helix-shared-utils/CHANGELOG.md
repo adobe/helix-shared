@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils@2.0.4...@adobe/helix-shared-utils@2.0.5) (2022-03-12)
+
+
+### Bug Fixes
+
+* fix webcrypto calls for non-node env ([dead3d4](https://github.com/adobe/helix-shared/commit/dead3d42f20430116f701014af4c02435dbfca06))
+
+
+
+
+
 ## [2.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils@2.0.3...@adobe/helix-shared-utils@2.0.4) (2022-03-10)
 
 **Note:** Version bump only for package @adobe/helix-shared-utils
