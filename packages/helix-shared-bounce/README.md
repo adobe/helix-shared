@@ -22,6 +22,25 @@
    .with(bounce, { responder: fast });
  ```
 
+## Disabling Bouncing for certain requests
+
+The plugin options can take a `debounce` function property that is called with the `request` and
+`context`. if it returns a non falsy value the wrapped function will not be bounced.
+
+```js
+
+function debounce(req, context) {
+  if (context.pathInfo.suffix === '/about') {
+    return true;
+  }
+  return false;
+}
+
+module.exports.main = wrap(main)
+   .with(bounce, { responder: fast, debounce });
+ 
+```
+
 ## Disabling Bouncing for Tests
 
 If you are testing a function that is using `bounce` locally, you might want to disable the bouncing for the duration of the test, because you would otherwise have

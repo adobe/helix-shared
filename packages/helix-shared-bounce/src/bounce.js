@@ -20,9 +20,11 @@ const timer = {
   setTimeout: async (delay) => new Promise((resolve) => setTimeout(resolve, delay)),
 };
 
-function bounce(func, { responder, timeout = 500 }) {
+function bounce(func, { responder, timeout = 500, debounce = () => '' }) {
   return async (request, context) => {
-    const id = request.headers.get('x-hlx-bounce-id') || process.env.HELIX_DEBOUNCE;
+    const id = request.headers.get('x-hlx-bounce-id')
+      || process.env.HELIX_DEBOUNCE
+      || debounce(request, context);
     if (id) {
       // use the provided bounce id
       context.invocation = context.invocation || {};

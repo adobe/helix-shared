@@ -73,8 +73,8 @@ describe('Bounce Wrapper Unit Tests', () => {
       invocation: {
       },
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
-    assert.equal(slowBounceId, fastBounceId);
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(slowBounceId, fastBounceId);
     assert.ok((await response.text()).startsWith('ok, job '));
   });
 
@@ -117,9 +117,8 @@ describe('Bounce Wrapper Unit Tests', () => {
     }), {
       log,
     });
-    assert.equal(response.status, 200, 'universal function should be executed');
-    console.log(slowBounceId, fastBounceId);
-    assert.equal(slowBounceId, fastBounceId);
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(slowBounceId, fastBounceId);
     assert.ok((await response.text()).startsWith('I am ready soon, check status at '));
   });
 
@@ -200,5 +199,47 @@ describe('Bounce Wrapper Unit Tests', () => {
       log,
     });
     assert.equal(response.status, 502, 'failing bounce should become 502');
+  });
+
+  it('Debounces with function', async () => {
+    let slowBounceId;
+
+    const slowfunction = async (_, context) => {
+      slowBounceId = context.invocation.bounceId;
+      return new Response(`ok, job ${context.invocation.bounceId} completed.`);
+    };
+
+    const actualfunct = wrap(slowfunction).with(bounce, { debounce: () => '1234' });
+
+    nock('http://localhost').post('/').reply(async function fakeruntime(uri, requestBody) {
+      const request = new Request(`http://localhost${uri}`, {
+        headers: this.req.headers,
+        body: JSON.stringify((requestBody)),
+        method: this.req.method,
+      });
+
+      const response = await actualfunct(request, {
+        log,
+        invocation: {
+        },
+      });
+      const body = await response.text();
+      return [response.status, body];
+    });
+
+    const response = await actualfunct(new Request('http://localhost', {
+      body: JSON.stringify({ foo: 'bar' }),
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+    }), {
+      log,
+      invocation: {
+      },
+    });
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
+    assert.strictEqual(slowBounceId, '1234');
+    assert.ok((await response.text()).startsWith('ok, job '));
   });
 });
