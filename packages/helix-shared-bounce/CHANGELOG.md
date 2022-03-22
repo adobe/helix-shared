@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.15...@adobe/helix-shared-bounce@1.4.0) (2022-03-22)
+
+
+### Features
+
+* add support for debounce function ([#664](https://github.com/adobe/helix-shared/issues/664)) ([70864a8](https://github.com/adobe/helix-shared/commit/70864a859383df5dd837d0ba0879c3fe7bca7e88))
+
+
+
+
+
 ## [1.3.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce@1.3.14...@adobe/helix-shared-bounce@1.3.15) (2022-03-18)
 
 **Note:** Version bump only for package @adobe/helix-shared-bounce
