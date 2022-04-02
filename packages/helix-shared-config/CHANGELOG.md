@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.21](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.7.20...@adobe/helix-shared-config@1.7.21) (2022-04-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lru-cache to v7.7.3 ([#666](https://github.com/adobe/helix-shared/issues/666)) ([3935048](https://github.com/adobe/helix-shared/commit/39350486ea855fe26730cd9b06ff92d6025f3962))
+
+
+
+
+
 ## [1.7.20](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@1.7.19...@adobe/helix-shared-config@1.7.20) (2022-03-28)
 
 

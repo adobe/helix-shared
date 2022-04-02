@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared",
-  "version": "8.0.88",
+  "version": "8.0.89",
   "description": "Shared modules of the Helix Project",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -25,7 +25,7 @@
   "dependencies": {
     "@adobe/helix-shared-async": "^1.1.5",
     "@adobe/helix-shared-body-data": "^1.1.18",
-    "@adobe/helix-shared-config": "^1.7.20",
+    "@adobe/helix-shared-config": "^1.7.21",
     "@adobe/helix-shared-dom": "^1.1.10",
     "@adobe/helix-shared-git": "^1.1.4",
     "@adobe/helix-shared-process-queue": "^1.1.4",
