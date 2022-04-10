@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.91](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.90...@adobe/helix-shared@8.0.91) (2022-04-10)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v3.0.9 ([#670](https://github.com/adobe/helix-shared/issues/670)) ([768d02f](https://github.com/adobe/helix-shared/commit/768d02fbfdcab02a24eec568989efc34759b8af3))
+
+
+
+
+
 ## [8.0.90](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@8.0.89...@adobe/helix-shared@8.0.90) (2022-04-05)
 
 

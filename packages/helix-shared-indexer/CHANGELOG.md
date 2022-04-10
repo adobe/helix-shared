@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.30](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.2.29...@adobe/helix-shared-indexer@0.2.30) (2022-04-10)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#669](https://github.com/adobe/helix-shared/issues/669)) ([abf4a21](https://github.com/adobe/helix-shared/commit/abf4a21a686361ee387fd272fe0ee769c1acfb71))
+
+
+
+
+
 ## [0.2.29](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.2.28...@adobe/helix-shared-indexer@0.2.29) (2022-04-10)
 
 
