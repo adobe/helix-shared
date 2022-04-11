@@ -6,9 +6,9 @@ https://ns.adobe.com/helix/shared/fstab#/properties/folders
 
 Mapping from subtrees to single sources for catch-all folder support.
 
-| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                     |
-| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [fstab.schema.json*](fstab.schema.json "open original schema") |
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                      |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :-------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [fstab.schema.json\*](fstab.schema.json "open original schema") |
 
 ## folders Type
 
@@ -24,9 +24,9 @@ The default value is:
 
 # folders Properties
 
-| Property    | Type     | Required | Nullable       | Defined by                                                                                                                                                       |
-| :---------- | :------- | :------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `^/.*[^/]$` | `string` | Optional | cannot be null | [FSTab (Mount Points)](fstab-properties-folders-patternproperties-.md "https://ns.adobe.com/helix/shared/fstab#/properties/folders/patternProperties/^/.*[^/]$") |
+| Property    | Type     | Required | Nullable       | Defined by                                                                                                                                                        |
+| :---------- | :------- | :------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `^/.*[^/]$` | `string` | Optional | cannot be null | [FSTab (Mount Points)](fstab-properties-folders-patternproperties-.md "https://ns.adobe.com/helix/shared/fstab#/properties/folders/patternProperties/^/.*\[^/]$") |
 
 ## Pattern: `^/.*[^/]$`
 
@@ -40,7 +40,7 @@ The default value is:
 
 *   cannot be null
 
-*   defined in: [FSTab (Mount Points)](fstab-properties-folders-patternproperties-.md "https://ns.adobe.com/helix/shared/fstab#/properties/folders/patternProperties/^/.\*\[^/]$")
+*   defined in: [FSTab (Mount Points)](fstab-properties-folders-patternproperties-.md "https://ns.adobe.com/helix/shared/fstab#/properties/folders/patternProperties/^/.*\[^/]$")
 
 ### ]$ Type
 

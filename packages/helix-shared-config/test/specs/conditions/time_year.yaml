@@ -1,4 +1,0 @@
-condition:
-  time_year=: 2019
-
-vcl: 'std.atoi(strftime({"%Y"}, time.start)) == 2019'

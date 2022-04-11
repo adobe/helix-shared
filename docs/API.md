@@ -43,35 +43,8 @@ module.exports.main = wrap(main)
 <dl>
 <dt><a href="#BaseConfig">BaseConfig</a></dt>
 <dd></dd>
-<dt><a href="#PropertyCondition">PropertyCondition</a></dt>
-<dd><p>PropertyCondition</p>
-</dd>
-<dt><a href="#URLCondition">URLCondition</a></dt>
-<dd><p>URLCondition</p>
-</dd>
-<dt><a href="#StringCondition">StringCondition</a></dt>
-<dd><p>StringCondition class</p>
-</dd>
-<dt><a href="#Condition">Condition</a></dt>
-<dd><p>Condition class</p>
-</dd>
-<dt><a href="#Performance">Performance</a></dt>
-<dd><p>Performance Definition</p>
-</dd>
-<dt><a href="#Redirect">Redirect</a></dt>
-<dd><p>Defines a redirect rule</p>
-</dd>
 <dt><a href="#SchemaDerivedConfig">SchemaDerivedConfig</a></dt>
 <dd><p>A Helix Config that is based on a (number of) JSON Schema(s).</p>
-</dd>
-<dt><a href="#Static">Static</a></dt>
-<dd><p>Static content handling</p>
-</dd>
-<dt><a href="#Strain">Strain</a></dt>
-<dd><p>Strain</p>
-</dd>
-<dt><a href="#Strains">Strains</a></dt>
-<dd><p>Strains</p>
 </dd>
 <dt><a href="#GitUrl">GitUrl</a></dt>
 <dd><p>Represents a GIT url.</p>
@@ -81,21 +54,6 @@ module.exports.main = wrap(main)
 ## Constants
 
 <dl>
-<dt><a href="#configMapper">configMapper</a></dt>
-<dd><p>Determines how to transform children configuration based on the affix type.</p>
-</dd>
-<dt><a href="#vclComposer">vclComposer</a></dt>
-<dd><p>Determines how to compose VCL based on the affix type.</p>
-</dd>
-<dt><a href="#jsonGenarator">jsonGenarator</a></dt>
-<dd><p>Determines how to output JSON based on the affix type.</p>
-</dd>
-<dt><a href="#booleanMap">booleanMap</a></dt>
-<dd><p>Boolean conditions</p>
-</dd>
-<dt><a href="#propertyMap">propertyMap</a></dt>
-<dd><p>Known properties</p>
-</dd>
 <dt><a href="#nodeMatches">nodeMatches</a> ⇒ <code>Boolean</code></dt>
 <dd><p>Node equivalence testing with wildcard support.</p>
 <p>This is mostly like nodeIsEquivalent, except that the
@@ -150,8 +108,6 @@ available.</p>
 <dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
 <dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
 </dd>
-<dt><a href="#ResolveFn">ResolveFn(left, right)</a></dt>
-<dd></dd>
 <dt><a href="#stripQuery">stripQuery(m, ...specialparams)</a> ⇒ <code>object</code></dt>
 <dd><p>Cleans up the URL by removing parameters that are deemed special. These
 special parameters will be returned in the return object instead.</p>
@@ -201,19 +157,19 @@ usually not affect equivalence, neither should inserting newline
 characters/replacing spaces with newlines because a line is growing
 too long or because dom elements should be one per line.</p>
 <p>Whitespace in <pre> elements however should affect equivalence.</p>
-<p>The given examples also adhere to the &#39;do not affect rendering&#39;
+<p>The given examples also adhere to the 'do not affect rendering'
 rules unless exotic javascript or CSS is added after the fact.</p>
 <h1 id="precise-semantics">Precise semantics</h1>
 <p>The following rules are used by this function:</p>
 <ol>
 <li>Whitespace in <pre> tags and contained tags is left alone.
-In more precise terms, whitespace in any elements whose computed
-<code>white-space</code> style property starts with <code>pre</code> is left alone.</li>
+  In more precise terms, whitespace in any elements whose computed
+  <code>white-space</code> style property starts with <code>pre</code> is left alone.</li>
 <li>Whitespace in other elements is compacted, meaning any combination
 of whitespace characters (newlines, spaces, tabs, etc) is replaced
 by a single space.</li>
 <li>Any whitespace before/after closing/opening tags is removed, unless
-the tag in question is inline. A tag is inline if it&#39;s computed
+the tag in question is inline. A tag is inline if it's computed
 style property <code>display</code> starts with <code>inline</code> or is set to <code>content</code>.
 This is the default behaviour for <span>.</li>
 <li>Whitespace next to opening/closing tags is also collapsed; all
@@ -226,16 +182,16 @@ in the closest common ancestor, between the ancestors of both text nodes.</li>
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM">https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM</a>
 <a href="https://drafts.csswg.org/css-text-3/#propdef-white-space">https://drafts.csswg.org/css-text-3/#propdef-white-space</a></p>
 <h1 id="examples">Examples</h1>
-<p><code>&lt;div&gt; &lt;/div&gt;</code> -&gt; <code>&lt;div&gt;&lt;/div&gt;</code></p>
+<p><code>&lt;div&gt; &lt;/div&gt;</code> -> <code>&lt;div&gt;&lt;/div&gt;</code></p>
 <p>Rule 3 - div is not inline:</p>
-<p><code>Hello &lt;div&gt; world &lt;/div&gt; friend</code> -&gt; <code>Hello&lt;div&gt;world&lt;/div&gt;friend</code></p>
+<p><code>Hello &lt;div&gt; world &lt;/div&gt; friend</code> -> <code>Hello&lt;div&gt;world&lt;/div&gt;friend</code></p>
 <p>Rule 4 - span is inline:</p>
-<p><code>Hello &lt;span&gt; world &lt;/span&gt; friend</code> -&gt; <code>Hello &lt;span&gt;world&lt;/span&gt; friend</code></p>
+<p><code>Hello &lt;span&gt; world &lt;/span&gt; friend</code> -> <code>Hello &lt;span&gt;world&lt;/span&gt; friend</code></p>
 <p>Rule 4 – the whitespace between multiple inline elements is placed
 int the lowest common ancestor.</p>
-<p><code>&lt;a&gt;Hello   &lt;/a&gt; \n  &lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
-<code>&lt;a&gt;Hello&lt;/a&gt;&lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
-<code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt;&lt;a&gt;   World&lt;/a&gt;</code> -&gt; <code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt; &lt;a&gt;World&lt;/a&gt;</code></p>
+<p><code>&lt;a&gt;Hello   &lt;/a&gt; \n  &lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
+<code>&lt;a&gt;Hello&lt;/a&gt;&lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;a&gt;Hello&lt;/a&gt; &lt;a&gt;World&lt;/a&gt;</code>
+<code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt;&lt;a&gt;   World&lt;/a&gt;</code> -> <code>&lt;span&gt;&lt;a&gt;Hello&lt;/a&gt;&lt;/span&gt; &lt;a&gt;World&lt;/a&gt;</code></p>
 <h1 id="css-handling">CSS Handling</h1>
 <p>Note that this function does not manually check for dom nodes like</p>
 <pre> or differentiate between <span> and <div>. Instead the `display`
@@ -318,7 +274,7 @@ from each line...</p>
 <dd><p>A glorified lookup table that translates backend errors into the appropriate
 HTTP status codes and log levels for your service.</p>
 </dd>
-<dt><a href="#computeSurrogateKey">computeSurrogateKey(url)</a> ⇒ <code>string</code></dt>
+<dt><a href="#computeSurrogateKey">computeSurrogateKey(url)</a> ⇒ <code>Promise.&lt;string&gt;</code></dt>
 <dd><p>Computes the caching Surrogate-Key for the given url. The computation uses a hmac_sha256
 with a fixed key: {@code &quot;helix&quot;}. the result is base64 encoded and truncated to 16 characters.
 This algorithm is chosen, because similar functionality exists in Fastly&#39;s VCL api:</p>
@@ -535,7 +491,7 @@ Reset the cache with a new cache size
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | cache options |
-| options.maxSize | <code>number</code> |  |
+| options.max | <code>number</code> |  |
 
 <a name="BaseConfig+withGithubToken"></a>
 
@@ -581,88 +537,6 @@ Set the base repository to fetch the config from.
 Saves this config to [#configPath](#configPath)
 
 **Kind**: instance method of [<code>BaseConfig</code>](#BaseConfig)  
-<a name="PropertyCondition"></a>
-
-## PropertyCondition
-PropertyCondition
-
-**Kind**: global class  
-<a name="PropertyCondition+toVCLPath"></a>
-
-### propertyCondition.toVCLPath(param)
-Return a VCL conditional clause that will assign the calculated base path
-to a request parameter.
-
-**Kind**: instance method of [<code>PropertyCondition</code>](#PropertyCondition)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| param | <code>String</code> \| <code>function</code> | request parameter name to insert or function to invoke |
-
-<a name="URLCondition"></a>
-
-## URLCondition
-URLCondition
-
-**Kind**: global class  
-<a name="StringCondition"></a>
-
-## StringCondition
-StringCondition class
-
-**Kind**: global class  
-<a name="Condition"></a>
-
-## Condition
-Condition class
-
-**Kind**: global class  
-<a name="Condition+preflightHeaders"></a>
-
-### condition.preflightHeaders ⇒
-Gets a list of all preflight headers used in this condition
-
-**Kind**: instance property of [<code>Condition</code>](#Condition)  
-**Returns**: String[]  
-<a name="Performance"></a>
-
-## Performance
-Performance Definition
-
-**Kind**: global class  
-
-* [Performance](#Performance)
-    * _instance_
-        * [.toJSON()](#Performance+toJSON) ⇒ [<code>JSON</code>](#Performance..JSON)
-    * _inner_
-        * [~JSON](#Performance..JSON)
-
-<a name="Performance+toJSON"></a>
-
-### performance.toJSON() ⇒ [<code>JSON</code>](#Performance..JSON)
-Returns a json representation
-
-**Kind**: instance method of [<code>Performance</code>](#Performance)  
-<a name="Performance..JSON"></a>
-
-### Performance~JSON
-JSON Serialization of Performance
-
-**Kind**: inner typedef of [<code>Performance</code>](#Performance)  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| device | <code>String</code> | 
-| location | <code>String</code> | 
-| connection | <code>String</code> | 
-
-<a name="Redirect"></a>
-
-## Redirect
-Defines a redirect rule
-
-**Kind**: global class  
 <a name="SchemaDerivedConfig"></a>
 
 ## SchemaDerivedConfig
@@ -739,134 +613,6 @@ pattern matches the provided property path
 | --- | --- | --- |
 | propertypath | <code>string</code> | the JSON Pointer path of the property |
 
-<a name="Static"></a>
-
-## Static
-Static content handling
-
-**Kind**: global class  
-
-* [Static](#Static)
-    * _instance_
-        * [.toJSON()](#Static+toJSON) ⇒ [<code>JSON</code>](#Static..JSON)
-    * _inner_
-        * [~JSON](#Static..JSON) ⇐ [<code>JSON</code>](#GitUrl..JSON)
-
-<a name="Static+toJSON"></a>
-
-### static.toJSON() ⇒ [<code>JSON</code>](#Static..JSON)
-Returns a json representation
-
-**Kind**: instance method of [<code>Static</code>](#Static)  
-<a name="Static..JSON"></a>
-
-### Static~JSON ⇐ [<code>JSON</code>](#GitUrl..JSON)
-JSON Serialization of Static
-
-**Kind**: inner typedef of [<code>Static</code>](#Static)  
-**Extends**: [<code>JSON</code>](#GitUrl..JSON)  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| magic | <code>boolean</code> | 
-| allow | <code>Array.&lt;String&gt;</code> | 
-| deny | <code>Array.&lt;String&gt;</code> | 
-
-<a name="Strain"></a>
-
-## Strain
-Strain
-
-**Kind**: global class  
-
-* [Strain](#Strain)
-    * _instance_
-        * [.name](#Strain+name) ⇒ <code>String</code>
-        * [.content](#Strain+content) ⇒ [<code>GitUrl</code>](#GitUrl)
-        * [.code](#Strain+code) ⇒ [<code>GitUrl</code>](#GitUrl)
-        * [.static](#Strain+static) ⇒ [<code>Static</code>](#Static)
-        * [.toJSON()](#Strain+toJSON) ⇒ [<code>JSON</code>](#Strain..JSON)
-    * _inner_
-        * [~JSON](#Strain..JSON)
-
-<a name="Strain+name"></a>
-
-### strain.name ⇒ <code>String</code>
-Name of this strain.
-
-**Kind**: instance property of [<code>Strain</code>](#Strain)  
-<a name="Strain+content"></a>
-
-### strain.content ⇒ [<code>GitUrl</code>](#GitUrl)
-GitUrl of the content repository
-
-**Kind**: instance property of [<code>Strain</code>](#Strain)  
-<a name="Strain+code"></a>
-
-### strain.code ⇒ [<code>GitUrl</code>](#GitUrl)
-GitUrl of the code repository
-
-**Kind**: instance property of [<code>Strain</code>](#Strain)  
-<a name="Strain+static"></a>
-
-### strain.static ⇒ [<code>Static</code>](#Static)
-Static information of this strain
-
-**Kind**: instance property of [<code>Strain</code>](#Strain)  
-<a name="Strain+toJSON"></a>
-
-### strain.toJSON() ⇒ [<code>JSON</code>](#Strain..JSON)
-Returns a json representation
-
-**Kind**: instance method of [<code>Strain</code>](#Strain)  
-<a name="Strain..JSON"></a>
-
-### Strain~JSON
-JSON Serialization of a Strain
-
-**Kind**: inner typedef of [<code>Strain</code>](#Strain)  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| name | <code>String</code> | 
-| code | <code>String</code> | 
-| content | [<code>JSON</code>](#GitUrl..JSON) | 
-| static | [<code>JSON</code>](#Static..JSON) | 
-| condition | <code>String</code> | 
-| directoryIndex | <code>String</code> | 
-| perf | [<code>JSON</code>](#Performance..JSON) | 
-| origin | <code>Origin~JSON</code> | 
-
-<a name="Strains"></a>
-
-## Strains
-Strains
-
-**Kind**: global class  
-
-* [Strains](#Strains)
-    * [.toJSON()](#Strains+toJSON) ⇒ <code>Strains~JSON</code>
-    * [.fromYAML(node)](#Strains+fromYAML)
-
-<a name="Strains+toJSON"></a>
-
-### strains.toJSON() ⇒ <code>Strains~JSON</code>
-Returns a json representation
-
-**Kind**: instance method of [<code>Strains</code>](#Strains)  
-<a name="Strains+fromYAML"></a>
-
-### strains.fromYAML(node)
-Creates the strains from a yaml node
-
-**Kind**: instance method of [<code>Strains</code>](#Strains)  
-
-| Param | Type |
-| --- | --- |
-| node | <code>YAMLSeq</code> | 
-
 <a name="GitUrl"></a>
 
 ## GitUrl
@@ -892,6 +638,7 @@ Represents a GIT url.
         * [.equalsIgnoreTransport(other)](#GitUrl+equalsIgnoreTransport) ⇒ <code>boolean</code>
         * [.toString()](#GitUrl+toString) ⇒ <code>String</code>
         * [.toJSON()](#GitUrl+toJSON) ⇒ [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code>
+        * [.toYAMLNode(doc, forceObject)](#GitUrl+toYAMLNode) ⇒ <code>\*</code>
     * _inner_
         * [~JSON](#GitUrl..JSON) : <code>Object</code>
 
@@ -1011,6 +758,16 @@ Returns a plain object representation.
 
 **Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
 **Returns**: [<code>JSON</code>](#GitUrl..JSON) \| <code>String</code> - A plain object suitable for serialization.  
+<a name="GitUrl+toYAMLNode"></a>
+
+### gitUrl.toYAMLNode(doc, forceObject) ⇒ <code>\*</code>
+**Kind**: instance method of [<code>GitUrl</code>](#GitUrl)  
+
+| Param | Type |
+| --- | --- |
+| doc | <code>YAML.Document</code> | 
+| forceObject |  | 
+
 <a name="GitUrl..JSON"></a>
 
 ### GitUrl~JSON : <code>Object</code>
@@ -1030,36 +787,6 @@ JSON Serialization of GitUrl
 | ref | <code>String</code> | Repository reference, such as `master` |
 | path | <code>String</code> | Relative path to the resource |
 
-<a name="configMapper"></a>
-
-## configMapper
-Determines how to transform children configuration based on the affix type.
-
-**Kind**: global constant  
-<a name="vclComposer"></a>
-
-## vclComposer
-Determines how to compose VCL based on the affix type.
-
-**Kind**: global constant  
-<a name="jsonGenarator"></a>
-
-## jsonGenarator
-Determines how to output JSON based on the affix type.
-
-**Kind**: global constant  
-<a name="booleanMap"></a>
-
-## booleanMap
-Boolean conditions
-
-**Kind**: global constant  
-<a name="propertyMap"></a>
-
-## propertyMap
-Known properties
-
-**Kind**: global constant  
 <a name="nodeMatches"></a>
 
 ## nodeMatches ⇒ <code>Boolean</code>
@@ -1152,16 +879,6 @@ Wraps a function with a body data middleware that extracts the request data.
 | --- | --- | --- |
 | func | <code>UniversalFunction</code> | the universal function |
 | [opts] | <code>BodyDataOptions</code> | Options |
-
-<a name="ResolveFn"></a>
-
-## ResolveFn(left, right)
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| left | [<code>Strain</code>](#Strain) | the current candidate strain (can be undefined) |
-| right | [<code>Strain</code>](#Strain) | the alternative candidate strain (can be undefined) |
 
 <a name="stripQuery"></a>
 
@@ -1507,7 +1224,7 @@ HTTP status codes and log levels for your service.
 
 <a name="computeSurrogateKey"></a>
 
-## computeSurrogateKey(url) ⇒ <code>string</code>
+## computeSurrogateKey(url) ⇒ <code>Promise.&lt;string&gt;</code>
 Computes the caching Surrogate-Key for the given url. The computation uses a hmac_sha256
 with a fixed key: {@code "helix"}. the result is base64 encoded and truncated to 16 characters.
 This algorithm is chosen, because similar functionality exists in Fastly's VCL api:
@@ -1519,7 +1236,7 @@ set var.key = regsub(var.key, "(.{16}).*", "\1");
 ```
 
 **Kind**: global function  
-**Returns**: <code>string</code> - The computed key.  
+**Returns**: <code>Promise.&lt;string&gt;</code> - A promise with the computed key.  
 
 | Param | Type | Description |
 | --- | --- | --- |

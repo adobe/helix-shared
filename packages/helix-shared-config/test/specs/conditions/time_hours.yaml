@@ -1,4 +1,0 @@
-condition:
-  time_hours=: 12
-
-vcl: 'std.atoi(strftime({"%H"}, time.start)) == 12'

@@ -6,9 +6,9 @@ https://ns.adobe.com/helix/shared/fstab#/properties/mountpoints
 
 
 
-| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                     |
-| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :------------------------------------------------------------- |
-| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [fstab.schema.json*](fstab.schema.json "open original schema") |
+| Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                      |
+| :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :-------------------------------------------------------------- |
+| Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [fstab.schema.json\*](fstab.schema.json "open original schema") |
 
 ## mountpoints Type
 
@@ -24,9 +24,9 @@ The default value is:
 
 # mountpoints Properties
 
-| Property    | Type   | Required | Nullable       | Defined by                                                                                                                                                                               |
-| :---------- | :----- | :------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `^/.*[^/]$` | Merged | Optional | cannot be null | [FSTab (Mount Points)](fstab-properties-mountpoints-patternproperties-mount-point.md "https://ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/patternProperties/^/.*[^/]$") |
+| Property    | Type   | Required | Nullable       | Defined by                                                                                                                                                                                |
+| :---------- | :----- | :------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `^/.*[^/]$` | Merged | Optional | cannot be null | [FSTab (Mount Points)](fstab-properties-mountpoints-patternproperties-mount-point.md "https://ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/patternProperties/^/.*\[^/]$") |
 
 ## Pattern: `^/.*[^/]$`
 
@@ -40,7 +40,7 @@ Defines the target URL where content should be retrieved from.
 
 *   cannot be null
 
-*   defined in: [FSTab (Mount Points)](fstab-properties-mountpoints-patternproperties-mount-point.md "https://ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/patternProperties/^/.\*\[^/]$")
+*   defined in: [FSTab (Mount Points)](fstab-properties-mountpoints-patternproperties-mount-point.md "https://ns.adobe.com/helix/shared/mountpoint#/properties/mountpoints/patternProperties/^/.*\[^/]$")
 
 ### ]$ Type
 

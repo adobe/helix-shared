@@ -9,19 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const IndexConfig = require('./IndexConfig');
-const MountConfig = require('./MountConfig');
-const { optionalConfig, requiredConfig } = require('./config-wrapper');
-const ValidationError = require('./ValidationError.js');
-const IgnoreConfig = require('./IgnoreConfig.js');
-const SitemapConfig = require('./SitemapConfig.js');
-
-module.exports = {
-  IndexConfig,
-  MountConfig,
-  IgnoreConfig,
-  SitemapConfig,
-  optionalConfig,
-  requiredConfig,
-  ValidationError,
-};
+// eslint-disable-next-line no-console
+console.log('Forcing HTTP/1.1 for Helix-Fetch');
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';

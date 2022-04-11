@@ -13,8 +13,6 @@
 /* eslint-disable no-console */
 
 /* eslint-env mocha */
-process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
-
 const assert = require('assert');
 const { Response, Request } = require('@adobe/helix-fetch');
 const wrap = require('@adobe/helix-shared-wrap');
@@ -112,7 +110,7 @@ describe('Required Config Loading Wrapper', () => {
       return new Response('ok');
     };
 
-    const actualfunct = wrap(universalfunct).with(requiredConfig, 'redirect');
+    const actualfunct = wrap(universalfunct).with(requiredConfig, 'index');
     const response = await actualfunct(new Request('http://localhost', {
       body: '{"owner": "adobe", "repo": "theblog", "ref": "non-existing"}',
       method: 'POST',
@@ -183,14 +181,13 @@ describe('Optional Config Loading Wrapper', () => {
 
   it('Config is loaded when request is a JSON body', async () => {
     const universalfunct = async (request, context) => {
-      assert.ok(context.config.redirect, 'redirect config should be available if loaded');
-      assert.equal(context.config.redirect.redirects.length, 34);
+      assert.ok(context.config.index, 'index config should be available if loaded');
       return new Response('ok');
     };
 
-    const actualfunct = wrap(universalfunct).with(optionalConfig, 'redirect');
+    const actualfunct = wrap(universalfunct).with(optionalConfig, 'index');
     const response = await actualfunct(new Request('http://localhost', {
-      body: '{"owner": "adobe", "repo": "theblog", "ref": "10c716c1ddaa8df482aea4220b36a4a578da5b2c"}',
+      body: '{"owner": "adobe", "repo": "blog", "ref": "main"}',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -206,14 +203,13 @@ describe('Optional Config Loading Wrapper', () => {
 
   it('Config is loaded when request is a Form body', async () => {
     const universalfunct = async (request, context) => {
-      assert.ok(context.config.redirect, 'redirect config should be available if loaded');
-      assert.equal(context.config.redirect.redirects.length, 34);
+      assert.ok(context.config.index, 'index config should be available if loaded');
       return new Response('ok');
     };
 
-    const actualfunct = wrap(universalfunct).with(optionalConfig, 'redirect');
+    const actualfunct = wrap(universalfunct).with(optionalConfig, 'index');
     const response = await actualfunct(new Request('http://localhost', {
-      body: 'owner=adobe&repo=theblog&ref=10c716c1ddaa8df482aea4220b36a4a578da5b2c',
+      body: 'owner=adobe&repo=blog&ref=main',
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

@@ -22,6 +22,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "mocha": {
+    "require": "test/setup-env.js"
+  },
   "dependencies": {
     "@adobe/helix-fetch": "^3.0.3",
     "@adobe/helix-shared-git": "^1.1.4",
@@ -35,7 +38,7 @@
     "lru-cache": "7.8.1",
     "object-hash": "3.0.0",
     "uri-js": "4.4.1",
-    "yaml": "1.10.2"
+    "yaml": "2.0.0"
   },
   "devDependencies": {
     "@adobe/helix-shared-wrap": "^1.0.4",
