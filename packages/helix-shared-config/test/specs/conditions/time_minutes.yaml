@@ -1,4 +1,0 @@
-condition:
-  time_minutes=: 14
-
-vcl: 'std.atoi(strftime({"%M"}, time.start)) == 14'

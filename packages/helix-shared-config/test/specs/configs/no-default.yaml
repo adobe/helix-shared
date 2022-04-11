@@ -1,5 +1,0 @@
-version: 1
-strains:
-  - name: no-default
-    code: https://github.com/adobe/project-helix.io.git
-    content: https://github.com/adobe/project-helix.io.git

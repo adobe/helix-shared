@@ -13,6 +13,7 @@
 /* global describe, it */
 
 const assert = require('assert');
+const YAML = require('yaml');
 const { GitUrl } = require('../src/index.js');
 
 describe('GitUrl from string tests', () => {
@@ -666,17 +667,19 @@ describe('GitUrl from object tests', () => {
   });
 
   it('to yaml node from string', () => {
+    const doc = new YAML.Document();
     const url = new GitUrl('http://git.example.com:1234/company/repository.git/docs/main');
-    assert.deepEqual(url.toYAMLNode().value, 'http://git.example.com:1234/company/repository.git/docs/main');
+    assert.deepEqual(url.toYAMLNode(doc).value, 'http://git.example.com:1234/company/repository.git/docs/main');
   });
 
   it('to yaml node from object', () => {
+    const doc = new YAML.Document();
     const url = new GitUrl({
       owner: 'company',
       repo: 'repository',
       ref: 'master',
     });
-    assert.deepEqual(url.toYAMLNode().toJSON(), {
+    assert.deepEqual(url.toYAMLNode(doc).toJSON(), {
       owner: 'company',
       ref: 'master',
       repo: 'repository',
@@ -684,8 +687,9 @@ describe('GitUrl from object tests', () => {
   });
 
   it('to yaml node from string (forced)', () => {
+    const doc = new YAML.Document();
     const url = new GitUrl('http://git.example.com:1234/company/repository.git/docs/main');
-    assert.deepEqual(url.toYAMLNode(true).toJSON(), {
+    assert.deepEqual(url.toYAMLNode(doc, true).toJSON(), {
       owner: 'company',
       path: '/docs/main',
       repo: 'repository',

@@ -1,4 +1,0 @@
-condition:
-  url: https://www.example.com
-
-vcl_path: ''

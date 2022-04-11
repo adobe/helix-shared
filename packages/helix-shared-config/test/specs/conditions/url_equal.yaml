@@ -1,4 +1,0 @@
-condition:
-  url=: https://www.example.com/index.html
-
-vcl: 'req.http.host == "www.example.com" && req.url.path == "/index.html"'

@@ -1,4 +1,0 @@
-condition:
-  client_city=: san jose
-
-vcl: 'client.geo.city == "san jose"'

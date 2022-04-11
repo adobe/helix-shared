@@ -1,6 +1,0 @@
-# Use a string based condition
-
-condition: req.http.host == "client.project-helix.io"
-
-vcl: 'req.http.host == "client.project-helix.io"'
-sticky: true

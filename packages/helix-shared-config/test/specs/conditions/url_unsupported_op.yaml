@@ -1,4 +1,0 @@
-condition:
-  url<: https://www.example.com
-
-error: 'Property url does not support operation: <'

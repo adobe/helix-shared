@@ -11,7 +11,6 @@
  */
 
 const { URL } = require('url');
-const YAML = require('yaml');
 const prune = require('@adobe/helix-shared-prune');
 
 const RAW_TYPE = 'raw';
@@ -309,11 +308,16 @@ class GitUrl {
     };
   }
 
-  toYAMLNode(forceObject) {
+  /**
+   * @param {YAML.Document} doc
+   * @param forceObject
+   * @returns {*}
+   */
+  toYAMLNode(doc, forceObject) {
     if (this._type === 'string' && !forceObject) {
-      return YAML.createNode(this.toString());
+      return doc.createNode(this.toString());
     }
-    return YAML.createNode(this.toJSON({ minimal: true }));
+    return doc.createNode(this.toJSON({ minimal: true }));
   }
 }
 

@@ -1,4 +1,0 @@
-condition:
-  client_country_code=: US
-
-vcl: 'client.geo.country_code == "US"'
