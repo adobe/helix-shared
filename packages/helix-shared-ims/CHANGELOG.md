@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.26](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.25...@adobe/helix-shared-ims@1.2.26) (2022-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v3.0.9 ([#670](https://github.com/adobe/helix-shared/issues/670)) ([768d02f](https://github.com/adobe/helix-shared/commit/768d02fbfdcab02a24eec568989efc34759b8af3))
+* **deps:** update external fixes ([#665](https://github.com/adobe/helix-shared/issues/665)) ([fb2322d](https://github.com/adobe/helix-shared/commit/fb2322d680d3bed29fb04beeed46173a5bd16bd9))
+
+
+
+
+
 ## [1.2.25](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.24...@adobe/helix-shared-ims@1.2.25) (2022-03-18)
 
 **Note:** Version bump only for package @adobe/helix-shared-ims

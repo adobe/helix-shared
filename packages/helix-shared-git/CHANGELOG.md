@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git@1.1.4...@adobe/helix-shared-git@2.0.0) (2022-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yaml to v2 and remove unused configs ([e2fd978](https://github.com/adobe/helix-shared/commit/e2fd978130076292c9049822b14718b8b6fa3269))
+
+
+### BREAKING CHANGES
+
+* **deps:** redirects, markup and helix-config removed
+
+
+
+
+
 ## [1.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git@1.1.3...@adobe/helix-shared-git@1.1.4) (2022-03-18)
 
 **Note:** Version bump only for package @adobe/helix-shared-git
