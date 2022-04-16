@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@9.0.1...@adobe/helix-shared@9.0.2) (2022-04-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to v10.1.0 ([#673](https://github.com/adobe/helix-shared/issues/673)) ([290378c](https://github.com/adobe/helix-shared/commit/290378cc47c42822bce1ad390bfb400b037c71f0))
+
+
+
+
+
 ## [9.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared@9.0.0...@adobe/helix-shared@9.0.1) (2022-04-16)
 
 
