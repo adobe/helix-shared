@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@adobe/helix-shared-prune": "^1.0.4",
-    "yaml": "2.0.0"
+    "yaml": "2.0.1"
   },
   "devDependencies": {
     "mocha": "9.2.2"
