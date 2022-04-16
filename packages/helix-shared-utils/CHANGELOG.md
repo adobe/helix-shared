@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils@2.0.7...@adobe/helix-shared-utils@2.0.8) (2022-04-16)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([24c8309](https://github.com/adobe/helix-shared/commit/24c830978f296cd3f4fea71983cd028ec1377d3a))
+
+
+
+
+
 ## [2.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils@2.0.6...@adobe/helix-shared-utils@2.0.7) (2022-04-11)
 
 **Note:** Version bump only for package @adobe/helix-shared-utils
