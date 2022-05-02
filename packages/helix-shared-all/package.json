@@ -35,6 +35,6 @@
     "@adobe/helix-shared-wrap": "^1.0.4"
   },
   "devDependencies": {
-    "mocha": "9.2.2"
+    "mocha": "10.0.0"
   }
 }
