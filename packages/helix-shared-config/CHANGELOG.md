@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@2.0.5...@adobe/helix-shared-config@2.0.6) (2022-05-06)
+
+
+### Bug Fixes
+
+* suppress deprecation warning (maxAge has been replaced by ttl) ([#678](https://github.com/adobe/helix-shared/issues/678)) ([7fb2df9](https://github.com/adobe/helix-shared/commit/7fb2df94f4f06d984c326b5ee897f877d69e86b0))
+
+
+
+
+
 ## [2.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@2.0.4...@adobe/helix-shared-config@2.0.5) (2022-05-03)
 
 **Note:** Version bump only for package @adobe/helix-shared-config
