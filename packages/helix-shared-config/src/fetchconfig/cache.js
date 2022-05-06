@@ -12,7 +12,7 @@
 
 const LRU = require('lru-cache');
 
-let lru = new LRU({ max: 1000, maxAge: 60 * 1000 });
+let lru = new LRU({ max: 1000, ttl: 60 * 1000 });
 
 /**
  * Returns a memoized version of the function `fn`.
