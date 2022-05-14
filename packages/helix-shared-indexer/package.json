@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-indexer",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Shared modules of the Helix Project - Indexer",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@adobe/helix-fetch": "3.0.9",
-    "@adobe/helix-shared-config": "^2.0.6",
+    "@adobe/helix-shared-config": "^2.0.7",
     "mocha": "10.0.0"
   }
 }
