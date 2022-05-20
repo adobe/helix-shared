@@ -173,4 +173,51 @@ describe('Index Config Loading', () => {
     assert.equal(cfg.getQueryCache('blog-posts', 'all'), 600);
     assert.equal(cfg.getQueryCache('blog-posts', 'by-author'), 300);
   });
+
+  it('add index configuration', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'));
+    await cfg.init();
+
+    const index = {
+      name: 'english',
+      include: ['/en/publish/*/*/*/*'],
+      exclude: ['**/Document.*'],
+      target: '/en/query-index.json',
+      properties: {
+        author: {
+          select: 'head > meta[name="author"]',
+          value: 'attribute(el, \'content\')',
+        },
+      },
+    };
+    cfg.addIndex(index);
+
+    const newcfg = new IndexConfig()
+      .withSource(cfg.toYAML());
+    await newcfg.init();
+
+    const config = newcfg.indices.find((i) => i.name === index.name);
+    assert.notStrictEqual(config, null);
+    assert.deepStrictEqual(config.include, index.include);
+    assert.deepStrictEqual(config.exclude, index.exclude);
+    assert.deepStrictEqual(config.target, index.target);
+
+    const property = config.properties.find((p) => p.name === 'author');
+    assert.notStrictEqual(property, null);
+    assert.deepStrictEqual(property.select, index.properties.author.select);
+    assert.deepStrictEqual(property.value, index.properties.author.value);
+  });
+
+  it('add index configuration with existing name', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'));
+    await cfg.init();
+
+    assert.throws(() => cfg.addIndex({
+      name: 'blog-posts',
+      target: '/query-index.json',
+      properties: {},
+    }));
+  });
 });
