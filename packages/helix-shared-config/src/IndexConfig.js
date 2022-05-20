@@ -43,7 +43,7 @@ class IndexConfig extends SchemaDerivedConfig {
    * @param {Array} index.include paths to include
    * @param {Array} index.exclude paths to exclude
    * @param {string} index.target target
-   * @param {object} properties properties to add to the index
+   * @param {object} index.properties properties to add to the index
    */
   addIndex({
     name, include, exclude, target, properties,

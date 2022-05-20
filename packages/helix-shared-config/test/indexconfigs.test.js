@@ -193,6 +193,7 @@ describe('Index Config Loading', () => {
     };
     cfg.addIndex(index);
 
+    // reparse the modified configuration's YAML output
     const newcfg = new IndexConfig()
       .withSource(cfg.toYAML());
     await newcfg.init();
