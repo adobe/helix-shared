@@ -52,7 +52,7 @@ class IndexConfig extends SchemaDerivedConfig {
     if (indices[name]) {
       throw new Error(`Unable to add index definition with existing name: ${name}`);
     }
-    this._cfg.indices[name] = {
+    indices[name] = {
       name,
       include,
       exclude,
@@ -60,7 +60,7 @@ class IndexConfig extends SchemaDerivedConfig {
       properties,
     };
 
-    // let toYAML() use the JSON output
+    // let BaseConfig.toYAML() use the JSON output
     this._document = null;
   }
 
