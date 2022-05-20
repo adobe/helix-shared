@@ -135,10 +135,11 @@ class SchemaDerivedConfig extends BaseConfig {
     await this.loadConfig();
     await this.validate();
 
-    this._content = new Proxy(this._cfg, this.defaultHandler(''));
+    const cfg = JSON.parse(JSON.stringify(this._cfg));
+    this._content = new Proxy(cfg, this.defaultHandler(''));
 
     // redefine getters
-    Object.keys(this._cfg).forEach((key) => {
+    Object.keys(cfg).forEach((key) => {
       if (!(key in this)) {
         this[key] = this._content[key];
       }

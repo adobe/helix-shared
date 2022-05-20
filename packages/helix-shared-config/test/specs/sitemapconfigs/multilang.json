@@ -1,7 +1,6 @@
 {
   "sitemaps": {
     "multilang": {
-      "name": "multilang",
       "origin": "https://www.example.com",
       "languages": {
         "en": {
