@@ -1,7 +1,6 @@
 {
   "indices": {
     "blog-posts": {
-      "name": "blog-posts",
       "fetch": "https://${repo}-${owner}.project-helix.page/${path}",
       "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/en/query-index.xlsx?d=we7bf6b3af3234076968b30a1565f2373&csf=1&web=1&e=q9o8tW",
       "properties": {

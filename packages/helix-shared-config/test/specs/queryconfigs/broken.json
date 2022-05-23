@@ -2,7 +2,6 @@
   "indices": {
     "blog-posts": {
       "fetch": "https://${repo}-${owner}.project-helix.page/${path}",
-      "name": "blog-posts",
       "properties": {
         "author": {
           "faceted": true,

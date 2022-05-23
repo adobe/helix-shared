@@ -53,7 +53,6 @@ class IndexConfig extends SchemaDerivedConfig {
       throw new Error(`Unable to add index definition with existing name: ${name}`);
     }
     indices[name] = {
-      name,
       include,
       exclude,
       target,
