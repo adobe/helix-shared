@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.3.10...@adobe/helix-shared-indexer@0.3.11) (2022-05-23)
+
+**Note:** Version bump only for package @adobe/helix-shared-indexer
+
+
+
+
+
 ## [0.3.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.3.9...@adobe/helix-shared-indexer@0.3.10) (2022-05-20)
 
 **Note:** Version bump only for package @adobe/helix-shared-indexer

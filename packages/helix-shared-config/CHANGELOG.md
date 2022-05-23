@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@2.1.0...@adobe/helix-shared-config@2.1.1) (2022-05-23)
+
+
+### Bug Fixes
+
+* proxy clone to not change original configuration ([#686](https://github.com/adobe/helix-shared/issues/686)) ([96f9ce7](https://github.com/adobe/helix-shared/commit/96f9ce7dc90cd97efc44ecd7a06151451dee9d3e))
+
+
+
+
+
 # [2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@2.0.7...@adobe/helix-shared-config@2.1.0) (2022-05-20)
 
 
