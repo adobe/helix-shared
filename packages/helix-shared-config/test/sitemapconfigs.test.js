@@ -65,4 +65,92 @@ describe('Sitemap Config Loading', () => {
       }
     });
   });
+
+  it('add sitemap configuration', async () => {
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'simple.yaml'));
+    await cfg.init();
+
+    const sitemap = {
+      name: 'other',
+      origin: 'https://www.example.com',
+      source: '/query-index2.json',
+      destination: '/sitemap-other.xml',
+    };
+    cfg.addSitemap(sitemap);
+
+    // reparse the modified configuration's YAML output
+    const newcfg = new SitemapConfig()
+      .withSource(cfg.toYAML());
+    await newcfg.init();
+
+    const config = newcfg.sitemaps.find((s) => s.name === sitemap.name);
+    assert.notStrictEqual(config, null);
+    assert.deepStrictEqual(config.origin, sitemap.origin);
+    assert.deepStrictEqual(config.source, sitemap.source);
+    assert.deepStrictEqual(config.destination, sitemap.destination);
+  });
+
+  it('add sitemap configuration with existing name', async () => {
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'simple.yaml'));
+    await cfg.init();
+
+    assert.throws(() => cfg.addSitemap({
+      name: 'simple',
+      source: '/query-index2.json',
+      destination: '/sitemap2.xml',
+    }));
+  });
+
+  it('add sitemap language', async () => {
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'multilang.yaml'));
+    await cfg.init();
+
+    const language = {
+      name: 'de',
+      source: '/de/query-index.json',
+      destination: '/sitemap-de.xml',
+      hreflang: 'de',
+      alternate: '/de/{path}',
+    };
+    cfg.addLanguage('multilang', language);
+
+    // reparse the modified configuration's YAML output
+    const newcfg = new SitemapConfig()
+      .withSource(cfg.toYAML());
+    await newcfg.init();
+
+    const config = newcfg.sitemaps[0].languages.find((l) => l.name === language.name);
+    assert.notStrictEqual(config, null);
+    assert.deepStrictEqual(config.source, language.source);
+    assert.deepStrictEqual(config.destination, language.destination);
+    assert.deepStrictEqual(config.hreflang, language.hreflang);
+    assert.deepStrictEqual(config.alternate, language.alternate);
+  });
+
+  it('add sitemap language to inexistant sitemap', async () => {
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'multilang.yaml'));
+    await cfg.init();
+
+    assert.throws(() => cfg.addLanguage('other', {
+      name: 'de',
+      source: '/de/query-index.json',
+      destination: '/sitemap-de.xml',
+    }));
+  });
+
+  it('add sitemap language with existing name', async () => {
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'multilang.yaml'));
+    await cfg.init();
+
+    assert.throws(() => cfg.addLanguage('multilang', {
+      name: 'fr',
+      source: '/fr/query-index.json',
+      destination: '/sitemap-fr.xml',
+    }));
+  });
 });
