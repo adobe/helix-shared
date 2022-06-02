@@ -51,6 +51,7 @@ class SitemapConfig extends SchemaDerivedConfig {
    * @param {string} sitemap.source sitemap source
    * @param {string} sitemap.destination sitemap destination
    * @param {string} sitemap.lastmod lastmod format
+   * @return new sitemap
    */
   addSitemap({
     name, origin, source, destination, lastmod,
@@ -68,8 +69,21 @@ class SitemapConfig extends SchemaDerivedConfig {
 
     // let BaseConfig.toYAML() use the JSON output
     this._document = null;
+    return sitemaps[name];
   }
 
+  /**
+   * Adds a language definition within a sitemap.
+   *
+   * @param {string} sitemapName sitemap name
+   * @param {Object} language language configuration
+   * @param {string} language.name language name
+   * @param {string} language.source language source
+   * @param {string} language.destination language destination
+   * @param {string} language.hreflang href language
+   * @param {string} language.alternate alternate location of this language
+   * @return new language
+   */
   addLanguage(sitemapName, {
     name, source, destination, hreflang, alternate,
   }) {
@@ -79,7 +93,8 @@ class SitemapConfig extends SchemaDerivedConfig {
     if (!sitemap) {
       throw new Error(`Unable to add language, sitemap not found: ${sitemapName}`);
     }
-    const { languages } = sitemap;
+    // eslint-disable-next-line no-multi-assign
+    const languages = (sitemap.languages = sitemap.languages || {});
     if (languages[name]) {
       throw new Error(`Unable to add language definition with existing name: ${name}`);
     }
@@ -92,6 +107,7 @@ class SitemapConfig extends SchemaDerivedConfig {
 
     // let BaseConfig.toYAML() use the JSON output
     this._document = null;
+    return languages[name];
   }
 }
 

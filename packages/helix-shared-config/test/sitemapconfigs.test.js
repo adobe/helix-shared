@@ -130,6 +130,36 @@ describe('Sitemap Config Loading', () => {
     assert.deepStrictEqual(config.alternate, language.alternate);
   });
 
+  it('add sitemap language to new sitemap', async () => {
+    const cfg = new SitemapConfig()
+      .withSource(`
+  version: 1
+`);
+    await cfg.init();
+
+    cfg.addSitemap({ name: 'multilang' });
+    const language = {
+      name: 'de',
+      source: '/de/query-index.json',
+      destination: '/sitemap-de.xml',
+      hreflang: 'de',
+      alternate: '/de/{path}',
+    };
+    cfg.addLanguage('multilang', language);
+
+    // reparse the modified configuration's YAML output
+    const newcfg = new SitemapConfig()
+      .withSource(cfg.toYAML());
+    await newcfg.init();
+
+    const config = newcfg.sitemaps[0].languages.find((l) => l.name === language.name);
+    assert.notStrictEqual(config, null);
+    assert.deepStrictEqual(config.source, language.source);
+    assert.deepStrictEqual(config.destination, language.destination);
+    assert.deepStrictEqual(config.hreflang, language.hreflang);
+    assert.deepStrictEqual(config.alternate, language.alternate);
+  });
+
   it('add sitemap language to inexistant sitemap', async () => {
     const cfg = new SitemapConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'multilang.yaml'));
