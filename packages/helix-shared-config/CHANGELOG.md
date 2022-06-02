@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@2.1.1...@adobe/helix-shared-config@2.1.2) (2022-06-02)
+
+
+### Bug Fixes
+
+* allow adding sitemap or languages ([#690](https://github.com/adobe/helix-shared/issues/690)) ([5f095ef](https://github.com/adobe/helix-shared/commit/5f095ef276e1a44a36d9f3168d25ecf1074fa4ad))
+
+
+
+
+
 ## [2.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config@2.1.0...@adobe/helix-shared-config@2.1.1) (2022-05-23)
 
 
