@@ -38,7 +38,7 @@
     "lru-cache": "7.10.1",
     "object-hash": "3.0.0",
     "uri-js": "4.4.1",
-    "yaml": "2.1.0"
+    "yaml": "2.1.1"
   },
   "devDependencies": {
     "@adobe/helix-shared-wrap": "^1.0.5",
@@ -47,6 +47,6 @@
     "@pollyjs/core": "6.0.5",
     "@pollyjs/persister-fs": "6.0.5",
     "mocha": "10.0.0",
-    "nock": "13.2.4"
+    "nock": "13.2.6"
   }
 }
