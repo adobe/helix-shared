@@ -153,11 +153,7 @@ export function indexResource(path, response, config, log) {
     const { select, ...p } = property;
     const expression = p.value || p.values;
     // create an array of elements
-    // const elements = select !== 'none' ? Array.from(document.querySelectorAll(select)) : [];
-    let elements = [];
-    if (select !== 'none') {
-      elements = selectAll(select, content);
-    }
+    const elements = select !== 'none' ? selectAll(select, content) : [];
     let value = getDOMValue(elements, expression, log, { path, headers }) || [];
     // concat for single value
     if (p.value) {
