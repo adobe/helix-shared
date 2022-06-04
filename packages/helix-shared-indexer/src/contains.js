@@ -14,7 +14,7 @@
 
 'use strict';
 
-const mm = require('micromatch');
+import mm from 'micromatch';
 
 /**
  * Return a flag indicating whether a particular path is matches all given glob patterns.
@@ -56,8 +56,6 @@ function match(globs, path, defaultValue) {
  *
  * @returns {boolean} whether path is included in configuration
  */
-function contains(cfg, path) {
+export function contains(cfg, path) {
   return match(cfg.include, path, true) && !match(cfg.exclude, path, false);
 }
-
-module.exports = contains;

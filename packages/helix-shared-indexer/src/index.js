@@ -9,10 +9,5 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const indexResource = require('./index-resource.js');
-const contains = require('./contains.js');
-
-module.exports = {
-  indexResource,
-  contains,
-};
+export * from './contains.js';
+export * from './index-resource.js';

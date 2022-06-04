@@ -14,8 +14,8 @@
 
 'use strict';
 
-const assert = require('assert');
-const contains = require('../src/contains.js');
+import assert from 'assert';
+import { contains } from '../src/contains.js';
 
 describe('Include tests', () => {
   it('missing include means unconditionally true', () => {
