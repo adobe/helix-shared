@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.30](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.29...@adobe/helix-shared-ims@1.2.30) (2022-06-04)
+
+**Note:** Version bump only for package @adobe/helix-shared-ims
+
+
+
+
+
 ## [1.2.29](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims@1.2.28...@adobe/helix-shared-ims@1.2.29) (2022-05-14)
 
 **Note:** Version bump only for package @adobe/helix-shared-ims
