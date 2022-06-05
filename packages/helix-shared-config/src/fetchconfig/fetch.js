@@ -16,7 +16,7 @@ const cache = require('./cache');
 
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
   ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })
-  /* istanbul ignore next */
+  /* c8 ignore next */
   : fetchAPI;
 
 /**
