@@ -26,7 +26,7 @@ indices:
     properties:
       author:
         select: main > div:nth-of-type(3) > p:nth-of-type(1)
-        value: |c
+        value: |
           match(el, 'by (.*)')
       title:
         select: h1:first-of-type
