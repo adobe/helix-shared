@@ -38,7 +38,7 @@ jobs:
       - run: mkdir junit
       - run:
           name: Lint
-          command: npm run lint
+          command: circleci tests glob "packages/*" | xargs -n 1 npm run lint -w
       - run:
           name: Running tests and getting code coverage
           command: npm run test
