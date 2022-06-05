@@ -38,7 +38,9 @@ jobs:
       - run: mkdir junit
       - run:
           name: Lint
-          command: circleci tests glob "packages/*" | circleci tests split /tmp/tests-to-run | echo /tmp/tests-to-run
+          command: |
+            circleci tests glob "packages/*" | circleci tests split > /tmp/tests-to-run
+            echo /tmp/tests-to-run
       - run:
           name: Running tests and getting code coverage
           command: npm run test
