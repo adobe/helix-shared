@@ -9,12 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* eslint-env mocha */
-const assert = require('assert');
-const { Headers } = require('@adobe/helix-fetch');
-const { IndexConfig } = require('@adobe/helix-shared-config');
 
-const indexResource = require('../src/index-resource.js');
+/* eslint-env mocha */
+
+import assert from 'assert';
+import { Headers } from '@adobe/helix-fetch';
+import { IndexConfig } from '@adobe/helix-shared-config';
+
+import { indexResource } from '../src/index-resource.js';
 
 const INDEX = `
 version: 1
@@ -46,10 +48,6 @@ indices:
         select: none
         value: |
           replace(path, '/test/specs/', '/')
-      paragraph:
-        select: main > div:nth-of-type(5)
-        value: |
-          innerHTML(el)
       teaser:
         select: main > div:nth-child(n+4) p
         value: |
@@ -159,7 +157,6 @@ describe('Index Resource Tests', () => {
       'member-without-get': '',
       'missing-header': '',
       'non-array-words': 'Mon, 22 Feb 2021 15:28:00 GMT',
-      paragraph: '\n    <p>consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>\n  ',
       sourceHash: 'JJYxCM1NDG4ahJm9f',
       teaser: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut',
       title: 'I feel good',

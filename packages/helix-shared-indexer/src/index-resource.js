@@ -9,9 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const moment = require('moment');
-const { JSDOM } = require('jsdom');
-const jsep = require('jsep');
+import moment from 'moment';
+import jsep from 'jsep';
+import rehypeParse from 'rehype-parse';
+import { selectAll } from 'hast-util-select';
+import { toText } from 'hast-util-to-text';
+import { unified } from 'unified';
 
 const helpers = {
   dateValue: (elements, format) => {
@@ -35,21 +38,20 @@ const helpers = {
       elements = [elements];
     }
     return elements.map((el) => {
-      const content = typeof el === 'string' ? el : el.textContent;
+      const content = typeof el === 'string' ? el : toText(el);
       const millis = moment.utc(content, format).valueOf();
       return millis / 1000;
     });
   },
-  attribute: (elements, name) => elements.map((el) => el.getAttribute(name)),
-  textContent: (elements) => elements.map((el) => el.textContent),
-  innerHTML: (elements) => elements.map((el) => el.innerHTML),
+  attribute: (elements, name) => elements.map((el) => el.properties[name]),
+  textContent: (elements) => elements.map((el) => toText(el)),
   match: (elements, re) => {
     // todo: maybe base on function ?
     const result = [];
     const regex = new RegExp(re, 'g');
     elements.forEach((el) => {
       let m;
-      const content = typeof el === 'string' ? el : el.textContent;
+      const content = typeof el === 'string' ? el : toText(el);
 
       // eslint-disable-next-line no-cond-assign
       while ((m = regex.exec(content)) !== null) {
@@ -139,9 +141,11 @@ function getDOMValue(elements, expression, log, vars) {
  * @param {Logger} log logger
  * @return {object} extracted properties
  */
-function indexResource(path, response, config, log) {
+export function indexResource(path, response, config, log) {
   const { body, headers } = response;
-  const { document } = new JSDOM(body).window;
+  const content = unified()
+    .use(rehypeParse, { fragment: false })
+    .parse(body);
   const record = { };
 
   /* Walk through all index properties */
@@ -149,7 +153,7 @@ function indexResource(path, response, config, log) {
     const { select, ...p } = property;
     const expression = p.value || p.values;
     // create an array of elements
-    const elements = select !== 'none' ? Array.from(document.querySelectorAll(select)) : [];
+    const elements = select !== 'none' ? selectAll(select, content) : [];
     let value = getDOMValue(elements, expression, log, { path, headers }) || [];
     // concat for single value
     if (p.value) {
@@ -161,5 +165,3 @@ function indexResource(path, response, config, log) {
   });
   return record;
 }
-
-module.exports = indexResource;
