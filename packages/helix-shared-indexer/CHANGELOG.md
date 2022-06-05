@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.4.0...@adobe/helix-shared-indexer@0.5.0) (2022-06-05)
+
+
+### Bug Fixes
+
+* create release ([91d16e0](https://github.com/adobe/helix-shared/commit/91d16e0f312657963c0ed23c61ff28465519c9ef))
+
+
+### BREAKING CHANGES
+
+* turn library into ESM
+
+
+
+
+
 # [0.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.3.13...@adobe/helix-shared-indexer@0.4.0) (2022-06-05)
 
 
