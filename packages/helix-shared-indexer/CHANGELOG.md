@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v0.5.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v0.5.0...@adobe/helix-shared-indexer-v0.5.1) (2022-06-05)
+
+
+### Bug Fixes
+
+* trigger release ([5804493](https://github.com/adobe/helix-shared/commit/5804493f168e990da79f6e0f9c5c932a586bfdae))
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
