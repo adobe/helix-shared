@@ -28,7 +28,7 @@ jobs:
           npm whoami
         env:
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
-      - run: npm ci
+      - run: npm install
       - run: npm run lint
       - run: npm test
       - run: npm run semantic-release
