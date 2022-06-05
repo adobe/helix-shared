@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git@2.0.3...@adobe/helix-shared-git@2.0.4) (2022-06-04)
+
+**Note:** Version bump only for package @adobe/helix-shared-git
+
+
+
+
+
 ## [2.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git@2.0.2...@adobe/helix-shared-git@2.0.3) (2022-05-14)
 
 
