@@ -35,7 +35,6 @@ jobs:
 
     steps:
       - setup
-      - run: mkdir junit
       - run:
           name: Split package list
           command: circleci tests glob "packages/*" | circleci tests split > /tmp/tests-to-run
@@ -45,10 +44,12 @@ jobs:
       - run:
           name: Running tests and getting code coverage
           command: cat /tmp/tests-to-run | xargs -I % npm run test -w %
-      - run:
-          name: Copy test tesults
-          command: cat /tmp/tests-to-run | xargs -I % cp %/junit/test-results.xml junit/$CIRCLE_NODE_INDEX-test-results.xml
       - codecov/upload
+      - run:
+          name: Copy test results
+          command: |
+            mkdir junit
+            cat /tmp/tests-to-run | xargs -I % cp %/junit/test-results.xml junit/test-results-$CIRCLE_NODE_INDEX.xml
       - store_test_results:
           path: junit
 

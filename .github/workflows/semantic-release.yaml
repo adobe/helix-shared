@@ -13,10 +13,10 @@ jobs:
         with:
           token: ${{ secrets.MY_GITHUB_TOKEN }}
           fetch-depth: 0
-      - name: Use Node.js 14.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: '16.x'
       - name: Configure Git User
         run: |
           git config --global user.email "ci@example.com"
@@ -29,10 +29,9 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
       - run: npm ci
-      - run: npm run bootstrap
       - run: npm run lint
       - run: npm test
-      - run: npm run semantic-release
+      - run: npm run semantic-release -e semantic-release-monorepo --dry-run --debug
         env:
           GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
