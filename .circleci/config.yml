@@ -40,7 +40,9 @@ jobs:
           name: Lint
           command: |
             circleci tests glob "packages/*" | circleci tests split > /tmp/tests-to-run
-            echo /tmp/tests-to-run
+            cat /tmp/tests-to-run
+            cat /tmp/tests-to-run | xargs -I % npm run lint -w %
+
       - run:
           name: Running tests and getting code coverage
           command: npm run test
