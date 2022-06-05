@@ -1,3 +1,25 @@
+# @adobe/helix-shared-v1.0.0 (2022-06-05)
+
+
+### Bug Fixes
+
+* add mocha ([#631](https://github.com/adobe/helix-shared/issues/631)) ([2849219](https://github.com/adobe/helix-shared/commit/2849219986aff4a31f1c6c3d1e137b1e2732027d))
+* **build:** create monorepo ([9bef792](https://github.com/adobe/helix-shared/commit/9bef7922361e97025f44412709cbad0a2d7784da)), closes [#444](https://github.com/adobe/helix-shared/issues/444)
+* **deps:** update dependency @adobe/helix-fetch to v3.0.9 ([#670](https://github.com/adobe/helix-shared/issues/670)) ([768d02f](https://github.com/adobe/helix-shared/commit/768d02fbfdcab02a24eec568989efc34759b8af3))
+* **deps:** update dependency fs-extra to v10.1.0 ([#673](https://github.com/adobe/helix-shared/issues/673)) ([290378c](https://github.com/adobe/helix-shared/commit/290378cc47c42822bce1ad390bfb400b037c71f0))
+* **deps:** update dependency yaml to v2 and remove unused configs ([e2fd978](https://github.com/adobe/helix-shared/commit/e2fd978130076292c9049822b14718b8b6fa3269))
+* **deps:** update external fixes ([24c8309](https://github.com/adobe/helix-shared/commit/24c830978f296cd3f4fea71983cd028ec1377d3a))
+* **deps:** update external fixes ([cdddbc5](https://github.com/adobe/helix-shared/commit/cdddbc590c52d6ebf336e7943387d8fb393c6524))
+* **deps:** update external fixes ([06e6c6e](https://github.com/adobe/helix-shared/commit/06e6c6ebd829422274f49bf11f6bb0613d1635b7))
+* **deps:** update external fixes ([#668](https://github.com/adobe/helix-shared/issues/668)) ([d32918b](https://github.com/adobe/helix-shared/commit/d32918b2885cabee8792f9d3ef1b65199668b9ad))
+* update renovate config to auto detect pin versions ([#644](https://github.com/adobe/helix-shared/issues/644)) ([3ae0423](https://github.com/adobe/helix-shared/commit/3ae04235dd6791685d9a03e5ed52570b73d5be2a))
+* use correct deps ([6398a43](https://github.com/adobe/helix-shared/commit/6398a43bded59d0e39c9a168b556e69a2334be9e))
+
+
+### BREAKING CHANGES
+
+* **deps:** redirects, markup and helix-config removed
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
