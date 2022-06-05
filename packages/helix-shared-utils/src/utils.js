@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* istanbul ignore next */
+/* c8 ignore next 2 */
 // eslint-disable-next-line no-undef
 const cryptoImpl = typeof crypto === 'undefined' ? require('crypto') : crypto;
 
@@ -53,11 +53,11 @@ function lookupBackendResponses(status) {
  * @returns  {Promise<string>} A promise with the computed key.
  */
 async function computeSurrogateKey(url) {
-  /* istanbul ignore next */
+  /* c8 ignore next 2 */
   const subtle = cryptoImpl?.webcrypto?.subtle // WebCrypto (node >= v15)
      || cryptoImpl?.subtle; // WebcCypto (browser, service worker)
 
-  /* istanbul ignore next */
+  /* c8 ignore start */
   if (subtle) {
     // WebCrypto API
     const key = await subtle.importKey('raw', new TextEncoder('utf-8').encode('helix').buffer, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
@@ -82,6 +82,7 @@ async function computeSurrogateKey(url) {
     hmac.update(String(url));
     return hmac.digest('base64url').substring(0, 16);
   }
+  /* c8 ignore end */
 }
 
 /**

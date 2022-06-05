@@ -5,9 +5,9 @@
   "main": "src/ims.js",
   "types": "src/ims.d.ts",
   "scripts": {
-    "test": "nyc mocha",
-    "test-ci": "nyc mocha && codecov",
-    "lint": "eslint ."
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
   },
   "mocha": {
     "reporter": "mocha-multi-reporters",
@@ -39,7 +39,6 @@
     "@adobe/helix-universal": "^3.0.4"
   },
   "devDependencies": {
-    "mocha": "10.0.0",
     "nock": "13.2.6"
   }
 }

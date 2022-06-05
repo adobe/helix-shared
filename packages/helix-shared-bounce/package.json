@@ -5,9 +5,13 @@
   "main": "src/bounce.js",
   "types": "src/bounce.d.ts",
   "scripts": {
-    "test": "nyc mocha",
-    "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
-    "lint": "eslint ."
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json"
   },
   "repository": {
     "type": "git",
@@ -30,7 +34,6 @@
     "@adobe/helix-universal": "^3.0.4"
   },
   "devDependencies": {
-    "mocha": "10.0.0",
     "nock": "13.2.6",
     "proxyquire": "2.1.3"
   }

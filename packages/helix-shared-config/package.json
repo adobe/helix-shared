@@ -5,9 +5,9 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "test": "nyc mocha",
-    "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
-    "lint": "eslint ."
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,9 @@
     "access": "public"
   },
   "mocha": {
-    "require": "test/setup-env.js"
+    "require": "test/setup-env.js",
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json"
   },
   "dependencies": {
     "@adobe/helix-fetch": "^3.0.3",
@@ -46,7 +48,6 @@
     "@pollyjs/adapter-node-http": "6.0.5",
     "@pollyjs/core": "6.0.5",
     "@pollyjs/persister-fs": "6.0.5",
-    "mocha": "10.0.0",
     "nock": "13.2.6"
   }
 }

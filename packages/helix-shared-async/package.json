@@ -4,13 +4,17 @@
   "description": "Shared modules of the Helix Project - async",
   "main": "src/async.js",
   "scripts": {
-    "test": "nyc mocha",
-    "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
-    "lint": "eslint ."
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -22,7 +26,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "ferrum": "1.9.4",
-    "mocha": "10.0.0"
+    "ferrum": "1.9.4"
   }
 }

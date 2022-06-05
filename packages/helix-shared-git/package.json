@@ -4,10 +4,13 @@
   "description": "Shared modules of the Helix Project - Git Utils",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc mocha",
-    "test-ci": "nyc mocha --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json && codecov",
+    "test": "c8 mocha",
     "lint": "eslint .",
-    "junit": "mocha --exit -R mocha-junit-reporter"
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json"
   },
   "repository": {
     "type": "git",
@@ -25,8 +28,5 @@
   "dependencies": {
     "@adobe/helix-shared-prune": "^1.0.5",
     "yaml": "2.1.1"
-  },
-  "devDependencies": {
-    "mocha": "10.0.0"
   }
 }

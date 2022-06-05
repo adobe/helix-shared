@@ -7,12 +7,12 @@
     "docs:schema": "jsonschema2md -d packages/helix-shared-config/src/schemas -o docs -x docs -f yaml",
     "docs:api": "jsdoc2md -c .jsdoc.json --files packages/*/src/*.js > docs/API.md",
     "docs": "npm run docs:schema && npm run docs:api",
-    "bootstrap": "lerna bootstrap",
-    "test": "lerna run test --stream",
-    "test-ci": "lerna-parallelism run test-ci",
-    "lint": "lerna run lint --stream",
-    "lint-ci": "lerna-parallelism run lint",
-    "semantic-release": "lerna publish --conventional-commits --create-release github --yes"
+    "_bootstrap": "lerna bootstrap",
+    "test": "npm test -ws",
+    "lint": "npm run lint -ws",
+    "semantic-release": "lerna publish --conventional-commits --create-release github --yes",
+    "prepare": "husky install",
+    "clean": "rm -rf package-lock.json node_modules"
   },
   "repository": {
     "type": "git",
@@ -24,34 +24,24 @@
     "url": "https://github.com/adobe/helix-shared/issues"
   },
   "homepage": "https://github.com/adobe/helix-shared#readme",
+  "workspaces": [
+    "./packages/*"
+  ],
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.3.2",
     "@adobe/jsonschema2md": "7.1.1",
     "ajv": "8.11.0",
-    "codecov": "3.8.3",
-    "commitizen": "4.2.4",
-    "cz-conventional-changelog": "3.3.0",
+    "c8": "7.11.3",
     "eslint": "8.17.0",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-import": "2.26.0",
-    "ghooks": "2.0.4",
+    "husky": "8.0.1",
     "jsdoc-to-markdown": "7.1.1",
-    "lerna": "4.0.0",
-    "lerna-parallelism": "0.4.0",
     "lint-staged": "12.5.0",
     "mocha": "10.0.0",
-    "mocha-multi-reporters": "1.5.1",
-    "nyc": "15.1.0"
+    "mocha-multi-reporters": "1.5.1"
   },
   "lint-staged": {
     "*.js": "eslint"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    },
-    "ghooks": {
-      "pre-commit": "npx lint-staged"
-    }
   }
 }

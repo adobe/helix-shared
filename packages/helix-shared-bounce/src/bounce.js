@@ -72,6 +72,7 @@ function bounce(func, { responder, timeout = 500, debounce = () => '' }) {
           // we acted as a gateway, but there was an error with the network connection
           status: 502,
         });
+      /* c8 ignore next 2 */
       } finally {
         signal.clear();
       }

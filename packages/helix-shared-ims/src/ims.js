@@ -13,14 +13,14 @@ const fetchAPI = require('@adobe/helix-fetch');
 const { parse, serialize } = require('cookie');
 
 const { context: fetchContext, ALPN_HTTP1_1, Response } = fetchAPI;
-/* istanbul ignore next */
+/* c8 ignore next */
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
-  /* istanbul ignore next */
+  /* c8 ignore next */
   ? fetchContext({
     alpnProtocols: [ALPN_HTTP1_1],
     userAgent: 'helix-fetch', // static user agent for test recordings
   })
-  /* istanbul ignore next */
+  /* c8 ignore next */
   : fetchAPI;
 
 const IMS_ENDPOINTS = {
