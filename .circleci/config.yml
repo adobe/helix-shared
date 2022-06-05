@@ -37,15 +37,14 @@ jobs:
       - setup
       - run: mkdir junit
       - run:
+          name: Split package list
+          command: circleci tests glob "packages/*" | circleci tests split > /tmp/tests-to-run
+      - run:
           name: Lint
-          command: |
-            circleci tests glob "packages/*" | circleci tests split > /tmp/tests-to-run
-            cat /tmp/tests-to-run
-            cat /tmp/tests-to-run | xargs -I % npm run lint -w %
-
+          command: cat /tmp/tests-to-run | xargs -I % npm run lint -w %
       - run:
           name: Running tests and getting code coverage
-          command: npm run test
+          command: cat /tmp/tests-to-run | xargs -I % npm run test -w %
       - codecov/upload
       - store_test_results:
           path: packages/helix-shared-all/junit
