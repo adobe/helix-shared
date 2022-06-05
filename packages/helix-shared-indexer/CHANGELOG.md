@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.3.13...@adobe/helix-shared-indexer@0.4.0) (2022-06-05)
+
+
+### Bug Fixes
+
+* replace jsdom with rehype ([#691](https://github.com/adobe/helix-shared/issues/691)) ([be2c049](https://github.com/adobe/helix-shared/commit/be2c0498bb3ec9a7c320d70babe6ee56cc59fa09))
+
+
+### BREAKING CHANGES
+
+* moved to ESM and removed innerHTML
+
+* chore: remove comment
+
+* fix: remove typo
+
+* fix: turn parse errors silent again
+
+* fix: apply merges from main
+
+* fix: merge conflict
+
+
+
+
+
 ## [0.3.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer@0.3.12...@adobe/helix-shared-indexer@0.3.13) (2022-06-04)
 
 **Note:** Version bump only for package @adobe/helix-shared-indexer
