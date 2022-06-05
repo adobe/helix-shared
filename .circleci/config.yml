@@ -35,7 +35,6 @@ jobs:
 
     steps:
       - setup
-      - run: mkdir junit
       - run:
           name: Split package list
           command: circleci tests glob "packages/*" | circleci tests split > /tmp/tests-to-run
@@ -47,33 +46,7 @@ jobs:
           command: cat /tmp/tests-to-run | xargs -I % npm run test -w %
       - codecov/upload
       - store_test_results:
-          path: packages/helix-shared-all/junit
-      - store_test_results:
-          path: packages/helix-shared-async/junit
-      - store_test_results:
-          path: packages/helix-shared-body-data/junit
-      - store_test_results:
-          path: packages/helix-shared-config/junit
-      - store_test_results:
-          path: packages/helix-shared-dom/junit
-      - store_test_results:
-          path: packages/helix-shared-git/junit
-      - store_test_results:
-          path: packages/helix-shared-ims/junit
-      - store_test_results:
-          path: packages/helix-shared-process-queue/junit
-      - store_test_results:
-          path: packages/helix-shared-prune/junit
-      - store_test_results:
-          path: packages/helix-shared-string/junit
-      - store_test_results:
-          path: packages/helix-shared-utils/junit
-      - store_test_results:
-          path: packages/helix-shared-wrap/junit
-      - store_test_results:
-          path: packages/helix-shared-indexer/junit
-      - store_test_results:
-          path: packages/helix-shared-bounce/junit
+          path: $(cat /tmp/tests-to-run)/junit
 
 workflows:
   version: 2
