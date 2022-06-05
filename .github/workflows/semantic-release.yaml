@@ -31,7 +31,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
-      - run: npm run semantic-release -e semantic-release-monorepo --dry-run --debug
+      - run: npm run semantic-release
         env:
           GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
