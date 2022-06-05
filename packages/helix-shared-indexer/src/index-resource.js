@@ -144,7 +144,7 @@ function getDOMValue(elements, expression, log, vars) {
 export function indexResource(path, response, config, log) {
   const { body, headers } = response;
   const content = unified()
-    .use(rehypeParse, { fragment: false, emitParseErrors: true })
+    .use(rehypeParse, { fragment: false })
     .parse(body);
   const record = { };
 
