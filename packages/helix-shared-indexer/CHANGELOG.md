@@ -1,3 +1,15 @@
+# [@adobe/helix-shared-indexer-v1.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v0.5.1...@adobe/helix-shared-indexer-v1.0.0) (2022-06-05)
+
+
+### Bug Fixes
+
+* trigger release ([93aaa05](https://github.com/adobe/helix-shared/commit/93aaa056576b1130d0dc57c977e720fac38d44a6))
+
+
+### BREAKING CHANGES
+
+* convert to esm
+
 # [@adobe/helix-shared-indexer-v0.5.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v0.5.0...@adobe/helix-shared-indexer-v0.5.1) (2022-06-05)
 
 
