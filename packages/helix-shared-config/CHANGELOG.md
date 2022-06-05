@@ -1,3 +1,73 @@
+# [@adobe/helix-shared-config-v8.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v7.21.1...@adobe/helix-shared-config-v8.0.0) (2022-06-05)
+
+
+### Bug Fixes
+
+* add mocha ([#631](https://github.com/adobe/helix-shared/issues/631)) ([2849219](https://github.com/adobe/helix-shared/commit/2849219986aff4a31f1c6c3d1e137b1e2732027d))
+* add url to github mount ([#526](https://github.com/adobe/helix-shared/issues/526)) ([5f989bf](https://github.com/adobe/helix-shared/commit/5f989bf8494ba42c895e96c9e5c2d33b2ae67e80))
+* allow adding sitemap or languages ([#690](https://github.com/adobe/helix-shared/issues/690)) ([5f095ef](https://github.com/adobe/helix-shared/commit/5f095ef276e1a44a36d9f3168d25ecf1074fa4ad))
+* **deps:** update adobe fixes ([0e2b0a5](https://github.com/adobe/helix-shared/commit/0e2b0a59cbcc86653b3294d84e13e1dcada508ee))
+* **deps:** update adobe fixes ([067f1bb](https://github.com/adobe/helix-shared/commit/067f1bbe8433e18484647b239318636519797947))
+* **deps:** update adobe fixes ([#497](https://github.com/adobe/helix-shared/issues/497)) ([1864a7f](https://github.com/adobe/helix-shared/commit/1864a7f0dddd9fed4439219a918c66a10c45df5d))
+* **deps:** update adobe fixes ([#520](https://github.com/adobe/helix-shared/issues/520)) ([6fae196](https://github.com/adobe/helix-shared/commit/6fae19681be8058d3a236b94b638b24c314282ab))
+* **deps:** update dependency @adobe/helix-fetch to v2.4.2 ([#543](https://github.com/adobe/helix-shared/issues/543)) ([d06e0c4](https://github.com/adobe/helix-shared/commit/d06e0c4179aee49827ed36256525138a8cea5200))
+* **deps:** update dependency @adobe/helix-fetch to v3 ([bb7b3d4](https://github.com/adobe/helix-shared/commit/bb7b3d45ff1ddb0681628903a65b7973a64533bc))
+* **deps:** update dependency @adobe/helix-fetch to v3.0.9 ([#670](https://github.com/adobe/helix-shared/issues/670)) ([768d02f](https://github.com/adobe/helix-shared/commit/768d02fbfdcab02a24eec568989efc34759b8af3))
+* **deps:** update dependency @adobe/helix-universal to v1.9.1 ([#602](https://github.com/adobe/helix-shared/issues/602)) ([fc9987a](https://github.com/adobe/helix-shared/commit/fc9987a3ec773c5ea0d09a5aef47d1329eb515d5))
+* **deps:** update dependency @adobe/helix-universal to v3 ([#625](https://github.com/adobe/helix-shared/issues/625)) ([cd33862](https://github.com/adobe/helix-shared/commit/cd338620a091c4c7b392ee3da685fbde134ba5b5))
+* **deps:** update dependency ajv to v8.6.0 ([2cbd4d3](https://github.com/adobe/helix-shared/commit/2cbd4d30eaa99909422c2b5700cec691120ced52))
+* **deps:** update dependency ferrum to v1.9.3 ([#568](https://github.com/adobe/helix-shared/issues/568)) ([2f7516f](https://github.com/adobe/helix-shared/commit/2f7516fb3ba5aa4041e6d55069f307cef6bf823a))
+* **deps:** update dependency fs-extra to v10.1.0 ([#673](https://github.com/adobe/helix-shared/issues/673)) ([290378c](https://github.com/adobe/helix-shared/commit/290378cc47c42822bce1ad390bfb400b037c71f0))
+* **deps:** update dependency lint-staged to v12 ([#599](https://github.com/adobe/helix-shared/issues/599)) ([5ccc345](https://github.com/adobe/helix-shared/commit/5ccc3452dd9830f26f90d59d2067eea163dd8173))
+* **deps:** update dependency lru-cache to v7 ([#647](https://github.com/adobe/helix-shared/issues/647)) ([4feaa27](https://github.com/adobe/helix-shared/commit/4feaa27a92f7734a5277231dcfcf2ae8e935eb77))
+* **deps:** update dependency lru-cache to v7.7.3 ([#666](https://github.com/adobe/helix-shared/issues/666)) ([3935048](https://github.com/adobe/helix-shared/commit/39350486ea855fe26730cd9b06ff92d6025f3962))
+* **deps:** update dependency object-hash to v2.2.0 ([07b40d1](https://github.com/adobe/helix-shared/commit/07b40d13748a3256c80ef19fc77d1236d5c88597))
+* **deps:** update dependency object-hash to v3 ([d79b768](https://github.com/adobe/helix-shared/commit/d79b768d7bc0ba5df1e97606bb6ed870804434ad))
+* **deps:** update dependency yaml to v2 and remove unused configs ([e2fd978](https://github.com/adobe/helix-shared/commit/e2fd978130076292c9049822b14718b8b6fa3269))
+* **deps:** update external fixes ([fb55e25](https://github.com/adobe/helix-shared/commit/fb55e255f46951a439b896bf57df8be380129648))
+* **deps:** update external fixes ([24c8309](https://github.com/adobe/helix-shared/commit/24c830978f296cd3f4fea71983cd028ec1377d3a))
+* **deps:** update external fixes ([cdddbc5](https://github.com/adobe/helix-shared/commit/cdddbc590c52d6ebf336e7943387d8fb393c6524))
+* **deps:** update external fixes ([06e6c6e](https://github.com/adobe/helix-shared/commit/06e6c6ebd829422274f49bf11f6bb0613d1635b7))
+* **deps:** update external fixes ([fdbdea1](https://github.com/adobe/helix-shared/commit/fdbdea1b3de6d9323f506766d4a4905f8572700b))
+* **deps:** update external fixes ([2d80dbd](https://github.com/adobe/helix-shared/commit/2d80dbd0a32dba90d83f91cfe403055835647c1e))
+* **deps:** update external fixes ([3325d4d](https://github.com/adobe/helix-shared/commit/3325d4d7f37dfa0cc7b41d5cb5ef718a0361c966))
+* **deps:** update external fixes ([a8dc79e](https://github.com/adobe/helix-shared/commit/a8dc79ee25573553aa5747478b66080888df2240))
+* **deps:** update external fixes ([f055338](https://github.com/adobe/helix-shared/commit/f0553387ba74ffd1eae0457afca7a46beef5d376))
+* **deps:** update external fixes ([94dbdfd](https://github.com/adobe/helix-shared/commit/94dbdfd8efddc3dae1facae99a21b9b629c22aec))
+* **deps:** update external fixes ([ad49a64](https://github.com/adobe/helix-shared/commit/ad49a64bfdadcea4e4475ec6a36c9bfee14b62dc))
+* **deps:** update external fixes ([#498](https://github.com/adobe/helix-shared/issues/498)) ([8e99853](https://github.com/adobe/helix-shared/commit/8e99853cd5458b3009ad9679247fe2c0f0b34617))
+* **deps:** update external fixes ([#506](https://github.com/adobe/helix-shared/issues/506)) ([6f237fe](https://github.com/adobe/helix-shared/commit/6f237fe13e87015265a31e0ce2ce3e0dc9d43c4d))
+* **deps:** update external fixes ([#567](https://github.com/adobe/helix-shared/issues/567)) ([0ce7d79](https://github.com/adobe/helix-shared/commit/0ce7d79342e070b7ad933582fcec8b9b4c60a465))
+* **deps:** update external fixes ([#665](https://github.com/adobe/helix-shared/issues/665)) ([fb2322d](https://github.com/adobe/helix-shared/commit/fb2322d680d3bed29fb04beeed46173a5bd16bd9))
+* **deps:** update external fixes ([#668](https://github.com/adobe/helix-shared/issues/668)) ([d32918b](https://github.com/adobe/helix-shared/commit/d32918b2885cabee8792f9d3ef1b65199668b9ad))
+* **deps:** update external fixes ([#669](https://github.com/adobe/helix-shared/issues/669)) ([abf4a21](https://github.com/adobe/helix-shared/commit/abf4a21a686361ee387fd272fe0ee769c1acfb71))
+* **deps:** update external fixes ([#680](https://github.com/adobe/helix-shared/issues/680)) ([75dc78e](https://github.com/adobe/helix-shared/commit/75dc78ef83e862f199c2fd56f298f2f9459dd742))
+* don't pin helix-fetch and universal for better deduping ([#639](https://github.com/adobe/helix-shared/issues/639)) ([d4f4060](https://github.com/adobe/helix-shared/commit/d4f40603a1c899e6cfbd51900bb49453a63d32dd))
+* export SitemapConfig ([5074666](https://github.com/adobe/helix-shared/commit/5074666d3bdc867e07aac556addd5956be0103e6))
+* fetch and source should be optional ([#533](https://github.com/adobe/helix-shared/issues/533)) ([a962662](https://github.com/adobe/helix-shared/commit/a962662a2413582b06383b84719fab2ff1bf975c))
+* proxy clone to not change original configuration ([#686](https://github.com/adobe/helix-shared/issues/686)) ([96f9ce7](https://github.com/adobe/helix-shared/commit/96f9ce7dc90cd97efc44ecd7a06151451dee9d3e))
+* reduce dependencies ([#537](https://github.com/adobe/helix-shared/issues/537)) ([289942b](https://github.com/adobe/helix-shared/commit/289942b37ad32560501d8e9a8d6bf2bb10c19429))
+* suppress deprecation warning (maxAge has been replaced by ttl) ([#678](https://github.com/adobe/helix-shared/issues/678)) ([7fb2df9](https://github.com/adobe/helix-shared/commit/7fb2df94f4f06d984c326b5ee897f877d69e86b0))
+* update renovate config to auto detect pin versions ([#644](https://github.com/adobe/helix-shared/issues/644)) ([3ae0423](https://github.com/adobe/helix-shared/commit/3ae04235dd6791685d9a03e5ed52570b73d5be2a))
+* use and export ValidationError ([#532](https://github.com/adobe/helix-shared/issues/532)) ([0c11d92](https://github.com/adobe/helix-shared/commit/0c11d928e902571c4d5e19deed6a4824afe9ef0f))
+
+
+### Features
+
+* add contains method and improve index config schema ([97c5134](https://github.com/adobe/helix-shared/commit/97c51341ad95ca90eba67d7ae61f322dcd3c0d4a))
+* add folders to fstab ([c91fcda](https://github.com/adobe/helix-shared/commit/c91fcdac54cbddff193c047b5730c897d5f5ca26))
+* add IMS wrapper ([bb52f86](https://github.com/adobe/helix-shared/commit/bb52f86b741e9d43b51076c66a767c35028b6169))
+* add index configuration ([#684](https://github.com/adobe/helix-shared/issues/684)) ([2cdec6f](https://github.com/adobe/helix-shared/commit/2cdec6f0c27b114d239ac524e3776e2d7e65fb18))
+* **config:** add ignore config, parser ([#542](https://github.com/adobe/helix-shared/issues/542)) ([c95ca88](https://github.com/adobe/helix-shared/commit/c95ca88991aa0a8369520459dfe5f599fe25c7f6))
+* introduce helix-sitemap.yaml ([#575](https://github.com/adobe/helix-shared/issues/575)) ([900fe9f](https://github.com/adobe/helix-shared/commit/900fe9fdde4989cdb444b7b4d2ae3aa98965af3e))
+* **schema:** add schemas for helix-data-embed ([#507](https://github.com/adobe/helix-shared/issues/507)) ([4563e25](https://github.com/adobe/helix-shared/commit/4563e25994656bd0c64a0047c4304d06843897cb)), closes [/github.com/adobe/helix-data-embed/pull/356#issuecomment-836357581](https://github.com//github.com/adobe/helix-data-embed/pull/356/issues/issuecomment-836357581)
+* target URI should be allowed relative ([#597](https://github.com/adobe/helix-shared/issues/597)) ([d8327c3](https://github.com/adobe/helix-shared/commit/d8327c34bd3770a2e8151f74555312c18e129b27))
+
+
+### BREAKING CHANGES
+
+* **deps:** redirects, markup and helix-config removed
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
