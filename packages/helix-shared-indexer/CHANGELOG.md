@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v1.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v1.0.0...@adobe/helix-shared-indexer-v1.0.1) (2022-06-11)
+
+
+### Bug Fixes
+
+* add back innerHTML ([#694](https://github.com/adobe/helix-shared/issues/694)) ([5965a44](https://github.com/adobe/helix-shared/commit/5965a44cd2cf13e88b0616bf63a60511dbff2282))
+
 # [@adobe/helix-shared-indexer-v1.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v0.5.1...@adobe/helix-shared-indexer-v1.0.0) (2022-06-05)
 
 
