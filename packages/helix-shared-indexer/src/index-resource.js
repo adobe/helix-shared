@@ -14,6 +14,7 @@ import jsep from 'jsep';
 import rehypeParse from 'rehype-parse';
 import { selectAll } from 'hast-util-select';
 import { toText } from 'hast-util-to-text';
+import { toHtml } from 'hast-util-to-html';
 import { unified } from 'unified';
 
 const helpers = {
@@ -45,6 +46,7 @@ const helpers = {
   },
   attribute: (elements, name) => elements.map((el) => el.properties[name]),
   textContent: (elements) => elements.map((el) => toText(el)),
+  innerHTML: (elements) => elements.map((el) => el.children.map((child) => toHtml(child)).join('')),
   match: (elements, re) => {
     // todo: maybe base on function ?
     const result = [];
