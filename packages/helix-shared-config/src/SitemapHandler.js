@@ -21,6 +21,9 @@ const wrap = (sitemap) => {
   if (typeof sitemap === 'object') {
     return {
       ...sitemap,
+      reset: () => {
+        fetchAPI.reset();
+      },
       getXML: async function getXML() {
         const res = await fetch(new URL(this.destination, this.origin).href);
         if (!res.ok) {

@@ -94,6 +94,7 @@ describe('Sitemap Config Loading', () => {
       url: new URL('https://blog.adobe.com/en/publish/2005/10/16/online-media-4-easy-steps-to-page-value'),
       lastmod: new Date('2021-11-04'),
     });
+    cfg.reset();
   });
 
   it('get sitemaps in config (404)', async function testSitemaps() {
@@ -110,6 +111,7 @@ describe('Sitemap Config Loading', () => {
     await cfg.init();
     const { sitemaps } = cfg;
     await assert.rejects(async () => sitemaps[0].getContents());
+    cfg.reset();
   });
 
   it('get sitemaps in config (no content)', async function testSitemaps() {
@@ -126,6 +128,7 @@ describe('Sitemap Config Loading', () => {
     await cfg.init();
     const { sitemaps } = cfg;
     assert.equal((await sitemaps[0].getContents()).length, 0);
+    cfg.reset();
   });
 
   it('add sitemap configuration', async () => {
