@@ -43,6 +43,10 @@ class SitemapConfig extends SchemaDerivedConfig {
     return this;
   }
 
+  reset() {
+    Object.values(this.sitemaps).forEach((sitemap) => sitemap.reset());
+  }
+
   /**
    * Adds a sitemap definition.
    *
