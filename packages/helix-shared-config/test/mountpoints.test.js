@@ -278,5 +278,9 @@ describe('Mount Point Config Loading', () => {
     // with multiple credentials
     const m16 = cfg.match('/multicreds');
     assert.deepEqual(m16.credentials, ['abcd', 'efgh']);
+
+    // with tenantId
+    const m17 = cfg.match('/onedrive-enterprise');
+    assert.deepEqual(m17.tenantId, '1234');
   });
 });
