@@ -13,7 +13,7 @@ const fetchAPI = require('@adobe/helix-fetch');
 const { NamedMapHandler } = require('./NamedMapHandler.js');
 
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
-  ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })
+  ? fetchAPI.h1()
   /* c8 ignore next */
   : fetchAPI;
 
