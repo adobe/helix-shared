@@ -1,3 +1,18 @@
+# [@adobe/helix-shared-config-v8.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v8.0.0...@adobe/helix-shared-config-v8.1.0) (2022-06-16)
+
+
+### Bug Fixes
+
+* **sitemap:** create a separate context for each sitemap ([a27e80b](https://github.com/adobe/helix-shared/commit/a27e80be6a437d8e18071b5f0adcbcfbb52e5ab1))
+* **sitemap:** use h1 ([25a4f97](https://github.com/adobe/helix-shared/commit/25a4f97229cd5f140c95f67200c002ecfba57662))
+
+
+### Features
+
+* **sitemap:** allow resetting the fetch context ([df861d8](https://github.com/adobe/helix-shared/commit/df861d88c564b1a0cad2800b531a0444f586e728))
+* **sitemap:** propagate resets ([41f77ab](https://github.com/adobe/helix-shared/commit/41f77abbd960073c2dff2575762efc4988783bc3))
+* **sitemaps:** add `getContents()` and `getXML()` methods to retrieve sitemap content ([ee3fb07](https://github.com/adobe/helix-shared/commit/ee3fb07a170f016c15862623ca3b7e6debca283f))
+
 # [@adobe/helix-shared-config-v8.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v7.21.1...@adobe/helix-shared-config-v8.0.0) (2022-06-05)
 
 
