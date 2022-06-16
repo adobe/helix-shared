@@ -13,10 +13,13 @@
 /* eslint-env mocha */
 /* eslint-disable max-len */
 
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
+
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
 const SitemapConfig = require('../src/SitemapConfig');
+const { setupPolly } = require('./utils.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/sitemapconfigs');
 
@@ -64,6 +67,68 @@ describe('Sitemap Config Loading', () => {
         }
       }
     });
+  });
+
+  setupPolly({
+    recordIfMissing: false,
+  });
+
+  it('get sitemaps in config', async function testSitemaps() {
+    const { server } = this.polly;
+
+    server
+      .get('https://www.example.com/sitemap-en.xml')
+      .intercept((req, res) => {
+        res.status(200).send(fs.readFileSync(path.resolve(SPEC_ROOT, 'blog-sitemap.xml'), 'utf-8'));
+      });
+
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'simple.yaml'));
+    await cfg.init();
+    const { sitemaps } = cfg;
+    assert.equal(sitemaps.length, 1);
+    assert.equal(sitemaps[0].name, 'simple');
+    const contents = await sitemaps[0].getContents();
+    assert.ok(contents);
+    assert.deepEqual(contents[0], {
+      url: new URL('https://blog.adobe.com/en/publish/2005/10/16/online-media-4-easy-steps-to-page-value'),
+      lastmod: new Date('2021-11-04'),
+    });
+    cfg.reset();
+  });
+
+  it('get sitemaps in config (404)', async function testSitemaps() {
+    const { server } = this.polly;
+
+    server
+      .get('https://www.example.com/sitemap-en.xml')
+      .intercept((req, res) => {
+        res.status(404).send('Not Found');
+      });
+
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'simple.yaml'));
+    await cfg.init();
+    const { sitemaps } = cfg;
+    await assert.rejects(async () => sitemaps[0].getContents());
+    cfg.reset();
+  });
+
+  it('get sitemaps in config (no content)', async function testSitemaps() {
+    const { server } = this.polly;
+
+    server
+      .get('https://www.example.com/sitemap-en.xml')
+      .intercept((req, res) => {
+        res.status(200).send('<urlset />');
+      });
+
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'simple.yaml'));
+    await cfg.init();
+    const { sitemaps } = cfg;
+    assert.equal((await sitemaps[0].getContents()).length, 0);
+    cfg.reset();
   });
 
   it('add sitemap configuration', async () => {

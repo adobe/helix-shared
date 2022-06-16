@@ -15,6 +15,7 @@ const { NamedMapHandler } = require('./NamedMapHandler');
 const sitemapConfigSchema = require('./schemas/sitemapconfig.schema.json');
 const sitemapSchema = require('./schemas/sitemap.schema.json');
 const languageSchema = require('./schemas/sitemap-language.schema.json');
+const { SitemapHandler } = require('./SitemapHandler.js');
 
 class SitemapConfig extends SchemaDerivedConfig {
   constructor() {
@@ -26,7 +27,7 @@ class SitemapConfig extends SchemaDerivedConfig {
         '^/sitemaps/.*/languages/.*$': languageSchema,
       },
       handlers: {
-        '^/sitemaps$': NamedMapHandler(),
+        '^/sitemaps$': SitemapHandler(),
         '^/sitemaps/.*/languages$': NamedMapHandler(),
       },
     });
@@ -40,6 +41,10 @@ class SitemapConfig extends SchemaDerivedConfig {
 
     this._version = this._cfg.version;
     return this;
+  }
+
+  reset() {
+    Object.values(this.sitemaps).forEach((sitemap) => sitemap.reset());
   }
 
   /**
