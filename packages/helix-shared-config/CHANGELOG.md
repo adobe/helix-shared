@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v8.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v8.1.0...@adobe/helix-shared-config-v8.2.0) (2022-06-18)
+
+
+### Features
+
+* allow to specify microsoft tenantid for custom domains ([#698](https://github.com/adobe/helix-shared/issues/698)) ([d5b7744](https://github.com/adobe/helix-shared/commit/d5b7744b21f2f4fa5e5e661dd75d16a77c541e2f))
+
 # [@adobe/helix-shared-config-v8.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v8.0.0...@adobe/helix-shared-config-v8.1.0) (2022-06-16)
 
 
