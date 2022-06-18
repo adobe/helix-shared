@@ -40,6 +40,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "Onedrive tenant id. If missing, it is computed from url."
         }
       }
     }

@@ -27,6 +27,11 @@
         "efgh"
       ],
       "url": "https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog"
+    },
+    "/onedrive-enterprise": {
+      "tenantId": "1234",
+      "type": "onedrive",
+      "url": "https://sp-global.com"
     }
   },
   "folders": {}
