@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v1.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v1.0.1...@adobe/helix-shared-indexer-v1.0.2) (2022-07-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency moment to v2.29.4 ([aa03d49](https://github.com/adobe/helix-shared/commit/aa03d4915f68e37a7e736f8747872d350ea02e33))
+
 # [@adobe/helix-shared-indexer-v1.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v1.0.0...@adobe/helix-shared-indexer-v1.0.1) (2022-06-11)
 
 
