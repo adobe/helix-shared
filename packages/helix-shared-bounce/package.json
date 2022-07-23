@@ -34,7 +34,7 @@
     "@adobe/helix-universal": "^3.0.4"
   },
   "devDependencies": {
-    "nock": "13.2.8",
+    "nock": "13.2.9",
     "proxyquire": "2.1.3"
   }
 }
