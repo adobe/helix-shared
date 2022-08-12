@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v8.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v8.2.0...@adobe/helix-shared-config-v8.3.0) (2022-08-12)
+
+
+### Features
+
+* add modifiers config ([0016e95](https://github.com/adobe/helix-shared/commit/0016e9519293c66953baa39d238147b2adf09ad5))
+
 # [@adobe/helix-shared-config-v8.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v8.1.0...@adobe/helix-shared-config-v8.2.0) (2022-06-18)
 
 
