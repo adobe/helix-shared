@@ -35,7 +35,7 @@
  *   ]
  * }
  */
-export declare interface ModifierSheet {
+export declare interface ModifierMap {
   [ModifierUrl:string]: Modifier[];
 }
 
@@ -96,14 +96,28 @@ export declare class ModifiersConfig {
    *
    * @param {object[]} sheet The sheet to parse
    * @param {ModifierKeyFilter} keyFilter filter to apply on keys
-   * @returns {ModifiersConfig} An object containing an array of key/value pairs for every glob
+   * @returns {ModifierMap} An object containing an array of key/value pairs for every glob
+   */
+  static parseModifierSheet(sheet:object[], keyFilter: ModifierKeyFilter): ModifierMap;
+
+  /**
+   * Creates a ModifierConfig from the given data
+   * @param sheet
+   * @param keyFilter
    */
   static fromModifierSheet(sheet:object[], keyFilter: ModifierKeyFilter): ModifiersConfig;
 
   /**
-   * Returns the modifier object for the given path.
-   * @param {string} path
-   * @return {Modifier[]} the modifiers
+   * Creates a new ModifiersConfig
+   * @param {ModifierMap} config
+   * @param {ModifierKeyFilter} keyFilter filter to apply on modifier keys
    */
-  getModifiers(path: string): Modifier[];
+  constructor(config:ModifierMap, keyFilter: ModifierKeyFilter);
+
+  /**
+   * Returns the modifier object for the given path, respecting the glob patterns in the urls.
+   * @param {string} path
+   * @return {object} the modifiers
+   */
+  getModifiers(path: string): object;
 }

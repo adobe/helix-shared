@@ -83,10 +83,11 @@ class ModifiersConfig {
    *
    *
    * @param {object[]} sheet The sheet to parse
-   * @param {function} keyFilter filter to apply on keys
-   * @returns {object} An object containing an array of key/value pairs for every glob
+   * @param {ModifierKeyFilter} keyFilter filter to apply on keys
+   * @returns {ModifierMap} An object containing an array of key/value pairs for every glob
    */
-  static fromModifierSheet(sheet, keyFilter = () => true) {
+  static parseModifierSheet(sheet, keyFilter = () => true) {
+    /** @type ModifierMap */
     const res = {};
     for (let row of sheet) {
       row = ModifiersConfig.toLowerKeys(row);
@@ -117,19 +118,35 @@ class ModifiersConfig {
         }
       }
     }
-    return new ModifiersConfig(res);
+    return res;
+  }
+
+  /**
+   * Creates a new `ModifiersConfig` from the given sheet.
+   *
+   * @see ModifiersConfig.parseModifierSheet
+   * @param {object[]} sheet The sheet to parse
+   * @param {ModifierKeyFilter} keyFilter filter to apply on keys
+   * @returns {ModifiersConfig} A ModifiersConfig instance.
+   */
+  static fromModifierSheet(sheet, keyFilter) {
+    return new ModifiersConfig(ModifiersConfig.parseModifierSheet(sheet, keyFilter));
   }
 
   /**
    * Creates a new ModifiersConfig class.
-   * @param {ModifierSheet} config
+   * @param {ModifierMap} [map] The modifier map.
+   * @param {ModifierKeyFilter} keyFilter filter to apply on modifier keys
    */
-  constructor(config) {
-    this.modifiers = Object.entries(config).map(([url, mods]) => {
+  constructor(map, keyFilter = () => true) {
+    if (!map) {
+      return;
+    }
+    this.modifiers = Object.entries(map).map(([url, mods]) => {
       const pat = url.indexOf('*') >= 0 ? ModifiersConfig.globToRegExp(url) : url;
       return {
         pat,
-        mods,
+        mods: mods.filter(({ key }) => keyFilter(key)),
       };
     });
   }
@@ -137,9 +154,12 @@ class ModifiersConfig {
   /**
    * Returns the modifier object for the given path.
    * @param {string} path
-   * @return {Modifier[]} the modifiers
+   * @return {object} the modifiers
    */
   getModifiers(path) {
+    if (!this.modifiers) {
+      return {};
+    }
     const modifiers = {};
     for (const { pat, mods } of this.modifiers) {
       if (pat === path || (pat instanceof RegExp && pat.test(path))) {

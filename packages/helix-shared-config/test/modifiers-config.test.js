@@ -113,6 +113,32 @@ describe('ModifiersConfig', () => {
     });
   });
 
+  it('it can filter keys on parsing', async () => {
+    const { default: { data } } = await readTestJSON('metadata-kv.json');
+    const filter = (name) => name !== 'title';
+    const actual = ModifiersConfig.fromModifierSheet(data, filter).getModifiers('/page-whatever.html');
+    assert.deepStrictEqual(actual, {
+      description: 'Lorem ipsum dolor sit amet.',
+      keywords: 'ACME, CORP, PR',
+    });
+  });
+
+  it('it can filter keys on construction', async () => {
+    const { default: { data } } = await readTestJSON('metadata-kv.json');
+    const filter = (name) => name !== 'title';
+    const map = ModifiersConfig.parseModifierSheet(data);
+    const actual = new ModifiersConfig(map, filter).getModifiers('/page-whatever.html');
+    assert.deepStrictEqual(actual, {
+      description: 'Lorem ipsum dolor sit amet.',
+      keywords: 'ACME, CORP, PR',
+    });
+  });
+
+  it('it deal with empty map', async () => {
+    const actual = new ModifiersConfig().getModifiers('/');
+    assert.deepStrictEqual(actual, {});
+  });
+
   it('it combines metadata', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/page-metadata-json.html');
