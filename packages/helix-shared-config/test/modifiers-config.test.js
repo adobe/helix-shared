@@ -16,7 +16,7 @@
 const assert = require('assert');
 const path = require('path');
 const { readFile } = require('fs').promises;
-const { ModifiersConfig } = require('../src/ModifiersConfig.js');
+const { ModifiersConfig } = require('../src/index.js');
 
 async function readTestJSON(filename) {
   return JSON.parse(await readFile(path.resolve(__dirname, 'fixtures', 'content', filename), 'utf-8'));
@@ -52,7 +52,7 @@ function bench(testData, json) {
   console.log('filter: ', totalFilter / numIter);
 }
 
-describe('Metadata', () => {
+describe('ModifiersConfig', () => {
   it('filters large metadata no glob', async () => {
     const testData = [];
     for (let i = 0; i < 10000; i += 1) {

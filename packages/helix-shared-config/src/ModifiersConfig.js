@@ -22,35 +22,35 @@ function toMetaName(text) {
 }
 
 /**
- * Converts a globbing expression to regexp. Note that only `*` and `**` are supported yet.
- * @param {string} glob
- * @returns {RegExp}
- */
-function globToRegExp(glob) {
-  const reString = glob
-    .replaceAll('**', '|')
-    .replaceAll('*', '[0-9a-z-.]*')
-    .replaceAll('|', '.*');
-  return new RegExp(`^${reString}$`);
-}
-
-/**
- * Converts all keys in a row object to lowercase
- * @param {Object} obj A row of data from a sheet
- * @returns {Object} A row with all keys converted to lowercase
- */
-function toLowerKeys(obj) {
-  return Object.keys(obj).reduce((prev, key) => {
-    // eslint-disable-next-line no-param-reassign
-    prev[key.toLowerCase()] = obj[key];
-    return prev;
-  }, {});
-}
-
-/**
  * The modifiers class help manage the metadata and headers modifiers.
  */
 class ModifiersConfig {
+  /**
+   * Converts a globbing expression to regexp. Note that only `*` and `**` are supported yet.
+   * @param {string} glob
+   * @returns {RegExp}
+   */
+  static globToRegExp(glob) {
+    const reString = glob
+      .replaceAll('**', '|')
+      .replaceAll('*', '[0-9a-z-.]*')
+      .replaceAll('|', '.*');
+    return new RegExp(`^${reString}$`);
+  }
+
+  /**
+   * Converts all keys in a row object to lowercase
+   * @param {Object} obj A row of data from a sheet
+   * @returns {Object} A row with all keys converted to lowercase
+   */
+  static toLowerKeys(obj) {
+    return Object.keys(obj).reduce((prev, key) => {
+      // eslint-disable-next-line no-param-reassign
+      prev[key.toLowerCase()] = obj[key];
+      return prev;
+    }, {});
+  }
+
   /**
    * Empty modifiers
    * @type {ModifiersConfig}
@@ -89,7 +89,7 @@ class ModifiersConfig {
   static fromModifierSheet(sheet, keyFilter = () => true) {
     const res = {};
     for (let row of sheet) {
-      row = toLowerKeys(row);
+      row = ModifiersConfig.toLowerKeys(row);
       const {
         url, key, value, ...rest
       } = row;
@@ -120,9 +120,13 @@ class ModifiersConfig {
     return new ModifiersConfig(res);
   }
 
+  /**
+   * Creates a new ModifiersConfig class.
+   * @param {ModifierSheet} config
+   */
   constructor(config) {
     this.modifiers = Object.entries(config).map(([url, mods]) => {
-      const pat = url.indexOf('*') >= 0 ? globToRegExp(url) : url;
+      const pat = url.indexOf('*') >= 0 ? ModifiersConfig.globToRegExp(url) : url;
       return {
         pat,
         mods,
@@ -150,6 +154,4 @@ class ModifiersConfig {
 
 module.exports = {
   ModifiersConfig,
-  toMetaName,
-  globToRegExp,
 };

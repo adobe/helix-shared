@@ -51,6 +51,20 @@ export type ModifierKeyFilter = (key:string) => boolean;
  */
 export declare class ModifiersConfig {
   /**
+   * Converts all non-valid characters to `-`.
+   * @param {string} text input text
+   * @returns {string} the meta name
+   */
+  static toMetaName(text: string): string;
+
+  /**
+   * Converts a globbing expression to regexp. Note that only `*` and `**` are supported yet.
+   * @param {string} glob
+   * @returns {RegExp}
+   */
+  static globToRegExp(glob:string): RegExp;
+
+  /**
    * Empty modifiers
    */
   static EMPTY: ModifiersConfig;
@@ -93,17 +107,3 @@ export declare class ModifiersConfig {
    */
   getModifiers(path: string): Modifier[];
 }
-
-/**
- * Converts all non-valid characters to `-`.
- * @param {string} text input text
- * @returns {string} the meta name
- */
-export function toMetaName(text: string): string;
-
-/**
- * Converts a globbing expression to regexp. Note that only `*` and `**` are supported yet.
- * @param {string} glob
- * @returns {RegExp}
- */
-export function globToRegExp(glob:string): RegExp;

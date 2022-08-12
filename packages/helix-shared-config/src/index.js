@@ -15,6 +15,7 @@ const { optionalConfig, requiredConfig } = require('./config-wrapper');
 const ValidationError = require('./ValidationError.js');
 const IgnoreConfig = require('./IgnoreConfig.js');
 const SitemapConfig = require('./SitemapConfig.js');
+const { ModifiersConfig } = require('./ModifiersConfig.js');
 
 module.exports = {
   IndexConfig,
@@ -24,4 +25,5 @@ module.exports = {
   optionalConfig,
   requiredConfig,
   ValidationError,
+  ModifiersConfig,
 };
