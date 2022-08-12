@@ -44,7 +44,7 @@ export declare interface Modifier {
   value: string;
 }
 
-export type ModifierKeyFilter = (string) => boolean;
+export type ModifierKeyFilter = (key:string) => boolean;
 
 /**
  * The modifiers class help manage the metadata and headers modifiers.
