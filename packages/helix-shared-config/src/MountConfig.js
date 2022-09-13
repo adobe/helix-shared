@@ -123,7 +123,7 @@ class MountConfig extends SchemaDerivedConfig {
       .filter((m) => (m.isDocument ? docPath === m.path : fullPath.startsWith(m.path)))
       .map((m) => ({
         ...m,
-        relPath: m.isDocument ? '' : fullPath.substring(m.path.length - 1, fullPath.length - 1),
+        relPath: m.isDocument ? '' : fullPath.substring(m.path.length - 1, resourcePath.length),
       }));
 
     return mp || null;

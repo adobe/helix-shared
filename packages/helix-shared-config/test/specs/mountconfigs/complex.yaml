@@ -25,3 +25,6 @@ mountpoints:
     url: https://sp-global.com
     type: onedrive
     tenantId: 1234
+  /custom:
+    url: https://www.example.com/content/
+    type: markup
