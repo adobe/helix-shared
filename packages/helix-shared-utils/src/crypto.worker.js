@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// browser (worker) runtime
+// browser/worker runtime
 // eslint-disable-next-line no-undef
 module.exports = crypto;
