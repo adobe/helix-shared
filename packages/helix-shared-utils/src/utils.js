@@ -9,9 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* c8 ignore next 2 */
-// eslint-disable-next-line no-undef
-const cryptoImpl = typeof crypto === 'undefined' ? require('crypto') : crypto;
+// eslint-disable-next-line import/no-unresolved
+const cryptoImpl = require('#crypto');
 
 /**
  * A glorified lookup table that translates backend errors into the appropriate
