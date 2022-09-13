@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-utils-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils-v2.0.11...@adobe/helix-shared-utils-v2.1.0) (2022-09-13)
+
+
+### Features
+
+* improve cross platform compatibilty with conditional crypto import ([b5a1111](https://github.com/adobe/helix-shared/commit/b5a1111c3b7ab3346821f26c49ef0969983f70c4))
+
 # Change Log
 
 All notable changes to this project will be documented in this file.

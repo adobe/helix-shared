@@ -32,6 +32,10 @@
       "tenantId": "1234",
       "type": "onedrive",
       "url": "https://sp-global.com"
+    },
+    "/custom": {
+      "type": "markup",
+      "url": "https://www.example.com/content/"
     }
   },
   "folders": {}
