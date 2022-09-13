@@ -282,5 +282,13 @@ describe('Mount Point Config Loading', () => {
     // with tenantId
     const m17 = cfg.match('/onedrive-enterprise');
     assert.deepEqual(m17.tenantId, '1234');
+
+    // index path keeps trailing slash
+    const m18 = cfg.match('/custom/foo/');
+    assert.deepEqual(m18.type, 'markup');
+    assert.deepEqual(m18.relPath, '/foo/');
+    const m19 = cfg.match('/custom/foo');
+    assert.deepEqual(m19.type, 'markup');
+    assert.deepEqual(m19.relPath, '/foo');
   });
 });
