@@ -3,6 +3,13 @@
   "version": "2.0.11",
   "description": "Shared modules of the Helix Project - Utils",
   "main": "src/utils.js",
+  "imports": {
+    "#crypto": {
+      "node": "./src/crypto.node.js",
+      "browser": "./src/crypto.worker.js",
+      "worker": "./src/crypto.worker.js"
+    }
+  },
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",
