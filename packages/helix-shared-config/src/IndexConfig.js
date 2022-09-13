@@ -64,6 +64,31 @@ class IndexConfig extends SchemaDerivedConfig {
   }
 
   /**
+   * Replaces an index definition.
+   *
+   * @param {Object} index index configuration
+   * @param {string} index.name index name
+   * @param {Array} index.include paths to include
+   * @param {Array} index.exclude paths to exclude
+   * @param {string} index.target target
+   * @param {object} index.properties properties to add to the index
+   */
+  replaceIndex({
+    name, include, exclude, target, properties,
+  }) {
+    const { indices } = this._cfg;
+    indices[name] = {
+      include,
+      exclude,
+      target,
+      properties,
+    };
+
+    // let BaseConfig.toYAML() use the JSON output
+    this._document = null;
+  }
+
+  /**
    * Evaluates a variable expression
    * @param {string} expression the expression to encode
    * @param {string[]} parameters the list of variable parameters in the query
