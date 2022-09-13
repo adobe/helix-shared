@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v9.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v9.0.0...@adobe/helix-shared-config-v9.1.0) (2022-09-13)
+
+
+### Features
+
+* replace index definition ([#714](https://github.com/adobe/helix-shared/issues/714)) ([88b6389](https://github.com/adobe/helix-shared/commit/88b6389793f0c23181f05cd663c8129c6a95de25))
+
 # [@adobe/helix-shared-config-v9.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v8.3.0...@adobe/helix-shared-config-v9.0.0) (2022-09-13)
 
 
