@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-// browser (worker) runtime
+// node runtime
 module.exports = require('crypto');
