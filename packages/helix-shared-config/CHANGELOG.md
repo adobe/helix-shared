@@ -1,3 +1,15 @@
+# [@adobe/helix-shared-config-v9.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v8.3.0...@adobe/helix-shared-config-v9.0.0) (2022-09-13)
+
+
+### Bug Fixes
+
+* keep trailing slash in relPath of matched mountpoint ([205d1f2](https://github.com/adobe/helix-shared/commit/205d1f2397f615346b2af500833cf3c944773924))
+
+
+### BREAKING CHANGES
+
+* relPath keeps trailing slash after resolution
+
 # [@adobe/helix-shared-config-v8.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v8.2.0...@adobe/helix-shared-config-v8.3.0) (2022-08-12)
 
 
