@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-body-data-v1.1.20](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v1.1.19...@adobe/helix-shared-body-data-v1.1.20) (2022-09-23)
+
+
+### Bug Fixes
+
+* @adobe/helix-fetch -> @adobe/helix ([0d05930](https://github.com/adobe/helix-shared/commit/0d05930fa34bcb9f641f1bd85b603647e7b210cf))
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
