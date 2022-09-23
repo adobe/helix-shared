@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v9.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v9.1.0...@adobe/helix-shared-config-v9.1.1) (2022-09-23)
+
+
+### Bug Fixes
+
+* @adobe/helix-fetch -> @adobe/helix ([0d05930](https://github.com/adobe/helix-shared/commit/0d05930fa34bcb9f641f1bd85b603647e7b210cf))
+
 # [@adobe/helix-shared-config-v9.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v9.0.0...@adobe/helix-shared-config-v9.1.0) (2022-09-13)
 
 
