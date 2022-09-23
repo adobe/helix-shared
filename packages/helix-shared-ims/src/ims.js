@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const fetchAPI = require('@adobe/helix-fetch');
+const fetchAPI = require('@adobe/fetch');
 const { parse, serialize } = require('cookie');
 
 const { context: fetchContext, ALPN_HTTP1_1, Response } = fetchAPI;
@@ -18,7 +18,7 @@ const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
   /* c8 ignore next */
   ? fetchContext({
     alpnProtocols: [ALPN_HTTP1_1],
-    userAgent: 'helix-fetch', // static user agent for test recordings
+    userAgent: 'adobe-fetch', // static user agent for test recordings
   })
   /* c8 ignore next */
   : fetchAPI;

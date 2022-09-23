@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { Request, Response } = require('@adobe/helix-fetch');
+const { Request, Response } = require('@adobe/fetch');
 const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
 const fstab = require('./MountConfig');
 const index = require('./IndexConfig');
@@ -88,7 +88,7 @@ function wrap(func, required, ...configs) {
       options.headers.authorization = authorization;
     }
 
-    // init is a helper function in helix-fetch that makes it easy
+    // init is a helper function in @adobe.fetch that makes it easy
     // to recreate a request by returning the inital options
     // the request needs to be re-created because `getData` consumed
     // the body

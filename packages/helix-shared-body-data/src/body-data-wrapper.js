@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable no-param-reassign */
-const { Request, Response } = require('@adobe/helix-fetch');
+const { Request, Response } = require('@adobe/fetch');
 
 const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 

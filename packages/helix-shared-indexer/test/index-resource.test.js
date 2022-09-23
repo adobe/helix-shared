@@ -13,7 +13,7 @@
 /* eslint-env mocha */
 
 import assert from 'assert';
-import { Headers } from '@adobe/helix-fetch';
+import { Headers } from '@adobe/fetch';
 import { IndexConfig } from '@adobe/helix-shared-config';
 
 import { indexResource } from '../src/index-resource.js';
