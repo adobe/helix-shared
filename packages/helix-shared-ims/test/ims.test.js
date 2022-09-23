@@ -14,7 +14,7 @@
 
 const wrap = require('@adobe/helix-shared-wrap');
 const assert = require('assert');
-const { Request, Response } = require('@adobe/helix-fetch');
+const { Request, Response } = require('@adobe/fetch');
 const { Nock } = require('./utils.js');
 const ims = require('../src/ims.js');
 

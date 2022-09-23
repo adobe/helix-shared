@@ -8,7 +8,7 @@
  
  ```js
  const { wrap, bounce } = require('@adobe/helix-shared');
- const { Response } = require('@adobe/helix-fetch')
+ const { Response } = require('@adobe/fetch')
  
  async function fast(req, context) {
    return new Response(`I am working on it. Use ${context.invocation.bounceId} to track the status.`);

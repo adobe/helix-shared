@@ -11,7 +11,7 @@
  */
 const {
   fetch, timeoutSignal, Response, AbortError,
-} = require('@adobe/helix-fetch');
+} = require('@adobe/fetch');
 const crypto = require('crypto');
 
 // polyfill for timers/promise

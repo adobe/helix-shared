@@ -16,7 +16,7 @@
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
 const assert = require('assert');
-const { Response, Request } = require('@adobe/helix-fetch');
+const { Response, Request } = require('@adobe/fetch');
 const wrap = require('@adobe/helix-shared-wrap');
 const nock = require('nock');
 const proxyquire = require('proxyquire');
@@ -168,7 +168,7 @@ describe('Bounce Wrapper Unit Tests', () => {
     const fastfunction = async (_, context) => new Response(`I am ready soon, check status at ${context.invocation.bounceId}`);
 
     const fakebounce = proxyquire('../src/bounce.js', {
-      '@adobe/helix-fetch': {
+      '@adobe/fetch': {
         fetch: () => { throw new Error('something went wrong'); },
       },
     });
