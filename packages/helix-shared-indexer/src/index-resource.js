@@ -9,7 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import moment from 'moment';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import jsep from 'jsep';
 import rehypeParse from 'rehype-parse';
 import { selectAll } from 'hast-util-select';
@@ -31,6 +33,9 @@ const helpers = {
     });
   },
   parseTimestamp: (elements, format) => {
+    dayjs.extend(customParseFormat);
+    dayjs.extend(utc);
+
     if (!elements) {
       return [];
     }
@@ -40,7 +45,9 @@ const helpers = {
     }
     return elements.map((el) => {
       const content = typeof el === 'string' ? el : toText(el);
-      const millis = moment.utc(content, format).valueOf();
+      const millis = Number.isNaN(dayjs.utc(content, format).valueOf())
+        ? dayjs.utc(content).valueOf() // fall back to ISO format
+        : dayjs.utc(content, format).valueOf();
       return millis / 1000;
     });
   },
@@ -148,7 +155,7 @@ export function indexResource(path, response, config, log) {
   const content = unified()
     .use(rehypeParse, { fragment: false })
     .parse(body);
-  const record = { };
+  const record = {};
 
   /* Walk through all index properties */
   config.properties.forEach((property) => {
