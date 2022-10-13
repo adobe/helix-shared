@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-indexer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Shared modules of the Helix Project - Indexer",
   "main": "src/index.js",
   "type": "module",
