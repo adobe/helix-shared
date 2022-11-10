@@ -19,9 +19,8 @@ const { GitUrl } = require('../src/index.js');
 describe('GitUrl from string tests', () => {
   it('Fails for no arguments', () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       const url = new GitUrl();
-      assert.fail('should fail with no arguments');
+      assert.ok(!url, 'should fail with no arguments');
     } catch (e) {
       assert.equal(e.message, 'Invalid Git URL: URL is undefined (no URL given).');
     }
@@ -29,9 +28,8 @@ describe('GitUrl from string tests', () => {
 
   it('Fails for non git-url arguments', () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       const url = new GitUrl('https://github.com/no');
-      assert.fail('should fail with no arguments');
+      assert.ok(!url, 'should fail with no arguments');
     } catch (e) {
       assert.equal(e.message, 'Invalid URL: Not a valid git url: https://github.com/no');
     }
@@ -397,9 +395,8 @@ describe('GitUrl from string tests', () => {
 
   it('Fails for non scp-url arguments', () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       const url = new GitUrl('git@github.com/no/git');
-      assert.fail('should fail with no arguments');
+      assert.ok(!url, 'should fail with no arguments');
     } catch (e) {
       assert.equal(e.message, 'Invalid URL: Not a valid scp-style git url (missing the path to the actual repo): git@github.com/no/git');
     }
@@ -542,11 +539,10 @@ describe('GitUrl from object tests', () => {
 
   it('missing required field: owner', () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       const url = new GitUrl({
         repo: 'repository',
       });
-      assert.fail('should fail with no arguments');
+      assert.ok(!url, 'should fail with no arguments');
     } catch (e) {
       assert.equal(e.message, 'Invalid Git URL: Could not extract owner. Not a github repository url?');
     }
@@ -554,11 +550,10 @@ describe('GitUrl from object tests', () => {
 
   it('missing required field: repo', () => {
     try {
-      // eslint-disable-next-line no-unused-vars
       const url = new GitUrl({
         owner: 'owner',
       });
-      assert.fail('should fail with no arguments');
+      assert.ok(!url, 'should fail with no arguments');
     } catch (e) {
       assert.equal(e.message, 'Invalid Git URL: Could not extract repository. Not a github repository url?');
     }
