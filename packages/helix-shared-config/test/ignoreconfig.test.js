@@ -50,6 +50,7 @@ describe('IgnoreConfig', () => {
       '.hlxignore',
       '.gitignore',
       '.tools/stuff',
+      'config.json',
     ]);
 
     shouldNotIgnore(cfg, [
@@ -58,6 +59,7 @@ describe('IgnoreConfig', () => {
       'public/',
       'public/icons/foo.svg',
       'packages/foo/stuff.js',
+      'tools/sidekick/config.json',
     ]);
   });
 
