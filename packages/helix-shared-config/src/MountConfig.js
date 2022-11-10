@@ -44,7 +44,7 @@ function stripQuery(m, ...specialparams) {
 
 const onedriveDecorator = {
   test(m) {
-    return /^https:\/\/.*\.sharepoint\.com/.test(m.url) || m.url.startsWith('https://1drv.ms/') || m.url.startsWith('onedrive:');
+    return /^https:\/\/.*\.sharepoint\.com\//.test(m.url) || m.url.startsWith('https://1drv.ms/') || m.url.startsWith('onedrive:');
   },
   decorate(m) {
     return {
