@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-utils-v2.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils-v2.1.0...@adobe/helix-shared-utils-v2.2.0) (2022-11-18)
+
+
+### Features
+
+* add hashContentBusId ([#732](https://github.com/adobe/helix-shared/issues/732)) ([595c980](https://github.com/adobe/helix-shared/commit/595c98056a1bc66f5d21aaa0567e84127e7010b9))
+
 # [@adobe/helix-shared-utils-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils-v2.0.11...@adobe/helix-shared-utils-v2.1.0) (2022-09-13)
 
 
