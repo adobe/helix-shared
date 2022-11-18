@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-v9.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-v9.0.11...@adobe/helix-shared-v9.1.0) (2022-11-18)
+
+
+### Features
+
+* add hashContentBusId ([#732](https://github.com/adobe/helix-shared/issues/732)) ([595c980](https://github.com/adobe/helix-shared/commit/595c98056a1bc66f5d21aaa0567e84127e7010b9))
+
 # @adobe/helix-shared-v1.0.0 (2022-06-05)
 
 
