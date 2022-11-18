@@ -47,6 +47,7 @@ describe('Index tests', () => {
       'propagateStatusCode',
       'logLevelForStatusCode',
       'cleanupHeaderValue',
+      'hashContentBusId',
       'pruneEmptyValues',
     ];
     assert.deepEqual(Object.keys(index.utils), exports);
