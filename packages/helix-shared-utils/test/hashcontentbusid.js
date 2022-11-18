@@ -13,10 +13,10 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const { computeShaDigest } = require('../src/utils.js');
+const { hashContentBusId } = require('../src/utils.js');
 
 describe('Surrogate Test', () => {
   it('computes a string', async () => {
-    assert.strictEqual(await computeShaDigest('test'), '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08');
+    assert.strictEqual(await hashContentBusId('test'), '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f');
   });
 });
