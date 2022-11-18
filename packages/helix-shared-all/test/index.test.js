@@ -48,6 +48,7 @@ describe('Index tests', () => {
       'logLevelForStatusCode',
       'cleanupHeaderValue',
       'pruneEmptyValues',
+      'createShaDigest',
     ];
     assert.deepEqual(Object.keys(index.utils), exports);
     assert.deepEqual(exports.filter((name) => (!(name in index.utils))), []);

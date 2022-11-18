@@ -122,9 +122,33 @@ function cleanupHeaderValue(value) {
   return value.replace(/[^\t\u0020-\u007E\u0080-\u00FF]/g, '').substr(0, 1024);
 }
 
+/**
+ * Compute an SHA digest from some string value.
+ *
+ * @param {string} value value to create digest for
+ * @returns SHA256 digest of value, shortened to 59 characters
+ */
+async function computeShaDigest(value) {
+  /* c8 ignore next 2 */
+  const subtle = cryptoImpl?.webcrypto?.subtle // WebCrypto (node >= v15)
+     || cryptoImpl?.subtle; // WebcCypto (browser, service worker)
+
+  /* c8 ignore start */
+  if (subtle) {
+    // WebCrypto API
+    const hash = await subtle.digest('sha-256', new TextEncoder('utf-8').encode(value).buffer);
+    return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  } else {
+    // legacy node (< v15)
+    return cryptoImpl.createHash('sha256').update(value).digest('hex');
+  }
+  /* c8 ignore end */
+}
+
 module.exports = {
   computeSurrogateKey,
   propagateStatusCode,
   logLevelForStatusCode,
   cleanupHeaderValue,
+  computeShaDigest,
 };
