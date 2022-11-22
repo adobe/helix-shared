@@ -14,7 +14,12 @@
 /**
  * Queue entry.
  */
-export declare interface QueueEntry {}
+export declare type QueueEntry = any;
+
+/**
+ * Queue type
+ */
+export declare type Queue = AsyncGenerator<QueueEntry>|Iterable<QueueEntry>|Array<QueueEntry>;
 
 /**
  * A (asynchronous) handler function that is invoked for every queue entry.
@@ -22,19 +27,20 @@ export declare interface QueueEntry {}
  * The handler can modify the `queue` if needed.
  *
  * @param {QueueEntry} entry The queue entry.
- * @param {QueueEntry[]} queue the queue.
+ * @param {Queue} queue the queue.
  * @param {[]} results the process queue results
+ * @return {*} the value to be added to the results, unless undefined.
  */
 export declare interface ProcessQueueHandler {
-  (entry: QueueEntry, queue:Iterable<QueueEntry>, results:Array<any>): Promise<void>;
+  (entry: QueueEntry, queue:Queue, results:Array<any>): Promise<any>;
 }
 
 /**
  * Processes the given queue concurrently.
  *
- * @param {Iterable<QueueEntry>} queue A list of entries to be processed
+ * @param {Queue} queue A list of entries to be processed
  * @param {ProcessQueueHandler} fn A handler function
  * @param {number} [maxConcurrent = 8] Concurrency level
  * @returns {Promise<[]>} the results
  */
-export default function processQueue(queue:Iterable<QueueEntry>, fn:ProcessQueueHandler, maxConcurrent?:number): Promise<Array<any>>;
+export default function processQueue(queue:Queue, fn:ProcessQueueHandler, maxConcurrent?:number): Promise<Array<any>>;
