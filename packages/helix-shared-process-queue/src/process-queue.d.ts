@@ -26,15 +26,15 @@ export declare interface QueueEntry {}
  * @param {[]} results the process queue results
  */
 export declare interface ProcessQueueHandler {
-  (entry: QueueEntry, queue:[QueueEntry], results:[any]): void;
+  (entry: QueueEntry, queue:Iterable<QueueEntry>, results:Array<any>): Promise<void>;
 }
 
 /**
  * Processes the given queue concurrently.
  *
- * @param {QueueEntry[]} queue A list of entries to be processed
+ * @param {Iterable<QueueEntry>} queue A list of entries to be processed
  * @param {ProcessQueueHandler} fn A handler function
  * @param {number} [maxConcurrent = 8] Concurrency level
- * @returns {[]} the results
+ * @returns {Promise<[]>} the results
  */
-export declare function processQueue(queue:[QueueEntry], fn:ProcessQueueHandler, maxConcurrent?:number): [any];
+export default function processQueue(queue:Iterable<QueueEntry>, fn:ProcessQueueHandler, maxConcurrent?:number): Promise<Array<any>>;
