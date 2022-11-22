@@ -25,11 +25,12 @@ export declare type Queue = AsyncGenerator<QueueEntry>|Iterable<QueueEntry>|Arra
  * A (asynchronous) handler function that is invoked for every queue entry.
  * Values added to the `results` array will be returned by `processQueue` function.
  * The handler can modify the `queue` if needed.
+ * If the return value is not undefined, it is added to the `results` array.
  *
  * @param {QueueEntry} entry The queue entry.
  * @param {Queue} queue the queue.
  * @param {[]} results the process queue results
- * @return {*} the value to be added to the results, unless undefined.
+ * @return {*} result or undefined.
  */
 export declare interface ProcessQueueHandler {
   (entry: QueueEntry, queue:Queue, results:Array<any>): Promise<any>;
