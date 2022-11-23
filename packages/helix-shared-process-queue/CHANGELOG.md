@@ -1,3 +1,18 @@
+# [@adobe/helix-shared-process-queue-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v1.1.5...@adobe/helix-shared-process-queue-v2.0.0) (2022-11-23)
+
+
+### Features
+
+* Improve process queue ([350515e](https://github.com/adobe/helix-shared/commit/350515ed48474fa9a0c5d50cc32bf8ac30075dd8)), closes [#735](https://github.com/adobe/helix-shared/issues/735)
+
+
+### BREAKING CHANGES
+
+* return value of handler is added to result set if the value defined.
+
+- fix TS types
+- add support for async generators
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
