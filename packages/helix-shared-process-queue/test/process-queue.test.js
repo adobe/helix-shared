@@ -16,6 +16,30 @@ const processQueue = require('../src/process-queue.js');
 
 const nop = () => {};
 
+function* fibonacci() {
+  let a = 1;
+  let b = 1;
+  while (a < 50) {
+    const c = a + b;
+    a = b;
+    b = c;
+    yield {
+      time: 10,
+      number: c,
+    };
+  }
+}
+
+async function* sleepOver(nights) {
+  for (let i = 0; i < nights; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise((resolve) => {
+      setTimeout(resolve, 10);
+    });
+    yield i;
+  }
+}
+
 describe('Process Queue', () => {
   let concurrency = 0;
   let maxConcurrency = 0;
@@ -40,12 +64,24 @@ describe('Process Queue', () => {
 
   it('works with empty queue', async () => {
     const result = await processQueue([], nop);
-    assert.deepEqual(result, []);
+    assert.deepStrictEqual(result, []);
   });
 
   it('works with non async function', async () => {
-    const result = await processQueue([5], (n, queue, results) => results.push(n * n));
-    assert.deepEqual(result, [25]);
+    const result = await processQueue([5], (n, queue, results) => {
+      results.push(n * n);
+    });
+    assert.deepStrictEqual(result, [25]);
+  });
+
+  it('return values are added as results', async () => {
+    const result = await processQueue([1, 2, 3, 4], (n) => n * n);
+    assert.deepStrictEqual(result, [1, 4, 9, 16]);
+  });
+
+  it('return values are added as results (async)', async () => {
+    const result = await processQueue([1, 2, 3, 4], async (n) => n * n);
+    assert.deepStrictEqual(result, [1, 4, 9, 16]);
   });
 
   it('processes queue', async () => {
@@ -56,7 +92,7 @@ describe('Process Queue', () => {
       time: 50,
       number: 3,
     }], testFunction);
-    assert.deepEqual(result, [9, 16]);
+    assert.deepStrictEqual(result, [9, 16]);
   });
 
   it('processes queue can add more items to the queue', async () => {
@@ -67,7 +103,7 @@ describe('Process Queue', () => {
         results.push(0);
       }
     });
-    assert.deepEqual(result, [0, 0, 0, 0]);
+    assert.deepStrictEqual(result, [0, 0, 0, 0]);
   });
 
   it('respects concurrency', async () => {
@@ -81,8 +117,8 @@ describe('Process Queue', () => {
       expected.push(i * i);
     }
     const result = await processQueue(tasks, testFunction);
-    assert.deepEqual(result.sort((a, b) => a - b), expected);
-    assert.equal(maxConcurrency, 8);
+    assert.deepStrictEqual(result.sort((a, b) => a - b), expected);
+    assert.strictEqual(maxConcurrency, 8);
   });
 
   it('aborts queue on early error', async () => {
@@ -115,27 +151,23 @@ describe('Process Queue', () => {
     }
 
     const result = await processQueue(counter(), testFunction);
-    assert.deepEqual(result, [0, 1, 4, 9, 16]);
-    assert.deepEqual(maxConcurrency, 5);
+    assert.deepStrictEqual(result, [0, 1, 4, 9, 16]);
+    assert.deepStrictEqual(maxConcurrency, 5);
   });
 
   it('iterators respect concurrency', async () => {
-    function* fibonacci() {
-      let a = 1;
-      let b = 1;
-      while (a < 50) {
-        const c = a + b;
-        a = b;
-        b = c;
-        yield {
-          time: 10,
-          number: c,
-        };
-      }
-    }
-
     const result = await processQueue(fibonacci(), testFunction, 4);
-    assert.deepEqual(result, [4, 9, 25, 64, 169, 441, 1156, 3025, 7921]);
-    assert.deepEqual(maxConcurrency, 4);
+    assert.deepStrictEqual(result, [4, 9, 25, 64, 169, 441, 1156, 3025, 7921]);
+    assert.deepStrictEqual(maxConcurrency, 4);
+  });
+
+  it('iterators add return value to result', async () => {
+    const result = await processQueue(fibonacci(), ({ number }) => number);
+    assert.deepStrictEqual(result, [2, 3, 5, 8, 13, 21, 34, 55, 89]);
+  });
+
+  it('async iterators add return value to results', async () => {
+    const result = await processQueue(await sleepOver(5), (number) => number);
+    assert.deepStrictEqual(result, [0, 1, 2, 3, 4]);
   });
 });

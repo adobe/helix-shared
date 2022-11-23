@@ -14,27 +14,36 @@
 /**
  * Queue entry.
  */
-export declare interface QueueEntry {}
+export declare type QueueEntry = any;
+
+/**
+ * Queue type
+ */
+export declare type Queue = AsyncGenerator<QueueEntry>|Iterable<QueueEntry>|Array<QueueEntry>;
 
 /**
  * A (asynchronous) handler function that is invoked for every queue entry.
  * Values added to the `results` array will be returned by `processQueue` function.
  * The handler can modify the `queue` if needed.
+ * If the return value is not undefined, it is added to the `results` array.
  *
  * @param {QueueEntry} entry The queue entry.
- * @param {QueueEntry[]} queue the queue.
+ * @param {Queue} queue the queue.
  * @param {[]} results the process queue results
+ * @return {*} result or undefined.
  */
 export declare interface ProcessQueueHandler {
-  (entry: QueueEntry, queue:[QueueEntry], results:[any]): void;
+  (entry: QueueEntry, queue:Queue, results:Array<any>): Promise<any>;
 }
 
 /**
- * Processes the given queue concurrently.
+ * Processes the given queue concurrently. If the `queue` is an array it will remove the
+ * entries during processing. It returns the `results` array which is either populated by the
+ * queue handler function directly or with the return values of the handler functions.
  *
- * @param {QueueEntry[]} queue A list of entries to be processed
+ * @param {Queue} queue A list of entries to be processed
  * @param {ProcessQueueHandler} fn A handler function
  * @param {number} [maxConcurrent = 8] Concurrency level
- * @returns {[]} the results
+ * @returns {Promise<[]>} the results
  */
-export declare function processQueue(queue:[QueueEntry], fn:ProcessQueueHandler, maxConcurrent?:number): [any];
+export default function processQueue(queue:Queue, fn:ProcessQueueHandler, maxConcurrent?:number): Promise<Array<any>>;

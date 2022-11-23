@@ -11,13 +11,24 @@
  */
 
 /**
+ * Simple dequeing iterator.
+ * @param queue
+ * @returns {Generator<*, void, *>}
+ */
+function* dequeue(queue) {
+  while (queue.length) {
+    yield queue.shift();
+  }
+}
+
+/**
  * Processes the given queue concurrently. The handler functions can add more items to the queue
  * if needed.
  *
  * @param {Iterable|Array} queue A list of tasks
  * @param {ProcessQueueHandler} fn A handler function `fn(task:any, queue:array, results:array)`
  * @param {number} [maxConcurrent = 8] Concurrency level
- * @returns the results
+ * @returns {Promise<[]>} the results
  */
 async function processQueue(queue, fn, maxConcurrent = 8) {
   if (typeof queue !== 'object') {
@@ -29,44 +40,40 @@ async function processQueue(queue, fn, maxConcurrent = 8) {
 
   const handler = (entry) => {
     const task = fn(entry, queue, results);
-    if (task && task.then) {
+    if (task?.then) {
       running.push(task);
       task
+        .then((r) => {
+          if (r !== undefined) {
+            results.push(r);
+          }
+        })
         .catch(() => {})
         .finally(() => {
           running.splice(running.indexOf(task), 1);
         });
+    } else if (task !== undefined) {
+      results.push(task);
     }
   };
 
-  // when using array, dequeue the entries
-  if (Array.isArray(queue)) {
-    while (queue.length || running.length) {
-      if (running.length < maxConcurrent && queue.length) {
-        handler(queue.shift());
-      } else {
-        // eslint-disable-next-line no-await-in-loop
-        await Promise.race(running);
-      }
-    }
-    return results;
+  const iter = Array.isArray(queue)
+    ? dequeue(queue)
+    : queue;
+  if (!iter || !('next' in iter)) {
+    throw Error('invalid queue argument: iterable expected');
   }
 
-  if ('next' in queue) {
-    let next = queue.next();
-    while (!next.done || running.length) {
-      if (running.length < maxConcurrent && !next.done) {
-        handler(next.value);
-        next = queue.next();
-      } else {
-        // eslint-disable-next-line no-await-in-loop
-        await Promise.race(running);
-      }
+  for await (const value of iter) {
+    while (running.length >= maxConcurrent) {
+      // eslint-disable-next-line no-await-in-loop
+      await Promise.race(running);
     }
-    return results;
+    handler(value);
   }
-
-  throw Error('invalid queue argument: iterable expected');
+  // wait until remaining tasks have completed
+  await Promise.all(running);
+  return results;
 }
 
 module.exports = processQueue;
