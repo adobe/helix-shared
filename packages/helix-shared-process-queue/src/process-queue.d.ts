@@ -37,7 +37,9 @@ export declare interface ProcessQueueHandler {
 }
 
 /**
- * Processes the given queue concurrently.
+ * Processes the given queue concurrently. If the `queue` is an array it will remove the
+ * entries during processing. It returns the `results` array which is either populated by the
+ * queue handler function directly or with the return values of the handler functions.
  *
  * @param {Queue} queue A list of entries to be processed
  * @param {ProcessQueueHandler} fn A handler function
