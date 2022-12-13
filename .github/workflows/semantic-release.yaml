@@ -9,10 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-      - name: Configure Git User
-        run: |
-          git config --global user.email "ci@example.com"
-          git config --global user.name "Github Build"
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -28,6 +24,10 @@ jobs:
           npm whoami
         env:
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
+      - name: Configure Git User
+        run: |
+          git config --global user.email "ci@example.com"
+          git config --global user.name "Github Build"
       - run: npm install
       - run: npm run lint
       - run: npm test
