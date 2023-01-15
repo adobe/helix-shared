@@ -48,6 +48,6 @@
     "@pollyjs/adapter-node-http": "6.0.5",
     "@pollyjs/core": "6.0.5",
     "@pollyjs/persister-fs": "6.0.5",
-    "nock": "13.2.9"
+    "nock": "13.3.0"
   }
 }
