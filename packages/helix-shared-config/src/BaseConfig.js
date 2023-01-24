@@ -13,8 +13,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const YAML = require('yaml');
 const { GitUrl } = require('@adobe/helix-shared-git');
-const cache = require('./fetchconfig/cache');
-const fetch = require('./fetchconfig/fetch');
+const cache = require('./fetchconfig/cache.js');
+const fetch = require('./fetchconfig/fetch.js');
 
 async function isFile(filePath) {
   try {

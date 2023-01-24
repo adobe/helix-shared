@@ -13,8 +13,8 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const BaseParser = require('../src/parsers/BaseParser');
-const GlobfileParser = require('../src/parsers/GlobfileParser');
+const BaseParser = require('../src/parsers/BaseParser.js');
+const GlobfileParser = require('../src/parsers/GlobfileParser.js');
 
 function stubs() {
   return {

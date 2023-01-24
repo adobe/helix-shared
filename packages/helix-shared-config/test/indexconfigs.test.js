@@ -15,7 +15,7 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const IndexConfig = require('../src/IndexConfig');
+const IndexConfig = require('../src/IndexConfig.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/queryconfigs');
 

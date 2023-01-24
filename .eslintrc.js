@@ -13,11 +13,4 @@
 module.exports = {
   root: true,
   extends: '@adobe/helix',
-  parserOptions: {
-    ecmaVersion: 2022,
-  },
-  rules: {
-    // Allow while (true) infinite loops
-    'no-constant-condition': ['error', { checkLoops: false }],
-  },
 };

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { NamedMapHandler } = require('./NamedMapHandler');
+const { NamedMapHandler } = require('./NamedMapHandler.js');
 
 const sitemapConfigSchema = require('./schemas/sitemapconfig.schema.json');
 const sitemapSchema = require('./schemas/sitemap.schema.json');

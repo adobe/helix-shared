@@ -11,7 +11,7 @@
  */
 /* eslint-env mocha */
 const assert = require('assert');
-const wrap = require('../src/wrap');
+const wrap = require('../src/wrap.js');
 
 describe('Wrapper Tests', () => {
   it('wrap leaves initial function unchanged', () => {

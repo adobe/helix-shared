@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { MountPointHandler } = require('./MountPointHandler');
+const { MountPointHandler } = require('./MountPointHandler.js');
 
 const fstabSchema = require('./schemas/fstab.schema.json');
 const mountpointSchema = require('./schemas/mountpoint.schema.json');

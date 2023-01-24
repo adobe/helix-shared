@@ -11,7 +11,7 @@
  */
 
 const ignore = require('ignore');
-const BaseParser = require('./BaseParser');
+const BaseParser = require('./BaseParser.js');
 
 const NAME = 'globfile';
 

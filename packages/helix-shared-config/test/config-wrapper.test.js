@@ -16,8 +16,8 @@
 const assert = require('assert');
 const { Response, Request } = require('@adobe/fetch');
 const wrap = require('@adobe/helix-shared-wrap');
-const { optionalConfig, requiredConfig } = require('../src/index');
-const { getData } = require('../src/config-wrapper');
+const { optionalConfig, requiredConfig } = require('../src/index.js');
+const { getData } = require('../src/config-wrapper.js');
 const { setupPolly } = require('./utils.js');
 
 const log = {
