@@ -32,7 +32,7 @@ The base query to run. If the value is an object or array, use [QBL JSON or YAML
 
 *   is optional
 
-*   Type: any of the folllowing: `string` or `object` or `array` ([Details](query-properties-query.md))
+*   Type: any of the following: `string` or `object` or `array` ([Details](query-properties-query.md))
 
 *   cannot be null
 
@@ -40,7 +40,7 @@ The base query to run. If the value is an object or array, use [QBL JSON or YAML
 
 ### query Type
 
-any of the folllowing: `string` or `object` or `array` ([Details](query-properties-query.md))
+any of the following: `string` or `object` or `array` ([Details](query-properties-query.md))
 
 ### query Default Value
 
