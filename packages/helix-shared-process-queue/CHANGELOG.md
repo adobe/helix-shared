@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-process-queue-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v2.0.0...@adobe/helix-shared-process-queue-v2.1.0) (2023-01-25)
+
+
+### Features
+
+* add helix-shared-secrets ([#752](https://github.com/adobe/helix-shared/issues/752)) ([0791f53](https://github.com/adobe/helix-shared/commit/0791f53527eeb4b679478a297a5de728eb42466d))
+
 # [@adobe/helix-shared-process-queue-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v1.1.5...@adobe/helix-shared-process-queue-v2.0.0) (2022-11-23)
 
 
