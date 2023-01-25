@@ -12,7 +12,7 @@
 
 const fetchAPI = require('@adobe/fetch');
 const utils = require('@adobe/helix-shared-utils');
-const cache = require('./cache');
+const cache = require('./cache.js');
 
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
   ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })

@@ -18,7 +18,7 @@ process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 const assert = require('assert');
 const { Response, Request } = require('@adobe/fetch');
 const wrap = require('@adobe/helix-shared-wrap');
-const bodyData = require('../src/body-data-wrapper');
+const bodyData = require('../src/body-data-wrapper.js');
 
 const log = {
   info: console.log,

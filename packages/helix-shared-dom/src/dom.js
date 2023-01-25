@@ -534,6 +534,7 @@ const nodeMatches = exec(() => {
     // To remedy this issue and reduce the worst case stack depths to roughly O(n+k)
     // manual tail recursion is implemented by using this while loop; we
     // recurse by just assigning to the function parameters and calling continue.
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       // We're at the end of both pattern and node! Successfully matched \o/
       if (!node && !pattern) {

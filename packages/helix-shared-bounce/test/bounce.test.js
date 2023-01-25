@@ -20,7 +20,7 @@ const { Response, Request } = require('@adobe/fetch');
 const wrap = require('@adobe/helix-shared-wrap');
 const nock = require('nock');
 const proxyquire = require('proxyquire');
-const bounce = require('../src/bounce');
+const bounce = require('../src/bounce.js');
 
 const log = {
   info: console.log,

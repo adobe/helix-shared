@@ -17,7 +17,7 @@ process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const MountConfig = require('../src/MountConfig');
+const MountConfig = require('../src/MountConfig.js');
 const { setupPolly } = require('./utils.js');
 
 describe('Mount Point Config Loading (from GitHub)', () => {

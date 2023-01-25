@@ -18,7 +18,7 @@ process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const SitemapConfig = require('../src/SitemapConfig');
+const SitemapConfig = require('../src/SitemapConfig.js');
 const { setupPolly } = require('./utils.js');
 
 const SPEC_ROOT = path.resolve(__dirname, 'specs/sitemapconfigs');

@@ -11,8 +11,8 @@
  */
 const { Request, Response } = require('@adobe/fetch');
 const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
-const fstab = require('./MountConfig');
-const index = require('./IndexConfig');
+const fstab = require('./MountConfig.js');
+const index = require('./IndexConfig.js');
 
 const loaders = {
   fstab,

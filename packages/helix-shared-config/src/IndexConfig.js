@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { NamedMapHandler } = require('./NamedMapHandler');
+const { NamedMapHandler } = require('./NamedMapHandler.js');
 
 const indexConfigSchema = require('./schemas/indexconfig.schema.json');
 const indexSchema = require('./schemas/index.schema.json');
