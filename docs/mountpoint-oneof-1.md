@@ -21,6 +21,7 @@ https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1
 | [url](#url)                   | `string` | Required | cannot be null | [Mount Point](mountpoint-oneof-1-properties-url.md "https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1/properties/url")                   |
 | [fallbackPath](#fallbackpath) | `string` | Optional | cannot be null | [Mount Point](mountpoint-oneof-1-properties-fallbackpath.md "https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1/properties/fallbackPath") |
 | [credentials](#credentials)   | `array`  | Optional | cannot be null | [Mount Point](mountpoint-oneof-1-properties-credentials.md "https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1/properties/credentials")   |
+| [tenantId](#tenantid)         | `string` | Optional | cannot be null | [Mount Point](mountpoint-oneof-1-properties-tenantid.md "https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1/properties/tenantId")         |
 
 ## url
 
@@ -79,3 +80,21 @@ encrypted credentials.
 ### credentials Type
 
 `string[]`
+
+## tenantId
+
+Onedrive tenant id. If missing, it is computed from url.
+
+`tenantId`
+
+*   is optional
+
+*   Type: `string`
+
+*   cannot be null
+
+*   defined in: [Mount Point](mountpoint-oneof-1-properties-tenantid.md "https://ns.adobe.com/helix/shared/mountpoint#/oneOf/1/properties/tenantId")
+
+### tenantId Type
+
+`string`

@@ -43,6 +43,9 @@ module.exports.main = wrap(main)
 <dl>
 <dt><a href="#BaseConfig">BaseConfig</a></dt>
 <dd></dd>
+<dt><a href="#ModifiersConfig">ModifiersConfig</a></dt>
+<dd><p>The modifiers class help manage the metadata and headers modifiers.</p>
+</dd>
 <dt><a href="#SchemaDerivedConfig">SchemaDerivedConfig</a></dt>
 <dd><p>A Helix Config that is based on a (number of) JSON Schema(s).</p>
 </dd>
@@ -107,6 +110,9 @@ available.</p>
 </dd>
 <dt><a href="#bodyData">bodyData(func, [opts])</a> ⇒ <code>UniversalFunction</code></dt>
 <dd><p>Wraps a function with a body data middleware that extracts the request data.</p>
+</dd>
+<dt><a href="#toMetaName">toMetaName(text)</a> ⇒ <code>string</code></dt>
+<dd><p>Converts all non-valid characters to <code>-</code>.</p>
 </dd>
 <dt><a href="#stripQuery">stripQuery(m, ...specialparams)</a> ⇒ <code>object</code></dt>
 <dd><p>Cleans up the URL by removing parameters that are deemed special. These
@@ -243,13 +249,25 @@ on it. The index contains the CSS selector that will select the
 value(s) to process. If we get multiple values, we return an
 array.</p>
 </dd>
-<dt><a href="#processQueue">processQueue(queue, fn, [maxConcurrent])</a> ⇒</dt>
+<dt><a href="#dequeue">dequeue(queue)</a> ⇒ <code>Generator.&lt;*, void, *&gt;</code></dt>
+<dd><p>Simple dequeing iterator.</p>
+</dd>
+<dt><a href="#processQueue">processQueue(queue, fn, [maxConcurrent])</a> ⇒ <code>Promise.&lt;Array&gt;</code></dt>
 <dd><p>Processes the given queue concurrently. The handler functions can add more items to the queue
 if needed.</p>
 </dd>
 <dt><a href="#pruneEmptyValues">pruneEmptyValues(obj)</a> ⇒ <code>object</code></dt>
 <dd><p>Iterates over the properties of the given object and removes all empty values.
 A value is considered empty, if it&#39;s not truthy or an empty array.</p>
+</dd>
+<dt><a href="#_request">_request(target, input)</a> ⇒ <code>any</code></dt>
+<dd><p>Pass a request to the AWS secrets manager</p>
+</dd>
+<dt><a href="#reset">reset()</a></dt>
+<dd><p>reset the cache - for testing only</p>
+</dd>
+<dt><a href="#loadSecrets">loadSecrets(ctx, [opts])</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
+<dd><p>Loads the secrets from the respective secrets manager.</p>
 </dd>
 <dt><a href="#multiline">multiline()</a></dt>
 <dd><p>This is a helper for declaring multiline strings.</p>
@@ -299,6 +317,9 @@ a standardized lookup function of backend status codes to log levels.</p>
 </dd>
 <dt><a href="#cleanupHeaderValue">cleanupHeaderValue(value)</a> ⇒</dt>
 <dd><p>Cleans up a header value by stripping invalid characters and truncating to 1024 chars</p>
+</dd>
+<dt><a href="#hashContentBusId">hashContentBusId(value)</a> ⇒</dt>
+<dd><p>Compute an SHA digest from some string value.</p>
 </dd>
 </dl>
 
@@ -537,6 +558,124 @@ Set the base repository to fetch the config from.
 Saves this config to [#configPath](#configPath)
 
 **Kind**: instance method of [<code>BaseConfig</code>](#BaseConfig)  
+<a name="ModifiersConfig"></a>
+
+## ModifiersConfig
+The modifiers class help manage the metadata and headers modifiers.
+
+**Kind**: global class  
+
+* [ModifiersConfig](#ModifiersConfig)
+    * [new ModifiersConfig([map], keyFilter)](#new_ModifiersConfig_new)
+    * _instance_
+        * [.EMPTY](#ModifiersConfig+EMPTY) : [<code>ModifiersConfig</code>](#ModifiersConfig)
+        * [.getModifiers(path)](#ModifiersConfig+getModifiers) ⇒ <code>object</code>
+    * _static_
+        * [.globToRegExp(glob)](#ModifiersConfig.globToRegExp) ⇒ <code>RegExp</code>
+        * [.toLowerKeys(obj)](#ModifiersConfig.toLowerKeys) ⇒ <code>Object</code>
+        * [.parseModifierSheet(sheet, keyFilter)](#ModifiersConfig.parseModifierSheet) ⇒ <code>ModifierMap</code>
+        * [.fromModifierSheet(sheet, keyFilter)](#ModifiersConfig.fromModifierSheet) ⇒ [<code>ModifiersConfig</code>](#ModifiersConfig)
+
+<a name="new_ModifiersConfig_new"></a>
+
+### new ModifiersConfig([map], keyFilter)
+Creates a new ModifiersConfig class.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [map] | <code>ModifierMap</code> | The modifier map. |
+| keyFilter | <code>ModifierKeyFilter</code> | filter to apply on modifier keys |
+
+<a name="ModifiersConfig+EMPTY"></a>
+
+### modifiersConfig.EMPTY : [<code>ModifiersConfig</code>](#ModifiersConfig)
+Empty modifiers
+
+**Kind**: instance property of [<code>ModifiersConfig</code>](#ModifiersConfig)  
+<a name="ModifiersConfig+getModifiers"></a>
+
+### modifiersConfig.getModifiers(path) ⇒ <code>object</code>
+Returns the modifier object for the given path.
+
+**Kind**: instance method of [<code>ModifiersConfig</code>](#ModifiersConfig)  
+**Returns**: <code>object</code> - the modifiers  
+
+| Param | Type |
+| --- | --- |
+| path | <code>string</code> | 
+
+<a name="ModifiersConfig.globToRegExp"></a>
+
+### ModifiersConfig.globToRegExp(glob) ⇒ <code>RegExp</code>
+Converts a globbing expression to regexp. Note that only `*` and `**` are supported yet.
+
+**Kind**: static method of [<code>ModifiersConfig</code>](#ModifiersConfig)  
+
+| Param | Type |
+| --- | --- |
+| glob | <code>string</code> | 
+
+<a name="ModifiersConfig.toLowerKeys"></a>
+
+### ModifiersConfig.toLowerKeys(obj) ⇒ <code>Object</code>
+Converts all keys in a row object to lowercase
+
+**Kind**: static method of [<code>ModifiersConfig</code>](#ModifiersConfig)  
+**Returns**: <code>Object</code> - A row with all keys converted to lowercase  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>Object</code> | A row of data from a sheet |
+
+<a name="ModifiersConfig.parseModifierSheet"></a>
+
+### ModifiersConfig.parseModifierSheet(sheet, keyFilter) ⇒ <code>ModifierMap</code>
+Parses a sheet that is in a modifier format into a list of key/value pairs
+
+**Kind**: static method of [<code>ModifiersConfig</code>](#ModifiersConfig)  
+**Returns**: <code>ModifierMap</code> - An object containing an array of key/value pairs for every glob  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| sheet | <code>Array.&lt;object&gt;</code> | The sheet to parse |
+| keyFilter | <code>ModifierKeyFilter</code> | filter to apply on keys |
+
+**Example**  
+```js
+| url   | key | value | Title   | Description    |
+|-------|-----|-------|---------|----------------|
+| "/*"  | "A" | "B"   | ""      | ""             |
+| "/*"  | "C" | "D"   | ""      | ""             |
+| "/f"  | ""  | ""    | "Hero"  | "Once upon..." |
+
+becomes:
+
+{
+  "/*": [
+    { "key": "A", "value": "B" },
+    { "key": "C", "value": "D" },
+  ],
+  "/f": [
+    { "key": "title", "value": "Hero" },
+    { "key": "description", "value": "Once upon..." },
+  ]
+}
+```
+<a name="ModifiersConfig.fromModifierSheet"></a>
+
+### ModifiersConfig.fromModifierSheet(sheet, keyFilter) ⇒ [<code>ModifiersConfig</code>](#ModifiersConfig)
+Creates a new `ModifiersConfig` from the given sheet.
+
+**Kind**: static method of [<code>ModifiersConfig</code>](#ModifiersConfig)  
+**Returns**: [<code>ModifiersConfig</code>](#ModifiersConfig) - A ModifiersConfig instance.  
+**See**: ModifiersConfig.parseModifierSheet  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| sheet | <code>Array.&lt;object&gt;</code> | The sheet to parse |
+| keyFilter | <code>ModifierKeyFilter</code> | filter to apply on keys |
+
 <a name="SchemaDerivedConfig"></a>
 
 ## SchemaDerivedConfig
@@ -880,6 +1019,18 @@ Wraps a function with a body data middleware that extracts the request data.
 | func | <code>UniversalFunction</code> | the universal function |
 | [opts] | <code>BodyDataOptions</code> | Options |
 
+<a name="toMetaName"></a>
+
+## toMetaName(text) ⇒ <code>string</code>
+Converts all non-valid characters to `-`.
+
+**Kind**: global function  
+**Returns**: <code>string</code> - the meta name  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | input text |
+
 <a name="stripQuery"></a>
 
 ## stripQuery(m, ...specialparams) ⇒ <code>object</code>
@@ -1155,14 +1306,25 @@ array.
 | config | <code>Index</code> | indexing configuration |
 | log | <code>Logger</code> | logger |
 
+<a name="dequeue"></a>
+
+## dequeue(queue) ⇒ <code>Generator.&lt;\*, void, \*&gt;</code>
+Simple dequeing iterator.
+
+**Kind**: global function  
+
+| Param |
+| --- |
+| queue | 
+
 <a name="processQueue"></a>
 
-## processQueue(queue, fn, [maxConcurrent]) ⇒
+## processQueue(queue, fn, [maxConcurrent]) ⇒ <code>Promise.&lt;Array&gt;</code>
 Processes the given queue concurrently. The handler functions can add more items to the queue
 if needed.
 
 **Kind**: global function  
-**Returns**: the results  
+**Returns**: <code>Promise.&lt;Array&gt;</code> - the results  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -1182,6 +1344,38 @@ A value is considered empty, if it's not truthy or an empty array.
 | Param | Type | Description |
 | --- | --- | --- |
 | obj | <code>object</code> | The object to prune. |
+
+<a name="_request"></a>
+
+## \_request(target, input) ⇒ <code>any</code>
+Pass a request to the AWS secrets manager
+
+**Kind**: global function  
+**Returns**: <code>any</code> - response object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| target | <code>string</code> | target method to invoke |
+| input | <code>any</code> | input that will be passed as JSON |
+
+<a name="reset"></a>
+
+## reset()
+reset the cache - for testing only
+
+**Kind**: global function  
+<a name="loadSecrets"></a>
+
+## loadSecrets(ctx, [opts]) ⇒ <code>Promise.&lt;object&gt;</code>
+Loads the secrets from the respective secrets manager.
+
+**Kind**: global function  
+**Returns**: <code>Promise.&lt;object&gt;</code> - the secrets or {@code null}.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ctx | <code>UniversalContext</code> | the context |
+| [opts] | <code>SecretsOptions</code> | Options |
 
 <a name="multiline"></a>
 
@@ -1288,4 +1482,16 @@ Cleans up a header value by stripping invalid characters and truncating to 1024 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>string</code> | a header value |
+
+<a name="hashContentBusId"></a>
+
+## hashContentBusId(value) ⇒
+Compute an SHA digest from some string value.
+
+**Kind**: global function  
+**Returns**: SHA256 digest of value, shortened to 59 characters  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | value to create digest for |
 

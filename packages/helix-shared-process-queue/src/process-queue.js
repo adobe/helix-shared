@@ -28,7 +28,7 @@ function* dequeue(queue) {
  * @param {Iterable|Array} queue A list of tasks
  * @param {ProcessQueueHandler} fn A handler function `fn(task:any, queue:array, results:array)`
  * @param {number} [maxConcurrent = 8] Concurrency level
- * @returns {Promise<[]>} the results
+ * @returns {Promise<Array>} the results
  */
 async function processQueue(queue, fn, maxConcurrent = 8) {
   if (typeof queue !== 'object') {
