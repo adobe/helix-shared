@@ -9,11 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { MountPointHandler } = require('./MountPointHandler.js');
+import { SchemaDerivedConfig } from './SchemaDerivedConfig.js';
+import { MountPointHandler } from './MountPointHandler.js';
 
-const fstabSchema = require('./schemas/fstab.schema.json');
-const mountpointSchema = require('./schemas/mountpoint.schema.json');
+import fstabSchema from './schemas/fstab.schema.cjs';
+import mountpointSchema from './schemas/mountpoint.schema.cjs';
 
 /**
  * Cleans up the URL by removing parameters that are deemed special. These
@@ -93,7 +93,7 @@ const githubDecorator = {
   },
 };
 
-class MountConfig extends SchemaDerivedConfig {
+export class MountConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'fstab.yaml',
@@ -129,5 +129,3 @@ class MountConfig extends SchemaDerivedConfig {
     return mp || null;
   }
 }
-
-module.exports = MountConfig;

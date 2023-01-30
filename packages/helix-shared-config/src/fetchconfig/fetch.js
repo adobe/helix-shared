@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-const fetchAPI = require('@adobe/fetch');
-const utils = require('@adobe/helix-shared-utils');
-const cache = require('./cache.js');
+import { context as h2, h1 } from '@adobe/fetch';
+import * as utils from '@adobe/helix-shared-utils';
+import { cache } from './cache.js';
 
+/* c8 ignore next 3 */
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
-  ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })
-  /* c8 ignore next */
-  : fetchAPI;
+  ? h1()
+  : h2();
 
 /**
  * Fetches an FSTab file from a GitHub repository
@@ -46,7 +46,7 @@ async function fetchConfigUncached(opts) {
 }
 
 // keep it cachy.
-const fetchConfigCached = cache(fetchConfigUncached, {
+export const fetchConfigCached = cache(fetchConfigUncached, {
   hash: (fn, {
     url, options, name,
   }) => ([
@@ -57,5 +57,3 @@ const fetchConfigCached = cache(fetchConfigUncached, {
       ? options.headers.Authorization : undefined,
   ].join()),
 });
-
-module.exports = fetchConfigCached;

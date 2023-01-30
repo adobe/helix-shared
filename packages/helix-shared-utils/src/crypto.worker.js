@@ -12,4 +12,4 @@
 
 // browser/worker runtime
 // eslint-disable-next-line no-undef
-module.exports = crypto;
+export default crypto;

@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const Ajv = require('ajv').default;
-const ajvFormats = require('ajv-formats');
-const BaseConfig = require('./BaseConfig.js');
-const ValidationError = require('./ValidationError.js');
+import Ajv from 'ajv';
+import ajvFormats from 'ajv-formats';
+import { BaseConfig } from './BaseConfig.js';
+import { ValidationError } from './ValidationError.js';
 
 /**
  * A Helix Config that is based on a (number of) JSON Schema(s).
  */
-class SchemaDerivedConfig extends BaseConfig {
+export class SchemaDerivedConfig extends BaseConfig {
   /**
    *
    * @param {object} opts
@@ -152,5 +152,3 @@ class SchemaDerivedConfig extends BaseConfig {
     return this._cfg;
   }
 }
-
-module.exports = SchemaDerivedConfig;

@@ -37,7 +37,7 @@
  * at the start of the line). This prefix is simply removed
  * from each line...
  */
-const multiline = (str) => {
+export function multiline(str) {
   // Discard the leading & trailing line
   const lines = str.split('\n');
 
@@ -58,6 +58,4 @@ const multiline = (str) => {
   return lines
     .map((l) => l.slice(prefixLen)) // discard prefixes
     .join('\n');
-};
-
-module.exports = { multiline };
+}

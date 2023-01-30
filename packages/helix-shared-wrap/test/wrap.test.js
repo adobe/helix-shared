@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-env mocha */
-const assert = require('assert');
-const wrap = require('../src/wrap.js');
+import assert from 'assert';
+import wrap from '../src/wrap.js';
 
 describe('Wrapper Tests', () => {
   it('wrap leaves initial function unchanged', () => {

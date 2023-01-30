@@ -9,15 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const fetchAPI = require('@adobe/fetch');
-const { NamedMapHandler } = require('./NamedMapHandler.js');
+import { context as h2, h1 } from '@adobe/fetch';
+import { NamedMapHandler } from './NamedMapHandler.js';
 
 const wrap = (sitemap) => {
   const context = process.env.HELIX_FETCH_FORCE_HTTP1
-    ? fetchAPI.context({
-      alpnProtocols: [fetchAPI.ALPN_HTTP1_1],
-    })
-    : fetchAPI.context();
+    ? h1()
+    : h2();
   const { fetch } = context;
 
   if (typeof sitemap === 'object') {
@@ -52,7 +50,6 @@ const wrap = (sitemap) => {
   return sitemap;
 };
 
-const SitemapHandler = (keyname = 'name') => ({
+export const SitemapHandler = (keyname = 'name') => ({
   get: (target, prop) => wrap(NamedMapHandler(keyname).get(target, prop)),
 });
-exports.SitemapHandler = SitemapHandler;

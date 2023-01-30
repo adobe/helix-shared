@@ -13,12 +13,11 @@
 /* eslint-disable no-console */
 
 /* eslint-env mocha */
-process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
+import assert from 'assert';
+import { Request, Response } from '@adobe/fetch';
 
-const assert = require('assert');
-const { Response, Request } = require('@adobe/fetch');
-const wrap = require('@adobe/helix-shared-wrap');
-const bodyData = require('../src/body-data-wrapper.js');
+import wrap from '@adobe/helix-shared-wrap';
+import bodyData from '../src/body-data-wrapper.js';
 
 const log = {
   info: console.log,

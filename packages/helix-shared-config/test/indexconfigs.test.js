@@ -12,12 +12,12 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const fs = require('fs-extra');
-const path = require('path');
-const IndexConfig = require('../src/IndexConfig.js');
+import assert from 'assert';
+import fs from 'fs-extra';
+import path from 'path';
+import { IndexConfig } from '../src/IndexConfig.js';
 
-const SPEC_ROOT = path.resolve(__dirname, 'specs/queryconfigs');
+const SPEC_ROOT = path.resolve(__testdir, 'specs/queryconfigs');
 
 const tests = [
   {

@@ -12,8 +12,8 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const { cleanupHeaderValue } = require('../src/utils.js');
+import assert from 'assert';
+import { cleanupHeaderValue } from '../src/utils.js';
 
 describe('Test Header Cleanup', () => {
   it('Invalid characters', () => {

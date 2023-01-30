@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const MountPointHandler = (decorators) => ({
+export const MountPointHandler = (decorators) => ({
 
   get: (target, prop) => {
     const index = Number.parseInt(prop, 10);
@@ -43,4 +43,3 @@ const MountPointHandler = (decorators) => ({
     return prop === 'length' ? Object.keys(target).length : target[prop];
   },
 });
-exports.MountPointHandler = MountPointHandler;

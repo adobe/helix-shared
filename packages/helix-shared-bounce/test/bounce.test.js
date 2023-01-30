@@ -13,15 +13,15 @@
 /* eslint-disable no-console */
 
 /* eslint-env mocha */
+import assert from 'assert';
+import { Request, Response } from '@adobe/fetch';
+
+import wrap from '@adobe/helix-shared-wrap';
+import nock from 'nock';
+import esmock from 'esmock';
+import bounce from '../src/bounce.js';
+
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
-
-const assert = require('assert');
-const { Response, Request } = require('@adobe/fetch');
-const wrap = require('@adobe/helix-shared-wrap');
-const nock = require('nock');
-const proxyquire = require('proxyquire');
-const bounce = require('../src/bounce.js');
-
 const log = {
   info: console.log,
   warn: console.log,
@@ -167,7 +167,7 @@ describe('Bounce Wrapper Unit Tests', () => {
 
     const fastfunction = async (_, context) => new Response(`I am ready soon, check status at ${context.invocation.bounceId}`);
 
-    const fakebounce = proxyquire('../src/bounce.js', {
+    const fakebounce = await esmock('../src/bounce.js', {
       '@adobe/fetch': {
         fetch: () => { throw new Error('something went wrong'); },
       },

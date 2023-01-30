@@ -4,6 +4,7 @@
   "description": "Shared modules of the Helix Project - config",
   "main": "src/index.js",
   "types": "src/index.d.ts",
+  "type": "module",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",
@@ -28,7 +29,7 @@
     "reporter-options": "configFile=.mocha-multi.json"
   },
   "dependencies": {
-    "@adobe/fetch": "^3.1.4",
+    "@adobe/fetch": "^4.0.1",
     "@adobe/helix-shared-git": "^2.0.4",
     "@adobe/helix-shared-prune": "^1.0.5",
     "@adobe/helix-shared-utils": "^2.1.0",

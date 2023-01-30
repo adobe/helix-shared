@@ -12,10 +12,11 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
+import assert from 'assert';
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { GitUrl } = require('@adobe/helix-shared-git');
-const { computeSurrogateKey } = require('../src/utils.js');
+import { GitUrl } from '@adobe/helix-shared-git';
+
+import { computeSurrogateKey } from '../src/utils.js';
 
 describe('Surrogate Test', () => {
   it('computes a string', async () => {

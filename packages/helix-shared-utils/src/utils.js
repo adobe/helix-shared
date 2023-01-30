@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 // eslint-disable-next-line import/no-unresolved
-const cryptoImpl = require('#crypto');
+import cryptoImpl from '#crypto';
 
 /**
  * A glorified lookup table that translates backend errors into the appropriate
@@ -51,7 +51,7 @@ function lookupBackendResponses(status) {
  * @param {*} url - The input url.
  * @returns  {Promise<string>} A promise with the computed key.
  */
-async function computeSurrogateKey(url) {
+export async function computeSurrogateKey(url) {
   /* c8 ignore next 2 */
   const subtle = cryptoImpl?.webcrypto?.subtle // WebCrypto (node >= v15)
      || cryptoImpl?.subtle; // WebcCypto (browser, service worker)
@@ -92,7 +92,7 @@ async function computeSurrogateKey(url) {
  * @param {int} status the backend HTTP status code
  * @returns {int} the appropriate HTTP status code for your app
  */
-function propagateStatusCode(status) {
+export function propagateStatusCode(status) {
   return lookupBackendResponses(status).status;
 }
 
@@ -109,7 +109,7 @@ function propagateStatusCode(status) {
  * @param {int} status the HTTP status code from your backend
  * @returns {string} the correct log level
  */
-function logLevelForStatusCode(status) {
+export function logLevelForStatusCode(status) {
   return lookupBackendResponses(status).level;
 }
 
@@ -118,7 +118,7 @@ function logLevelForStatusCode(status) {
  * @param {string} value a header value
  * @returns a valid header value
  */
-function cleanupHeaderValue(value) {
+export function cleanupHeaderValue(value) {
   return value.replace(/[^\t\u0020-\u007E\u0080-\u00FF]/g, '').substr(0, 1024);
 }
 
@@ -128,7 +128,7 @@ function cleanupHeaderValue(value) {
  * @param {string} value value to create digest for
  * @returns SHA256 digest of value, shortened to 59 characters
  */
-async function hashContentBusId(value) {
+export async function hashContentBusId(value) {
   /* c8 ignore next 2 */
   const subtle = cryptoImpl?.webcrypto?.subtle // WebCrypto (node >= v15)
      || cryptoImpl?.subtle; // WebcCypto (browser, service worker)
@@ -147,11 +147,3 @@ async function hashContentBusId(value) {
 
   return s.substring(0, 59);
 }
-
-module.exports = {
-  computeSurrogateKey,
-  propagateStatusCode,
-  logLevelForStatusCode,
-  cleanupHeaderValue,
-  hashContentBusId,
-};

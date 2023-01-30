@@ -12,8 +12,10 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const cache = require('../src/fetchconfig/cache.js').options({ max: 10 });
+import assert from 'assert';
+import { options } from '../src/fetchconfig/cache.js';
+
+const cache = options({ max: 10 });
 
 let errcounter = 0;
 const errfn = () => {

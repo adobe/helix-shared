@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { NamedMapHandler } = require('./NamedMapHandler.js');
+import { SchemaDerivedConfig } from './SchemaDerivedConfig.js';
+import { NamedMapHandler } from './NamedMapHandler.js';
 
-const indexConfigSchema = require('./schemas/indexconfig.schema.json');
-const indexSchema = require('./schemas/index.schema.json');
-const propertySchema = require('./schemas/property.schema.json');
-const querySchema = require('./schemas/query.schema.json');
+import indexConfigSchema from './schemas/indexconfig.schema.cjs';
+import indexSchema from './schemas/index.schema.cjs';
+import propertySchema from './schemas/property.schema.cjs';
+import querySchema from './schemas/query.schema.cjs';
 
-class IndexConfig extends SchemaDerivedConfig {
+export class IndexConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'helix-query.yaml',
@@ -178,5 +178,3 @@ class IndexConfig extends SchemaDerivedConfig {
     return this;
   }
 }
-
-module.exports = IndexConfig;

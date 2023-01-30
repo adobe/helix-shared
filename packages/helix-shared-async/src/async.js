@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const sleep = (ms) => new Promise((res) => {
+export const sleep = (ms) => new Promise((res) => {
   setTimeout(res, ms);
 });
 
@@ -33,8 +33,6 @@ const sleep = (ms) => new Promise((res) => {
  *
  * @returns {promise} A promise that will resolve during the next tick.
  */
-const nextTick = () => new Promise((res) => {
+export const nextTick = () => new Promise((res) => {
   setImmediate(res);
 });
-
-module.exports = { sleep, nextTick };

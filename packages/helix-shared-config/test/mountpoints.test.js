@@ -12,13 +12,11 @@
 
 /* eslint-env mocha */
 
-process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
-
-const assert = require('assert');
-const fs = require('fs-extra');
-const path = require('path');
-const MountConfig = require('../src/MountConfig.js');
-const { setupPolly } = require('./utils.js');
+import assert from 'assert';
+import fs from 'fs-extra';
+import path from 'path';
+import { MountConfig } from '../src/MountConfig.js';
+import { setupPolly } from './utils.js';
 
 describe('Mount Point Config Loading (from GitHub)', () => {
   setupPolly({
@@ -95,7 +93,7 @@ describe('Mount Point Config Loading (from GitHub)', () => {
   });
 });
 
-const SPEC_ROOT = path.resolve(__dirname, 'specs/mountconfigs');
+const SPEC_ROOT = path.resolve(__testdir, 'specs/mountconfigs');
 
 const tests = [
   {

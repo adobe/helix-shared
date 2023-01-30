@@ -11,16 +11,20 @@
  */
 
 /* eslint-env mocha */
-/* eslint-disable max-len,array-callback-return,no-param-reassign */
+/* eslint-disable max-len,array-callback-return,no-param-reassign,import/named */
 
-const assert = require('assert');
-const { each } = require('ferrum');
-const { JSDOM } = require('jsdom');
-const {
-  ancestryNodes, equalizeNode,
-  nodeIsEquivalent, assertEquivalentNode,
-  isNode, assertNode, nodeName, nodeMatches, dumpDOM,
-} = require('../src/dom.js');
+import assert from 'assert';
+import { each } from 'ferrum';
+
+import { JSDOM } from 'jsdom';
+
+import {
+  ancestryNodes,
+  assertEquivalentNode, assertNode, dumpDOM,
+  equalizeNode,
+  isNode,
+  nodeIsEquivalent, nodeMatches, nodeName,
+} from '../src/dom.js';
 
 describe('isNode, assertNode, nodeName', () => {
   const doc = new JSDOM('<foo></foo><div></div>Hello<!-- Fnord -->').window.document;

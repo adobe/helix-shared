@@ -11,8 +11,8 @@
  */
 
 /* eslint-env mocha */
-const assert = require('assert');
-const processQueue = require('../src/process-queue.js');
+import assert from 'assert';
+import processQueue from '../src/process-queue.js';
 
 const nop = () => {};
 

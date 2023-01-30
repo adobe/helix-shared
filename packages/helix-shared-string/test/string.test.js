@@ -12,8 +12,8 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const { multiline } = require('../src/string.js');
+import assert from 'assert';
+import { multiline } from '../src/string.js';
 
 describe('String tests', () => {
   it('multiline()', () => {

@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-const { URL } = require('url');
-const prune = require('@adobe/helix-shared-prune');
+import { URL } from 'url';
+
+import prune from '@adobe/helix-shared-prune';
 
 const RAW_TYPE = 'raw';
 const API_TYPE = 'api';
@@ -21,7 +22,7 @@ const MATCH_GIT_URL = /^\/([^/]+)\/([^/]+)(\/.*)?$/;
 /**
  * Represents a GIT url.
  */
-class GitUrl {
+export class GitUrl {
   /**
    * Creates a new GitUrl either from a String URL or from a serialized object. The string must be
    * of the format "<scheme>://<hostname>[:<port>]/<owner>/<repo>.git[/<path>][#ref>]".
@@ -320,5 +321,3 @@ class GitUrl {
     return doc.createNode(this.toJSON({ minimal: true }));
   }
 }
-
-module.exports = GitUrl;

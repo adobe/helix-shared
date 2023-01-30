@@ -9,10 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { Request, Response } = require('@adobe/fetch');
-const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
-const fstab = require('./MountConfig.js');
-const index = require('./IndexConfig.js');
+import { Request, Response } from '@adobe/fetch';
+
+import { cleanupHeaderValue } from '@adobe/helix-shared-utils';
+
+import { MountConfig as fstab } from './MountConfig.js';
+import { IndexConfig as index } from './IndexConfig.js';
 
 const loaders = {
   fstab,
@@ -25,7 +27,7 @@ const loaders = {
  * @param  {...string} names the parameter names to extract
  * @returns {object} an object with the provided parameter names as keys
  */
-async function getData(request, ...names) {
+export async function getData(request, ...names) {
   if (/^application\/x-www-form-urlencoded/.test(request.headers.get('content-type'))) {
     const data = new URLSearchParams(await request.text());
     return names.reduce((prev, name) => {
@@ -155,14 +157,10 @@ function wrap(func, required, ...configs) {
   };
 }
 
-function requiredConfig(func, ...configs) {
+export function requiredConfig(func, ...configs) {
   return wrap(func, true, ...configs);
 }
 
-function optionalConfig(func, ...configs) {
+export function optionalConfig(func, ...configs) {
   return wrap(func, false, ...configs);
 }
-
-module.exports = {
-  requiredConfig, optionalConfig, getData,
-};

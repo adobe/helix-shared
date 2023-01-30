@@ -51,7 +51,7 @@
  * @param {Function} fn the function to prepare for wrapping
  * @returns {WrappableFunction} the same main function, now including a `with` method
  */
-function wrap(fn) {
+export default function wrap(fn) {
   const withfn = function withfn(wrapper, ...opts) {
     const wrapped = wrapper(this, ...opts);
     wrapped.with = withfn;
@@ -62,5 +62,3 @@ function wrap(fn) {
   fn.with = withfn;
   return fn;
 }
-
-module.exports = wrap;

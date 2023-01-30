@@ -17,7 +17,7 @@
  * @param {object} obj - The object to prune.
  * @returns {object} the input object or {@code null} if the object is empty.
  */
-function pruneEmptyValues(obj) {
+export default function pruneEmptyValues(obj) {
   const keys = Object.keys(obj);
   let i = 0;
   keys.forEach((k) => {
@@ -29,5 +29,3 @@ function pruneEmptyValues(obj) {
   });
   return keys.length === i ? null : obj;
 }
-
-module.exports = pruneEmptyValues;

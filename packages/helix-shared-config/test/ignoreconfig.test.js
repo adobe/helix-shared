@@ -12,12 +12,12 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const fs = require('fs-extra');
-const path = require('path');
-const { IgnoreConfig } = require('../src/index.js');
+import assert from 'assert';
+import fs from 'fs-extra';
+import path from 'path';
+import { IgnoreConfig } from '../src/index.js';
 
-const SPEC_ROOT = path.resolve(__dirname, 'specs/hlxignore');
+const SPEC_ROOT = path.resolve(__testdir, 'specs/hlxignore');
 
 function shouldIgnore(cfg, paths) {
   paths.forEach((s) => assert.ok(cfg.ignores(s), `'${s}' not ignored, but it should be.`));

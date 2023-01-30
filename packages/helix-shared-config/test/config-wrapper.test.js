@@ -13,12 +13,14 @@
 /* eslint-disable no-console */
 
 /* eslint-env mocha */
-const assert = require('assert');
-const { Response, Request } = require('@adobe/fetch');
-const wrap = require('@adobe/helix-shared-wrap');
-const { optionalConfig, requiredConfig } = require('../src/index.js');
-const { getData } = require('../src/config-wrapper.js');
-const { setupPolly } = require('./utils.js');
+import assert from 'assert';
+import { Request, Response } from '@adobe/fetch';
+
+import wrap from '@adobe/helix-shared-wrap';
+import { optionalConfig, requiredConfig } from '../src/index.js';
+
+import { setupPolly } from './utils.js';
+import { getData } from '../src/config-wrapper.js';
 
 const log = {
   info: console.log,
