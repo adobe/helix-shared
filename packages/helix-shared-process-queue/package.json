@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-process-queue",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Shared modules of the Helix Project - Process Queue",
   "main": "src/process-queue.js",
   "types": "src/process-queue.d.ts",
