@@ -1,3 +1,15 @@
+# [@adobe/helix-shared-utils-v3.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils-v2.2.0...@adobe/helix-shared-utils-v3.0.0) (2023-01-31)
+
+
+### Bug Fixes
+
+* use esm ([1ee2a3a](https://github.com/adobe/helix-shared/commit/1ee2a3a952b2ca6453507d73e89efdc06fc57c11))
+
+
+### BREAKING CHANGES
+
+* requires ESM
+
 # [@adobe/helix-shared-utils-v2.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-utils-v2.1.0...@adobe/helix-shared-utils-v2.2.0) (2022-11-18)
 
 
