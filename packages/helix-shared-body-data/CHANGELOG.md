@@ -1,3 +1,15 @@
+# [@adobe/helix-shared-body-data-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v1.1.20...@adobe/helix-shared-body-data-v2.0.0) (2023-01-31)
+
+
+### Bug Fixes
+
+* use esm ([1ee2a3a](https://github.com/adobe/helix-shared/commit/1ee2a3a952b2ca6453507d73e89efdc06fc57c11))
+
+
+### BREAKING CHANGES
+
+* requires ESM
+
 # [@adobe/helix-shared-body-data-v1.1.20](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v1.1.19...@adobe/helix-shared-body-data-v1.1.20) (2022-09-23)
 
 
