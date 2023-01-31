@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.0.0...@adobe/helix-shared-secrets-v2.0.1) (2023-01-31)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to ^4.0.1 ([#756](https://github.com/adobe/helix-shared/issues/756)) ([41fccd4](https://github.com/adobe/helix-shared/commit/41fccd4845f7b07e121360680c99e272050c826b))
+
 # [@adobe/helix-shared-secrets-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v1.0.0...@adobe/helix-shared-secrets-v2.0.0) (2023-01-31)
 
 
