@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-const ignore = require('ignore');
-const BaseParser = require('./BaseParser.js');
+import ignore from 'ignore';
+import { BaseParser } from './BaseParser.js';
 
 const NAME = 'globfile';
 
-class GlobfileParser extends BaseParser {
+export class GlobfileParser extends BaseParser {
   constructor() {
     super(NAME, {
       outputs: ['string'],
@@ -78,5 +78,3 @@ class GlobfileParser extends BaseParser {
     }
   }
 }
-
-module.exports = GlobfileParser;

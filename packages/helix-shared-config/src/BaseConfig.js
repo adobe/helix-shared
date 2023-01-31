@@ -9,12 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const fs = require('fs-extra');
-const path = require('path');
-const YAML = require('yaml');
-const { GitUrl } = require('@adobe/helix-shared-git');
-const cache = require('./fetchconfig/cache.js');
-const fetch = require('./fetchconfig/fetch.js');
+import fs from 'fs-extra';
+import path from 'path';
+import YAML from 'yaml';
+import { GitUrl } from '@adobe/helix-shared-git';
+import { options as cacheOptions } from './fetchconfig/cache.js';
+import { fetchConfigCached } from './fetchconfig/fetch.js';
 
 async function isFile(filePath) {
   try {
@@ -24,7 +24,7 @@ async function isFile(filePath) {
   }
 }
 
-class BaseConfig {
+export class BaseConfig {
   /**
    *
    * @param {string} name name of the config file, e.g. `helix-config.yaml`
@@ -62,9 +62,9 @@ class BaseConfig {
         max: options.maxSize,
       };
       delete opts.maxSize;
-      cache.options(opts);
+      cacheOptions(opts);
     } else {
-      cache.options(options);
+      cacheOptions(options);
     }
     return this;
   }
@@ -170,7 +170,7 @@ class BaseConfig {
     if (!this._source) {
       if (this._repo) {
         // fetch the config file from the repo
-        this._source = await fetch({
+        this._source = await fetchConfigCached({
           ...this._repo,
           name: this._name,
           log: this._logger,
@@ -221,5 +221,3 @@ class BaseConfig {
     return YAML.stringify(this.toJSON());
   }
 }
-
-module.exports = BaseConfig;

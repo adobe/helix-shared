@@ -12,9 +12,9 @@
 
 /* global describe, it */
 
-const assert = require('assert');
-const YAML = require('yaml');
-const { GitUrl } = require('../src/index.js');
+import assert from 'assert';
+import YAML from 'yaml';
+import { GitUrl } from '../src/index.js';
 
 describe('GitUrl from string tests', () => {
   it('Fails for no arguments', () => {

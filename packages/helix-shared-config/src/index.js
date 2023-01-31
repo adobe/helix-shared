@@ -9,21 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const IndexConfig = require('./IndexConfig.js');
-const MountConfig = require('./MountConfig.js');
-const { optionalConfig, requiredConfig } = require('./config-wrapper.js');
-const ValidationError = require('./ValidationError.js');
-const IgnoreConfig = require('./IgnoreConfig.js');
-const SitemapConfig = require('./SitemapConfig.js');
-const { ModifiersConfig } = require('./ModifiersConfig.js');
+export { IndexConfig } from './IndexConfig.js';
+export { MountConfig } from './MountConfig.js';
+export { optionalConfig, requiredConfig } from './config-wrapper.js';
 
-module.exports = {
-  IndexConfig,
-  MountConfig,
-  IgnoreConfig,
-  SitemapConfig,
-  optionalConfig,
-  requiredConfig,
-  ValidationError,
-  ModifiersConfig,
-};
+export { ValidationError } from './ValidationError.js';
+export { IgnoreConfig } from './IgnoreConfig.js';
+export { SitemapConfig } from './SitemapConfig.js';
+export { ModifiersConfig } from './ModifiersConfig.js';

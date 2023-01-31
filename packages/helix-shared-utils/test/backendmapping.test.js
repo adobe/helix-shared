@@ -12,8 +12,8 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const { propagateStatusCode, logLevelForStatusCode } = require('../src/utils.js');
+import assert from 'assert';
+import { logLevelForStatusCode, propagateStatusCode } from '../src/utils.js';
 
 describe('Test Log Level Determination', () => {
   it('2xx responses', () => {

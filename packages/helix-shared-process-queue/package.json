@@ -4,6 +4,7 @@
   "description": "Shared modules of the Helix Project - Process Queue",
   "main": "src/process-queue.js",
   "types": "src/process-queue.d.ts",
+  "type": "module",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",

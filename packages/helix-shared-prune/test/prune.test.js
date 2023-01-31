@@ -12,8 +12,8 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const pruneEmptyValues = require('../src/prune.js');
+import assert from 'assert';
+import pruneEmptyValues from '../src/prune.js';
 
 describe('Prune Empty Values Test', () => {
   it('removes empty values', () => {

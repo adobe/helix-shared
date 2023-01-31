@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const LRU = require('lru-cache');
+import LRU from 'lru-cache';
 
 let lru = new LRU({ max: 1000, ttl: 60 * 1000 });
 
@@ -31,7 +31,7 @@ let lru = new LRU({ max: 1000, ttl: 60 * 1000 });
  * function returns `true` will the error be cached. The default is that
  * errors are never cached, so that each new invocation will be uncached.
  */
-function cache(fn, opts = {}) {
+export function cache(fn, opts = {}) {
   const {
     hash = (...args) => args.join(),
     cacheresult = () => true,
@@ -73,10 +73,8 @@ function cache(fn, opts = {}) {
  * @param {object} opts options
  * @param {number} opts.max maximum size of the cache
  */
-cache.options = (opts) => {
+export const options = (opts) => {
   lru = new LRU(opts);
 
   return cache;
 };
-
-module.exports = cache;

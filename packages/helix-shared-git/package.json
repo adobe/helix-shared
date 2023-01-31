@@ -3,6 +3,7 @@
   "version": "2.0.4",
   "description": "Shared modules of the Helix Project - Git Utils",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",

@@ -3,6 +3,7 @@
   "version": "2.2.0",
   "description": "Shared modules of the Helix Project - Utils",
   "main": "src/utils.js",
+  "type": "module",
   "imports": {
     "#crypto": {
       "node": "./src/crypto.node.js",

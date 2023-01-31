@@ -12,9 +12,10 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const { exec } = require('ferrum');
-const { nextTick, sleep } = require('../src/async.js');
+import assert from 'assert';
+import { exec } from 'ferrum';
+
+import { nextTick, sleep } from '../src/async.js';
 
 describe('Async Tests', () => {
   it('sleep', async () => {

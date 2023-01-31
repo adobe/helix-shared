@@ -12,11 +12,13 @@
 
 /* eslint-env mocha */
 
-const wrap = require('@adobe/helix-shared-wrap');
-const assert = require('assert');
-const { Request, Response } = require('@adobe/fetch');
-const { Nock } = require('./utils.js');
-const ims = require('../src/ims.js');
+import wrap from '@adobe/helix-shared-wrap';
+import assert from 'assert';
+import { Request, Response } from '@adobe/fetch';
+
+import { Nock } from './utils.js';
+
+import ims from '../src/ims.js';
 
 const DEFAULT_CONTEXT = (suffix = '/') => ({
   log: console,

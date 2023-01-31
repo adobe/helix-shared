@@ -3,6 +3,7 @@
   "version": "1.0.5",
   "description": "Shared modules of the Helix Project - prune",
   "main": "src/prune.js",
+  "type": "module",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",

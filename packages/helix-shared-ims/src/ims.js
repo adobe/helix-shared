@@ -9,19 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const fetchAPI = require('@adobe/fetch');
-const { parse, serialize } = require('cookie');
+import { context as h2, h1, Response } from '@adobe/fetch';
+import { parse, serialize } from 'cookie';
 
-const { context: fetchContext, ALPN_HTTP1_1, Response } = fetchAPI;
-/* c8 ignore next */
+/* c8 ignore next 5 */
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
-  /* c8 ignore next */
-  ? fetchContext({
-    alpnProtocols: [ALPN_HTTP1_1],
+  ? h1({
     userAgent: 'adobe-fetch', // static user agent for test recordings
   })
-  /* c8 ignore next */
-  : fetchAPI;
+  : h2();
 
 const IMS_ENDPOINTS = {
   stage: 'https://ims-na1-stg1.adobelogin.com',
@@ -180,7 +176,7 @@ async function logout(ctx) {
  *
  * The `IMSConfig.routeLoginRedirectPrompt` (default '/login/ack2') route handles the response from
  * the second login attempt.
- * The the login was successful, it will respond with a redirect to the root `/`,
+ * The login was successful, it will respond with a redirect to the root `/`,
  * otherwise the request remains unauthenticated.
  *
  * After a successful login, a `ims_access_token` cookie is set on the response, which is
@@ -197,7 +193,7 @@ async function logout(ctx) {
  * @param {IMSConfig} [options] Options
  * @returns {UniversalFunction} an universal function with the added middleware.
  */
-function imsWrapper(func, options = {}) {
+export default function imsWrapper(func, options = {}) {
   return async (req, ctx) => {
     const { data = {} } = ctx;
 
@@ -309,5 +305,3 @@ function imsWrapper(func, options = {}) {
     return func(req, ctx);
   };
 }
-
-module.exports = imsWrapper;

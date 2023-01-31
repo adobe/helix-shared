@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable no-param-reassign */
-const { Request, Response } = require('@adobe/fetch');
+import { Request, Response } from '@adobe/fetch';
 
 const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 
@@ -79,7 +79,7 @@ async function getData(request, opts) {
  * @param {BodyDataOptions} [opts] Options
  * @returns {UniversalFunction} an universal function with the added middleware.
  */
-function bodyData(func, opts = {}) {
+export default function bodyData(func, opts = {}) {
   return async (request, context) => {
     try {
       context.data = await getData(request, opts);
@@ -97,5 +97,3 @@ function bodyData(func, opts = {}) {
     return func(newreq, context);
   };
 }
-
-module.exports = bodyData;

@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const SchemaDerivedConfig = require('./SchemaDerivedConfig.js');
-const { NamedMapHandler } = require('./NamedMapHandler.js');
+import { SchemaDerivedConfig } from './SchemaDerivedConfig.js';
+import { NamedMapHandler } from './NamedMapHandler.js';
 
-const sitemapConfigSchema = require('./schemas/sitemapconfig.schema.json');
-const sitemapSchema = require('./schemas/sitemap.schema.json');
-const languageSchema = require('./schemas/sitemap-language.schema.json');
-const { SitemapHandler } = require('./SitemapHandler.js');
+import sitemapConfigSchema from './schemas/sitemapconfig.schema.cjs';
+import sitemapSchema from './schemas/sitemap.schema.cjs';
+import languageSchema from './schemas/sitemap-language.schema.cjs';
+import { SitemapHandler } from './SitemapHandler.js';
 
-class SitemapConfig extends SchemaDerivedConfig {
+export class SitemapConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'helix-sitemap.yaml',
@@ -115,5 +115,3 @@ class SitemapConfig extends SchemaDerivedConfig {
     return languages[name];
   }
 }
-
-module.exports = SitemapConfig;

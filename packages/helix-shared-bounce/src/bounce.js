@@ -9,18 +9,18 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const {
-  fetch, timeoutSignal, Response, AbortError,
-} = require('@adobe/fetch');
-const crypto = require('crypto');
+import {
+  AbortError, fetch, Response, timeoutSignal,
+} from '@adobe/fetch';
 
+import crypto from 'crypto';
 // polyfill for timers/promise
 const timer = {
   // eslint-disable-next-line no-promise-executor-return
   setTimeout: async (delay) => new Promise((resolve) => setTimeout(resolve, delay)),
 };
 
-function bounce(func, { responder, timeout = 500, debounce = () => '' }) {
+export default function bounce(func, { responder, timeout = 500, debounce = () => '' }) {
   return async (request, context) => {
     const id = request.headers.get('x-hlx-bounce-id')
       || process.env.HELIX_DEBOUNCE
@@ -81,5 +81,3 @@ function bounce(func, { responder, timeout = 500, debounce = () => '' }) {
     return Promise.race([actualResponse, holdingResponse]);
   };
 }
-
-module.exports = bounce;

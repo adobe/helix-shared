@@ -12,8 +12,8 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const { hashContentBusId } = require('../src/utils.js');
+import assert from 'assert';
+import { hashContentBusId } from '../src/utils.js';
 
 describe('Surrogate Test', () => {
   it('computes a string', async () => {

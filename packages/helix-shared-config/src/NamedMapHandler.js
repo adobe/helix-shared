@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const NamedMapHandler = (keyname = 'name') => ({
+export const NamedMapHandler = (keyname = 'name') => ({
   get: (target, prop) => {
     const index = Number.parseInt(prop, 10);
     if (!Number.isNaN(index) && index >= 0) {
@@ -21,4 +21,3 @@ const NamedMapHandler = (keyname = 'name') => ({
     return prop === 'length' ? Object.keys(target).length : target[prop];
   },
 });
-exports.NamedMapHandler = NamedMapHandler;

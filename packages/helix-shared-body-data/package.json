@@ -4,6 +4,7 @@
   "description": "Shared modules of the Helix Project - body-data",
   "main": "src/body-data-wrapper.js",
   "types": "src/body-data-wrapper.d.ts",
+  "type": "module",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",
@@ -27,10 +28,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/fetch": "^3.1.4",
+    "@adobe/fetch": "^4.0.1",
     "@adobe/helix-shared-wrap": "^1.0.5"
   },
   "optionalDependencies": {
-    "@adobe/helix-universal": "^3.0.4"
+    "@adobe/helix-universal": "^4.0.0"
   }
 }

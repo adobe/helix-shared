@@ -4,6 +4,7 @@
   "description": "Shared modules of the Helix Project - wrap",
   "main": "src/wrap.js",
   "types": "src/wrap.d.ts",
+  "type": "module",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",

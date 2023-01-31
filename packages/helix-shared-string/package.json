@@ -3,6 +3,7 @@
   "version": "1.0.9",
   "description": "Shared modules of the Helix Project - string",
   "main": "src/string.js",
+  "type": "module",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",

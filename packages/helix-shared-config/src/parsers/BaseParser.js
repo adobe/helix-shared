@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-class BaseParser {
+export class BaseParser {
   /**
    *
    * @param {string} name name of the parser, e.g. `yaml`
@@ -80,5 +80,3 @@ class BaseParser {
     throw new Error(`${format} output not implemented for ${this._name}.`);
   }
 }
-
-module.exports = BaseParser;

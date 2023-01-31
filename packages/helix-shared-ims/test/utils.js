@@ -9,10 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const assert = require('assert');
-const nock = require('nock');
+import assert from 'assert';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import nock from 'nock';
 
-function Nock() {
+export function Nock() {
   const scopes = {};
 
   let unmatched;
@@ -44,5 +45,3 @@ function Nock() {
 
   return nocker;
 }
-
-module.exports = { Nock };

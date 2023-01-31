@@ -11,7 +11,7 @@
  */
 /* eslint-disable max-classes-per-file */
 
-class ValidationError extends Error {
+export class ValidationError extends Error {
   constructor(
     msg,
     errors = [],
@@ -42,5 +42,3 @@ ${msg}`);
     return `${prettyname(dataPath, parentSchema)} ${message}: ${keyword}(${JSON.stringify(data)}, ${JSON.stringify(params)})`;
   }
 }
-
-module.exports = ValidationError;

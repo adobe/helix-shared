@@ -13,13 +13,14 @@
 /* eslint-disable no-console */
 
 /* eslint-env mocha */
-const assert = require('assert');
-const path = require('path');
-const { readFile } = require('fs').promises;
-const { ModifiersConfig } = require('../src/index.js');
+import assert from 'assert';
+import path from 'path';
+import { readFile } from 'fs/promises';
+
+import { ModifiersConfig } from '../src/index.js';
 
 async function readTestJSON(filename) {
-  return JSON.parse(await readFile(path.resolve(__dirname, 'fixtures', 'content', filename), 'utf-8'));
+  return JSON.parse(await readFile(path.resolve(__testdir, 'fixtures', 'content', filename), 'utf-8'));
 }
 
 function delta(t0, t1) {

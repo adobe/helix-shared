@@ -13,15 +13,13 @@
 /* eslint-env mocha */
 /* eslint-disable max-len */
 
-process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
+import assert from 'assert';
+import fs from 'fs-extra';
+import path from 'path';
+import { SitemapConfig } from '../src/SitemapConfig.js';
+import { setupPolly } from './utils.js';
 
-const assert = require('assert');
-const fs = require('fs-extra');
-const path = require('path');
-const SitemapConfig = require('../src/SitemapConfig.js');
-const { setupPolly } = require('./utils.js');
-
-const SPEC_ROOT = path.resolve(__dirname, 'specs/sitemapconfigs');
+const SPEC_ROOT = path.resolve(__testdir, 'specs/sitemapconfigs');
 
 const tests = [
   {

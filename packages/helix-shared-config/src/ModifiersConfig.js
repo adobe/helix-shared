@@ -24,7 +24,7 @@ function toMetaName(text) {
 /**
  * The modifiers class help manage the metadata and headers modifiers.
  */
-class ModifiersConfig {
+export class ModifiersConfig {
   /**
    * Converts a globbing expression to regexp. Note that only `*` and `**` are supported yet.
    * @param {string} glob
@@ -171,7 +171,3 @@ class ModifiersConfig {
     return modifiers;
   }
 }
-
-module.exports = {
-  ModifiersConfig,
-};

@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const path = require('path');
+import path from 'path';
 // eslint-disable-next-line import/no-extraneous-dependencies
-const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
+import NodeHttpAdapter from '@pollyjs/adapter-node-http';
 // eslint-disable-next-line import/no-extraneous-dependencies
-const FSPersister = require('@pollyjs/persister-fs');
+import FSPersister from '@pollyjs/persister-fs';
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { setupMocha } = require('@pollyjs/core');
+import { setupMocha } from '@pollyjs/core';
 
-function setupPolly(opts) {
+export function setupPolly(opts) {
   setupMocha({
     logging: false,
     recordFailedRequests: true,
@@ -31,11 +31,9 @@ function setupPolly(opts) {
     persister: FSPersister,
     persisterOptions: {
       fs: {
-        recordingsDir: path.resolve(__dirname, 'fixtures'),
+        recordingsDir: path.resolve(__testdir, 'fixtures'),
       },
     },
     ...opts,
   });
 }
-
-module.exports = { setupPolly };

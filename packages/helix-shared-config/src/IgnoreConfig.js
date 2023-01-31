@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-const BaseConfig = require('./BaseConfig.js');
-const GlobfileParser = require('./parsers/GlobfileParser.js');
+import { BaseConfig } from './BaseConfig.js';
+import { GlobfileParser } from './parsers/GlobfileParser.js';
 
 const IGNORE_CONFIG = '.hlxignore';
 
-class IgnoreConfig extends BaseConfig {
+export class IgnoreConfig extends BaseConfig {
   constructor() {
     super(IGNORE_CONFIG);
     this._parser = new GlobfileParser();
@@ -39,5 +39,3 @@ class IgnoreConfig extends BaseConfig {
     return this._parser.includes(path);
   }
 }
-
-module.exports = IgnoreConfig;
