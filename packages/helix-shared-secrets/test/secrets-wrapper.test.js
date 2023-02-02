@@ -74,6 +74,20 @@ describe('Secrets Wrapper Unit Tests', () => {
     assert.strictEqual(resp.status, 200);
   });
 
+  it('Responds with {} for invalid context (simulate runtime)', async () => {
+    const main = wrap((req, ctx) => {
+      assert.deepStrictEqual(ctx.env, { });
+      return new Response(200);
+    }).with(secrets);
+    const resp = await main(new Request('http://localhost'), {
+      runtime: {
+        name: 'simulate',
+      },
+      env: {},
+    });
+    assert.strictEqual(resp.status, 200);
+  });
+
   it('Responds with {} for invalid context (no func)', async () => {
     const main = wrap((req, ctx) => {
       assert.deepStrictEqual(ctx.env, { });
