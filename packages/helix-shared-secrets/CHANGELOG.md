@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.0.2...@adobe/helix-shared-secrets-v2.0.3) (2023-02-02)
+
+
+### Bug Fixes
+
+* improve context checks ([#758](https://github.com/adobe/helix-shared/issues/758)) ([d22e740](https://github.com/adobe/helix-shared/commit/d22e74064825cc5efd1c1968f33ac389b16dd4d8))
+
 # [@adobe/helix-shared-secrets-v2.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.0.1...@adobe/helix-shared-secrets-v2.0.2) (2023-02-02)
 
 
