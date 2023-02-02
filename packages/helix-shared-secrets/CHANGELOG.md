@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.0.1...@adobe/helix-shared-secrets-v2.0.2) (2023-02-02)
+
+
+### Bug Fixes
+
+* don't throw error if context is invalid ([#757](https://github.com/adobe/helix-shared/issues/757)) ([3b6ec5d](https://github.com/adobe/helix-shared/commit/3b6ec5d2ce5a481f147dcab669cfa94c90a5bcf9))
+
 # [@adobe/helix-shared-secrets-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.0.0...@adobe/helix-shared-secrets-v2.0.1) (2023-01-31)
 
 
