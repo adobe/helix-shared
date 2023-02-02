@@ -63,6 +63,31 @@ describe('Secrets Wrapper Unit Tests', () => {
     assert.strictEqual(resp.headers.get('x-error'), 'error fetching secrets.');
   });
 
+  it('Responds with {} for invalid context (no runtime)', async () => {
+    const main = wrap((req, ctx) => {
+      assert.deepStrictEqual(ctx.env, { });
+      return new Response(200);
+    }).with(secrets);
+    const resp = await main(new Request('http://localhost'), {
+      env: {},
+    });
+    assert.strictEqual(resp.status, 200);
+  });
+
+  it('Responds with {} for invalid context (no func)', async () => {
+    const main = wrap((req, ctx) => {
+      assert.deepStrictEqual(ctx.env, { });
+      return new Response(200);
+    }).with(secrets);
+    const resp = await main(new Request('http://localhost'), {
+      env: {},
+      runtime: {
+        name: 'aws-lambda',
+      },
+    });
+    assert.strictEqual(resp.status, 200);
+  });
+
   it('fetches secrets with default name', async () => {
     nock('https://secretsmanager.us-east-1.amazonaws.com/')
       .post('/')

@@ -39,10 +39,20 @@ export function reset() {
  * @returns {Promise<object>} the secrets or {@code null}.
  */
 async function loadSecrets(ctx, opts) {
+  if (!ctx.runtime) {
+    // eslint-disable-next-line no-console
+    console.warn('local secrets not loaded. no ctx.runtime');
+    return {};
+  }
   if (ctx.runtime.name !== 'aws-lambda') {
     const error = Error(`unsupported runtime: ${ctx.runtime.name}`);
     error.statusCode = 500;
     throw error;
+  }
+  if (!ctx.func) {
+    // eslint-disable-next-line no-console
+    console.warn('local secrets not loaded. no ctx.func');
+    return {};
   }
 
   const {
