@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.0...@adobe/helix-shared-indexer-v2.0.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* catch unsupported selectors ([#761](https://github.com/adobe/helix-shared/issues/761)) ([59b3f8f](https://github.com/adobe/helix-shared/commit/59b3f8ff8de4a42b31be6725c1beadbe1497461d))
+
 # [@adobe/helix-shared-indexer-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v1.0.8...@adobe/helix-shared-indexer-v2.0.0) (2023-01-31)
 
 
