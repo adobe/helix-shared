@@ -92,6 +92,10 @@ indices:
         select: main h1
         value: |
           el.innerText
+      bad-selector:
+        select: div:is([class="embed"])
+        value: |
+          textContent(el)
   `;
 
 const BODY = `
@@ -150,6 +154,7 @@ describe('Index Resource Tests', () => {
     const record = indexResource('/path', { body: BODY, headers }, config.indices[0], console);
     assert.deepStrictEqual(record, {
       author: 'Max',
+      'bad-selector': '',
       'call-unknown-function': '',
       'condition-unsupported': '',
       date: 44313,

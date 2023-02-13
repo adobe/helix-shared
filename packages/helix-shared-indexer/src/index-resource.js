@@ -162,15 +162,20 @@ export function indexResource(path, response, config, log) {
     const { select, ...p } = property;
     const expression = p.value || p.values;
     // create an array of elements
-    const elements = select !== 'none' ? selectAll(select, content) : [];
-    let value = getDOMValue(elements, expression, log, { path, headers }) || [];
-    // concat for single value
-    if (p.value) {
-      if (Array.isArray(value)) {
-        value = value.length === 1 ? value[0] : value.join('');
+    try {
+      const elements = select !== 'none' ? selectAll(select, content) : [];
+      let value = getDOMValue(elements, expression, log, { path, headers }) || [];
+      // concat for single value
+      if (p.value) {
+        if (Array.isArray(value)) {
+          value = value.length === 1 ? value[0] : value.join('');
+        }
       }
+      record[property.name] = value;
+    } catch (e) {
+      log.warn(`Unable to apply given selector '${select}': ${e.message}`);
+      record[property.name] = '';
     }
-    record[property.name] = value;
   });
   return record;
 }
