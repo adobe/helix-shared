@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.1...@adobe/helix-shared-indexer-v2.0.2) (2023-02-22)
+
+
+### Bug Fixes
+
+* prevent prototype pollution ([#765](https://github.com/adobe/helix-shared/issues/765)) ([b6d1677](https://github.com/adobe/helix-shared/commit/b6d16776b9e838c5b5fd856070de893d1546219a))
+
 # [@adobe/helix-shared-indexer-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.0...@adobe/helix-shared-indexer-v2.0.1) (2023-02-13)
 
 
