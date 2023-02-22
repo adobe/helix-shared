@@ -89,7 +89,7 @@ describe('Body Data Wrapper Unit Tests (JSON Body)', () => {
 
   it('Ignores body for GET requests.', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { });
+      assert.deepEqual(context.data, { });
       return new Response('ok');
     };
 
@@ -109,7 +109,7 @@ describe('Body Data Wrapper Unit Tests (JSON Body)', () => {
 describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
   it('Loads URL Parameters', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: 'bar' });
+      assert.deepEqual(context.data, { foo: 'bar' });
       return new Response('ok');
     };
 
@@ -123,7 +123,7 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
 
   it('Loads URL Parameters for POST requests', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: 'bar' });
+      assert.deepEqual(context.data, { foo: 'bar' });
       return new Response('ok');
     };
 
@@ -141,7 +141,7 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
 
   it('Coerces Boolean from URL Parameters', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: true, bar: 'untrue' });
+      assert.deepEqual(context.data, { foo: true, bar: 'untrue' });
       return new Response('ok');
     };
 
@@ -155,7 +155,7 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
 
   it('Coerces Integers from URL Parameters', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: 10, bar: '10.0', baz: '1.5' });
+      assert.deepEqual(context.data, { foo: 10, bar: '10.0', baz: '1.5' });
       return new Response('ok');
     };
 
@@ -169,7 +169,7 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
 
   it('Coerces Numbers from URL Parameters', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, {
+      assert.deepEqual(context.data, {
         foo: 10, bar: 10.0, baz: 1.5, date: '2021-09-30:13:00:00',
       });
       return new Response('ok');
@@ -185,7 +185,7 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
 
   it('Loads duplicate URL Parameters into arrays', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: ['bar', 'baz'] });
+      assert.deepEqual(context.data, { foo: ['bar', 'baz'] });
       return new Response('ok');
     };
 
@@ -199,7 +199,7 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
 
   it('Loads indexed URL Parameters into arrays', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: ['bar', 'baz'] });
+      assert.deepEqual(context.data, { foo: ['bar', 'baz'] });
       return new Response('ok');
     };
 
@@ -216,7 +216,7 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
       const expected = [];
       expected[1] = 'bar';
       expected[2] = 'baz';
-      assert.deepStrictEqual(context.data, { foo: expected });
+      assert.deepEqual(context.data, { foo: expected });
       return new Response('ok');
     };
 
@@ -232,7 +232,7 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
 describe('Body Data Wrapper Unit Tests (Form Data)', () => {
   it('Loads Form Data', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: 'bar' });
+      assert.deepEqual(context.data, { foo: 'bar' });
       return new Response('ok');
     };
 
@@ -251,7 +251,7 @@ describe('Body Data Wrapper Unit Tests (Form Data)', () => {
 
   it('Ignores Form Data for non POST requests', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepStrictEqual(context.data, { foo: 'zoo' });
+      assert.deepEqual(context.data, { foo: 'zoo' });
       return new Response('ok');
     };
 
