@@ -155,7 +155,7 @@ export function indexResource(path, response, config, log) {
   const content = unified()
     .use(rehypeParse, { fragment: false })
     .parse(body);
-  const record = {};
+  const record = Object.create(null);
 
   /* Walk through all index properties */
   config.properties.forEach((property) => {

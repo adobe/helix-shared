@@ -69,7 +69,7 @@ async function getData(request, opts) {
       alldata[key] = values;
     }
     return alldata;
-  }, {});
+  }, Object.create(null));
 }
 
 /**

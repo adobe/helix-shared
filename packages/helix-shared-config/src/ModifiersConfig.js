@@ -48,7 +48,7 @@ export class ModifiersConfig {
       // eslint-disable-next-line no-param-reassign
       prev[key.toLowerCase()] = obj[key];
       return prev;
-    }, {});
+    }, Object.create(null));
   }
 
   /**
@@ -88,7 +88,7 @@ export class ModifiersConfig {
    */
   static parseModifierSheet(sheet, keyFilter = () => true) {
     /** @type ModifierMap */
-    const res = {};
+    const res = Object.create(null);
     for (let row of sheet) {
       row = ModifiersConfig.toLowerKeys(row);
       const {
@@ -158,9 +158,9 @@ export class ModifiersConfig {
    */
   getModifiers(path) {
     if (!this.modifiers) {
-      return {};
+      return Object.create(null);
     }
-    const modifiers = {};
+    const modifiers = Object.create(null);
     for (const { pat, mods } of this.modifiers) {
       if (pat === path || (pat instanceof RegExp && pat.test(path))) {
         for (const { key, value } of mods) {

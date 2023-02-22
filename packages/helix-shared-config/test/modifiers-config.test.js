@@ -99,7 +99,7 @@ describe('ModifiersConfig', () => {
   it('it matches sub-pages metadata', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/page-whatever.html');
-    assert.deepStrictEqual(actual, {
+    assert.deepEqual(actual, {
       category: 'rendering-test',
     });
   });
@@ -107,7 +107,7 @@ describe('ModifiersConfig', () => {
   it('it can parse kv-pairs', async () => {
     const { default: { data } } = await readTestJSON('metadata-kv.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/page-whatever.html');
-    assert.deepStrictEqual(actual, {
+    assert.deepEqual(actual, {
       description: 'Lorem ipsum dolor sit amet.',
       keywords: 'ACME, CORP, PR',
       title: 'ACME CORP',
@@ -118,7 +118,7 @@ describe('ModifiersConfig', () => {
     const { default: { data } } = await readTestJSON('metadata-kv.json');
     const filter = (name) => name !== 'title';
     const actual = ModifiersConfig.fromModifierSheet(data, filter).getModifiers('/page-whatever.html');
-    assert.deepStrictEqual(actual, {
+    assert.deepEqual(actual, {
       description: 'Lorem ipsum dolor sit amet.',
       keywords: 'ACME, CORP, PR',
     });
@@ -129,7 +129,7 @@ describe('ModifiersConfig', () => {
     const filter = (name) => name !== 'title';
     const map = ModifiersConfig.parseModifierSheet(data);
     const actual = new ModifiersConfig(map, filter).getModifiers('/page-whatever.html');
-    assert.deepStrictEqual(actual, {
+    assert.deepEqual(actual, {
       description: 'Lorem ipsum dolor sit amet.',
       keywords: 'ACME, CORP, PR',
     });
@@ -137,13 +137,13 @@ describe('ModifiersConfig', () => {
 
   it('it deal with empty map', async () => {
     const actual = new ModifiersConfig().getModifiers('/');
-    assert.deepStrictEqual(actual, {});
+    assert.deepEqual(actual, {});
   });
 
   it('it combines metadata', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/page-metadata-json.html');
-    assert.deepStrictEqual(actual, {
+    assert.deepEqual(actual, {
       'og:publisher': 'Adobe',
       category: 'rendering-test',
       image: '/media_cf867e391c0b433ec3d416c979aafa1f8e4aae9c.png',
@@ -154,7 +154,7 @@ describe('ModifiersConfig', () => {
   it('it matches exactly', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/exact-match.html');
-    assert.deepStrictEqual(actual, {
+    assert.deepEqual(actual, {
       'og:publisher': 'Adobe',
       keywords: 'Exactomento',
       'short-title': 'E',
@@ -164,7 +164,7 @@ describe('ModifiersConfig', () => {
   it('it matches exact folder', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/exact-folder/');
-    assert.deepStrictEqual(actual, {
+    assert.deepEqual(actual, {
       'og:publisher': 'Adobe',
       keywords: 'Exactomento Folder',
       'short-title': 'E',
@@ -174,12 +174,12 @@ describe('ModifiersConfig', () => {
   it('it doesnt matches below exact folder', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/exact-folder/subpage');
-    assert.deepStrictEqual(actual, {});
+    assert.deepEqual(actual, {});
   });
 
   it('it matches nothing', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/nope');
-    assert.deepStrictEqual(actual, {});
+    assert.deepEqual(actual, {});
   });
 });

@@ -152,7 +152,7 @@ describe('Index Resource Tests', () => {
     const config = await new IndexConfig().withSource(INDEX).init();
     const headers = new Headers({ 'last-modified': 'Mon, 22 Feb 2021 15:28:00 GMT' });
     const record = indexResource('/path', { body: BODY, headers }, config.indices[0], console);
-    assert.deepStrictEqual(record, {
+    assert.deepEqual(record, {
       author: 'Max',
       'bad-selector': '',
       'call-unknown-function': '',
