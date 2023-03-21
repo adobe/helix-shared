@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.0.1...@adobe/helix-shared-config-v10.0.2) (2023-03-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lru-cache to v8 ([#774](https://github.com/adobe/helix-shared/issues/774)) ([07aa5ba](https://github.com/adobe/helix-shared/commit/07aa5ba969f6043bdf5d07e760d99dcb22f511d7))
+
 # [@adobe/helix-shared-config-v10.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.0.0...@adobe/helix-shared-config-v10.0.1) (2023-02-22)
 
 
