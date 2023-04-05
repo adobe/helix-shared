@@ -11,3 +11,4 @@
  */
 export * from './config-wrapper';
 export * from './ModifiersConfig';
+export * from './MountConfig';
