@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 
-let lru = new LRU({ max: 1000, ttl: 60 * 1000 });
+let lru = new LRUCache({ max: 1000, ttl: 60 * 1000 });
 
 /**
  * Returns a memoized version of the function `fn`.
@@ -74,7 +74,7 @@ export function cache(fn, opts = {}) {
  * @param {number} opts.max maximum size of the cache
  */
 export const options = (opts) => {
-  lru = new LRU(opts);
+  lru = new LRUCache(opts);
 
   return cache;
 };
