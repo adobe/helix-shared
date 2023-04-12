@@ -4,6 +4,10 @@
   },
   "folders": {
     "/app/": "/spa/index.html",
-    "/products": "/special/generic-product"
+    "/products": "/special/generic-product",
+    "/template": {
+      "metadata": "/template/doc/metadata.json",
+      "resource": "/template/doc"
+    }
   }
 }

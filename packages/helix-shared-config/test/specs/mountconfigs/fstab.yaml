@@ -4,3 +4,6 @@ mountpoints:
 folders:
   /products: /special/generic-product
   /app/: /spa/index.html
+  /template:
+    resource: /template/doc
+    metadata: /template/doc/metadata.json

@@ -32,7 +32,21 @@
       "description": "Mapping from subtrees to single sources for catch-all folder support.",
       "patternProperties": {
         "^/.*[^/]$": {
-          "type": "string"
+          "oneOf": [{
+            "type": "string"
+          },{
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": ["resource"]
+          }]
         }
       }
     }
