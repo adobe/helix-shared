@@ -28,3 +28,4 @@ mountpoints:
   /custom:
     url: https://www.example.com/content/
     type: markup
+  /invalid-sharepoint: https://anvilsecure.com?.sharepoint.com/foobar
