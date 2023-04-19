@@ -288,5 +288,9 @@ describe('Mount Point Config Loading', () => {
     const m19 = cfg.match('/custom/foo');
     assert.deepEqual(m19.type, 'markup');
     assert.deepEqual(m19.relPath, '/foo');
+
+    // invalid sharepoint is not handled
+    const m20 = cfg.match('/invalid-sharepoint/foo');
+    assert.deepEqual(m20.type, undefined);
   });
 });
