@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.0.3...@adobe/helix-shared-config-v10.1.0) (2023-04-25)
+
+
+### Features
+
+* delete generated index configuration ([#792](https://github.com/adobe/helix-shared/issues/792)) ([f08aac7](https://github.com/adobe/helix-shared/commit/f08aac7098f7badbc4a1560a87730f4ef1715450))
+
 # [@adobe/helix-shared-config-v10.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.0.2...@adobe/helix-shared-config-v10.0.3) (2023-04-11)
 
 
