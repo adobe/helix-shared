@@ -89,6 +89,22 @@ export class IndexConfig extends SchemaDerivedConfig {
   }
 
   /**
+   * Removes an index definition.
+   *
+   * @param {Object} index index configuration
+   * @param {string} index.name index name
+   */
+  removeIndex({
+    name,
+  }) {
+    const { indices } = this._cfg;
+    delete indices[name];
+
+    // let BaseConfig.toYAML() use the JSON output
+    this._document = null;
+  }
+
+  /**
    * Evaluates a variable expression
    * @param {string} expression the expression to encode
    * @param {string[]} parameters the list of variable parameters in the query

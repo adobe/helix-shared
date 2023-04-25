@@ -246,6 +246,22 @@ describe('Index Config Loading', () => {
     assert.deepStrictEqual(property.value, index.properties.author.value);
   });
 
+  it('remove index configuration', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'));
+    await cfg.init();
+
+    cfg.removeIndex({ name: 'blog-posts' });
+
+    // reparse the modified configuration's YAML output
+    const newcfg = new IndexConfig()
+      .withSource(cfg.toYAML());
+    await newcfg.init();
+
+    const config = newcfg.indices.find((i) => i.name === 'blog-posts');
+    assert.strictEqual(config, undefined);
+  });
+
   it('add index configuration with existing name', async () => {
     const cfg = new IndexConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'query.yaml'));
