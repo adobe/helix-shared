@@ -38,7 +38,7 @@
     "cookie": "0.5.0",
     "fs-extra": "11.1.1",
     "ignore": "5.2.4",
-    "lru-cache": "9.0.3",
+    "lru-cache": "9.1.1",
     "object-hash": "3.0.0",
     "uri-js": "4.4.1",
     "yaml": "2.2.1"
@@ -49,6 +49,6 @@
     "@pollyjs/adapter-node-http": "6.0.5",
     "@pollyjs/core": "6.0.5",
     "@pollyjs/persister-fs": "6.0.5",
-    "nock": "13.3.0"
+    "nock": "13.3.1"
   }
 }
