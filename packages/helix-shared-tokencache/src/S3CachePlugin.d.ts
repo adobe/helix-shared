@@ -43,6 +43,8 @@ export declare class S3CachePlugin implements ICachePlugin {
 
   deleteCache(): Promise<void>;
 
+  location: string;
+
   afterCacheAccess(tokenCacheContext: TokenCacheContext): Promise<boolean>;
 
   beforeCacheAccess(tokenCacheContext: TokenCacheContext): Promise<boolean>;

@@ -26,4 +26,6 @@ export declare class FSCachePlugin implements ICachePlugin {
   afterCacheAccess(tokenCacheContext: TokenCacheContext): Promise<boolean>;
 
   beforeCacheAccess(tokenCacheContext: TokenCacheContext): Promise<boolean>;
+
+  location: string;
 }

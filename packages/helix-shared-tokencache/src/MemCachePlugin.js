@@ -85,4 +85,8 @@ export class MemCachePlugin {
     }
     return false;
   }
+
+  get location() {
+    return this.base ? this.base.location : this.key;
+  }
 }

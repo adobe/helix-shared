@@ -39,6 +39,7 @@ describe('MemCachePlugin Test', () => {
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
     assert.strictEqual(caches.get('foobar-key'), 'foobar');
+    assert.strictEqual(p.location, 'foobar-key');
   });
 
   it('read/writes the cache w/o base with global cache', async () => {
