@@ -15,3 +15,4 @@ export { MemCachePlugin } from './MemCachePlugin.js';
 export { S3CachePlugin } from './S3CachePlugin.js';
 export { S3CacheManager } from './S3CacheManager.js';
 export { encrypt, decrypt } from './encrypt.js';
+export { getCachePlugin } from './getCachePlugin.js';
