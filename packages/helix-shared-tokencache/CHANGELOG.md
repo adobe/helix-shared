@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.1.0...@adobe/helix-shared-tokencache-v1.1.1) (2023-05-03)
+
+
+### Bug Fixes
+
+* export getCachePlugin in index.js ([39f6c9c](https://github.com/adobe/helix-shared/commit/39f6c9c5944e27178f2c57bb5271c2db2d82fa72))
+
 # [@adobe/helix-shared-tokencache-v1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.0.0...@adobe/helix-shared-tokencache-v1.1.0) (2023-05-03)
 
 
