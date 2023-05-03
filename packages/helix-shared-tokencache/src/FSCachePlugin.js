@@ -70,4 +70,8 @@ export class FSCachePlugin {
     }
     return false;
   }
+
+  get location() {
+    return this.filePath;
+  }
 }

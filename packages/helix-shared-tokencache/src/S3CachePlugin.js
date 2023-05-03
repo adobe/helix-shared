@@ -110,6 +110,10 @@ export class S3CachePlugin {
     }
     return false;
   }
+
+  get location() {
+    return `${this.bucket}/${this.key}`;
+  }
 }
 
 S3CachePlugin.encrypt = encrypt;

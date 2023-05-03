@@ -46,6 +46,7 @@ describe('FSCachePlugin Test', () => {
     assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
       access_token: '1234',
     });
+    assert.strictEqual(p.location, testFilePath);
   });
 
   it('does not the cache data to the filesystem if context not changed', async () => {
