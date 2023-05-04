@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@adobe/fetch": "^4.0.1",
-    "@adobe/helix-shared-git": "^2.0.4",
+    "@adobe/helix-shared-git": "^3.0.0",
     "@adobe/helix-shared-prune": "^1.0.5",
     "@adobe/helix-shared-utils": "^2.1.0",
     "ajv": "8.12.0",
