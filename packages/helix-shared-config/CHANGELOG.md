@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.1.0...@adobe/helix-shared-config-v10.1.1) (2023-05-04)
+
+
+### Bug Fixes
+
+* **deps:** remove yaml@2.1.1 by updating helix-shared-git dependency ([#800](https://github.com/adobe/helix-shared/issues/800)) ([73f24d2](https://github.com/adobe/helix-shared/commit/73f24d293f3fa6edf644d106590ddd1f55001348))
+
 # [@adobe/helix-shared-config-v10.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.0.3...@adobe/helix-shared-config-v10.1.0) (2023-04-25)
 
 
