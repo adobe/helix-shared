@@ -6,4 +6,6 @@ sitemaps:
     languages:
       en:
         source: /query-index.json
-        destination: /sitemap.xml
+        destination: /sitemap-en.xml
+        hreflangs:
+          - en,en-US
