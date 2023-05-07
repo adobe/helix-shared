@@ -58,6 +58,12 @@ HREF Language must match pattern`,
     error: `Error: Invalid configuration:
 HREF Language must match pattern`,
   },
+  {
+    title: 'loads an example with both hreflang and hreflangs',
+    config: 'broken5.yaml',
+    error: `Error: Invalid configuration:
+Sitemap Language must match exactly one schema in oneOf: oneOf({"source":"/query-index.json","destination":"/sitemap-en.xml","hreflang":"en","hreflangs":["en-US"]}, {"passingSchemas":[0,1]})`,
+  },
 ];
 
 describe('Sitemap Config Loading', () => {
