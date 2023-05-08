@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.1.1...@adobe/helix-shared-config-v10.2.0) (2023-05-08)
+
+
+### Features
+
+* support multiple hreflangs in sitemap ([#802](https://github.com/adobe/helix-shared/issues/802)) ([6fcba40](https://github.com/adobe/helix-shared/commit/6fcba40ed281ee57d133e6eceb16be83991be763))
+
 # [@adobe/helix-shared-config-v10.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.1.0...@adobe/helix-shared-config-v10.1.1) (2023-05-04)
 
 
