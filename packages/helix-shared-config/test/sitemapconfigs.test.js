@@ -36,15 +36,13 @@ const tests = [
     title: 'loads an example without hreflang',
     config: 'broken.yaml',
     error: `Error: Invalid configuration:
-Single hreflang must have required property 'hreflang'
-Multiple hreflangs must have required property 'hreflangs'`,
+Sitemap Language must have required property 'hreflang'`,
   },
   {
     title: 'loads an example without destination',
     config: 'broken2.yaml',
     error: `Error: Invalid configuration:
-Single hreflang must have required property 'destination'
-Multiple hreflangs must have required property 'destination'`,
+Sitemap Language must have required property 'destination'`,
   },
   {
     title: 'loads an example with invalid hreflang',

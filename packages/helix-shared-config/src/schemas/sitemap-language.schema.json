@@ -34,13 +34,11 @@
       "description": "The destination resource path to store sitemap to."
     },
     "hreflang": {
-      "oneOf": [
+      "anyOf": [
         {
-          "title": "Single HREF language",
           "$ref": "#/$defs/hreflang"
         },
         {
-          "title": "Array of HREF languages",
           "type": "array",
           "items": {
             "$ref": "#/$defs/hreflang"
