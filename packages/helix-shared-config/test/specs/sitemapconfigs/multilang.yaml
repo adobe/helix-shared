@@ -13,3 +13,11 @@ sitemaps:
         destination: /sitemap-fr.xml
         hreflang: fr
         alternate: /fr/{path}
+      la:
+        source: /la/query-index.json
+        destination: /sitemap-la.xml
+        hreflang:
+          - es-VE
+          - es-SV
+          - es-PA
+        alternate: /la/{path}

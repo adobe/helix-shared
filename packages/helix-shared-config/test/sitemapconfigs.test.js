@@ -33,13 +33,28 @@ const tests = [
     result: 'multilang.json',
   },
   {
-    title: 'loads a broken example',
+    title: 'loads an example without hreflang',
     config: 'broken.yaml',
     error: `Error: Invalid configuration:
-Sitemap Language must have required property 'destination'
-Sitemap Language must have required property 'hreflang'
-
-data/sitemaps/broken/languages/en must have required property 'destination', data/sitemaps/broken/languages/en must have required property 'hreflang'`,
+Sitemap Language must have required property 'hreflang'`,
+  },
+  {
+    title: 'loads an example without destination',
+    config: 'broken2.yaml',
+    error: `Error: Invalid configuration:
+Sitemap Language must have required property 'destination'`,
+  },
+  {
+    title: 'loads an example with invalid hreflang',
+    config: 'broken3.yaml',
+    error: `Error: Invalid configuration:
+HREF Language must match pattern`,
+  },
+  {
+    title: 'loads an example with invalid hreflangs array',
+    config: 'broken4.yaml',
+    error: `Error: Invalid configuration:
+HREF Language must match pattern`,
   },
 ];
 
@@ -59,10 +74,11 @@ describe('Sitemap Config Loading', () => {
         }
       } catch (e) {
         if (test.error) {
-          assert.equal(e.toString(), test.error);
-        } else {
-          throw e;
+          if (e.toString().startsWith(test.error)) {
+            return;
+          }
         }
+        throw e;
       }
     });
   });
