@@ -17,7 +17,7 @@
         "la": {
           "source": "/la/query-index.json",
           "destination": "/sitemap-la.xml",
-          "hreflangs": ["es-VE","es-SV","es-PA"],
+          "hreflang": ["es-VE","es-SV","es-PA"],
           "alternate": "/la/{path}"
         }
       }

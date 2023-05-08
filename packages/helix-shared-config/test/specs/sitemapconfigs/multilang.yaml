@@ -16,7 +16,7 @@ sitemaps:
       la:
         source: /la/query-index.json
         destination: /sitemap-la.xml
-        hreflangs:
+        hreflang:
           - es-VE
           - es-SV
           - es-PA
