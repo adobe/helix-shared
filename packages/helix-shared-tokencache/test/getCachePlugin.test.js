@@ -53,6 +53,22 @@ describe('getCachePlugin tests', () => {
     assert.strictEqual(cachePlugin.location, `helix-content-bus/${contentBusId}/.helix-auth/auth-onedrive-content.json`);
   });
 
+  it('uses derived opts if owner is available', async () => {
+    const contentBusId = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789a';
+    nock('https://helix-code-bus.s3.us-east-1.amazonaws.com')
+      .head('/adobe/.helix-auth/auth-onedrive-content.json')
+      .reply(200);
+
+    const cachePlugin = await getCachePlugin({
+      log: console,
+      env: DEFAULT_ENV,
+      contentBusId,
+      owner: 'adobe',
+    }, 'onedrive');
+    assert.ok(cachePlugin);
+    assert.strictEqual(cachePlugin.location, 'helix-code-bus/adobe/.helix-auth/auth-onedrive-content.json');
+  });
+
   it('uses empty opts if contentBusId is not available', async () => {
     // "content-bus-id/.helix-auth/auth-onedrive-content.json"
     const cachePlugin = await getCachePlugin({
