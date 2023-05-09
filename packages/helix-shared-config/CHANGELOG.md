@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.2.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.2.0...@adobe/helix-shared-config-v10.2.1) (2023-05-09)
+
+
+### Bug Fixes
+
+* increase timeout for slow tests ([c1454e9](https://github.com/adobe/helix-shared/commit/c1454e9ab8c84cdf96527579c8bce98c217dbc25))
+
 # [@adobe/helix-shared-config-v10.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.1.1...@adobe/helix-shared-config-v10.2.0) (2023-05-08)
 
 
