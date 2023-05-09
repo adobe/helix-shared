@@ -14,26 +14,58 @@
 import { MemCachePlugin } from './MemCachePlugin.js';
 import { S3CacheManager } from './S3CacheManager.js';
 
+const BUCKET_CONTENT_BUS = 'helix-content-bus';
+
+const BUCKET_CODE_BUS = 'helix-code-bus';
+
 /**
- * Returns the S3 cache plugin
+ * @typedef GetCachePluginOptions
+ * @property {Console} log logger
+ * @property {string} contentBusId content-bus id
+ * @property {string} owner  code owner
+ * @property {string} [user = "content"] the user for which the cache is retrieved
+ */
+
+/**
+ * Returns the S3 cache plugin by using {@link #S3CacheManager} to find the token cache based on
+ * the provided options. The token cache is searched as follows:
  *
+ * 1. check in `helix-code-bus/${opts.owner}/.helix-auth`
+ * 2. check in `helix-content-bus/${opts.contentBusId}/.helix-auth`
+ * 3. check in `helix-content-bus/default/.helix-auth`
+ *
+ * @param {GetCachePluginOptions} opts
+ * @param {string} type The plugin type: "onedrive" or "google"
  * @returns {ICachePlugin} the cache plugin
  */
 export async function getCachePlugin(opts, type) {
-  const { log, contentBusId } = opts;
+  const {
+    log,
+    contentBusId,
+    owner,
+    user = 'content',
+  } = opts;
 
   const derivedOpts = [];
+  if (owner) {
+    derivedOpts.push({
+      prefix: `${owner}/.helix-auth`,
+      secret: owner,
+      bucket: BUCKET_CODE_BUS,
+    });
+  }
   if (contentBusId) {
     derivedOpts.push({
       prefix: `${contentBusId}/.helix-auth`,
       secret: contentBusId,
+      bucket: BUCKET_CONTENT_BUS,
     });
   }
-  const basePlugin = await S3CacheManager.findCache('content', {
+  const basePlugin = await S3CacheManager.findCache(user, {
     log,
     prefix: 'default/.helix-auth',
     secret: 'default',
-    bucket: 'helix-content-bus',
+    bucket: BUCKET_CONTENT_BUS,
     type,
   }, ...derivedOpts);
 
