@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.6...@adobe/helix-shared-indexer-v2.0.7) (2023-05-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v4.0.12 ([#806](https://github.com/adobe/helix-shared/issues/806)) ([74e3fa5](https://github.com/adobe/helix-shared/commit/74e3fa5d51decd5085a1703a9b5173ff1ffd52da))
+
 # [@adobe/helix-shared-indexer-v2.0.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.5...@adobe/helix-shared-indexer-v2.0.6) (2023-04-16)
 
 
