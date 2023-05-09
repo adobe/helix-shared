@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.1.2...@adobe/helix-shared-tokencache-v1.2.0) (2023-05-09)
+
+
+### Features
+
+* add support for owner global connected users ([b9a27a1](https://github.com/adobe/helix-shared/commit/b9a27a1f2665a9a8d4913ae02af1abbd7381e0fd)), closes [#798](https://github.com/adobe/helix-shared/issues/798)
+
 # [@adobe/helix-shared-tokencache-v1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.1.1...@adobe/helix-shared-tokencache-v1.1.2) (2023-05-08)
 
 
