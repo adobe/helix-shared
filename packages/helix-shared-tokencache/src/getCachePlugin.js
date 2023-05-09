@@ -14,13 +14,15 @@
 import { MemCachePlugin } from './MemCachePlugin.js';
 import { S3CacheManager } from './S3CacheManager.js';
 
+const BUCKET_CONTENT_BUS = 'helix-content-bus';
+
+const BUCKET_CODE_BUS = 'helix-code-bus';
+
 /**
  * @typedef GetCachePluginOptions
  * @property {Console} log logger
  * @property {string} contentBusId content-bus id
  * @property {string} owner  code owner
- * @property {string} [contentBucket = "helix-content-bus"] the content-bus bucket name
- * @property {string} [codeBucket  = "helix-code-bus"] the code-bus bucket name
  * @property {string} [user = "content"] the user for which the cache is retrieved
  */
 
@@ -28,9 +30,9 @@ import { S3CacheManager } from './S3CacheManager.js';
  * Returns the S3 cache plugin by using {@link #S3CacheManager} to find the token cache based on
  * the provided options. The token cache is searched as follows:
  *
- * 1. check in `{codeBucket}/${org}/.helix-auth`
- * 2. check in `{contentBucket}/${contentBusId}/.helix-auth`
- * 3. check in `{contentBucket}/default/.helix-auth`
+ * 1. check in `helix-code-bus/${opts.owner}/.helix-auth`
+ * 2. check in `helix-content-bus/${opts.contentBusId}/.helix-auth`
+ * 3. check in `helix-content-bus/default/.helix-auth`
  *
  * @param {GetCachePluginOptions} opts
  * @param {string} type The plugin type: "onedrive" or "google"
@@ -41,8 +43,6 @@ export async function getCachePlugin(opts, type) {
     log,
     contentBusId,
     owner,
-    contentBucket = 'helix-content-bus',
-    codeBucket = 'helix-code-bus',
     user = 'content',
   } = opts;
 
@@ -51,21 +51,21 @@ export async function getCachePlugin(opts, type) {
     derivedOpts.push({
       prefix: `${owner}/.helix-auth`,
       secret: owner,
-      bucket: codeBucket,
+      bucket: BUCKET_CODE_BUS,
     });
   }
   if (contentBusId) {
     derivedOpts.push({
       prefix: `${contentBusId}/.helix-auth`,
       secret: contentBusId,
-      bucket: contentBucket,
+      bucket: BUCKET_CONTENT_BUS,
     });
   }
   const basePlugin = await S3CacheManager.findCache(user, {
     log,
     prefix: 'default/.helix-auth',
     secret: 'default',
-    bucket: contentBucket,
+    bucket: BUCKET_CONTENT_BUS,
     type,
   }, ...derivedOpts);
 
