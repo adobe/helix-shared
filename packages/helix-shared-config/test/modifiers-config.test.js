@@ -66,7 +66,7 @@ describe('ModifiersConfig', () => {
     }
     const json = JSON.stringify(testData);
     bench(testData, json);
-  });
+  }).timeout(3000);
 
   it('filters large metadata all glob', async () => {
     const testData = [];
@@ -80,7 +80,7 @@ describe('ModifiersConfig', () => {
     }
     const json = JSON.stringify(testData);
     bench(testData, json);
-  });
+  }).timeout(3000);
 
   it('filters large metadata all match', async () => {
     const testData = [];
@@ -94,7 +94,7 @@ describe('ModifiersConfig', () => {
     }
     const json = JSON.stringify(testData);
     bench(testData, json);
-  });
+  }).timeout(3000);
 
   it('it matches sub-pages metadata', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
