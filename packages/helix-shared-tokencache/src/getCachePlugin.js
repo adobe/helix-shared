@@ -47,18 +47,18 @@ export async function getCachePlugin(opts, type) {
   } = opts;
 
   const derivedOpts = [];
-  if (owner) {
-    derivedOpts.push({
-      prefix: `${owner}/.helix-auth`,
-      secret: owner,
-      bucket: BUCKET_CODE_BUS,
-    });
-  }
   if (contentBusId) {
     derivedOpts.push({
       prefix: `${contentBusId}/.helix-auth`,
       secret: contentBusId,
       bucket: BUCKET_CONTENT_BUS,
+    });
+  }
+  if (owner) {
+    derivedOpts.push({
+      prefix: `${owner}/.helix-auth`,
+      secret: owner,
+      bucket: BUCKET_CODE_BUS,
     });
   }
   const basePlugin = await S3CacheManager.findCache(user, {
