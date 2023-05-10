@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.2.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.2.0...@adobe/helix-shared-tokencache-v1.2.1) (2023-05-10)
+
+
+### Bug Fixes
+
+* reverse order of cache locations ([#807](https://github.com/adobe/helix-shared/issues/807)) ([101d09e](https://github.com/adobe/helix-shared/commit/101d09e04b5c63a0c237520b9b590c207a4ad622))
+
 # [@adobe/helix-shared-tokencache-v1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.1.2...@adobe/helix-shared-tokencache-v1.2.0) (2023-05-09)
 
 
