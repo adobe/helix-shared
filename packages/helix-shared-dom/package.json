@@ -30,6 +30,6 @@
     "ferrum": "1.9.4"
   },
   "devDependencies": {
-    "jsdom": "22.0.0"
+    "jsdom": "22.1.0"
   }
 }
