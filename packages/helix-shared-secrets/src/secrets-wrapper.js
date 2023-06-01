@@ -38,7 +38,7 @@ export function reset() {
  * @param {SecretsOptions} [opts] Options
  * @returns {Promise<object>} the secrets or {@code null}.
  */
-async function loadSecrets(ctx, opts) {
+export async function loadSecrets(ctx, opts) {
   const runtime = ctx.runtime?.name ?? 'simulate';
   if (runtime === 'simulate') {
     // eslint-disable-next-line no-console

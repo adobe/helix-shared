@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { UniversalFunction } from '@adobe/helix-universal';
+import { UniversalContext, UniversalFunction } from '@adobe/helix-universal';
 
 /**
  * Options for the wrap function
@@ -59,3 +59,12 @@ export declare interface SecretsOptions {
  * @returns {UniversalFunction} a new function that wraps the original one.
  */
 export declare function secrets(fn: UniversalFunction, opts: SecretsOptions): UniversalFunction;
+
+/**
+ * Loads the secrets from the respective secrets-manager.
+ *
+ * @param {UniversalContext} ctx the context
+ * @param {SecretsOptions} [opts] Options
+ * @returns {Promise<object>} the secrets or {@code null}.
+ */
+export function loadSecrets(ctx:UniversalContext, opts:SecretsOptions):Promise<object>;
