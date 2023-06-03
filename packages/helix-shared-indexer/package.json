@@ -28,7 +28,7 @@
     "reporter-options": "configFile=.mocha-multi.json"
   },
   "dependencies": {
-    "dayjs": "1.11.7",
+    "dayjs": "1.11.8",
     "hast-util-select": "5.0.5",
     "hast-util-to-html": "8.0.4",
     "hast-util-to-text": "3.1.2",
@@ -40,6 +40,6 @@
   "devDependencies": {
     "@adobe/fetch": "4.0.13",
     "@adobe/helix-shared-config": "^9.1.0",
-    "c8": "7.13.0"
+    "c8": "7.14.0"
   }
 }
