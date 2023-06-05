@@ -67,7 +67,7 @@ export default function bounce(func, { responder, timeout = 500, debounce = () =
             status: 504,
           });
         }
-        context.log.warn(`error while bouncing: ${e.message}`);
+        context.log.warn(`error while bouncing: ${e.message}`, e);
         return new Response(e.message, {
           // we acted as a gateway, but there was an error with the network connection
           status: 502,
