@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-bounce-v2.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.3...@adobe/helix-shared-bounce-v2.0.4) (2023-06-05)
+
+
+### Bug Fixes
+
+* log error and stack as well ([1efda5e](https://github.com/adobe/helix-shared/commit/1efda5e72db7ceb8b3927d6498c45ee2f128ecb8))
+
 # [@adobe/helix-shared-bounce-v2.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.2...@adobe/helix-shared-bounce-v2.0.3) (2023-06-03)
 
 
