@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          token: ${{ secrets.ADOBE_BOT_GITHUB_TOKEN }}
           fetch-depth: 0
       - name: Use Node.js 18.x
         uses: actions/setup-node@v3
