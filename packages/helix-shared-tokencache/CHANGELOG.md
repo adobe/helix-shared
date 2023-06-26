@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.2.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.2.6...@adobe/helix-shared-tokencache-v1.2.7) (2023-06-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @aws-sdk/client-s3 to v3.359.0 ([#818](https://github.com/adobe/helix-shared/issues/818)) ([1616f98](https://github.com/adobe/helix-shared/commit/1616f983e2eb13e694a15a7525e0d0d0ad3bd5cc))
+
 # [@adobe/helix-shared-tokencache-v1.2.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.2.5...@adobe/helix-shared-tokencache-v1.2.6) (2023-06-18)
 
 
