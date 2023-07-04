@@ -28,7 +28,7 @@
     "reporter-options": "configFile=.mocha-multi.json"
   },
   "dependencies": {
-    "dayjs": "1.11.8",
+    "dayjs": "1.11.9",
     "hast-util-select": "5.0.5",
     "hast-util-to-html": "8.0.4",
     "hast-util-to-text": "3.1.2",
