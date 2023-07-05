@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.2.3...@adobe/helix-shared-config-v10.3.0) (2023-07-05)
+
+
+### Features
+
+* set origin of sitemap ([#820](https://github.com/adobe/helix-shared/issues/820)) ([ad12143](https://github.com/adobe/helix-shared/commit/ad12143538c425d251f022518904f7508cc8323d))
+
 # [@adobe/helix-shared-config-v10.2.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.2.2...@adobe/helix-shared-config-v10.2.3) (2023-06-03)
 
 
