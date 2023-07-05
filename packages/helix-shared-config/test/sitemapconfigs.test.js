@@ -262,4 +262,31 @@ describe('Sitemap Config Loading', () => {
       destination: '/sitemap-fr.xml',
     }));
   });
+
+  it('change origin', async () => {
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'simple.yaml'));
+    await cfg.init();
+
+    cfg.setOrigin('simple', 'https://www.neworigin.com');
+
+    // value in sitemaps array should change as well
+    assert.strictEqual(cfg.sitemaps[0].origin, 'https://www.neworigin.com');
+
+    // reparse the modified configuration's YAML output
+    const newcfg = new SitemapConfig()
+      .withSource(cfg.toYAML());
+    await newcfg.init();
+
+    const config = newcfg.sitemaps.find((s) => s.name === 'simple');
+    assert.strictEqual(config.origin, 'https://www.neworigin.com');
+  });
+
+  it('change origin of inexistant sitemap', async () => {
+    const cfg = new SitemapConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'simple.yaml'));
+    await cfg.init();
+
+    assert.throws(() => cfg.setOrigin('other', 'https://www.neworigin.com'));
+  });
 });

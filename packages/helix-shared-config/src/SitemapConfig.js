@@ -114,4 +114,28 @@ export class SitemapConfig extends SchemaDerivedConfig {
     this._document = null;
     return languages[name];
   }
+
+  /**
+   * Set the origin of a sitemap.
+   *
+   * @param {string} sitemapName sitemap name
+   * @param {string} origin sitemap origin
+   */
+  setOrigin(sitemapName, origin) {
+    const { sitemaps } = this._cfg;
+
+    const sitemap = sitemaps[sitemapName];
+    if (!sitemap) {
+      throw new Error(`Unable to set origin, sitemap not found: ${sitemapName}`);
+    }
+    sitemap.origin = origin;
+
+    const proxySitemap = this.sitemaps.find((proxy) => proxy.name === sitemapName);
+    if (proxySitemap) {
+      proxySitemap.origin = origin;
+    }
+
+    // let BaseConfig.toYAML() use the JSON output
+    this._document = null;
+  }
 }
