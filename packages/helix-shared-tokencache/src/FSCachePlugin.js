@@ -72,7 +72,9 @@ export class FSCachePlugin {
     if (Object.keys(this.meta || {}).length) {
       data.cachePluginMetadata = this.meta;
     }
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    const raw = JSON.stringify(data, null, 2);
+    delete data.cachePluginMetadata;
+    await fs.writeFile(filePath, raw, 'utf-8');
   }
 
   /**

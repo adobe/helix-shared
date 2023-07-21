@@ -116,6 +116,7 @@ export class S3CachePlugin {
         data.cachePluginMetadata = this.meta;
       }
       let raw = JSON.stringify(data);
+      delete data.cachePluginMetadata;
       if (secret) {
         raw = encrypt(secret, Buffer.from(raw, 'utf-8'));
       }
