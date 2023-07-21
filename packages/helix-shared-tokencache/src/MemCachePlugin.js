@@ -45,22 +45,31 @@ export class MemCachePlugin {
     }
   }
 
+  #getOrCreateCache() {
+    let cache = this.caches.get(this.key);
+    if (!cache) {
+      cache = {};
+      this.caches.set(this.key, cache);
+    }
+    return cache;
+  }
+
   /**
    * @param {TokenCacheContext} cacheContext
    */
   async beforeCacheAccess(cacheContext) {
     try {
       this.log.debug('mem: read token cache', this.key);
-      const cache = this.caches.get(this.key);
-      if (cache) {
-        cacheContext.tokenCache.deserialize(cache);
+      const cache = this.#getOrCreateCache();
+      if (cache.data) {
+        cacheContext.tokenCache.deserialize(cache.data);
         return true;
       } else if (this.base) {
         this.log.debug('mem: read token cache failed. asking base');
         const ret = await this.base.beforeCacheAccess(cacheContext);
         if (ret) {
           this.log.debug('mem: base updated. remember.');
-          this.caches.set(this.key, cacheContext.tokenCache.serialize());
+          cache.data = cacheContext.tokenCache.serialize();
         }
         return ret;
       }
@@ -76,7 +85,8 @@ export class MemCachePlugin {
   async afterCacheAccess(cacheContext) {
     if (cacheContext.cacheHasChanged) {
       this.log.debug('mem: write token cache', this.key);
-      this.caches.set(this.key, cacheContext.tokenCache.serialize());
+      const cache = this.#getOrCreateCache();
+      cache.data = cacheContext.tokenCache.serialize();
       if (this.base) {
         this.log.debug('mem: write token cache done. telling base', this.key);
         return this.base.afterCacheAccess(cacheContext);
@@ -88,5 +98,19 @@ export class MemCachePlugin {
 
   get location() {
     return this.base ? this.base.location : this.key;
+  }
+
+  async getPluginMetadata() {
+    const cache = this.#getOrCreateCache();
+    if (!cache.metadata && this.base) {
+      cache.metadata = await this.base.getPluginMetadata();
+    }
+    return cache.metadata;
+  }
+
+  async setPluginMetadata(meta) {
+    const cache = this.#getOrCreateCache();
+    cache.metadata = meta;
+    await this.base?.setPluginMetadata(meta);
   }
 }

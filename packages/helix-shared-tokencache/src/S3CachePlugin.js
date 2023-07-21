@@ -39,6 +39,8 @@ export class S3CachePlugin {
     this.key = opts.key;
     this.secret = opts.secret;
     this.s3 = new S3Client();
+    this.meta = null;
+    this.data = null;
   }
 
   async deleteCache() {
@@ -58,7 +60,7 @@ export class S3CachePlugin {
     }
   }
 
-  async beforeCacheAccess(cacheContext) {
+  async #loadData() {
     const {
       log, secret, key, bucket,
     } = this;
@@ -68,14 +70,22 @@ export class S3CachePlugin {
         Bucket: bucket,
         Key: key,
       }));
-      let data = await new Response(res.Body, {}).buffer();
+      let raw = await new Response(res.Body, {}).buffer();
       if (secret) {
-        data = decrypt(secret, data).toString('utf-8');
+        raw = decrypt(secret, raw).toString('utf-8');
       } else {
-        data = data.toString('utf-8');
+        raw = raw.toString('utf-8');
       }
-      cacheContext.tokenCache.deserialize(data);
-      return true;
+      const data = JSON.parse(raw);
+      if (data.cachePluginMetadata) {
+        this.meta = data.cachePluginMetadata;
+        delete data.cachePluginMetadata;
+        raw = JSON.stringify(data);
+      } else {
+        this.meta = {};
+      }
+      this.data = data;
+      return raw;
     } catch (e) {
       if (e.$metadata?.httpStatusCode === 404) {
         log.info('s3: unable to deserialize token cache: not found');
@@ -83,32 +93,66 @@ export class S3CachePlugin {
         log.warn('s3: unable to deserialize token cache', e);
       }
     }
+    return null;
+  }
+
+  async beforeCacheAccess(cacheContext) {
+    const raw = await this.#loadData();
+    if (raw) {
+      cacheContext.tokenCache.deserialize(raw);
+      return true;
+    }
+    return false;
+  }
+
+  async #saveData() {
+    const {
+      log, secret, key, bucket,
+    } = this;
+    try {
+      log.debug('s3: write token cache', key);
+      const data = this.data || {};
+      if (Object.keys(this.meta || {}).length) {
+        data.cachePluginMetadata = this.meta;
+      }
+      let raw = JSON.stringify(data);
+      if (secret) {
+        raw = encrypt(secret, Buffer.from(raw, 'utf-8'));
+      }
+      await this.s3.send(new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: raw,
+        ContentType: secret ? 'application/octet-stream' : 'text/plain',
+      }));
+      return true;
+    } catch (e) {
+      log.warn('s3: unable to serialize token cache', e);
+    }
     return false;
   }
 
   async afterCacheAccess(cacheContext) {
     if (cacheContext.cacheHasChanged) {
-      const {
-        log, secret, key, bucket,
-      } = this;
-      try {
-        log.debug('s3: write token cache', key);
-        let data = cacheContext.tokenCache.serialize();
-        if (secret) {
-          data = encrypt(secret, Buffer.from(data, 'utf-8'));
-        }
-        await this.s3.send(new PutObjectCommand({
-          Bucket: bucket,
-          Key: key,
-          Body: data,
-          ContentType: secret ? 'application/octet-stream' : 'text/plain',
-        }));
-        return true;
-      } catch (e) {
-        log.warn('s3: unable to serialize token cache', e);
-      }
+      this.data = JSON.parse(cacheContext.tokenCache.serialize());
+      return this.#saveData();
     }
     return false;
+  }
+
+  async getPluginMetadata() {
+    if (!this.meta) {
+      await this.#loadData();
+    }
+    return this.meta;
+  }
+
+  async setPluginMetadata(meta) {
+    if (!this.data) {
+      await this.#loadData();
+    }
+    this.meta = meta || {};
+    await this.#saveData();
   }
 
   get location() {

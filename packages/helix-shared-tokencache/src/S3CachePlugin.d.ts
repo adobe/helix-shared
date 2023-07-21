@@ -9,9 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { ICachePlugin, TokenCacheContext } from  '@azure/msal-node';
-
-import { Logger } from "../OneDrive";
+import {CachePlugin} from "./CachePlugin";
 
 export declare interface S3CachePluginOptions {
   log: Console;
@@ -20,7 +18,7 @@ export declare interface S3CachePluginOptions {
   secret: string;
 }
 
-export declare class S3CachePlugin implements ICachePlugin {
+export declare class S3CachePlugin implements CachePlugin {
   /**
    * Decrypts a AES-GCM encrypted digest.
    * @param {string} key encryption key / password
@@ -40,12 +38,4 @@ export declare class S3CachePlugin implements ICachePlugin {
   static decrypt(key: string, data: Buffer):Buffer;
 
   constructor(opts: S3CachePluginOptions);
-
-  deleteCache(): Promise<void>;
-
-  location: string;
-
-  afterCacheAccess(tokenCacheContext: TokenCacheContext): Promise<boolean>;
-
-  beforeCacheAccess(tokenCacheContext: TokenCacheContext): Promise<boolean>;
 }
