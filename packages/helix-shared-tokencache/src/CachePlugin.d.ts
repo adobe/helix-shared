@@ -9,19 +9,27 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CachePlugin} from "./CachePlugin";
+import { ICachePlugin, TokenCacheContext } from  '@azure/msal-node';
 
-export declare interface MemCachePluginOptions {
-  log: Console;
+export declare interface CachePlugin extends ICachePlugin {
+
+  afterCacheAccess(tokenCacheContext: TokenCacheContext): Promise<boolean>;
+
+  beforeCacheAccess(tokenCacheContext: TokenCacheContext): Promise<boolean>;
+
+  deleteCache(): Promise<void>;
+
+  location: string;
+
   /**
-   * memory cache key
+   * gets plugin metadata.
+   * @returns the plugin metadata
    */
-  key: string;
-  base: CachePlugin;
-  caches?: Map<string, any>;
-}
+  getPluginMetadata(): Promise<object>;
 
-export declare class MemCachePlugin implements CachePlugin {
-  constructor(opts: MemCachePluginOptions);
-
+  /**
+   * sets the plugin metadata.
+   * @param meta
+   */
+  setPluginMetadata(meta): Promise<void>;
 }

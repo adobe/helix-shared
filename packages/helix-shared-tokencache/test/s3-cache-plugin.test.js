@@ -35,19 +35,20 @@ describe('S3CachePlugin Test', () => {
     process.env = savedProcessEnv;
   });
 
-  it('writes the cache data to s3 w/o encryption', async () => {
+  it('writes the cache data to s3 w/o encryption and metadata', async () => {
     const p = new S3CachePlugin({
       bucket: 'test-bucket',
       key: 'myproject/auth-default/json',
       secret: '',
     });
 
-    let objectData = '';
+    const objectData = [];
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
       .put('/myproject/auth-default/json?x-id=PutObject')
+      .twice()
       .reply((_, body) => {
-        objectData = body;
+        objectData.push(body);
         return [204];
       });
 
@@ -57,7 +58,59 @@ describe('S3CachePlugin Test', () => {
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(objectData, '{ "access_token": "1234" }');
+    assert.strictEqual(objectData.shift(), '{"access_token":"1234"}');
+
+    await p.setPluginMetadata({ foo: 'bar' });
+    assert.strictEqual(objectData.shift(), '{"access_token":"1234","cachePluginMetadata":{"foo":"bar"}}');
+  });
+
+  it('can clear plugin metadata', async () => {
+    const p = new S3CachePlugin({
+      bucket: 'test-bucket',
+      key: 'myproject/auth-default/json',
+      secret: '',
+    });
+
+    const objectData = [];
+
+    nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(200, JSON.stringify({
+        access_token: '1234',
+        cachePluginMetadata: {
+          foo: 'bar',
+        },
+      }))
+      .put('/myproject/auth-default/json?x-id=PutObject')
+      .reply((_, body) => {
+        objectData.push(body);
+        return [204];
+      });
+
+    await p.setPluginMetadata();
+    assert.strictEqual(objectData.shift(), '{"access_token":"1234"}');
+  });
+
+  it('writes metadata to pristine plugin', async () => {
+    const p = new S3CachePlugin({
+      bucket: 'test-bucket',
+      key: 'myproject/auth-default/json',
+      secret: '',
+    });
+
+    const objectData = [];
+
+    nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(404)
+      .put('/myproject/auth-default/json?x-id=PutObject')
+      .reply((_, body) => {
+        objectData.push(body);
+        return [204];
+      });
+
+    await p.setPluginMetadata({ foo: 'bar' });
+    assert.strictEqual(objectData.shift(), '{"cachePluginMetadata":{"foo":"bar"}}');
   });
 
   it('writes the cache data to s3 with encryption', async () => {
@@ -82,7 +135,7 @@ describe('S3CachePlugin Test', () => {
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(decrypt('foobar', objectData).toString('utf-8'), '{ "access_token": "1234" }');
+    assert.strictEqual(decrypt('foobar', objectData).toString('utf-8'), '{"access_token":"1234"}');
   });
 
   it('does not the write data to s3 if context not changed', async () => {
@@ -128,16 +181,21 @@ describe('S3CachePlugin Test', () => {
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
       .get('/myproject/auth-default/json?x-id=GetObject')
-      .reply(200, '{ "access_token": "1234" }');
+      .reply(200, JSON.stringify({
+        access_token: '1234',
+        cachePluginMetadata: {
+          foo: 'bar',
+        },
+      }));
 
-    const ctx = new MockTokenCacheContext({
-    });
+    const ctx = new MockTokenCacheContext({});
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(ctx.tokens, '{ "access_token": "1234" }');
+    assert.strictEqual(ctx.tokens, '{"access_token":"1234"}');
+    assert.deepStrictEqual(await p.getPluginMetadata(), { foo: 'bar' });
   });
 
-  it('read cache data from s3 with/o encryption', async () => {
+  it('read cache data from s3 with encryption', async () => {
     const p = new S3CachePlugin({
       bucket: 'test-bucket',
       key: 'myproject/auth-default/json',
@@ -171,6 +229,25 @@ describe('S3CachePlugin Test', () => {
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, false);
     assert.strictEqual(ctx.tokens, '');
+  });
+
+  it('read plugin metadata from pristine plugin', async () => {
+    const p = new S3CachePlugin({
+      bucket: 'test-bucket',
+      key: 'myproject/auth-default/json',
+      secret: '',
+    });
+
+    nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(200, JSON.stringify({
+        access_token: '1234',
+        cachePluginMetadata: {
+          foo: 'bar',
+        },
+      }));
+
+    assert.deepStrictEqual(await p.getPluginMetadata(), { foo: 'bar' });
   });
 
   it('read cache data handles generic error', async () => {
