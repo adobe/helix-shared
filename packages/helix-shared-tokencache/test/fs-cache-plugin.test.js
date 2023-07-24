@@ -49,6 +49,61 @@ describe('FSCachePlugin Test', () => {
     assert.strictEqual(p.location, testFilePath);
   });
 
+  it('writes the plugin metadata cache data to the filesystem', async () => {
+    const p = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+
+    const ctx = new MockTokenCacheContext({
+      cacheHasChanged: true,
+      tokens: '{ "access_token": "1234" }',
+    });
+    const ret = await p.afterCacheAccess(ctx);
+    assert.strictEqual(ret, true);
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
+      access_token: '1234',
+    });
+
+    await p.setPluginMetadata({ foo: 'bar' });
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
+      access_token: '1234',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    });
+    assert.strictEqual(p.location, testFilePath);
+  });
+
+  it('writes the plugin metadata cache data pristine plugin', async () => {
+    const p = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+    await p.setPluginMetadata({ foo: 'bar' });
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    });
+    assert.strictEqual(p.location, testFilePath);
+  });
+
+  it('can clear plugin metadata', async () => {
+    await fs.writeFile(testFilePath, JSON.stringify({
+      access_token: '1234',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    }), 'utf-8');
+
+    const p = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+    await p.setPluginMetadata();
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
+      access_token: '1234',
+    });
+  });
+
   it('does not the cache data to the filesystem if context not changed', async () => {
     const p = new FSCachePlugin({
       filePath: testFilePath,
@@ -84,7 +139,45 @@ describe('FSCachePlugin Test', () => {
     assert.strictEqual(ctx.tokens, '{ "access_token": "1234" }');
   });
 
-  it('read cache data ignores inexistant file', async () => {
+  it('read cache plugin metadata from the filesystem', async () => {
+    await fs.writeFile(testFilePath, JSON.stringify({
+      access_token: '1234',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    }), 'utf-8');
+
+    const p = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+
+    const ctx = new MockTokenCacheContext({
+    });
+    const ret = await p.beforeCacheAccess(ctx);
+    assert.strictEqual(ret, true);
+    assert.strictEqual(ctx.tokens, '{"access_token":"1234"}');
+    assert.deepStrictEqual(await p.getPluginMetadata(), {
+      foo: 'bar',
+    });
+  });
+
+  it('read cache plugin metadata from pristine plugin', async () => {
+    await fs.writeFile(testFilePath, JSON.stringify({
+      access_token: '1234',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    }), 'utf-8');
+
+    const p = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+    assert.deepStrictEqual(await p.getPluginMetadata(), {
+      foo: 'bar',
+    });
+  });
+
+  it('read cache data ignores nonexistent file', async () => {
     const p = new FSCachePlugin({
       filePath: testRoot,
     });

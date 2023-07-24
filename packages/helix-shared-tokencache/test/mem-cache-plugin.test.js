@@ -12,16 +12,26 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
-import { MemCachePlugin } from '../src/index.js';
+import path from 'path';
+import crypto from 'crypto';
+import { promises as fs } from 'fs';
+import { FSCachePlugin, MemCachePlugin } from '../src/index.js';
 import { MockTokenCacheContext } from './MockTokenCacheContext.js';
 
 describe('MemCachePlugin Test', () => {
-  beforeEach(() => {
+  let testRoot;
+  let testFilePath;
+
+  beforeEach(async () => {
     new MemCachePlugin().clear();
+    testRoot = path.resolve(__testdir, 'tmp', crypto.randomUUID());
+    await fs.mkdir(testRoot, { recursive: true });
+    testFilePath = path.resolve(testRoot, 'auth.json');
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     new MemCachePlugin().clear();
+    await fs.rm(testRoot, { recursive: true });
   });
 
   it('writes the cache w/o base with local cache', async () => {
@@ -38,7 +48,7 @@ describe('MemCachePlugin Test', () => {
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(caches.get('foobar-key'), 'foobar');
+    assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
     assert.strictEqual(p.location, 'foobar-key');
   });
 
@@ -108,7 +118,7 @@ describe('MemCachePlugin Test', () => {
       tokens: 'foobar',
     });
     await p.afterCacheAccess(ctx);
-    assert.strictEqual(caches.get('foobar-key'), 'foobar');
+    assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
     p.deleteCache();
     assert.strictEqual(caches.get('foobar-key'), undefined);
   });
@@ -132,7 +142,7 @@ describe('MemCachePlugin Test', () => {
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(caches.get('foobar-key'), 'foobar');
+    assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
   });
 
   it('read the cache from base', async () => {
@@ -141,7 +151,7 @@ describe('MemCachePlugin Test', () => {
       key: 'foobar-key',
       caches: baseCaches,
     });
-    baseCaches.set('foobar-key', 'foobar');
+    baseCaches.set('foobar-key', { data: 'foobar' });
 
     const caches = new Map();
     const p = new MemCachePlugin({
@@ -156,7 +166,7 @@ describe('MemCachePlugin Test', () => {
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, true);
     assert.strictEqual(ctx.tokens, 'foobar');
-    assert.strictEqual(caches.get('foobar-key'), 'foobar');
+    assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
   });
 
   it('read the cache from base is missing', async () => {
@@ -197,5 +207,46 @@ describe('MemCachePlugin Test', () => {
 
     await p.deleteCache();
     assert.strictEqual(baseCaches.get('foobar-key'), undefined);
+  });
+
+  it('writes the metadata to base', async () => {
+    const base = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+    const p = new MemCachePlugin({
+      log: console,
+      key: 'foobar-key',
+      base,
+    });
+
+    await p.setPluginMetadata({ foo: 'bar' });
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    });
+  });
+
+  it('reads the metadata from base', async () => {
+    await fs.writeFile(testFilePath, JSON.stringify({
+      access_token: '1234',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    }), 'utf-8');
+
+    const base = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+    const p = new MemCachePlugin({
+      log: console,
+      key: 'foobar-key',
+      base,
+    });
+
+    const meta = await p.getPluginMetadata();
+    assert.deepStrictEqual(meta, {
+      foo: 'bar',
+    });
   });
 });

@@ -27,9 +27,13 @@ export class FSCachePlugin {
   constructor(opts) {
     this.filePath = opts.filePath;
     this.log = opts.log || console;
+    this.meta = null;
+    this.data = null;
   }
 
   async deleteCache() {
+    this.data = null;
+    this.meta = null;
     try {
       await fs.rm(this.filePath);
     } catch (e) {
@@ -38,22 +42,67 @@ export class FSCachePlugin {
     }
   }
 
-  /**
-   * @param {TokenCacheContext} cacheContext
-   * @returns {Promise<boolean>} if cache was updated
-   */
-  async beforeCacheAccess(cacheContext) {
+  async #loadData() {
     const { log, filePath } = this;
     try {
-      cacheContext.tokenCache.deserialize(await fs.readFile(filePath, 'utf-8'));
-      return true;
+      let raw = await fs.readFile(filePath, 'utf-8');
+      const data = JSON.parse(raw);
+      if (data.cachePluginMetadata) {
+        this.meta = data.cachePluginMetadata;
+        delete data.cachePluginMetadata;
+        raw = JSON.stringify(data);
+      } else {
+        this.meta = {};
+      }
+      this.data = data;
+      return raw;
     } catch (e) {
       if (e.code !== 'ENOENT') {
         // only log warnings if file exists, otherwise ignore
         log.warn('FSCachePlugin: unable to deserialize', e);
       }
     }
+    this.data = null;
+    return null;
+  }
+
+  async #saveData() {
+    const { filePath } = this;
+    const data = this.data || {};
+    if (Object.keys(this.meta || {}).length) {
+      data.cachePluginMetadata = this.meta;
+    }
+    const raw = JSON.stringify(data, null, 2);
+    delete data.cachePluginMetadata;
+    await fs.writeFile(filePath, raw, 'utf-8');
+  }
+
+  /**
+   * @param {TokenCacheContext} cacheContext
+   * @returns {Promise<boolean>} if cache was updated
+   */
+  async beforeCacheAccess(cacheContext) {
+    const raw = await this.#loadData();
+    if (raw) {
+      cacheContext.tokenCache.deserialize(raw);
+      return true;
+    }
     return false;
+  }
+
+  async getPluginMetadata() {
+    if (!this.meta) {
+      await this.#loadData();
+    }
+    return this.meta;
+  }
+
+  async setPluginMetadata(meta) {
+    if (!this.data) {
+      await this.#loadData();
+    }
+    this.meta = meta || {};
+    await this.#saveData();
   }
 
   /**
@@ -61,11 +110,9 @@ export class FSCachePlugin {
    * @returns {Promise<boolean>} if cache was updated
    */
   async afterCacheAccess(cacheContext) {
-    const { filePath } = this;
     if (cacheContext.cacheHasChanged) {
-      // reparse and create a nice formatted JSON
-      const tokens = JSON.parse(cacheContext.tokenCache.serialize());
-      await fs.writeFile(filePath, JSON.stringify(tokens, null, 2), 'utf-8');
+      this.data = JSON.parse(cacheContext.tokenCache.serialize());
+      await this.#saveData();
       return true;
     }
     return false;
