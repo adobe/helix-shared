@@ -135,6 +135,9 @@ export class S3CachePlugin {
 
   async afterCacheAccess(cacheContext) {
     if (cacheContext.cacheHasChanged) {
+      if (!this.meta) {
+        await this.#loadData();
+      }
       this.data = JSON.parse(cacheContext.tokenCache.serialize());
       return this.#saveData();
     }
