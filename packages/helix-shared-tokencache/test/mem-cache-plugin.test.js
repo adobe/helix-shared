@@ -249,4 +249,48 @@ describe('MemCachePlugin Test', () => {
       foo: 'bar',
     });
   });
+
+  it('updates the data w/o loosing metadata (fs-cache)', async () => {
+    await fs.writeFile(testFilePath, JSON.stringify({
+      access_token: '1234',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    }), 'utf-8');
+
+    const b1 = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+    const p1 = new MemCachePlugin({
+      log: console,
+      key: 'foobar-key',
+      base: b1,
+    });
+
+    const meta = await p1.getPluginMetadata();
+    assert.deepStrictEqual(meta, {
+      foo: 'bar',
+    });
+
+    const b2 = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+    const p2 = new MemCachePlugin({
+      log: console,
+      key: 'foobar-key',
+      base: b2,
+    });
+    const ctx = new MockTokenCacheContext({
+      cacheHasChanged: true,
+      tokens: '{ "access_token": "foobar" }',
+    });
+    await p2.afterCacheAccess(ctx);
+
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
+      access_token: 'foobar',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    });
+  });
 });

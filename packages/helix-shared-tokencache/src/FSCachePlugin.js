@@ -111,6 +111,9 @@ export class FSCachePlugin {
    */
   async afterCacheAccess(cacheContext) {
     if (cacheContext.cacheHasChanged) {
+      if (!this.meta) {
+        await this.#loadData();
+      }
       this.data = JSON.parse(cacheContext.tokenCache.serialize());
       await this.#saveData();
       return true;

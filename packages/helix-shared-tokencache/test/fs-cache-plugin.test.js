@@ -49,6 +49,33 @@ describe('FSCachePlugin Test', () => {
     assert.strictEqual(p.location, testFilePath);
   });
 
+  it('writes the fresh cache data does not overwrite metadata', async () => {
+    await fs.writeFile(testFilePath, JSON.stringify({
+      access_token: '1234',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    }), 'utf-8');
+
+    const p = new FSCachePlugin({
+      filePath: testFilePath,
+    });
+
+    const ctx = new MockTokenCacheContext({
+      cacheHasChanged: true,
+      tokens: '{ "access_token": "1234" }',
+    });
+    const ret = await p.afterCacheAccess(ctx);
+    assert.strictEqual(ret, true);
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
+      access_token: '1234',
+      cachePluginMetadata: {
+        foo: 'bar',
+      },
+    });
+    assert.strictEqual(p.location, testFilePath);
+  });
+
   it('writes the plugin metadata cache data to the filesystem', async () => {
     const p = new FSCachePlugin({
       filePath: testFilePath,

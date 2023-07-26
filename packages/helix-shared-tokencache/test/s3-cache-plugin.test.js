@@ -45,6 +45,12 @@ describe('S3CachePlugin Test', () => {
     const objectData = [];
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(200, JSON.stringify({
+        cachePluginMetadata: {
+          foo: 'bar',
+        },
+      }))
       .put('/myproject/auth-default/json?x-id=PutObject')
       .twice()
       .reply((_, body) => {
@@ -58,10 +64,10 @@ describe('S3CachePlugin Test', () => {
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(objectData.shift(), '{"access_token":"1234"}');
-
-    await p.setPluginMetadata({ foo: 'bar' });
     assert.strictEqual(objectData.shift(), '{"access_token":"1234","cachePluginMetadata":{"foo":"bar"}}');
+
+    await p.setPluginMetadata({ foo: 'zoo' });
+    assert.strictEqual(objectData.shift(), '{"access_token":"1234","cachePluginMetadata":{"foo":"zoo"}}');
   });
 
   it('can clear plugin metadata', async () => {
@@ -123,6 +129,8 @@ describe('S3CachePlugin Test', () => {
     let objectData = null;
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(404)
       .put('/myproject/auth-default/json?x-id=PutObject')
       .reply((_, body) => {
         objectData = Buffer.from(body, 'hex');
@@ -161,6 +169,8 @@ describe('S3CachePlugin Test', () => {
     });
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(404)
       .put('/myproject/auth-default/json?x-id=PutObject')
       .reply(404);
 
