@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.3.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.3.0...@adobe/helix-shared-tokencache-v1.3.1) (2023-07-26)
+
+
+### Bug Fixes
+
+* plugin metadata lost on cache update ([#825](https://github.com/adobe/helix-shared/issues/825)) ([44ccdba](https://github.com/adobe/helix-shared/commit/44ccdba5488c4314456efc4d5ed2393a26b863df))
+
 # [@adobe/helix-shared-tokencache-v1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.2.10...@adobe/helix-shared-tokencache-v1.3.0) (2023-07-24)
 
 
