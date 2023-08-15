@@ -93,7 +93,7 @@ indices:
         value: |
           el.innerText
       bad-selector:
-        select: div:is([class="embed"])
+        select: div:foobar([class="embed"])
         value: |
           textContent(el)
   `;
