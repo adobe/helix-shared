@@ -174,6 +174,7 @@ describe('Index Resource Tests', () => {
       'missing-header': '',
       'non-array-words': 'Mon, 22 Feb 2021 15:28:00 GMT',
       paragraph: '\n    <p>consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>\n  ',
+      'first-segment': 'abc',
       'replace-path': '/zc/de/ab/fg/abcd',
       'replaceAll-path': '/zc/de/z/fg/zcd',
       sourceHash: 'JJYxCM1NDG4ahJm9f',
