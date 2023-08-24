@@ -44,10 +44,18 @@ indices:
         select: head > meta[name="x-source-hash"]
         value: |
           attribute(el, 'content')
-      external-path:
+      first-segment:
         select: none
         value: |
-          replace(path, '/test/specs/', '/')
+          match(path, '^/([^/]+)/')
+      replace-path:
+        select: none
+        value: |
+          replace(path, 'ab', 'z')
+      replaceAll-path:
+        select: none
+        value: |
+          replaceAll(path, 'ab', 'z')
       paragraph:
         select: main > div:nth-of-type(5)
         value: |
@@ -151,14 +159,13 @@ describe('Index Resource Tests', () => {
   it('indexing a resource', async () => {
     const config = await new IndexConfig().withSource(INDEX).init();
     const headers = new Headers({ 'last-modified': 'Mon, 22 Feb 2021 15:28:00 GMT' });
-    const record = indexResource('/path', { body: BODY, headers }, config.indices[0], console);
+    const record = indexResource('/abc/de/ab/fg/abcd', { body: BODY, headers }, config.indices[0], console);
     assert.deepEqual(record, {
       author: 'Max',
       'bad-selector': '',
       'call-unknown-function': '',
       'condition-unsupported': '',
       date: 44313,
-      'external-path': '/path',
       'last-modified': 1614007680,
       'last-modified-raw': 'Mon, 22 Feb 2021 15:28:00 GMT',
       'match-simple': '',
@@ -167,6 +174,9 @@ describe('Index Resource Tests', () => {
       'missing-header': '',
       'non-array-words': 'Mon, 22 Feb 2021 15:28:00 GMT',
       paragraph: '\n    <p>consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>\n  ',
+      'first-segment': 'abc',
+      'replace-path': '/zc/de/ab/fg/abcd',
+      'replaceAll-path': '/zc/de/z/fg/zcd',
       sourceHash: 'JJYxCM1NDG4ahJm9f',
       teaser: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut',
       title: 'I feel good',
