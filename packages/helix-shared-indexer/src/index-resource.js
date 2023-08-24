@@ -58,6 +58,11 @@ const helpers = {
     // todo: maybe base on function ?
     const result = [];
     const regex = new RegExp(re, 'g');
+
+    if (!Array.isArray(elements)) {
+      // eslint-disable-next-line no-param-reassign
+      elements = [elements];
+    }
     elements.forEach((el) => {
       let m;
       const content = typeof el === 'string' ? el : toText(el);
@@ -77,6 +82,7 @@ const helpers = {
     return [text.split(/\s+/g).slice(start, end).join(' ')];
   },
   replace: (s, searchValue, replaceValue) => [s.replace(searchValue, replaceValue)],
+  replaceAll: (s, searchValue, replaceValue) => [s.replaceAll(searchValue, replaceValue)],
 };
 
 function evaluate(expression, context) {
