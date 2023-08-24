@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.0.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.10...@adobe/helix-shared-indexer-v2.0.11) (2023-08-24)
+
+
+### Bug Fixes
+
+* match should enforce array input ([#835](https://github.com/adobe/helix-shared/issues/835)) ([91874c9](https://github.com/adobe/helix-shared/commit/91874c9c46b75cdce3ba787f7ad3a012e26e9c19))
+
 # [@adobe/helix-shared-indexer-v2.0.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.9...@adobe/helix-shared-indexer-v2.0.10) (2023-08-21)
 
 
