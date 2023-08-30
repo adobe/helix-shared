@@ -56,23 +56,34 @@ const helpers = {
   innerHTML: (elements) => elements.map((el) => el.children.map((child) => toHtml(child)).join('')),
   match: (elements, re) => {
     // todo: maybe base on function ?
-    const result = [];
+    const results = [];
     const regex = new RegExp(re, 'g');
 
     if (!Array.isArray(elements)) {
       // eslint-disable-next-line no-param-reassign
       elements = [elements];
     }
+    let previousIndex = -1;
     elements.forEach((el) => {
       let m;
       const content = typeof el === 'string' ? el : toText(el);
 
       // eslint-disable-next-line no-cond-assign
       while ((m = regex.exec(content)) !== null) {
-        result.push(m[m.length - 1]);
+        const { index } = m;
+        if (index === previousIndex) {
+          // stop collecting empty matches
+          break;
+        }
+        const result = m.findLast((value) => !!value);
+        if (result) {
+          // only add result if non-empty
+          results.push(result);
+        }
+        previousIndex = index;
       }
     });
-    return result;
+    return results;
   },
   words: (text, start, end) => {
     if (Array.isArray(text)) {
