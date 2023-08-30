@@ -104,6 +104,14 @@ indices:
         select: div:foobar([class="embed"])
         value: |
           textContent(el)
+      first-alternate:
+        select: main > div:last-of-type > p:nth-of-type(2)
+        value: |
+          match(innerHTML(el), '(.*?)<br><br>.*|(.*)')
+      second-alternate:
+        select: main > div:last-of-type > p:nth-of-type(3)
+        value: |
+          match(innerHTML(el), '(.*?)<br><br>.*|(.*)')
   `;
 
 const BODY = `
@@ -149,6 +157,8 @@ const BODY = `
   </div>
   <div class="default">
     <p>Topics: A, B, C,</p>
+    <p>before<br><br>after</p>
+    <p>before<br>after</p>
   </div>
 </main>
 <footer></footer>
@@ -166,6 +176,8 @@ describe('Index Resource Tests', () => {
       'call-unknown-function': '',
       'condition-unsupported': '',
       date: 44313,
+      'first-alternate': 'before',
+      'second-alternate': 'before<br>after',
       'last-modified': 1614007680,
       'last-modified-raw': 'Mon, 22 Feb 2021 15:28:00 GMT',
       'match-simple': '',
