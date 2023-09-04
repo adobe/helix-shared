@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-git-v3.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git-v3.0.1...@adobe/helix-shared-git-v3.0.2) (2023-09-04)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#836](https://github.com/adobe/helix-shared/issues/836)) ([2000b91](https://github.com/adobe/helix-shared/commit/2000b916f1541d8e00b6ab0cd03bb3a637bad91f))
+
 # [@adobe/helix-shared-git-v3.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git-v3.0.0...@adobe/helix-shared-git-v3.0.1) (2023-05-28)
 
 
