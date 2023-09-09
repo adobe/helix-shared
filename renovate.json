@@ -31,7 +31,7 @@
       "allowedVersions": "<4.0.0"
     },
     {
-      "packageNames": ["unist-util-visit"],
+      "packageNames": ["unist-util-visit", "rehype-format"],
       "allowedVersions": "<5.0.0"
     },
     {
@@ -43,7 +43,7 @@
       "allowedVersions": "<8.0.0"
     },
     {
-      "packageNames": ["hast-util-raw", "hast-util-to-html"],
+      "packageNames": ["hast-util-raw", "hast-util-to-html", "rehype-parse"],
       "allowedVersions": "<9.0.0"
     },
     {
