@@ -38,7 +38,7 @@
     "unified": "11.0.2"
   },
   "devDependencies": {
-    "@adobe/fetch": "4.0.13",
+    "@adobe/fetch": "4.1.0",
     "@adobe/helix-shared-config": "^9.1.0",
     "c8": "8.0.1"
   }
