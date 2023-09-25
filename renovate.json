@@ -8,54 +8,6 @@
   "branchPrefix": "renovate-",
   "packageRules": [
     {
-      "packageNames": [
-        "hast-util-to-string",
-        "mdast-util-gfm-footnote",
-        "mdast-util-gfm-strikethrough",
-        "mdast-util-gfm-table",
-        "mdast-util-gfm-task-list-item",
-        "micromark-extension-gfm-footnote",
-        "micromark-extension-gfm-strikethrough",
-        "micromark-extension-gfm-table",
-        "micromark-extension-gfm-tagfilter",
-        "micromark-extension-gfm-task-list-item",
-        "micromark-util-character",
-        "micromark-util-combine-extensions",
-        "micromark-util-symbol",
-        "unist-util-find"
-      ],
-      "allowedVersions": "<2.0.0"
-    },
-    {
-      "packageNames": ["mdast-util-phrasing"],
-      "allowedVersions": "<4.0.0"
-    },
-    {
-      "packageNames": ["unist-util-visit", "rehype-format"],
-      "allowedVersions": "<5.0.0"
-    },
-    {
-      "packageNames": ["hast-util-select"],
-      "allowedVersions": "<6.0.0"
-    },
-    {
-      "packageNames": ["hastscript", "unist-util-inspect"],
-      "allowedVersions": "<8.0.0"
-    },
-    {
-      "packageNames": ["hast-util-raw", "hast-util-to-html", "rehype-parse"],
-      "allowedVersions": "<9.0.0"
-    },
-    {
-      "packageNames": ["unified"],
-      "allowedVersions": "<11.0.0"
-    },
-    {
-      "packageNames": ["mdast-util-to-hast"],
-      "allowedVersions": "<13.0.0"
-    },
-
-    {
       "packageNames": ["quick-lru"],
       "allowedVersions": "<6.0.0"
     },
@@ -70,10 +22,6 @@
     {
       "packageNames": ["p-limit"],
       "allowedVersions": "<4.0.0"
-    },
-    {
-      "packageNames": ["circleci/node"],
-      "allowedVersions": "<15"
     },
     {
       "packageNames": ["cimg/node"],
