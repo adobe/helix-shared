@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>adobe/helix-shared"],
+  "extends": ["local>adobe/helix-shared"],
   "packageRules": [
     {
       "packageNames": ["semantic-release"],
