@@ -11,7 +11,7 @@
       "allowedVersions": "<10.0"
     },
     {
-      "comment": "https://github.com/iambumblehead/esmock/issues/260",
+      // https://github.com/iambumblehead/esmock/issues/260
       "packageNames": ["esmock"],
       "allowedVersions": "2.5.1"
     }
