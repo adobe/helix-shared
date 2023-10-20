@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-ims-v2.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims-v2.0.2...@adobe/helix-shared-ims-v2.0.3) (2023-10-20)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#854](https://github.com/adobe/helix-shared/issues/854)) ([646c4f2](https://github.com/adobe/helix-shared/commit/646c4f2f746fe83e268edbda9e9ae844ad24f79c))
+
 # [@adobe/helix-shared-ims-v2.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims-v2.0.1...@adobe/helix-shared-ims-v2.0.2) (2023-08-21)
 
 
