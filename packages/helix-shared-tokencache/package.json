@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-tokencache",
-  "version": "1.3.12",
+  "version": "1.3.13",
   "description": "Shared modules of the Helix Project - tokencache",
   "main": "src/index.js",
   "type": "module",
