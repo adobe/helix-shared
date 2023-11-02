@@ -10,7 +10,7 @@
     "docs": "npm run docs:schema && npm run docs:api",
     "test": "npm test -ws",
     "lint": "npm run lint -ws",
-    "semantic-release": "npx --no-install -ws semantic-release -e semantic-release-monorepo",
+    "semantic-release": "npx --no-install -ws semantic-release -e semantic-release-monorepo-esm",
     "prepare": "husky install",
     "clean": "rm -rf package-lock.json node_modules"
   },
@@ -32,7 +32,7 @@
     "@adobe/jsonschema2md": "7.1.5",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
-    "@semantic-release/npm": "9.0.2",
+    "@semantic-release/npm": "11.0.0",
     "ajv": "8.12.0",
     "c8": "8.0.1",
     "eslint": "8.52.0",
@@ -42,8 +42,8 @@
     "mocha": "10.2.0",
     "mocha-multi-reporters": "1.5.1",
     "nock": "13.3.6",
-    "semantic-release": "19.0.5",
-    "semantic-release-monorepo": "7.0.5"
+    "semantic-release": "22.0.6",
+    "semantic-release-monorepo-esm": "1.0.10"
   },
   "lint-staged": {
     "*.js": "eslint"
