@@ -28,6 +28,6 @@
   },
   "dependencies": {
     "@adobe/helix-shared-prune": "^1.0.5",
-    "yaml": "2.3.3"
+    "yaml": "2.3.4"
   }
 }
