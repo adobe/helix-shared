@@ -12,7 +12,7 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
-import jsep from 'jsep';
+import jsep, { Jsep } from 'jsep';
 import rehypeParse from 'rehype-parse';
 import { selectAll } from 'hast-util-select';
 import { toText } from 'hast-util-to-text';
@@ -105,7 +105,7 @@ function evaluate(expression, context) {
 
   function evalNode(node) {
     switch (node.type) {
-      case 'CallExpression': {
+      case Jsep.CALL_EXP: {
         const args = node.arguments.map(evalNode);
         const fn = evalNode(node.callee);
         if (typeof fn === 'function') {
@@ -115,17 +115,17 @@ function evaluate(expression, context) {
         }
         return undefined;
       }
-      case 'MemberExpression': {
+      case Jsep.MEMBER_EXP: {
         const obj = vars[node.object.name];
         if (obj && obj.get) {
           return obj.get(node.property.value);
         }
         return undefined;
       }
-      case 'Identifier': {
+      case Jsep.IDENTIFIER: {
         return vars[node.name];
       }
-      case 'Literal': {
+      case Jsep.LITERAL: {
         return node.value;
       }
       default: {
