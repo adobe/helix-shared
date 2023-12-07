@@ -30,19 +30,17 @@ const cache = {
  *
  * @param {SecretsOptions} opts - the options
  * @param {UniversalContext} ctx - the context
- * @param {string} defaultSecretsPath - the default secrets path
  * @return {Promise<string>} the secrets path
  */
-async function evaluatePathFromName(opts, ctx, defaultSecretsPath) {
-  let secretsPath;
+async function evaluatePathFromName(opts, ctx) {
+  let secretsPath = `/helix-deploy/${ctx.func.package}/${ctx.func.name}`;
 
   try {
     const userPath = typeof opts.name === 'function' ? await opts.name.call(ctx, opts) : opts.name;
-    secretsPath = userPath || defaultSecretsPath;
+    secretsPath = userPath || secretsPath;
   } catch (e) {
     const { log = console } = ctx;
     log.error(`error in user-supplied 'name' function: ${e.message}`);
-    secretsPath = defaultSecretsPath;
   }
 
   return secretsPath;
@@ -82,14 +80,12 @@ export async function loadSecrets(ctx, opts) {
     return {};
   }
 
-  const defaultSecretsPath = `/helix-deploy/${ctx.func.package}/${ctx.func.name}`;
-
   const {
     expiration = CACHE_EXPIRATION,
     checkDelay = CHECK_DELAY,
   } = opts;
 
-  const secretsPath = await evaluatePathFromName(opts, ctx, defaultSecretsPath);
+  const secretsPath = await evaluatePathFromName(opts, ctx);
 
   const sm = new SecretsManager(process.env);
   const now = Date.now();
