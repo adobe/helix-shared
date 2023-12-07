@@ -1,3 +1,11 @@
+# [@adobe/helix-shared-indexer-v2.0.17](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.16...@adobe/helix-shared-indexer-v2.0.17) (2023-12-07)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#870](https://github.com/adobe/helix-shared/issues/870)) ([c549fe1](https://github.com/adobe/helix-shared/commit/c549fe180a4199a424b85f3d88a87c67e32ac4a1))
+* use Jsep.Field instead of strings ([#869](https://github.com/adobe/helix-shared/issues/869)) ([df2e6da](https://github.com/adobe/helix-shared/commit/df2e6daae4a410318c386653dbdb1566fbcae14e))
+
 # [@adobe/helix-shared-indexer-v2.0.16](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.15...@adobe/helix-shared-indexer-v2.0.16) (2023-10-30)
 
 
