@@ -23,6 +23,32 @@ const cache = {
 };
 
 /**
+ * Allow dynamic setting of the secrets path via user-supplied function or default to the
+ * defaultSecretsPath. If the user-supplied function throws an error, log it and use the
+ * defaultSecretsPath. The user-supplied function may be async or sync, which is both
+ * handled by using await.
+ *
+ * @param {SecretsOptions} opts - the options
+ * @param {UniversalContext} ctx - the context
+ * @param {string} defaultSecretsPath - the default secrets path
+ * @return {Promise<string>} the secrets path
+ */
+async function evaluatePathFromName(opts, ctx, defaultSecretsPath) {
+  let secretsPath;
+
+  try {
+    const userPath = typeof opts.name === 'function' ? await opts.name.call(ctx, opts) : opts.name;
+    secretsPath = userPath || defaultSecretsPath;
+  } catch (e) {
+    const { log = console } = ctx;
+    log.error(`error in user-supplied 'name' function: ${e.message}`);
+    secretsPath = defaultSecretsPath;
+  }
+
+  return secretsPath;
+}
+
+/**
  * reset the cache - for testing only
  */
 export function reset() {
@@ -56,15 +82,14 @@ export async function loadSecrets(ctx, opts) {
     return {};
   }
 
+  const defaultSecretsPath = `/helix-deploy/${ctx.func.package}/${ctx.func.name}`;
+
   const {
     expiration = CACHE_EXPIRATION,
     checkDelay = CHECK_DELAY,
-    name = `/helix-deploy/${ctx.func.package}/${ctx.func.name}`,
   } = opts;
 
-  // Allow dynamic setting of the secrets path via user-supplied function
-  // The function can be async or sync which is both handled by using await
-  const secretsPath = typeof name === 'function' ? await name.call(ctx, opts) : name;
+  const secretsPath = await evaluatePathFromName(opts, ctx, defaultSecretsPath);
 
   const sm = new SecretsManager(process.env);
   const now = Date.now();
