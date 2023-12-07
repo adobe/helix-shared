@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.2.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.2.0...@adobe/helix-shared-secrets-v2.2.1) (2023-12-07)
+
+
+### Bug Fixes
+
+* default path for name-function and usage example ([#880](https://github.com/adobe/helix-shared/issues/880)) ([e8d932a](https://github.com/adobe/helix-shared/commit/e8d932aa90174515f673c533396fa615a1c6eec9))
+
 # [@adobe/helix-shared-secrets-v2.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.1.4...@adobe/helix-shared-secrets-v2.2.0) (2023-12-07)
 
 
