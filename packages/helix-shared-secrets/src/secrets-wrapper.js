@@ -23,6 +23,30 @@ const cache = {
 };
 
 /**
+ * Allow dynamic setting of the secrets path via user-supplied function or default to the
+ * defaultSecretsPath. If the user-supplied function throws an error, log it and use the
+ * defaultSecretsPath. The user-supplied function may be async or sync, which is both
+ * handled by using await.
+ *
+ * @param {SecretsOptions} opts - the options
+ * @param {UniversalContext} ctx - the context
+ * @return {Promise<string>} the secrets path
+ */
+async function evaluatePathFromName(opts, ctx) {
+  let secretsPath = `/helix-deploy/${ctx.func.package}/${ctx.func.name}`;
+
+  try {
+    const userPath = typeof opts.name === 'function' ? await opts.name.call(ctx, opts) : opts.name;
+    secretsPath = userPath || secretsPath;
+  } catch (e) {
+    const { log = console } = ctx;
+    log.error(`error in user-supplied 'name' function: ${e.message}`);
+  }
+
+  return secretsPath;
+}
+
+/**
  * reset the cache - for testing only
  */
 export function reset() {
@@ -59,8 +83,9 @@ export async function loadSecrets(ctx, opts) {
   const {
     expiration = CACHE_EXPIRATION,
     checkDelay = CHECK_DELAY,
-    name = `/helix-deploy/${ctx.func.package}/${ctx.func.name}`,
   } = opts;
+
+  const secretsPath = await evaluatePathFromName(opts, ctx);
 
   const sm = new SecretsManager(process.env);
   const now = Date.now();
@@ -69,11 +94,11 @@ export async function loadSecrets(ctx, opts) {
   if (!cache.checked) {
     cache.checked = now;
   } else if (now > cache.checked + checkDelay) {
-    lastChanged = await sm.getLastChangedDate(name);
+    lastChanged = await sm.getLastChangedDate(secretsPath);
     cache.checked = Date.now();
   }
   if (!cache.data || now > cache.loaded + expiration || lastChanged > cache.loaded) {
-    const params = await sm.loadSecrets(name);
+    const params = await sm.loadSecrets(secretsPath);
     const nower = Date.now();
     // eslint-disable-next-line no-console
     console.info(`loaded ${Object.entries(params).length} package parameter in ${nower - now}ms`);
