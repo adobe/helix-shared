@@ -160,7 +160,12 @@ describe('Secrets Wrapper Unit Tests', () => {
         }];
       });
 
-    const nameFunction = () => '/dynamic-path';
+    const nameFunction = (opts, ctx, defaultPath) => {
+      assert.deepStrictEqual(opts, { name: nameFunction });
+      assert.deepStrictEqual(ctx, DEFAULT_CONTEXT());
+      assert.strictEqual(defaultPath, '/helix-deploy/helix3/helix-admin');
+      return '/dynamic-path';
+    };
 
     const main = wrap((req, ctx) => {
       assert.deepStrictEqual(ctx.env, { SOME_SECRET: 'pssst' });
@@ -182,9 +187,10 @@ describe('Secrets Wrapper Unit Tests', () => {
         }];
       });
 
-    const nameFunction = (ctx, opts) => {
-      assert.deepStrictEqual(ctx, DEFAULT_CONTEXT());
+    const nameFunction = (opts, ctx, defaultPath) => {
       assert.deepStrictEqual(opts, { name: nameFunction });
+      assert.deepStrictEqual(ctx, DEFAULT_CONTEXT());
+      assert.strictEqual(defaultPath, '/helix-deploy/helix3/helix-admin');
       return '';
     };
 
@@ -208,7 +214,10 @@ describe('Secrets Wrapper Unit Tests', () => {
         }];
       });
 
-    const nameFunction = () => {
+    const nameFunction = (opts, ctx, defaultPath) => {
+      assert.deepStrictEqual(opts, { name: nameFunction });
+      assert.deepStrictEqual(ctx, DEFAULT_CONTEXT());
+      assert.strictEqual(defaultPath, '/helix-deploy/helix3/helix-admin');
       throw new Error('boom');
     };
 

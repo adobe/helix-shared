@@ -36,7 +36,7 @@ async function evaluatePathFromName(opts, ctx) {
   let secretsPath = `/helix-deploy/${ctx.func.package}/${ctx.func.name}`;
 
   try {
-    const userPath = typeof opts.name === 'function' ? await opts.name.call(ctx, opts) : opts.name;
+    const userPath = typeof opts.name === 'function' ? await opts.name.call(null, opts, ctx, secretsPath) : opts.name;
     secretsPath = userPath || secretsPath;
   } catch (e) {
     const { log = console } = ctx;
