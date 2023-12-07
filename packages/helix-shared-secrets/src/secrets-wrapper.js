@@ -62,6 +62,10 @@ export async function loadSecrets(ctx, opts) {
     name = `/helix-deploy/${ctx.func.package}/${ctx.func.name}`,
   } = opts;
 
+  // Allow dynamic setting of the secrets path via user-supplied function
+  // The function can be async or sync which is both handled by using await
+  const secretsPath = typeof name === 'function' ? await name.call(ctx, opts) : name;
+
   const sm = new SecretsManager(process.env);
   const now = Date.now();
   let lastChanged = 0;
@@ -69,11 +73,11 @@ export async function loadSecrets(ctx, opts) {
   if (!cache.checked) {
     cache.checked = now;
   } else if (now > cache.checked + checkDelay) {
-    lastChanged = await sm.getLastChangedDate(name);
+    lastChanged = await sm.getLastChangedDate(secretsPath);
     cache.checked = Date.now();
   }
   if (!cache.data || now > cache.loaded + expiration || lastChanged > cache.loaded) {
-    const params = await sm.loadSecrets(name);
+    const params = await sm.loadSecrets(secretsPath);
     const nower = Date.now();
     // eslint-disable-next-line no-console
     console.info(`loaded ${Object.entries(params).length} package parameter in ${nower - now}ms`);

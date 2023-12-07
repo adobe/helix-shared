@@ -148,6 +148,28 @@ describe('Secrets Wrapper Unit Tests', () => {
     assert.strictEqual(resp.status, 200);
   });
 
+  it('fetches secrets with custom name function', async () => {
+    nock('https://secretsmanager.us-east-1.amazonaws.com/')
+      .post('/')
+      .reply((uri, body) => {
+        assert.strictEqual(body, '{"SecretId":"/dynamic-path"}');
+        return [200, {
+          SecretString: JSON.stringify({ SOME_SECRET: 'pssst' }),
+        }, {
+          'content-type': 'application/json',
+        }];
+      });
+
+    const nameFunction = () => '/dynamic-path';
+
+    const main = wrap((req, ctx) => {
+      assert.deepStrictEqual(ctx.env, { SOME_SECRET: 'pssst' });
+      return new Response(200);
+    }).with(secrets, { name: nameFunction });
+    const resp = await main(new Request('http://localhost'), DEFAULT_CONTEXT());
+    assert.strictEqual(resp.status, 200);
+  });
+
   it('caches secrets', async () => {
     nock('https://secretsmanager.us-east-1.amazonaws.com/')
       .post('/')
