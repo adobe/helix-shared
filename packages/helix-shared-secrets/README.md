@@ -20,10 +20,6 @@ import secrets from '@adobe/helix-shared-secrets';
 export const main = wrap(run)
   .with(secrets);
 ```
-Certainly, below is a sample README section describing how to use the `secrets` wrapper with two different types of `nameFunction`. This section provides examples for users to understand how to implement their custom logic for determining the secrets path.
-
----
-
 ## Usage of `secrets` Wrapper with Custom `nameFunction`
 
 The `secrets` wrapper can be customized by providing a `nameFunction` within the options. This function can dynamically determine the secrets path based on the context (`ctx`) and options (`opts`), or use a default path. Here are two example usages of the `secrets` wrapper with different types of `nameFunction`.
