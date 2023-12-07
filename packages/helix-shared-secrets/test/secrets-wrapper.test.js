@@ -182,7 +182,11 @@ describe('Secrets Wrapper Unit Tests', () => {
         }];
       });
 
-    const nameFunction = () => '';
+    const nameFunction = (ctx, opts) => {
+      assert.deepStrictEqual(ctx, DEFAULT_CONTEXT());
+      assert.deepStrictEqual(opts, { name: nameFunction });
+      return '';
+    };
 
     const main = wrap((req, ctx) => {
       assert.deepStrictEqual(ctx.env, { SOME_SECRET: 'pssst' });
