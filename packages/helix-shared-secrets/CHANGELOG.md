@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.1.4...@adobe/helix-shared-secrets-v2.2.0) (2023-12-07)
+
+
+### Features
+
+* support resolving secrets name via function ([#879](https://github.com/adobe/helix-shared/issues/879)) ([841e7a0](https://github.com/adobe/helix-shared/commit/841e7a0d1a4182020cb6715ff1b96f2bccc36a5e))
+
 # [@adobe/helix-shared-secrets-v2.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.1.3...@adobe/helix-shared-secrets-v2.1.4) (2023-12-07)
 
 
