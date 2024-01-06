@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-dom-v2.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-dom-v2.0.1...@adobe/helix-shared-dom-v2.0.2) (2024-01-06)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([9abd444](https://github.com/adobe/helix-shared/commit/9abd44448a04c04908bf6a2ebb57110de7c3793a))
+
 # [@adobe/helix-shared-dom-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-dom-v2.0.0...@adobe/helix-shared-dom-v2.0.1) (2023-05-28)
 
 
