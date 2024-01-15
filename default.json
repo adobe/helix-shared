@@ -8,6 +8,12 @@
   "branchPrefix": "renovate-",
   "packageRules": [
     {
+      "packageNames": [
+        "semantic-release",
+      ],
+      "allowedVersions": "<23"
+    },
+    {
       "packageNames": ["quick-lru"],
       "allowedVersions": "<6.0.0"
     },
