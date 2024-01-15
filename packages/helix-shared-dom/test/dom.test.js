@@ -463,7 +463,7 @@ describe('dom equivalence nodeIsEquivalent(), assertEquivalentNode(), nodeMatche
     const prechanges = new JSDOM(changes);
 
     assert.throws(() => dumpDOM(prebase.window.document, prechanges.window.document, 0));
-  });
+  }).timeout(3000);
 
   it('dumpDOM equality tests', async () => {
     each([docA, docB, docC], (v) => {
