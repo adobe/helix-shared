@@ -10,7 +10,7 @@
     "docs": "npm run docs:schema && npm run docs:api",
     "test": "npm test -ws",
     "lint": "npm run lint -ws",
-    "semantic-release": "npx --no-install -ws semantic-release -e semantic-release-monorepo",
+    "semantic-release": "npx --no-install -ws semantic-release",
     "semantic-release-dry": "npx --no-install -ws semantic-release --dry-run --branches $CI_BRANCH",
     "prepare": "husky install",
     "clean": "rm -rf package-lock.json node_modules"
