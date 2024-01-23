@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-async-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-async-v2.0.0...@adobe/helix-shared-async-v2.0.1) (2024-01-23)
+
+
+### Bug Fixes
+
+* semrel ([#896](https://github.com/adobe/helix-shared/issues/896)) ([f28aee2](https://github.com/adobe/helix-shared/commit/f28aee2e92cff899405577badab067f071d30771))
+
 # [8.0.0](https://github.com/adobe/helix-shared/compare/v7.29.1...v8.0.0) (2024-01-21)
 
 
