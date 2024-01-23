@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-prune",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Shared modules of the Helix Project - prune",
   "main": "src/prune.js",
   "type": "module",
