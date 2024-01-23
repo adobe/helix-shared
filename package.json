@@ -44,7 +44,7 @@
     "mocha-multi-reporters": "1.5.1",
     "nock": "13.5.0",
     "semantic-release": "23.0.0",
-    "semantic-release-monorepo": "8.0.0"
+    "semantic-release-monorepo": "8.0.1"
   },
   "lint-staged": {
     "*.js": "eslint"

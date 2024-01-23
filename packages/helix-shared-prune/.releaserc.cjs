@@ -1,3 +1,1 @@
-module.exports = {
-  extends: '../../.releaserc.cjs',
-};
+../../.releaserc.cjs
