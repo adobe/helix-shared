@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-bounce-v2.0.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.14...@adobe/helix-shared-bounce-v2.0.15) (2024-01-23)
+
+
+### Bug Fixes
+
+* semrel ([#896](https://github.com/adobe/helix-shared/issues/896)) ([f28aee2](https://github.com/adobe/helix-shared/commit/f28aee2e92cff899405577badab067f071d30771))
+
 # [@adobe/helix-shared-bounce-v2.0.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.13...@adobe/helix-shared-bounce-v2.0.14) (2024-01-15)
 
 
