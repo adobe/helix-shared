@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.2.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.2.2...@adobe/helix-shared-secrets-v2.2.3) (2024-01-23)
+
+
+### Bug Fixes
+
+* semrel ([#896](https://github.com/adobe/helix-shared/issues/896)) ([f28aee2](https://github.com/adobe/helix-shared/commit/f28aee2e92cff899405577badab067f071d30771))
+
 # [@adobe/helix-shared-secrets-v2.2.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.2.1...@adobe/helix-shared-secrets-v2.2.2) (2024-01-15)
 
 
