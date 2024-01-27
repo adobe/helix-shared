@@ -38,7 +38,7 @@
     "cookie": "0.6.0",
     "fs-extra": "11.2.0",
     "ignore": "5.3.0",
-    "lru-cache": "10.1.0",
+    "lru-cache": "10.2.0",
     "object-hash": "3.0.0",
     "uri-js": "4.4.1",
     "yaml": "2.3.4"
