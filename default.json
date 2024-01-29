@@ -9,7 +9,7 @@
   "packageRules": [
     {
       "packageNames": [
-        "semantic-release",
+        "semantic-release"
       ],
       "allowedVersions": "<23"
     },
