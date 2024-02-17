@@ -29,7 +29,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "nock": "13.5.1"
+    "nock": "13.5.3"
   },
   "dependencies": {
     "@adobe/fetch": "^4.0.10",
