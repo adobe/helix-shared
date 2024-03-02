@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-ims",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Shared modules of the Helix Project - ims",
   "main": "src/ims.js",
   "types": "src/ims.d.ts",
