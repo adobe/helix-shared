@@ -29,10 +29,10 @@
     "access": "public"
   },
   "devDependencies": {
-    "nock": "13.5.3"
+    "nock": "13.5.4"
   },
   "dependencies": {
     "@adobe/fetch": "^4.0.10",
-    "@aws-sdk/client-s3": "3.521.0"
+    "@aws-sdk/client-s3": "3.525.0"
   }
 }
