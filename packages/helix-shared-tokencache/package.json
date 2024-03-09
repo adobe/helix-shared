@@ -33,6 +33,6 @@
   },
   "dependencies": {
     "@adobe/fetch": "^4.0.10",
-    "@aws-sdk/client-s3": "3.525.0"
+    "@aws-sdk/client-s3": "3.529.1"
   }
 }
