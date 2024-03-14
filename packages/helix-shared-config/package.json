@@ -28,6 +28,10 @@
     "reporter": "mocha-multi-reporters",
     "reporter-options": "configFile=.mocha-multi.json"
   },
+  "exports": {
+    ".": "./src/index.js",
+    "./modifiers": "./src/ModifiersConfig.js"
+  },
   "dependencies": {
     "@adobe/fetch": "^4.0.1",
     "@adobe/helix-shared-git": "^3.0.0",
