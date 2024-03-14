@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.3.13...@adobe/helix-shared-config-v10.4.0) (2024-03-14)
+
+
+### Features
+
+* create extra export for modifiers ([85ebf51](https://github.com/adobe/helix-shared/commit/85ebf51e6b1dd368ad2e8e748a4d512e17170893))
+
 # [@adobe/helix-shared-config-v10.3.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.3.12...@adobe/helix-shared-config-v10.3.13) (2024-03-09)
 
 
