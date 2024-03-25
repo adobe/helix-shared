@@ -16,6 +16,7 @@ export declare interface S3CachePluginOptions {
   bucket: string;
   key: string;
   secret: string;
+  readOnly?: boolean;
 }
 
 export declare class S3CachePlugin implements CachePlugin {

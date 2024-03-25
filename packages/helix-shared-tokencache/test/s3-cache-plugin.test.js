@@ -146,6 +146,26 @@ describe('S3CachePlugin Test', () => {
     assert.strictEqual(decrypt('foobar', objectData).toString('utf-8'), '{"access_token":"1234"}');
   });
 
+  it('does not write in read-only mode', async () => {
+    const p = new S3CachePlugin({
+      bucket: 'test-bucket',
+      key: 'myproject/auth-default/json',
+      secret: 'foobar',
+      readOnly: true,
+    });
+
+    nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(404);
+
+    const ctx = new MockTokenCacheContext({
+      cacheHasChanged: true,
+      tokens: '{ "access_token": "1234" }',
+    });
+    const ret = await p.afterCacheAccess(ctx);
+    assert.strictEqual(ret, true);
+  });
+
   it('does not the write data to s3 if context not changed', async () => {
     const p = new S3CachePlugin({
       bucket: 'test-bucket',

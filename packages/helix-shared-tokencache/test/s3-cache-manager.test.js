@@ -118,6 +118,7 @@ describe('S3CacheManager Test', () => {
       prefix: 'myproject/auth-default',
       type: 'onedrive',
       secret: 'foobar',
+      readOnly: true,
     });
 
     const p = await mgr.getCache('content');
@@ -126,6 +127,7 @@ describe('S3CacheManager Test', () => {
     assert.strictEqual(p.key, 'myproject/auth-default/auth-onedrive-content.json');
     assert.strictEqual(p.bucket, 'test-bucket');
     assert.strictEqual(p.secret, 'foobar');
+    assert.strictEqual(p.readOnly, true);
   });
 
   it('checks if cache exits', async () => {

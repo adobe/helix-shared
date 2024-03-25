@@ -38,6 +38,7 @@ export class S3CachePlugin {
     this.bucket = opts.bucket;
     this.key = opts.key;
     this.secret = opts.secret;
+    this.readOnly = opts.readOnly || false;
     this.s3 = new S3Client();
     this.meta = null;
     this.data = null;
@@ -110,6 +111,10 @@ export class S3CachePlugin {
       log, secret, key, bucket,
     } = this;
     try {
+      if (this.readOnly) {
+        log.debug('s3: skip write token cache (read-only)', key);
+        return true;
+      }
       log.debug('s3: write token cache', key);
       const data = this.data || {};
       if (Object.keys(this.meta || {}).length) {
