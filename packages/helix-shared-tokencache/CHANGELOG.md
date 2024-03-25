@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.3.31...@adobe/helix-shared-tokencache-v1.4.0) (2024-03-25)
+
+
+### Features
+
+* add support for read-only s3 cache plugin (for testing) ([#914](https://github.com/adobe/helix-shared/issues/914)) ([e1d19d7](https://github.com/adobe/helix-shared/commit/e1d19d79bfabe1036005eeae8bf94392898e049d))
+
 # [@adobe/helix-shared-tokencache-v1.3.31](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.3.30...@adobe/helix-shared-tokencache-v1.3.31) (2024-03-23)
 
 
