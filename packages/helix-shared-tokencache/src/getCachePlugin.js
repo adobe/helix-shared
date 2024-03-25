@@ -24,6 +24,7 @@ const BUCKET_CODE_BUS = 'helix-code-bus';
  * @property {string} contentBusId content-bus id
  * @property {string} owner  code owner
  * @property {string} [user = "content"] the user for which the cache is retrieved
+ * @property {boolean} [readOnly = false] don't write to underlying persistence layer
  */
 
 /**
@@ -44,6 +45,7 @@ export async function getCachePlugin(opts, type) {
     contentBusId,
     owner,
     user = 'content',
+    readOnly = false,
   } = opts;
 
   const derivedOpts = [];
@@ -67,6 +69,7 @@ export async function getCachePlugin(opts, type) {
     secret: 'default',
     bucket: BUCKET_CONTENT_BUS,
     type,
+    readOnly,
   }, ...derivedOpts);
 
   log.info(`using connected user from ${basePlugin.location}`);

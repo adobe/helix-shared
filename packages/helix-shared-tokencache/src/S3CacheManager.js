@@ -47,6 +47,7 @@ export class S3CacheManager {
     this.bucket = opts.bucket;
     this.prefix = opts.prefix;
     this.secret = opts.secret;
+    this.readOnly = opts.readOnly;
     this.type = opts.type;
     this.s3 = new S3Client();
   }
@@ -102,6 +103,7 @@ export class S3CacheManager {
       key: this.getAuthObjectKey(key),
       secret: this.secret,
       bucket: this.bucket,
+      readOnly: this.readOnly,
     });
   }
 }
