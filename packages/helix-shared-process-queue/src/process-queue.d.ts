@@ -14,12 +14,20 @@
 /**
  * Queue entry.
  */
-export declare type QueueEntry = any;
+export declare type QueueEntry<T = any> = T;
 
 /**
  * Queue type
  */
-export declare type Queue = AsyncGenerator<QueueEntry>|Iterable<QueueEntry>|Array<QueueEntry>;
+export declare type Queue<T = any> = AsyncGenerator<QueueEntry<T>> | Iterable<QueueEntry<T>> | Array<QueueEntry<T>>;
+
+/**
+ * Inverse queue entry type
+ */
+export declare type QueueEntryType<TQueue extends Queue> = TQueue extends Array<infer T>
+  ? T : TQueue extends Iterable<infer T>
+  ? T : TQueue extends AsyncGenerator<infer T>
+  ? T : never;
 
 /**
  * A (asynchronous) handler function that is invoked for every queue entry.
@@ -27,23 +35,35 @@ export declare type Queue = AsyncGenerator<QueueEntry>|Iterable<QueueEntry>|Arra
  * The handler can modify the `queue` if needed.
  * If the return value is not undefined, it is added to the `results` array.
  *
- * @param {QueueEntry} entry The queue entry.
- * @param {Queue} queue the queue.
- * @param {[]} results the process queue results
- * @return {*} result or undefined.
+ * @param entry The queue entry.
+ * @param queue the queue.
+ * @param results the process queue results
+ * @return result or undefined.
  */
-export declare interface ProcessQueueHandler {
-  (entry: QueueEntry, queue:Queue, results:Array<any>): Promise<any>;
-}
+export declare type ProcessQueueHandler<
+  TQueue extends Queue,
+  TEntry extends QueueEntry = QueueEntryType<TQueue>,
+  TReturn = any
+> = (entry: TEntry, queue: TQueue, results: TReturn[]) => PromiseLike<TReturn>;
 
 /**
  * Processes the given queue concurrently. If the `queue` is an array it will remove the
  * entries during processing. It returns the `results` array which is either populated by the
  * queue handler function directly or with the return values of the handler functions.
  *
- * @param {Queue} queue A list of entries to be processed
- * @param {ProcessQueueHandler} fn A handler function
+ * @param queue A list of entries to be processed
+ * @param fn A handler function
  * @param {number} [maxConcurrent = 8] Concurrency level
- * @returns {Promise<[]>} the results
+ * @returns the results
  */
-export default function processQueue(queue:Queue, fn:ProcessQueueHandler, maxConcurrent?:number): Promise<Array<any>>;
+export default function processQueue<
+  TQueue extends Queue,
+  THandler extends ProcessQueueHandler<TQueue>,
+  TReturn = ReturnType<THandler>
+>(
+  queue: TQueue,
+  fn: THandler,
+  maxConcurrent?: number
+): Promise<TReturn[]>;
+
+
