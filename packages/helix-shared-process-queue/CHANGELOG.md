@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-process-queue-v3.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.0.1...@adobe/helix-shared-process-queue-v3.0.2) (2024-03-29)
+
+
+### Bug Fixes
+
+* **types:** add more specific processQueue typings ([#917](https://github.com/adobe/helix-shared/issues/917)) ([2c0f6b4](https://github.com/adobe/helix-shared/commit/2c0f6b4b0cb74e9b652e08325b977fb042ce856b))
+
 # [@adobe/helix-shared-process-queue-v3.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.0.0...@adobe/helix-shared-process-queue-v3.0.1) (2024-01-23)
 
 
