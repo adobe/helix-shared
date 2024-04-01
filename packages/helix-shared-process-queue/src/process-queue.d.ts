@@ -59,7 +59,7 @@ export declare type ProcessQueueHandler<
 export default function processQueue<
   TQueue extends Queue,
   THandler extends ProcessQueueHandler<TQueue>,
-  TReturn = ReturnType<THandler>
+  TReturn = ReturnType<THandler> extends PromiseLike<infer U> ? U : ReturnType<THandler>
 >(
   queue: TQueue,
   fn: THandler,
