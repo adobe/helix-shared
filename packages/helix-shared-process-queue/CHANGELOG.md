@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-process-queue-v3.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.0.2...@adobe/helix-shared-process-queue-v3.0.3) (2024-04-02)
+
+
+### Bug Fixes
+
+* **types:** unrwap processqueue promises ([#919](https://github.com/adobe/helix-shared/issues/919)) ([d6921d4](https://github.com/adobe/helix-shared/commit/d6921d410d3343b1377b084dcc46d016235fb734))
+
 # [@adobe/helix-shared-process-queue-v3.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.0.1...@adobe/helix-shared-process-queue-v3.0.2) (2024-03-29)
 
 
