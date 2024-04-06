@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.0...@adobe/helix-shared-tokencache-v1.4.1) (2024-04-06)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([420fcd9](https://github.com/adobe/helix-shared/commit/420fcd91ccfff6331efec12d266f4a6a76a44ff2))
+
 # [@adobe/helix-shared-tokencache-v1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.3.31...@adobe/helix-shared-tokencache-v1.4.0) (2024-03-25)
 
 
