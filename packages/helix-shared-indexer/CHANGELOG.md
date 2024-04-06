@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.0.20](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.19...@adobe/helix-shared-indexer-v2.0.20) (2024-04-06)
+
+
+### Bug Fixes
+
+* return all matches not just the first ([#922](https://github.com/adobe/helix-shared/issues/922)) ([cd5221a](https://github.com/adobe/helix-shared/commit/cd5221ad95896ef892af3dfeccbb71cdb7828f23))
+
 # [@adobe/helix-shared-indexer-v2.0.19](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.18...@adobe/helix-shared-indexer-v2.0.19) (2024-01-23)
 
 
