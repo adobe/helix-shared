@@ -63,9 +63,10 @@ const helpers = {
       // eslint-disable-next-line no-param-reassign
       elements = [elements];
     }
-    let previousIndex = -1;
     elements.forEach((el) => {
       let m;
+      let previousIndex = -1;
+
       const content = typeof el === 'string' ? el : toText(el);
 
       // eslint-disable-next-line no-cond-assign

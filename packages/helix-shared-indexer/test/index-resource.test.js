@@ -112,6 +112,10 @@ indices:
         select: main > div:last-of-type > p:nth-of-type(3)
         value: |
           match(innerHTML(el), '(.*?)<br><br>.*|(.*)')
+      all-matches:
+        select: a
+        values: |
+          match(attribute(el, 'href'), 'https://[^/]+/assets/.*')
   `;
 
 const BODY = `
@@ -160,6 +164,9 @@ const BODY = `
     <p>before<br><br>after</p>
     <p>before<br>after</p>
   </div>
+  <a href="https://my.domain.com/assets/asset-link">an asset</a>
+  <a href="https://my.domain.com">some link</a>
+  <a href="https://my.domain.com/assets/asset-link2">another asset</a>
 </main>
 <footer></footer>
 </body>
@@ -171,6 +178,10 @@ describe('Index Resource Tests', () => {
     const headers = new Headers({ 'last-modified': 'Mon, 22 Feb 2021 15:28:00 GMT' });
     const record = indexResource('/abc/de/ab/fg/abcd', { body: BODY, headers }, config.indices[0], console);
     assert.deepEqual(record, {
+      'all-matches': [
+        'https://my.domain.com/assets/asset-link',
+        'https://my.domain.com/assets/asset-link2',
+      ],
       author: 'Max',
       'bad-selector': '',
       'call-unknown-function': '',
