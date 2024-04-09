@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.4.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.4.0...@adobe/helix-shared-config-v10.4.1) (2024-04-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ajv-formats to v3 ([#923](https://github.com/adobe/helix-shared/issues/923)) ([e7789fd](https://github.com/adobe/helix-shared/commit/e7789fd5f6f8ddc2ff8c52fdf9d5c48ad86f3b3c))
+
 # [@adobe/helix-shared-config-v10.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.3.13...@adobe/helix-shared-config-v10.4.0) (2024-03-14)
 
 
