@@ -8,50 +8,48 @@
   "branchPrefix": "renovate-",
   "packageRules": [
     {
-      "packageNames": [
-        "semantic-release"
-      ],
-      "allowedVersions": "<23"
+      "matchPackageNames": ["eslint"],
+      "allowedVersions": "<9.0.0"
     },
     {
-      "packageNames": ["quick-lru"],
+      "matchPackageNames": ["quick-lru"],
       "allowedVersions": "<6.0.0"
     },
     {
-      "packageNames": ["callsites"],
+      "matchPackageNames": ["callsites"],
       "allowedVersions": "<4.0.0"
     },
     {
-      "packageNames": ["escape-string-regexp"],
+      "matchPackageNames": ["escape-string-regexp"],
       "allowedVersions": "<5.0.0"
     },
     {
-      "packageNames": ["p-limit"],
+      "matchPackageNames": ["p-limit"],
       "allowedVersions": "<4.0.0"
     },
     {
-      "packageNames": ["cimg/node"],
+      "matchPackageNames": ["cimg/node"],
       "allowedVersions": "<19"
     },
     {
-      "packageNames": ["@aws-sdk/client-s3"],
+      "matchPackageNames": ["@aws-sdk/client-s3"],
       "allowedVersions": "!/3\\.29\\.0/"
     },
     {
-      "packageNames": ["@adobe/helix-cli"],
+      "matchPackageNames": ["@adobe/helix-cli"],
       "allowedVersions": "<14"
     },
     {
       "groupName": "adobe fixes",
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
-      "packagePatterns": ["^@adobe/"],
+      "matchPackagePatterns": ["^@adobe/"],
       "schedule": ["at any time"]
     },
     {
       "groupName": "adobe major",
       "updateTypes": ["major"],
-      "packagePatterns": ["^@adobe/"],
+      "matchPackagePatterns": ["^@adobe/"],
       "automerge": false,
       "schedule": ["at any time"]
     },
@@ -60,15 +58,15 @@
       "updateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
       "schedule": ["after 2pm on Saturday"],
-      "packagePatterns": ["^.+"],
-      "excludePackagePatterns": ["^@adobe/"]
+      "matchPackagePatterns": ["^.+"],
+      "excludematchPackagePatterns": ["^@adobe/"]
     },
     {
       "groupName": "external major",
       "updateTypes": ["major"],
       "automerge": false,
-      "packagePatterns": ["^.+"],
-      "excludePackagePatterns": ["^@adobe/"],
+      "matchPackagePatterns": ["^.+"],
+      "excludematchPackagePatterns": ["^@adobe/"],
       "schedule": ["after 2pm on Monday"]
     },
     {
