@@ -59,14 +59,14 @@
       "automerge": true,
       "schedule": ["after 2pm on Saturday"],
       "matchPackagePatterns": ["^.+"],
-      "excludematchPackagePatterns": ["^@adobe/"]
+      "excludePackagePatterns": ["^@adobe/"]
     },
     {
       "groupName": "external major",
       "updateTypes": ["major"],
       "automerge": false,
       "matchPackagePatterns": ["^.+"],
-      "excludematchPackagePatterns": ["^@adobe/"],
+      "excludePackagePatterns": ["^@adobe/"],
       "schedule": ["after 2pm on Monday"]
     },
     {
