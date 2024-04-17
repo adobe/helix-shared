@@ -14,6 +14,7 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
+import YAML from 'yaml';
 import { Request, Response } from '@adobe/fetch';
 
 import wrap from '@adobe/helix-shared-wrap';
@@ -265,5 +266,68 @@ describe('Body Data Wrapper Unit Tests (Form Data)', () => {
       log,
     });
     assert.strictEqual(response.status, 200, 'universal function should be executed');
+  });
+});
+
+describe('Body Data Wrapper Unit Tests (YAML Body)', () => {
+  const contents = { indices: [] };
+
+  ['POST', 'post', 'PUT', 'PATCH'].forEach((method) => {
+    it(`Loads YAML (${method})`, async () => {
+      const universalfunct = async (request, context) => {
+        const yaml = YAML.parse(context.data);
+        assert.deepStrictEqual(yaml, contents);
+        return new Response('ok');
+      };
+
+      const actualfunct = wrap(universalfunct).with(bodyData, { supportYAML: true });
+      const response = await actualfunct(new Request('http://localhost', {
+        body: YAML.stringify(contents),
+        method,
+        headers: {
+          'content-type': 'text/yaml',
+        },
+      }), {
+        log,
+      });
+      assert.strictEqual(response.status, 200, 'universal function should be executed');
+    });
+  });
+
+  it('Ignores body for GET requests.', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepEqual(context.data, { });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData, { supportYAML: true });
+    const response = await actualfunct(new Request('http://localhost', {
+      method: 'GET',
+      headers: {
+        'content-type': 'text/yaml',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
+  });
+
+  it('Ignores body when support YAML is not enabled.', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepEqual(context.data, { });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost', {
+      body: YAML.stringify(contents),
+      method: 'POST',
+      headers: {
+        'content-type': 'text/yaml',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
   });
 });
