@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-git",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "description": "Shared modules of the Helix Project - Git Utils",
   "main": "src/index.js",
   "type": "module",
@@ -11,7 +11,10 @@
   },
   "mocha": {
     "reporter": "mocha-multi-reporters",
-    "reporter-options": "configFile=.mocha-multi.json"
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "mocha-suppress-logs"
+    ]
   },
   "repository": {
     "type": "git",

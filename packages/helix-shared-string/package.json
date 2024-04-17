@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-string",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Shared modules of the Helix Project - string",
   "main": "src/string.js",
   "type": "module",
@@ -11,7 +11,10 @@
   },
   "mocha": {
     "reporter": "mocha-multi-reporters",
-    "reporter-options": "configFile=.mocha-multi.json"
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "mocha-suppress-logs"
+    ]
   },
   "repository": {
     "type": "git",

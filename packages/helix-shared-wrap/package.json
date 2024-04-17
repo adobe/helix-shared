@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-wrap",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Shared modules of the Helix Project - wrap",
   "main": "src/wrap.js",
   "types": "src/wrap.d.ts",
@@ -12,7 +12,10 @@
   },
   "mocha": {
     "reporter": "mocha-multi-reporters",
-    "reporter-options": "configFile=.mocha-multi.json"
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "mocha-suppress-logs"
+    ]
   },
   "repository": {
     "type": "git",

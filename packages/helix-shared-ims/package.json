@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-ims",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "Shared modules of the Helix Project - ims",
   "main": "src/ims.js",
   "types": "src/ims.d.ts",
@@ -13,8 +13,11 @@
   "mocha": {
     "reporter": "mocha-multi-reporters",
     "reporter-options": "configFile=.mocha-multi.json",
-    "require": "test/setup-env.js",
-    "spec": "test/*.test.js"
+    "spec": "test/*.test.js",
+    "require": [
+      "test/setup-env.js",
+      "mocha-suppress-logs"
+    ]
   },
   "repository": {
     "type": "git",

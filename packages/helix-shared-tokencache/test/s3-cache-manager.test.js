@@ -44,8 +44,7 @@ describe('S3CacheManager Test', () => {
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
       .get('/?list-type=2&prefix=myproject%2Fauth-default%2F')
-      .reply(200, `
-        <?xml version="1.0" encoding="UTF-8"?>
+      .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
         <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
           <Name>helix-code-bus</Name>
           <Prefix>myproject/auth-default/</Prefix>
@@ -81,8 +80,7 @@ describe('S3CacheManager Test', () => {
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
       .get('/?list-type=2&prefix=myproject%2Fauth-default%2F')
-      .reply(200, `
-        <?xml version="1.0" encoding="UTF-8"?>
+      .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
         <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
           <Name>helix-code-bus</Name>
           <Prefix>myproject/auth-default/</Prefix>

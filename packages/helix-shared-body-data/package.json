@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-body-data",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Shared modules of the Helix Project - body-data",
   "main": "src/body-data-wrapper.js",
   "types": "src/body-data-wrapper.d.ts",
@@ -12,7 +12,10 @@
   },
   "mocha": {
     "reporter": "mocha-multi-reporters",
-    "reporter-options": "configFile=.mocha-multi.json"
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "mocha-suppress-logs"
+    ]
   },
   "repository": {
     "type": "git",
