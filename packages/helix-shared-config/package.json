@@ -24,7 +24,10 @@
     "access": "public"
   },
   "mocha": {
-    "require": "test/setup-env.js",
+    "require": [
+      "test/setup-env.js",
+      "mocha-suppress-logs"
+    ],
     "reporter": "mocha-multi-reporters",
     "reporter-options": "configFile=.mocha-multi.json"
   },
