@@ -31,6 +31,11 @@ export declare interface BodyDataOptions {
    * Flag that coerces  number strings to numbers.
    */
   coerceNumber?:boolean;
+
+  /**
+   * Support YAML in the POST body.
+   */
+  supportYAML?:boolean;
 }
 
 /**

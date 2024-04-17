@@ -22,13 +22,18 @@ const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
  * available.
  *
  * @param {Request} request The universal request
- * @param {BodyDataOptions} [opts] Options
+ * @param {import('./body-data-wrapper').BodyDataOptions} [opts] Options
  * @returns {Promise<object>} the parsed data object.
  */
 async function getData(request, opts) {
   const contentType = request.headers.get('content-type');
   if (/\/json/.test(contentType) && BODY_METHODS.includes(request.method)) {
     return request.json();
+  }
+
+  const { supportYAML } = opts;
+  if (supportYAML && /\/yaml/.test(contentType) && BODY_METHODS.includes(request.method)) {
+    return request.text();
   }
 
   let data;
