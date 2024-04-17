@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-body-data-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.0.3...@adobe/helix-shared-body-data-v2.1.0) (2024-04-17)
+
+
+### Features
+
+* suppot YAML in body data (if enabled) ([#929](https://github.com/adobe/helix-shared/issues/929)) ([248910c](https://github.com/adobe/helix-shared/commit/248910c71988ed4dc8e95b7f498b7d2a28a3a048))
+
 # [@adobe/helix-shared-body-data-v2.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.0.2...@adobe/helix-shared-body-data-v2.0.3) (2024-04-17)
 
 
