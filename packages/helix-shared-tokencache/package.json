@@ -13,7 +13,10 @@
   "mocha": {
     "reporter": "mocha-multi-reporters",
     "reporter-options": "configFile=.mocha-multi.json",
-    "require": "test/setup-env.js"
+    "require": [
+      "test/setup-env.js",
+      "mocha-suppress-logs"
+    ]
   },
   "repository": {
     "type": "git",
