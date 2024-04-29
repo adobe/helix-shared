@@ -1,0 +1,25 @@
+{
+  "scope": "https://helix-code-bus.s3.us-east-1.amazonaws.com:443",
+  "method": "GET",
+  "path": "/?list-type=2&prefix=owner%2Frepo%2Fref%2F",
+  "body": "",
+  "status": 200,
+  "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Name>helix-code-bus</Name><Prefix>owner/repo/ref/</Prefix><KeyCount>10</KeyCount><MaxKeys>1000</MaxKeys><IsTruncated>false</IsTruncated><Contents><Key>owner/repo/ref/.circleci/config.yml</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag><Size>1875</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/.gitignore</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;4a3bf29ef03ede1a8ae22475e661d3c8&quot;</ETag><Size>111</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/.vscode/launch.json</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;b372a503c30e88e0cc3bf3dbc02c3518&quot;</ETag><Size>395</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/.vscode/settings.json</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;296a9b1d1b4b21dda32793f7561164fe&quot;</ETag><Size>97</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/README.md</Key><LastModified>2021-05-05T04:14:59.000Z</LastModified><ETag>&quot;afb94b3baee5ec44f0848c2d88856236&quot;</ETag><Size>91</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/helix_logo.png</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;c6b6f1bd5bcf4f5147839ceb547719ee&quot;</ETag><Size>4695</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/htdocs/favicon.ico</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;5e53b594547162b5c66bc5fb1448730b&quot;</ETag><Size>921</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/htdocs/style.css</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;c5239c45de68c51e17585ae6e199b17b&quot;</ETag><Size>711</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/index.md</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;4b0a049c9a829275193ffcc3d74642c7&quot;</ETag><Size>1421</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>owner/repo/ref/src/html.pre.js</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><ETag>&quot;234f53aaafe3384bbd4d4dbfa3f79b9f&quot;</ETag><Size>1076</Size><StorageClass>STANDARD</StorageClass></Contents></ListBucketResult>",
+  "rawHeaders": [
+    "x-amz-id-2",
+    "xDfRvc5H7Hbm9+0s1zUHhCGosfeEc9eO5ussnALVPN+uc8gJcQ95YEtZws+/Qg7bSE2Xm4EruDU=",
+    "x-amz-request-id",
+    "EZFM2AP27PP97F85",
+    "Date",
+    "Wed, 05 May 2021 08:37:22 GMT",
+    "x-amz-bucket-region",
+    "us-east-1",
+    "Content-Type",
+    "application/xml",
+    "Transfer-Encoding",
+    "chunked",
+    "Server",
+    "AmazonS3"
+  ],
+  "responseIsBinary": false
+}
