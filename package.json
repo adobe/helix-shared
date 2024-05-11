@@ -33,7 +33,7 @@
     "@adobe/jsonschema2md": "8.0.2",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
-    "@semantic-release/npm": "12.0.0",
+    "@semantic-release/npm": "12.0.1",
     "ajv": "8.13.0",
     "c8": "9.1.0",
     "eslint": "8.57.0",
@@ -44,7 +44,7 @@
     "mocha-multi-reporters": "1.5.1",
     "mocha-suppress-logs": "0.5.1",
     "nock": "13.5.4",
-    "semantic-release": "23.0.8",
+    "semantic-release": "23.1.1",
     "semantic-release-monorepo": "8.0.2"
   },
   "lint-staged": {
