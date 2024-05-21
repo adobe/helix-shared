@@ -377,10 +377,10 @@ describe('Storage test', () => {
 
   it('remove objects can fail', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .post('/?delete=&x-id=DeleteObjects')
+      .post('/?delete=')
       .reply(404);
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
-      .post('/?delete=&x-id=DeleteObjects')
+      .post('/?delete=')
       .reply(404);
 
     const bus = storage.codeBus();
@@ -390,7 +390,7 @@ describe('Storage test', () => {
   it('can remove objects', async () => {
     const reqs = { s3: {}, r2: {} };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .post('/?delete=&x-id=DeleteObjects')
+      .post('/?delete=')
       .reply(function cb(uri, body) {
         reqs.s3[uri] = {
           body,
@@ -400,7 +400,7 @@ describe('Storage test', () => {
         return [200, '<?xml version="1.0" encoding="UTF-8"?>\n<DeleteResult><Deleted><Key>/foo</Key></Deleted><Deleted><Key>/bar</Key></Deleted></DeleteResult>'];
       });
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
-      .post('/?delete=&x-id=DeleteObjects')
+      .post('/?delete=')
       .reply(function cb(uri, body) {
         reqs.r2[uri] = {
           body,
@@ -414,7 +414,7 @@ describe('Storage test', () => {
     await bus.remove(['/foo', '/bar']);
 
     const req = {
-      '/?delete=&x-id=DeleteObjects': {
+      '/?delete=': {
         body: '<?xml version="1.0" encoding="UTF-8"?><Delete xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Object><Key>foo</Key></Object><Object><Key>bar</Key></Object></Delete>',
         headers: {
           'content-type': 'application/xml',
