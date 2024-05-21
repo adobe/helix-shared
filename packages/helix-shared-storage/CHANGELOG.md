@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.1...@adobe/helix-shared-storage-v1.0.2) (2024-05-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @aws-sdk/client-s3 to v3.577.0 ([#936](https://github.com/adobe/helix-shared/issues/936)) ([2968b02](https://github.com/adobe/helix-shared/commit/2968b02a15332dce849a2b997ca0c0d34210ede9))
+
 # [@adobe/helix-shared-storage-v1.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.0...@adobe/helix-shared-storage-v1.0.1) (2024-05-14)
 
 
