@@ -2,11 +2,14 @@
   "extends": [
     "config:base",
     ":semanticCommits",
-    ":autodetectPinVersions"
   ],
   "timezone": "Europe/Zurich",
   "branchPrefix": "renovate-",
   "packageRules": [
+    {
+      "matchPackageNames": ["@adobe/fetch"],
+      "rangeStrategy": "replace"
+    },
     {
       "matchPackageNames": ["eslint"],
       "allowedVersions": "<9.0.0"
