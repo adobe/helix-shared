@@ -31,7 +31,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/fetch": "^4.0.1",
+    "@adobe/fetch": "^4.1.3",
     "@adobe/helix-shared-wrap": "^1.0.5",
     "aws4": "^1.12.0"
   },
