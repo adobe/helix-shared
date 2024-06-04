@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-body-data-v2.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.1.1...@adobe/helix-shared-body-data-v2.1.2) (2024-06-04)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#943](https://github.com/adobe/helix-shared/issues/943)) ([bc19295](https://github.com/adobe/helix-shared/commit/bc19295b2714bdf418499011151172ae61d1c2c9))
+
 # [@adobe/helix-shared-body-data-v2.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.1.0...@adobe/helix-shared-body-data-v2.1.1) (2024-05-04)
 
 
