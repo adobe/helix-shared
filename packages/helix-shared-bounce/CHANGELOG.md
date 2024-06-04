@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-bounce-v2.0.19](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.18...@adobe/helix-shared-bounce-v2.0.19) (2024-06-04)
+
+
+### Bug Fixes
+
+* pass headers in fetch, add user-agent ([#944](https://github.com/adobe/helix-shared/issues/944)) ([df3d126](https://github.com/adobe/helix-shared/commit/df3d1264d89aa7bac89d62667bb5e8531221c3b8))
+
 # [@adobe/helix-shared-bounce-v2.0.18](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.17...@adobe/helix-shared-bounce-v2.0.18) (2024-04-17)
 
 
