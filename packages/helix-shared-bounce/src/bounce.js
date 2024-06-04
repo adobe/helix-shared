@@ -51,13 +51,16 @@ export default function bounce(func, { responder, timeout = 500, debounce = () =
     })();
     // invoke the current function again, via HTTP, with the x-hlx-bounce-id
     // header set, so that we don't get into an endless loop
-    request.headers.set('x-hlx-bounce-id', bounceId);
     const signal = timeoutSignal(2 * timeout);
     const actualResponse = (async () => {
       try {
         return await fetch(request.url, {
           ...request.init,
-          headers: request.headers,
+          headers: {
+            ...request.headers,
+            'x-hlx-bounce-id': bounceId,
+            'user-agent': 'adobe/helix-shared-bounce',
+          },
           signal,
         });
       } catch (e) {
