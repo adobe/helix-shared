@@ -55,6 +55,14 @@
         "/en/{path}",
         "/german/{path}"
       ]
+    },
+    "extension": {
+      "type": "string",
+      "title": "Location extension",
+      "description": "Extension to append to every location generated for this sitemap. Default is empty",
+      "examples": [
+        ".html"
+      ]
     }
   },
   "required": [

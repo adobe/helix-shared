@@ -28,6 +28,11 @@ const tests = [
     result: 'simple.json',
   },
   {
+    title: 'loads a simple example with extension',
+    config: 'simple-extension.yaml',
+    result: 'simple-extension.json',
+  },
+  {
     title: 'loads an example with multiple languages',
     config: 'multilang.yaml',
     result: 'multilang.json',

@@ -1,0 +1,24 @@
+version: 1
+
+sitemaps:
+  multilang:
+    origin: https://www.example.com
+    languages:
+      en:
+        source: /en/query-index.json
+        destination: /sitemap-en.xml
+        hreflang: en
+      fr:
+        source: /fr/query-index.json
+        destination: /sitemap-fr.xml
+        hreflang: fr
+        alternate: /fr/{path}
+        extension: .html
+      la:
+        source: /la/query-index.json
+        destination: /sitemap-la.xml
+        hreflang:
+          - es-VE
+          - es-SV
+          - es-PA
+        alternate: /la/{path}
