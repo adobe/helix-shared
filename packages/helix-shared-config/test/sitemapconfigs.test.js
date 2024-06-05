@@ -38,6 +38,11 @@ const tests = [
     result: 'multilang.json',
   },
   {
+    title: 'loads an example with multiple languages and one having an extension',
+    config: 'multilang-extension.yaml',
+    result: 'multilang-extension.json',
+  },
+  {
     title: 'loads an example without hreflang',
     config: 'broken.yaml',
     error: `Error: Invalid configuration:
