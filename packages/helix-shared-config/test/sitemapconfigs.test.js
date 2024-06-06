@@ -28,9 +28,19 @@ const tests = [
     result: 'simple.json',
   },
   {
+    title: 'loads a simple example with extension',
+    config: 'simple-extension.yaml',
+    result: 'simple-extension.json',
+  },
+  {
     title: 'loads an example with multiple languages',
     config: 'multilang.yaml',
     result: 'multilang.json',
+  },
+  {
+    title: 'loads an example with multiple languages and one having an extension',
+    config: 'multilang-extension.yaml',
+    result: 'multilang-extension.json',
   },
   {
     title: 'loads an example without hreflang',
