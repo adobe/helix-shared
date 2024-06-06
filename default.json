@@ -1,13 +1,17 @@
 {
   "extends": [
-    "config:base",
-    ":semanticCommits",
+    "config:recommended",
+    ":semanticCommits"
   ],
   "timezone": "Europe/Zurich",
   "branchPrefix": "renovate-",
   "packageRules": [
     {
       "matchPackageNames": ["@adobe/fetch"],
+      "rangeStrategy": "replace"
+    },
+    {
+      "matchPackageNames": ["^@adobe/helix-shared-.*"],
       "rangeStrategy": "replace"
     },
     {
@@ -44,21 +48,21 @@
     },
     {
       "groupName": "adobe fixes",
-      "updateTypes": ["patch", "pin", "digest", "minor"],
+      "matchUpdateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
       "matchPackagePatterns": ["^@adobe/"],
       "schedule": ["at any time"]
     },
     {
       "groupName": "adobe major",
-      "updateTypes": ["major"],
+      "matchUpdateTypes": ["major"],
       "matchPackagePatterns": ["^@adobe/"],
       "automerge": false,
       "schedule": ["at any time"]
     },
     {
       "groupName": "external fixes",
-      "updateTypes": ["patch", "pin", "digest", "minor"],
+      "matchUpdateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
       "schedule": ["after 2pm on Saturday"],
       "matchPackagePatterns": ["^.+"],
@@ -66,15 +70,15 @@
     },
     {
       "groupName": "external major",
-      "updateTypes": ["major"],
+      "matchUpdateTypes": ["major"],
       "automerge": false,
       "matchPackagePatterns": ["^.+"],
       "excludePackagePatterns": ["^@adobe/"],
       "schedule": ["after 2pm on Monday"]
     },
     {
-      "datasources": ["orb"],
-      "updateTypes": ["patch", "minor"],
+      "matchDatasources": ["orb"],
+      "matchUpdateTypes": ["patch", "minor"],
       "automerge": true
     }
   ],

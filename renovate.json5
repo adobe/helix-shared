@@ -2,20 +2,5 @@
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: [
     'local>adobe/helix-shared'
-  ],
-  packageRules: [
-    {
-      packageNames: [
-        'semantic-release'
-      ],
-      allowedVersions: '>=23.0'
-    },
-    {
-      // https://github.com/iambumblehead/esmock/issues/260
-      packageNames: [
-        'esmock'
-      ],
-      allowedVersions: '2.5.1'
-    }
   ]
 }
