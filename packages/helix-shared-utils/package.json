@@ -37,7 +37,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@adobe/helix-shared-git": "^2.0.4"
+    "@adobe/helix-shared-git": "^3.0.10"
   },
   "engines": {
     "node": ">= 14.18"
