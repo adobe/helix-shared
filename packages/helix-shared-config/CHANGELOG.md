@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.5.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.4.6...@adobe/helix-shared-config-v10.5.0) (2024-06-06)
+
+
+### Features
+
+* support extension in sitemap location ([#945](https://github.com/adobe/helix-shared/issues/945)) ([9615dcd](https://github.com/adobe/helix-shared/commit/9615dcda5bbd550189739183bd43eceb079ef5aa))
+
 # [@adobe/helix-shared-config-v10.4.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.4.5...@adobe/helix-shared-config-v10.4.6) (2024-06-04)
 
 
