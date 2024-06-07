@@ -96,7 +96,7 @@ export default class SecretsManager {
         }
         throw Error(`Failed to invoke ${target} (${resp.status}): ${await resp.text()}`);
       }
-      return resp.json();
+      return await resp.json();
     } finally {
       await fetchContext.reset();
     }
