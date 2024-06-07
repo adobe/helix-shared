@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.2.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.2.7...@adobe/helix-shared-secrets-v2.2.8) (2024-06-07)
+
+
+### Bug Fixes
+
+* (a)wait for response ([#950](https://github.com/adobe/helix-shared/issues/950)) ([ae563b1](https://github.com/adobe/helix-shared/commit/ae563b18856edcbd728c84fb78ff385ba03df874))
+
 # [@adobe/helix-shared-secrets-v2.2.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.2.6...@adobe/helix-shared-secrets-v2.2.7) (2024-06-04)
 
 

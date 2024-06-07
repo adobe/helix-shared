@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-secrets",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "description": "Shared modules of the Helix Project - secrets",
   "type": "module",
   "main": "src/secrets-wrapper.js",
