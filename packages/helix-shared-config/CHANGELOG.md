@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.5.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.5.1...@adobe/helix-shared-config-v10.5.2) (2024-06-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yaml to v2.4.4 ([80c4179](https://github.com/adobe/helix-shared/commit/80c4179218fac123083addc7d19db8ca8efe8a22))
+
 # [@adobe/helix-shared-config-v10.5.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.5.0...@adobe/helix-shared-config-v10.5.1) (2024-06-08)
 
 
