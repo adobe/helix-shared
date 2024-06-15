@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.0.27](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.26...@adobe/helix-shared-indexer-v2.0.27) (2024-06-15)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([e5329bd](https://github.com/adobe/helix-shared/commit/e5329bd4734e2f031eaf3f2cd692d41c69ffc895))
+
 # [@adobe/helix-shared-indexer-v2.0.26](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.25...@adobe/helix-shared-indexer-v2.0.26) (2024-06-01)
 
 
