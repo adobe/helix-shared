@@ -38,7 +38,7 @@
     "jsep": "1.3.8",
     "micromatch": "4.0.7",
     "rehype-parse": "9.0.0",
-    "unified": "11.0.4"
+    "unified": "11.0.5"
   },
   "devDependencies": {
     "@adobe/fetch": "4.1.8",
