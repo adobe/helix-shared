@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.6.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.5.3...@adobe/helix-shared-config-v10.6.0) (2024-06-24)
+
+
+### Features
+
+* add selectFirst in query config ([#958](https://github.com/adobe/helix-shared/issues/958)) ([83d6f5f](https://github.com/adobe/helix-shared/commit/83d6f5faea513f8e45ec353e647299bae2e10bad))
+
 # [@adobe/helix-shared-config-v10.5.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.5.2...@adobe/helix-shared-config-v10.5.3) (2024-06-15)
 
 
