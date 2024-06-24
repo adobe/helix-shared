@@ -14,7 +14,7 @@ import utc from 'dayjs/plugin/utc.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import jsep, { Jsep } from 'jsep';
 import rehypeParse from 'rehype-parse';
-import { selectAll } from 'hast-util-select';
+import { select as selectOne, selectAll } from 'hast-util-select';
 import { toText } from 'hast-util-to-text';
 import { toHtml } from 'hast-util-to-html';
 import { unified } from 'unified';
@@ -177,11 +177,19 @@ export function indexResource(path, response, config, log) {
 
   /* Walk through all index properties */
   config.properties.forEach((property) => {
-    const { select, ...p } = property;
+    const { select, selectFirst, ...p } = property;
     const expression = p.value || p.values;
-    // create an array of elements
+
     try {
-      const elements = select !== 'none' ? selectAll(select, content) : [];
+      let elements = [];
+      if (selectFirst) {
+        const element = selectOne(selectFirst, content);
+        if (element) {
+          elements = [element];
+        }
+      } else if (select !== 'none') {
+        elements = selectAll(select, content);
+      }
       let value = getDOMValue(elements, expression, log, { path, headers }) || [];
       // concat for single value
       if (p.value) {
