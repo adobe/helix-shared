@@ -116,6 +116,14 @@ indices:
         select: a
         values: |
           match(attribute(el, 'href'), 'https://[^/]+/assets/.*')
+      first-href-in-a:
+        selectFirst: a
+        value: |
+          attribute(el, 'href')
+      first-href-in-foo:
+        selectFirst: foo
+        value: |
+          attribute(el, 'href')
   `;
 
 const BODY = `
@@ -188,6 +196,8 @@ describe('Index Resource Tests', () => {
       'condition-unsupported': '',
       date: 44313,
       'first-alternate': 'before',
+      'first-href-in-a': 'https://my.domain.com/assets/asset-link',
+      'first-href-in-foo': '',
       'second-alternate': 'before<br>after',
       'last-modified': 1614007680,
       'last-modified-raw': 'Mon, 22 Feb 2021 15:28:00 GMT',
