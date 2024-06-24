@@ -20,9 +20,26 @@
       "description": "The property in an index. The value will be stored as a single cardinal value.",
       "type": "object",
       "properties": {
+        "selectFirst": {
+          "type": "string",
+          "description": "A CSS selector expression that selects the first matching node in the HTML (DOM) or Markdown (MDAST) syntax tree"
+        },
+        "value": {
+          "type": "string",
+          "description": "A ES6 template literal expression that extracts the value from the matching node(s) to be stored in the index"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["selectFirst", "value"]
+    },
+    {
+      "title": "Multi-value property, concatenated to a single value",
+      "description": "The property in an index. The value will be stored as a single cardinal value.",
+      "type": "object",
+      "properties": {
         "select": {
           "type": "string",
-          "description": "A CSS selector expression that selects nodes in the HTML (DOM) or Markdown (MDAST) syntax tree"
+          "description": "A CSS selector expression that selects all matching nodes in the HTML (DOM) or Markdown (MDAST) syntax tree"
         },
         "value": {
           "type": "string",
@@ -44,7 +61,7 @@
       "properties": {
         "select": {
           "type": "string",
-          "description": "A CSS selector expression that selects nodes in the HTML (DOM) or Markdown (MDAST) syntax tree"
+          "description": "A CSS selector expression that selects all matching nodes in the HTML (DOM) or Markdown (MDAST) syntax tree"
         },
         "values": {
           "type": "string",
