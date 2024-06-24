@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.28...@adobe/helix-shared-indexer-v2.1.0) (2024-06-24)
+
+
+### Features
+
+* support selectFirst in indexing ([#959](https://github.com/adobe/helix-shared/issues/959)) ([eff9813](https://github.com/adobe/helix-shared/commit/eff98135b4e4ed04cf71f24fe420bdf80d6bc1e4))
+
 # [@adobe/helix-shared-indexer-v2.0.28](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.0.27...@adobe/helix-shared-indexer-v2.0.28) (2024-06-22)
 
 
