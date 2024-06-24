@@ -26,7 +26,7 @@ indices:
           ${match('(Topics: )? ([^,]+)')}
         faceted: true
       hero:
-        select: main > div > img:first-of-type
+        selectFirst: main > div > img:first-of-type
         value: |
           ${attribute('src')}
     queries:

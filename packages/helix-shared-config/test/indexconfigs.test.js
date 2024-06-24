@@ -98,6 +98,12 @@ describe('Index Config Loading', () => {
     assert.deepEqual(actual, expected);
   });
 
+  it('Rejects invalid configuration', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'invalid.yaml'));
+    await assert.rejects(async () => cfg.init(), /Single-Value Property has unknown property 'values'/);
+  });
+
   it('theblog Index Config gets loaded from JSON', async () => {
     const cfg = new IndexConfig()
       .withJSON(fs.readJSONSync(path.resolve(SPEC_ROOT, 'query.json')));
