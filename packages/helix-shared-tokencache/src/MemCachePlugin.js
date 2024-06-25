@@ -87,13 +87,13 @@ export class MemCachePlugin {
       return false;
     }
     this.log.debug('mem: write token cache', this.key);
-    const cache = this.#getOrCreateCache();
     const data = JSON.parse(cacheContext.tokenCache.serialize());
     if (Object.keys(data.Account ?? {}).length === 0) {
       this.log.debug('mem: write token cache done, ignoring empty data', this.key);
       return false;
     }
-    cache.data = data;
+    const cache = this.#getOrCreateCache();
+    cache.data = JSON.stringify(data);
     if (this.base) {
       this.log.debug('mem: write token cache done. telling base', this.key);
       return this.base.afterCacheAccess(cacheContext);

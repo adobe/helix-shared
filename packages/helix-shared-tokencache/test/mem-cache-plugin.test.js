@@ -17,6 +17,7 @@ import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { FSCachePlugin, MemCachePlugin } from '../src/index.js';
 import { MockTokenCacheContext } from './MockTokenCacheContext.js';
+import { toAuthContent } from './utils.js';
 
 describe('MemCachePlugin Test', () => {
   let testRoot;
@@ -41,14 +42,14 @@ describe('MemCachePlugin Test', () => {
       key: 'foobar-key',
       caches,
     });
-
+    const data = toAuthContent('1234');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{"access_token": "1234"}',
+      data,
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
+    assert.deepStrictEqual(caches.get('foobar-key'), { data: JSON.stringify(data) });
     assert.strictEqual(p.location, 'foobar-key');
   });
 
@@ -58,15 +59,16 @@ describe('MemCachePlugin Test', () => {
       key: 'foobar-key',
     });
 
+    const data = toAuthContent('1234');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{"access_token": "1234"}',
+      data,
     });
 
     await p.afterCacheAccess(ctx);
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(ctx.tokens, 'foobar');
+    assert.strictEqual(ctx.token, '1234');
   });
 
   it('handles errors when updating the token cache', async () => {
@@ -75,9 +77,10 @@ describe('MemCachePlugin Test', () => {
       key: 'foobar-key',
     });
 
+    const data = toAuthContent('1234');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{"access_token": "1234"}',
+      data,
     });
     ctx.tokenCache.deserialize = () => {
       throw new Error('kaput');
@@ -96,13 +99,48 @@ describe('MemCachePlugin Test', () => {
       caches,
     });
 
+    const data = toAuthContent('1234');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: false,
-      tokens: '{"access_token": "1234"}',
+      data,
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, false);
     assert.strictEqual(caches.get('foobar-key'), undefined);
+  });
+
+  it('ignores if value passed has no Account keys', async () => {
+    const caches = new Map();
+    const p = new MemCachePlugin({
+      log: console,
+      key: 'foobar-key',
+      caches,
+    });
+
+    const ctx = new MockTokenCacheContext({
+      cacheHasChanged: true,
+      data: { Account: {}, AccessToken: {} },
+    });
+    const ret = await p.afterCacheAccess(ctx);
+    assert.strictEqual(ret, false);
+    assert.deepStrictEqual(caches.get('foobar-key'), undefined);
+  });
+
+  it('ignores if value passed has no Account at all', async () => {
+    const caches = new Map();
+    const p = new MemCachePlugin({
+      log: console,
+      key: 'foobar-key',
+      caches,
+    });
+
+    const ctx = new MockTokenCacheContext({
+      cacheHasChanged: true,
+      data: { AccessToken: {} },
+    });
+    const ret = await p.afterCacheAccess(ctx);
+    assert.strictEqual(ret, false);
+    assert.deepStrictEqual(caches.get('foobar-key'), undefined);
   });
 
   it('writes the cache w/o base with local cache can delete', async () => {
@@ -113,12 +151,13 @@ describe('MemCachePlugin Test', () => {
       caches,
     });
 
+    const data = toAuthContent('1234');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{"access_token": "1234"}',
+      data,
     });
     await p.afterCacheAccess(ctx);
-    assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
+    assert.deepStrictEqual(caches.get('foobar-key'), { data: JSON.stringify(data) });
     p.deleteCache();
     assert.strictEqual(caches.get('foobar-key'), undefined);
   });
@@ -136,13 +175,14 @@ describe('MemCachePlugin Test', () => {
       base,
     });
 
+    const data = toAuthContent('1234');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{"access_token": "1234"}',
+      data,
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
+    assert.deepStrictEqual(caches.get('foobar-key'), { data: JSON.stringify(data) });
   });
 
   it('read the cache from base', async () => {
@@ -151,7 +191,8 @@ describe('MemCachePlugin Test', () => {
       key: 'foobar-key',
       caches: baseCaches,
     });
-    baseCaches.set('foobar-key', { data: 'foobar' });
+    const data = toAuthContent('1234');
+    baseCaches.set('foobar-key', { data: JSON.stringify(data) });
 
     const caches = new Map();
     const p = new MemCachePlugin({
@@ -165,8 +206,8 @@ describe('MemCachePlugin Test', () => {
     });
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(ctx.tokens, 'foobar');
-    assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
+    assert.strictEqual(ctx.token, '1234');
+    assert.deepStrictEqual(caches.get('foobar-key'), { data: JSON.stringify(data) });
   });
 
   it('read the cache from base is missing', async () => {
@@ -186,7 +227,7 @@ describe('MemCachePlugin Test', () => {
     });
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, false);
-    assert.strictEqual(ctx.tokens, '');
+    assert.strictEqual(ctx.token, '');
   });
 
   it('deletes the cache from base', async () => {
@@ -250,9 +291,9 @@ describe('MemCachePlugin Test', () => {
     });
   });
 
-  it('updates the data w/o loosing metadata (fs-cache)', async () => {
+  it('updates the data w/o losing metadata (fs-cache)', async () => {
     await fs.writeFile(testFilePath, JSON.stringify({
-      access_token: '1234',
+      ...toAuthContent('1234'),
       cachePluginMetadata: {
         foo: 'bar',
       },
@@ -280,14 +321,16 @@ describe('MemCachePlugin Test', () => {
       key: 'foobar-key',
       base: b2,
     });
+    const data = toAuthContent('2345');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{ "access_token": "foobar" }',
+      data,
     });
-    await p2.afterCacheAccess(ctx);
+    const ret = await p2.afterCacheAccess(ctx);
+    assert.strictEqual(ret, true);
 
     assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
-      access_token: 'foobar',
+      ...data,
       cachePluginMetadata: {
         foo: 'bar',
       },

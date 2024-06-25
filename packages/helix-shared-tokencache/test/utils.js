@@ -45,3 +45,16 @@ export function Nock() {
 
   return nocker;
 }
+
+export function toAuthContent(secret) {
+  return {
+    Account: {
+      'foo-id': {},
+    },
+    AccessToken: {
+      'foo-id': {
+        secret,
+      },
+    },
+  };
+}
