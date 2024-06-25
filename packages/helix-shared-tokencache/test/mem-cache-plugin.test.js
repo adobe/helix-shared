@@ -109,7 +109,7 @@ describe('MemCachePlugin Test', () => {
     assert.strictEqual(caches.get('foobar-key'), undefined);
   });
 
-  it('ignores if value passed has no Account keys', async () => {
+  it('ignores if value passed has empty Account key', async () => {
     const caches = new Map();
     const p = new MemCachePlugin({
       log: console,
@@ -126,7 +126,7 @@ describe('MemCachePlugin Test', () => {
     assert.deepStrictEqual(caches.get('foobar-key'), undefined);
   });
 
-  it('ignores if value passed has no Account at all', async () => {
+  it('ignores if value passed has no Account key at all', async () => {
     const caches = new Map();
     const p = new MemCachePlugin({
       log: console,
