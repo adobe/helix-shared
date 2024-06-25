@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.12](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.11...@adobe/helix-shared-tokencache-v1.4.12) (2024-06-25)
+
+
+### Bug Fixes
+
+* **s3:** write back only when contents changed ([#960](https://github.com/adobe/helix-shared/issues/960)) ([aa71cea](https://github.com/adobe/helix-shared/commit/aa71cea21366795888bf96f2f3679dff3df149fa))
+
 # [@adobe/helix-shared-tokencache-v1.4.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.10...@adobe/helix-shared-tokencache-v1.4.11) (2024-06-22)
 
 
