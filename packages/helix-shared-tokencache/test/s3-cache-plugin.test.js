@@ -214,7 +214,7 @@ describe('S3CachePlugin Test', () => {
     assert.strictEqual(ret, false);
   });
 
-  it('does not write data to s3 if contents has no Account keys', async () => {
+  it('does not write data to s3 if Account is empty', async () => {
     const p = new S3CachePlugin({
       bucket: 'test-bucket',
       key: 'myproject/auth-default/json',
