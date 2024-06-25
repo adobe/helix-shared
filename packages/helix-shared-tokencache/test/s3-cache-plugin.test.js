@@ -181,7 +181,7 @@ describe('S3CachePlugin Test', () => {
     assert.strictEqual(ret, false);
   });
 
-  it('does not the write data to s3 if contents has not changed', async () => {
+  it('does not write data to s3 if contents is unchanged', async () => {
     const p = new S3CachePlugin({
       bucket: 'test-bucket',
       key: 'myproject/auth-default/json',
