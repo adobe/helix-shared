@@ -44,7 +44,7 @@ describe('MemCachePlugin Test', () => {
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: 'foobar',
+      tokens: '{"access_token": "1234"}',
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
@@ -60,7 +60,7 @@ describe('MemCachePlugin Test', () => {
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: 'foobar',
+      tokens: '{"access_token": "1234"}',
     });
 
     await p.afterCacheAccess(ctx);
@@ -77,7 +77,7 @@ describe('MemCachePlugin Test', () => {
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: 'foobar',
+      tokens: '{"access_token": "1234"}',
     });
     ctx.tokenCache.deserialize = () => {
       throw new Error('kaput');
@@ -98,7 +98,7 @@ describe('MemCachePlugin Test', () => {
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: false,
-      tokens: 'foobar',
+      tokens: '{"access_token": "1234"}',
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, false);
@@ -115,7 +115,7 @@ describe('MemCachePlugin Test', () => {
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: 'foobar',
+      tokens: '{"access_token": "1234"}',
     });
     await p.afterCacheAccess(ctx);
     assert.deepStrictEqual(caches.get('foobar-key'), { data: 'foobar' });
@@ -138,7 +138,7 @@ describe('MemCachePlugin Test', () => {
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: 'foobar',
+      tokens: '{"access_token": "1234"}',
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);

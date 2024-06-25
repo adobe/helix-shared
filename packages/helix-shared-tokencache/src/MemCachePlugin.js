@@ -83,17 +83,22 @@ export class MemCachePlugin {
    * @param {TokenCacheContext} cacheContext
    */
   async afterCacheAccess(cacheContext) {
-    if (cacheContext.cacheHasChanged) {
-      this.log.debug('mem: write token cache', this.key);
-      const cache = this.#getOrCreateCache();
-      cache.data = cacheContext.tokenCache.serialize();
-      if (this.base) {
-        this.log.debug('mem: write token cache done. telling base', this.key);
-        return this.base.afterCacheAccess(cacheContext);
-      }
-      return true;
+    if (!cacheContext.cacheHasChanged) {
+      return false;
     }
-    return false;
+    this.log.debug('mem: write token cache', this.key);
+    const cache = this.#getOrCreateCache();
+    const data = JSON.parse(cacheContext.tokenCache.serialize());
+    if (Object.keys(data.Account ?? {}).length === 0) {
+      this.log.debug('mem: write token cache done, ignoring empty data', this.key);
+      return false;
+    }
+    cache.data = data;
+    if (this.base) {
+      this.log.debug('mem: write token cache done. telling base', this.key);
+      return this.base.afterCacheAccess(cacheContext);
+    }
+    return true;
   }
 
   get location() {
