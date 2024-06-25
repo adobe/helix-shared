@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import { isDeepStrictEqual } from 'util';
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -143,8 +144,11 @@ export class S3CachePlugin {
       if (!this.meta) {
         await this.#loadData();
       }
-      this.data = JSON.parse(cacheContext.tokenCache.serialize());
-      return this.#saveData();
+      const data = JSON.parse(cacheContext.tokenCache.serialize());
+      if (!isDeepStrictEqual(data, this.data)) {
+        this.data = data;
+        return this.#saveData();
+      }
     }
     return false;
   }
