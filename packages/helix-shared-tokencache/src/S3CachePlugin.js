@@ -140,6 +140,8 @@ export class S3CachePlugin {
   }
 
   async afterCacheAccess(cacheContext) {
+    const { log } = this;
+
     if (cacheContext.cacheHasChanged) {
       if (!this.meta) {
         await this.#loadData();
@@ -148,6 +150,8 @@ export class S3CachePlugin {
       if (!isDeepStrictEqual(data, this.data)) {
         this.data = data;
         return this.#saveData();
+      } else {
+        log.debug('s3: we were told cache has changed, but contents didn\'t');
       }
     }
     return false;
