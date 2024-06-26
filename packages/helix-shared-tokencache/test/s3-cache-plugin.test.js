@@ -236,7 +236,7 @@ describe('S3CachePlugin Test', () => {
     assert.strictEqual(ret, false);
   });
 
-  it('does not write data to s3 if contents has no Account key at all', async () => {
+  it('writes data to s3 if contents has non empty AccessTokens key', async () => {
     const p = new S3CachePlugin({
       bucket: 'test-bucket',
       key: 'myproject/auth-default/json',
@@ -247,15 +247,17 @@ describe('S3CachePlugin Test', () => {
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
       .get('/myproject/auth-default/json?x-id=GetObject')
       .twice()
-      .reply(404);
+      .reply(404)
+      .put('/myproject/auth-default/json?x-id=PutObject')
+      .reply(204);
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      data: { AccessToken: {} },
+      data: { Account: {}, AccessToken: { secret: '1234' } },
     });
     await p.beforeCacheAccess(ctx);
     const ret = await p.afterCacheAccess(ctx);
-    assert.strictEqual(ret, false);
+    assert.strictEqual(ret, true);
   });
 
   it('handles error during write', async () => {

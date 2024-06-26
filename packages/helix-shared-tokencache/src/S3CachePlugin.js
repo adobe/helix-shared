@@ -18,6 +18,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { Response } from '@adobe/fetch';
 import { decrypt, encrypt } from './encrypt.js';
+import { isAuthTokenEmpty } from './utils.js';
 
 /**
  * aliases
@@ -150,7 +151,7 @@ export class S3CachePlugin {
       await this.#loadData();
     }
     const data = JSON.parse(cacheContext.tokenCache.serialize());
-    if (type === 'onedrive' && Object.keys(data.Account ?? {}).length === 0) {
+    if (type === 'onedrive' && isAuthTokenEmpty(data)) {
       log.info('s3: write token cache, ignoring empty data', this.key);
       return false;
     }
