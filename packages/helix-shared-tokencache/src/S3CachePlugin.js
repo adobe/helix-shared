@@ -40,6 +40,7 @@ export class S3CachePlugin {
     this.key = opts.key;
     this.secret = opts.secret;
     this.readOnly = opts.readOnly || false;
+    this.type = opts.type;
     this.s3 = new S3Client();
     this.meta = null;
     this.data = null;
@@ -140,7 +141,7 @@ export class S3CachePlugin {
   }
 
   async afterCacheAccess(cacheContext) {
-    const { log } = this;
+    const { log, type } = this;
 
     if (!cacheContext.cacheHasChanged) {
       return false;
@@ -149,7 +150,7 @@ export class S3CachePlugin {
       await this.#loadData();
     }
     const data = JSON.parse(cacheContext.tokenCache.serialize());
-    if (Object.keys(data.Account ?? {}).length === 0) {
+    if (type === 'onedrive' && Object.keys(data.Account ?? {}).length === 0) {
       log.info('s3: write token cache, ignoring empty data', this.key);
       return false;
     }

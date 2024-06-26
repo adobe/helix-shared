@@ -219,6 +219,7 @@ describe('S3CachePlugin Test', () => {
       bucket: 'test-bucket',
       key: 'myproject/auth-default/json',
       secret: '',
+      type: 'onedrive',
     });
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
@@ -240,6 +241,7 @@ describe('S3CachePlugin Test', () => {
       bucket: 'test-bucket',
       key: 'myproject/auth-default/json',
       secret: '',
+      type: 'onedrive',
     });
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
