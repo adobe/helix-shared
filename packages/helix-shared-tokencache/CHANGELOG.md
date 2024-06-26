@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.12...@adobe/helix-shared-tokencache-v1.4.13) (2024-06-26)
+
+
+### Bug Fixes
+
+* ignore changes when data has no `Account` key ([#961](https://github.com/adobe/helix-shared/issues/961)) ([87360e0](https://github.com/adobe/helix-shared/commit/87360e0d000f52ee3d954adaaf53544d7c480d96))
+
 # [@adobe/helix-shared-tokencache-v1.4.12](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.11...@adobe/helix-shared-tokencache-v1.4.12) (2024-06-25)
 
 
