@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.14...@adobe/helix-shared-tokencache-v1.4.15) (2024-06-26)
+
+
+### Bug Fixes
+
+* check Account *and* AccessTokens ([#963](https://github.com/adobe/helix-shared/issues/963)) ([62a1d9d](https://github.com/adobe/helix-shared/commit/62a1d9d1ce4a596167daf333f9b90b093a21b129))
+
 # [@adobe/helix-shared-tokencache-v1.4.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.13...@adobe/helix-shared-tokencache-v1.4.14) (2024-06-26)
 
 
