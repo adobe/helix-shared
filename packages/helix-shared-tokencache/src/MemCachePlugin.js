@@ -30,6 +30,7 @@ export class MemCachePlugin {
     this.log = opts.log || console;
     this.key = opts.key;
     this.base = opts.base;
+    this.type = opts.type;
     this.caches = opts.caches || caches;
   }
 
@@ -83,13 +84,13 @@ export class MemCachePlugin {
    * @param {TokenCacheContext} cacheContext
    */
   async afterCacheAccess(cacheContext) {
-    const { log } = this;
+    const { log, type } = this;
 
     if (!cacheContext.cacheHasChanged) {
       return false;
     }
     const data = JSON.parse(cacheContext.tokenCache.serialize());
-    if (Object.keys(data.Account ?? {}).length === 0) {
+    if (type === 'onedrive' && Object.keys(data.Account ?? {}).length === 0) {
       log.info('mem: write token cache done, ignoring empty data', this.key);
       return false;
     }

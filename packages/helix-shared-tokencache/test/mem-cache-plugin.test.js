@@ -115,6 +115,7 @@ describe('MemCachePlugin Test', () => {
       log: console,
       key: 'foobar-key',
       caches,
+      type: 'onedrive',
     });
 
     const ctx = new MockTokenCacheContext({
@@ -132,6 +133,7 @@ describe('MemCachePlugin Test', () => {
       log: console,
       key: 'foobar-key',
       caches,
+      type: 'onedrive',
     });
 
     const ctx = new MockTokenCacheContext({
