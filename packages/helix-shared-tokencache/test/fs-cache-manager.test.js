@@ -17,6 +17,7 @@ import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { FSCacheManager, FSCachePlugin } from '../src/index.js';
 import { MockTokenCacheContext } from './MockTokenCacheContext.js';
+import { toAuthContent } from './utils.js';
 
 describe('FSCacheManager Test', () => {
   let testRoot;
@@ -108,7 +109,7 @@ describe('FSCacheManager Test', () => {
     const p = await mgr.getCache('content');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{ "access_token": "1234" }',
+      data: toAuthContent('1234'),
     });
     await p.afterCacheAccess(ctx);
 

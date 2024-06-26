@@ -17,15 +17,18 @@
  */
 export class MockTokenCacheContext {
   constructor(opts = {}) {
-    const context = this;
-    Object.assign(this, {
-      cacheHasChanged: false,
-      tokens: '',
-      /** @type ISerializableTokenCache */
-      tokenCache: {
-        serialize: () => context.tokens,
-        deserialize: (value) => { context.tokens = value; },
+    this.cacheHasChanged = opts.cacheHasChanged;
+    this.data = opts.data || { Account: {}, AccessToken: {} };
+
+    this.tokenCache = {
+      serialize: () => JSON.stringify(this.data),
+      deserialize: (value) => {
+        this.data = JSON.parse(value);
       },
-    }, opts);
+    };
+  }
+
+  get token() {
+    return this.data.AccessToken?.['foo-id']?.secret ?? '';
   }
 }

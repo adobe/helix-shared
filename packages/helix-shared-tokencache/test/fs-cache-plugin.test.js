@@ -17,6 +17,7 @@ import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { FSCachePlugin } from '../src/index.js';
 import { MockTokenCacheContext } from './MockTokenCacheContext.js';
+import { toAuthContent } from './utils.js';
 
 describe('FSCachePlugin Test', () => {
   let testRoot;
@@ -37,21 +38,20 @@ describe('FSCachePlugin Test', () => {
       filePath: testFilePath,
     });
 
+    const data = toAuthContent('1234');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{ "access_token": "1234" }',
+      data,
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
-      access_token: '1234',
-    });
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), data);
     assert.strictEqual(p.location, testFilePath);
   });
 
   it('writes the fresh cache data does not overwrite metadata', async () => {
     await fs.writeFile(testFilePath, JSON.stringify({
-      access_token: '1234',
+      ...toAuthContent('1234'),
       cachePluginMetadata: {
         foo: 'bar',
       },
@@ -61,14 +61,15 @@ describe('FSCachePlugin Test', () => {
       filePath: testFilePath,
     });
 
+    const data = toAuthContent('2345');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{ "access_token": "1234" }',
+      data,
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
     assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
-      access_token: '1234',
+      ...data,
       cachePluginMetadata: {
         foo: 'bar',
       },
@@ -81,19 +82,18 @@ describe('FSCachePlugin Test', () => {
       filePath: testFilePath,
     });
 
+    const data = toAuthContent('2345');
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      tokens: '{ "access_token": "1234" }',
+      data,
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
-      access_token: '1234',
-    });
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), data);
 
     await p.setPluginMetadata({ foo: 'bar' });
     assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
-      access_token: '1234',
+      ...data,
       cachePluginMetadata: {
         foo: 'bar',
       },
@@ -115,8 +115,9 @@ describe('FSCachePlugin Test', () => {
   });
 
   it('can clear plugin metadata', async () => {
+    const data = toAuthContent('2345');
     await fs.writeFile(testFilePath, JSON.stringify({
-      access_token: '1234',
+      ...data,
       cachePluginMetadata: {
         foo: 'bar',
       },
@@ -126,9 +127,7 @@ describe('FSCachePlugin Test', () => {
       filePath: testFilePath,
     });
     await p.setPluginMetadata();
-    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), {
-      access_token: '1234',
-    });
+    assert.deepStrictEqual(JSON.parse(await fs.readFile(testFilePath, 'utf-8')), data);
   });
 
   it('does not the cache data to the filesystem if context not changed', async () => {
@@ -138,7 +137,7 @@ describe('FSCachePlugin Test', () => {
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: false,
-      tokens: '{ "access_token": "1234" }',
+      data: toAuthContent('2345'),
     });
     const ret = await p.afterCacheAccess(ctx);
     assert.strictEqual(ret, false);
@@ -153,7 +152,8 @@ describe('FSCachePlugin Test', () => {
   });
 
   it('read cache data from the filesystem', async () => {
-    await fs.writeFile(testFilePath, '{ "access_token": "1234" }', 'utf-8');
+    const data = toAuthContent('1234');
+    await fs.writeFile(testFilePath, JSON.stringify(data), 'utf-8');
 
     const p = new FSCachePlugin({
       filePath: testFilePath,
@@ -163,12 +163,12 @@ describe('FSCachePlugin Test', () => {
     });
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(ctx.tokens, '{ "access_token": "1234" }');
+    assert.strictEqual(ctx.token, '1234');
   });
 
   it('read cache plugin metadata from the filesystem', async () => {
     await fs.writeFile(testFilePath, JSON.stringify({
-      access_token: '1234',
+      ...toAuthContent('1234'),
       cachePluginMetadata: {
         foo: 'bar',
       },
@@ -182,7 +182,7 @@ describe('FSCachePlugin Test', () => {
     });
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, true);
-    assert.strictEqual(ctx.tokens, '{"access_token":"1234"}');
+    assert.strictEqual(ctx.token, '1234');
     assert.deepStrictEqual(await p.getPluginMetadata(), {
       foo: 'bar',
     });
@@ -190,7 +190,7 @@ describe('FSCachePlugin Test', () => {
 
   it('read cache plugin metadata from pristine plugin', async () => {
     await fs.writeFile(testFilePath, JSON.stringify({
-      access_token: '1234',
+      ...toAuthContent('1234'),
       cachePluginMetadata: {
         foo: 'bar',
       },
@@ -213,23 +213,11 @@ describe('FSCachePlugin Test', () => {
     });
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, false);
-    assert.strictEqual(ctx.tokens, '');
-  });
-
-  it('read cache data warns about other errors', async () => {
-    const p = new FSCachePlugin({
-      filePath: testFilePath,
-    });
-
-    const ctx = new MockTokenCacheContext({
-    });
-    const ret = await p.beforeCacheAccess(ctx);
-    assert.strictEqual(ret, false);
-    assert.strictEqual(ctx.tokens, '');
+    assert.strictEqual(ctx.token, '');
   });
 
   it('deletes the cache from the filesystem', async () => {
-    await fs.writeFile(testFilePath, '{ "access_token": "1234" }', 'utf-8');
+    await fs.writeFile(testFilePath, JSON.stringify(toAuthContent('1234')), 'utf-8');
     const p = new FSCachePlugin({
       filePath: testFilePath,
     });
