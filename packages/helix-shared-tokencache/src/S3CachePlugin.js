@@ -150,7 +150,7 @@ export class S3CachePlugin {
     }
     const data = JSON.parse(cacheContext.tokenCache.serialize());
     if (Object.keys(data.Account ?? {}).length === 0) {
-      log.debug('s3: write token cache, ignoring empty data', this.key);
+      log.info('s3: write token cache, ignoring empty data', this.key);
       return false;
     }
     if (isDeepStrictEqual(data, this.data)) {
