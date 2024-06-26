@@ -127,22 +127,20 @@ describe('MemCachePlugin Test', () => {
     assert.deepStrictEqual(caches.get('foobar-key'), undefined);
   });
 
-  it('ignores if value passed has no Account key at all', async () => {
+  it('writes data to cache w/o base if contents has non empty AccessTokens key', async () => {
     const caches = new Map();
     const p = new MemCachePlugin({
       log: console,
       key: 'foobar-key',
       caches,
-      type: 'onedrive',
     });
 
     const ctx = new MockTokenCacheContext({
       cacheHasChanged: true,
-      data: { AccessToken: {} },
+      data: { Account: {}, AccessToken: { secret: '1234' } },
     });
     const ret = await p.afterCacheAccess(ctx);
-    assert.strictEqual(ret, false);
-    assert.deepStrictEqual(caches.get('foobar-key'), undefined);
+    assert.strictEqual(ret, true);
   });
 
   it('writes the cache w/o base with local cache can delete', async () => {

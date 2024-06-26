@@ -9,6 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import { isAuthTokenEmpty } from './utils.js';
+
 const caches = new Map();
 
 /**
@@ -90,7 +92,7 @@ export class MemCachePlugin {
       return false;
     }
     const data = JSON.parse(cacheContext.tokenCache.serialize());
-    if (type === 'onedrive' && Object.keys(data.Account ?? {}).length === 0) {
+    if (type === 'onedrive' && isAuthTokenEmpty(data)) {
       log.info('mem: write token cache done, ignoring empty data', this.key);
       return false;
     }
