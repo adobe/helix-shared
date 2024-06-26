@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.13...@adobe/helix-shared-tokencache-v1.4.14) (2024-06-26)
+
+
+### Bug Fixes
+
+* check empty Account only with type 'onedrive' ([#962](https://github.com/adobe/helix-shared/issues/962)) ([e3c39a0](https://github.com/adobe/helix-shared/commit/e3c39a0dcc23647388db21b9510cd6a46c05afa4))
+
 # [@adobe/helix-shared-tokencache-v1.4.13](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.12...@adobe/helix-shared-tokencache-v1.4.13) (2024-06-26)
 
 
