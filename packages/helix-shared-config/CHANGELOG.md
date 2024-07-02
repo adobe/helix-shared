@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.6.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.6.1...@adobe/helix-shared-config-v10.6.2) (2024-07-02)
+
+
+### Bug Fixes
+
+* export index and sitemap schemas ([#965](https://github.com/adobe/helix-shared/issues/965)) ([4a965e5](https://github.com/adobe/helix-shared/commit/4a965e5ceb7767d92de2dda94776ae84755160df))
+
 # [@adobe/helix-shared-config-v10.6.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.6.0...@adobe/helix-shared-config-v10.6.1) (2024-06-29)
 
 
