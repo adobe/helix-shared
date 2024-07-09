@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.19](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.18...@adobe/helix-shared-tokencache-v1.4.19) (2024-07-09)
+
+
+### Bug Fixes
+
+* still deserialize cached data ([#968](https://github.com/adobe/helix-shared/issues/968)) ([449063c](https://github.com/adobe/helix-shared/commit/449063c43610f036f50b826cf85b6a33b0ffeb72))
+
 # [@adobe/helix-shared-tokencache-v1.4.18](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.17...@adobe/helix-shared-tokencache-v1.4.18) (2024-07-09)
 
 
