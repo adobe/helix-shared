@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.18](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.17...@adobe/helix-shared-tokencache-v1.4.18) (2024-07-09)
+
+
+### Bug Fixes
+
+* read cache data only once ([#967](https://github.com/adobe/helix-shared/issues/967)) ([29183bc](https://github.com/adobe/helix-shared/commit/29183bc33aa8717e82fd5ed9c7a6fc678f87792b))
+
 # [@adobe/helix-shared-tokencache-v1.4.17](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.16...@adobe/helix-shared-tokencache-v1.4.17) (2024-07-06)
 
 
