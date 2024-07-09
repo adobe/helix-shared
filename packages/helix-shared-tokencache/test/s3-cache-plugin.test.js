@@ -342,6 +342,27 @@ describe('S3CachePlugin Test', () => {
     assert.strictEqual(await p.beforeCacheAccess(ctx), true);
   });
 
+  it('read plugin metadata first should return cached data from s3', async () => {
+    const p = new S3CachePlugin({
+      bucket: 'test-bucket',
+      key: 'myproject/auth-default/json',
+      secret: 'foobar',
+    });
+
+    nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(200, encrypt('foobar', JSON.stringify(toAuthContent('1234'))));
+
+    const metadata = await p.getPluginMetadata();
+    assert.deepStrictEqual(metadata, {});
+
+    const ctx = new MockTokenCacheContext({
+    });
+    const ret = await p.beforeCacheAccess(ctx);
+    assert.strictEqual(ret, true);
+    assert.strictEqual(ctx.token, '1234');
+  });
+
   it('read cache data handles 404 error', async () => {
     const p = new S3CachePlugin({
       bucket: 'test-bucket',

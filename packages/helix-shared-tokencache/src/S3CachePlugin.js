@@ -101,10 +101,7 @@ export class S3CachePlugin {
   }
 
   async beforeCacheAccess(cacheContext) {
-    if (this.data) {
-      return true;
-    }
-    const raw = await this.#loadData();
+    const raw = this.data ? JSON.stringify(this.data) : await this.#loadData();
     if (raw) {
       cacheContext.tokenCache.deserialize(raw);
       return true;
