@@ -45,6 +45,7 @@ export class S3CachePlugin {
     this.s3 = new S3Client();
     this.meta = null;
     this.data = null;
+    this.lastModified = null;
   }
 
   async deleteCache() {
@@ -74,6 +75,7 @@ export class S3CachePlugin {
         Bucket: bucket,
         Key: key,
       }));
+      this.lastModified = res.LastModified;
       let raw = await new Response(res.Body, {}).buffer();
       if (secret) {
         raw = decrypt(secret, raw).toString('utf-8');
@@ -111,7 +113,7 @@ export class S3CachePlugin {
 
   async #saveData() {
     const {
-      log, secret, key, bucket,
+      log, secret, key, bucket, lastModified,
     } = this;
     try {
       if (this.readOnly) {
@@ -134,6 +136,8 @@ export class S3CachePlugin {
         Body: raw,
         ContentType: secret ? 'application/octet-stream' : 'text/plain',
       }));
+      this.lastModified = new Date();
+      log.info(`s3: write token cache: ${lastModified?.toISOString() ?? 'never'} => ${this.lastModified.toISOString()}`);
       return true;
     } catch (e) {
       log.warn('s3: unable to serialize token cache', e);
