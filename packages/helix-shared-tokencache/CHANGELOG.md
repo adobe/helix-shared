@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.22](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.21...@adobe/helix-shared-tokencache-v1.4.22) (2024-07-12)
+
+
+### Bug Fixes
+
+* MemCachePlugin should check equality before calling base ([#972](https://github.com/adobe/helix-shared/issues/972)) ([f4873a1](https://github.com/adobe/helix-shared/commit/f4873a1ba3ac27cb0ed6c764132995acf35ebef1))
+
 # [@adobe/helix-shared-tokencache-v1.4.21](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.20...@adobe/helix-shared-tokencache-v1.4.21) (2024-07-12)
 
 
