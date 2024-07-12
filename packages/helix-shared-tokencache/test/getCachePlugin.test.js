@@ -11,8 +11,10 @@
  */
 /* eslint-env mocha */
 import assert from 'assert';
+import { encrypt } from '../src/index.js';
 import { getCachePlugin } from '../src/getCachePlugin.js';
-import { Nock } from './utils.js';
+import { MockTokenCacheContext } from './MockTokenCacheContext.js';
+import { Nock, toAuthContent } from './utils.js';
 
 const DEFAULT_ENV = {
   AZURE_HELIX_SERVICE_CLIENT_ID: 'client-id',
@@ -38,8 +40,9 @@ describe('getCachePlugin tests', () => {
     process.env = savedProcessEnv;
   });
 
+  const contentBusId = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789a';
+
   it('uses derived opts if contentBusId is available', async () => {
-    const contentBusId = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789a';
     nock('https://helix-content-bus.s3.us-east-1.amazonaws.com')
       .head(`/${contentBusId}/.helix-auth/auth-onedrive-content.json`)
       .reply(200);
@@ -54,7 +57,6 @@ describe('getCachePlugin tests', () => {
   });
 
   it('contentBusId has precedence over owner', async () => {
-    const contentBusId = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789a';
     nock('https://helix-content-bus.s3.us-east-1.amazonaws.com')
       .head(`/${contentBusId}/.helix-auth/auth-onedrive-content.json`)
       .reply(200);
@@ -70,7 +72,6 @@ describe('getCachePlugin tests', () => {
   });
 
   it('falls back to owner if contentBusId not found', async () => {
-    const contentBusId = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789a';
     nock('https://helix-content-bus.s3.us-east-1.amazonaws.com')
       .head(`/${contentBusId}/.helix-auth/auth-onedrive-content.json`)
       .reply(404);
@@ -89,7 +90,6 @@ describe('getCachePlugin tests', () => {
   });
 
   it('falls back to default if contentBusId and owner not found', async () => {
-    const contentBusId = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789a';
     nock('https://helix-content-bus.s3.us-east-1.amazonaws.com')
       .head(`/${contentBusId}/.helix-auth/auth-onedrive-content.json`)
       .reply(404);
@@ -116,5 +116,51 @@ describe('getCachePlugin tests', () => {
     }, 'onedrive');
     assert.ok(cachePlugin);
     assert.strictEqual(cachePlugin.location, 'helix-content-bus/default/.helix-auth/auth-onedrive-content.json');
+  });
+
+  it('does not store back unmodified auth settings', async () => {
+    nock('https://helix-content-bus.s3.us-east-1.amazonaws.com')
+      .head(`/${contentBusId}/.helix-auth/auth-onedrive-content.json`)
+      .twice()
+      .reply(200)
+      .get(`/${contentBusId}/.helix-auth/auth-onedrive-content.json?x-id=GetObject`)
+      .reply(200, encrypt(contentBusId, JSON.stringify(toAuthContent('1234'))));
+
+    const caches = new Map();
+
+    // step 1: create plugin and read token from underlying S3 storage
+    let cachePlugin = await getCachePlugin({
+      log: console,
+      env: DEFAULT_ENV,
+      contentBusId,
+      caches,
+    }, 'onedrive');
+
+    await cachePlugin.beforeCacheAccess(
+      new MockTokenCacheContext({
+        cacheHasChanged: true,
+      }),
+    );
+
+    // step 2: verify cache has been filled
+    assert.strictEqual(caches.size, 1);
+
+    // step 3: create another plugin instance with the same cache
+    cachePlugin = await getCachePlugin({
+      log: console,
+      env: DEFAULT_ENV,
+      contentBusId,
+      caches,
+    }, 'onedrive');
+
+    // step 4: read cache back into context
+    const ctx = new MockTokenCacheContext({
+      cacheHasChanged: true,
+    });
+    await cachePlugin.beforeCacheAccess(ctx);
+
+    // step 5: and write cache back without changes
+    const ret = await cachePlugin.afterCacheAccess(ctx);
+    assert.strictEqual(ret, false);
   });
 });

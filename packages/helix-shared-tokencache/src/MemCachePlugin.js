@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import { isDeepStrictEqual } from 'util';
 import { isAuthTokenEmpty } from './utils.js';
 
 const caches = new Map();
@@ -96,8 +97,12 @@ export class MemCachePlugin {
       log.info('mem: write token cache done, ignoring empty data', this.key);
       return false;
     }
-    log.debug('mem: write token cache', this.key);
     const cache = this.#getOrCreateCache();
+    if (cache.data && isDeepStrictEqual(data, JSON.parse(cache.data))) {
+      log.debug('mem: we were told cache has changed, but contents didn\'t');
+      return false;
+    }
+    log.debug('mem: write token cache', this.key);
     cache.data = JSON.stringify(data);
     if (this.base) {
       log.debug('mem: write token cache done. telling base', this.key);

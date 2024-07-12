@@ -82,7 +82,7 @@ export async function getCachePlugin(opts, type) {
     type,
   };
   if (process.env.HELIX_ONEDRIVE_LOCAL_AUTH_CACHE) {
-    cacheOpts.caches = new Map();
+    cacheOpts.caches = opts.caches ?? new Map();
   }
   return new MemCachePlugin(cacheOpts);
 }
