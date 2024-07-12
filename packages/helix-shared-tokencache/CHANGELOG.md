@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.21](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.20...@adobe/helix-shared-tokencache-v1.4.21) (2024-07-12)
+
+
+### Bug Fixes
+
+* include id in write back message ([#971](https://github.com/adobe/helix-shared/issues/971)) ([61b332b](https://github.com/adobe/helix-shared/commit/61b332bda55fa5d086ae99bdf1eff770e952e9b9))
+
 # [@adobe/helix-shared-tokencache-v1.4.20](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.19...@adobe/helix-shared-tokencache-v1.4.20) (2024-07-12)
 
 
