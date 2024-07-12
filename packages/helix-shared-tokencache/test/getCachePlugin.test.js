@@ -118,7 +118,7 @@ describe('getCachePlugin tests', () => {
     assert.strictEqual(cachePlugin.location, 'helix-content-bus/default/.helix-auth/auth-onedrive-content.json');
   });
 
-  it('does not store back unmodified auth settings', async () => {
+  it('does not store back unchanged global auth', async () => {
     nock('https://helix-content-bus.s3.us-east-1.amazonaws.com')
       .head(`/${contentBusId}/.helix-auth/auth-onedrive-content.json`)
       .twice()

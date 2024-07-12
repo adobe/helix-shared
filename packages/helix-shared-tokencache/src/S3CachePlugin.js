@@ -49,7 +49,7 @@ export class S3CachePlugin {
   async deleteCache() {
     const { log, key, bucket } = this;
     try {
-      log.debug('s3: read token cache', key);
+      log.debug('s3: delete token cache', key);
       await this.s3.send(new DeleteObjectCommand({
         Bucket: bucket,
         Key: key,
