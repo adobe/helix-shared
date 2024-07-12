@@ -9,7 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { isDeepStrictEqual } from 'util';
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -45,13 +44,12 @@ export class S3CachePlugin {
     this.s3 = new S3Client();
     this.meta = null;
     this.data = null;
-    this.lastModified = null;
   }
 
   async deleteCache() {
     const { log, key, bucket } = this;
     try {
-      log.debug('s3: read token cache', key);
+      log.debug('s3: delete token cache', key);
       await this.s3.send(new DeleteObjectCommand({
         Bucket: bucket,
         Key: key,
@@ -75,7 +73,6 @@ export class S3CachePlugin {
         Bucket: bucket,
         Key: key,
       }));
-      this.lastModified = res.LastModified;
       let raw = await new Response(res.Body, {}).buffer();
       if (secret) {
         raw = decrypt(secret, raw).toString('utf-8');
@@ -113,7 +110,7 @@ export class S3CachePlugin {
 
   async #saveData() {
     const {
-      log, secret, key, bucket, lastModified,
+      log, secret, key, bucket,
     } = this;
     try {
       if (this.readOnly) {
@@ -136,12 +133,6 @@ export class S3CachePlugin {
         Body: raw,
         ContentType: secret ? 'application/octet-stream' : 'text/plain',
       }));
-      this.lastModified = new Date();
-
-      const id = key.split('/')[0];
-      const before = lastModified?.toISOString() ?? 'never';
-      const now = this.lastModified.toISOString();
-      log.info(`s3: write token cache [${id}]: ${before} => ${now}`);
       return true;
     } catch (e) {
       log.warn('s3: unable to serialize token cache', e);
@@ -161,10 +152,6 @@ export class S3CachePlugin {
     const data = JSON.parse(cacheContext.tokenCache.serialize());
     if (type === 'onedrive' && isAuthTokenEmpty(data)) {
       log.info('s3: write token cache, ignoring empty data', this.key);
-      return false;
-    }
-    if (isDeepStrictEqual(data, this.data)) {
-      log.debug('s3: we were told cache has changed, but contents didn\'t');
       return false;
     }
     this.data = data;

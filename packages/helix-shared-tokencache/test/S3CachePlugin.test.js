@@ -195,25 +195,6 @@ describe('S3CachePlugin Test', () => {
     assert.strictEqual(ret, false);
   });
 
-  it('does not write data to s3 if contents is unchanged', async () => {
-    const p = new S3CachePlugin({
-      bucket: 'test-bucket',
-      key: 'myproject/auth-default/json',
-      secret: '',
-    });
-
-    nock('https://test-bucket.s3.us-east-1.amazonaws.com')
-      .get('/myproject/auth-default/json?x-id=GetObject')
-      .reply(200, JSON.stringify(toAuthContent('1234')));
-
-    const ctx = new MockTokenCacheContext({
-      cacheHasChanged: true,
-    });
-    await p.beforeCacheAccess(ctx);
-    const ret = await p.afterCacheAccess(ctx);
-    assert.strictEqual(ret, false);
-  });
-
   it('does not write data to s3 if contents has empty Account key', async () => {
     const p = new S3CachePlugin({
       bucket: 'test-bucket',
