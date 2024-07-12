@@ -137,7 +137,11 @@ export class S3CachePlugin {
         ContentType: secret ? 'application/octet-stream' : 'text/plain',
       }));
       this.lastModified = new Date();
-      log.info(`s3: write token cache: ${lastModified?.toISOString() ?? 'never'} => ${this.lastModified.toISOString()}`);
+
+      const id = key.split('/')[0];
+      const before = lastModified?.toISOString() ?? 'never';
+      const now = this.lastModified.toISOString();
+      log.info(`s3: write token cache [${id}]: ${before} => ${now}`);
       return true;
     } catch (e) {
       log.warn('s3: unable to serialize token cache', e);
