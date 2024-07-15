@@ -303,15 +303,16 @@ class Bucket {
    * @returns result obtained from S3
    */
   async copy(src, dst, opts = {}) {
+    const key = sanitizeKey(src);
     const input = {
       Bucket: this.bucket,
-      CopySource: `${this.bucket}/${sanitizeKey(src)}`,
+      CopySource: `${this.bucket}/${key}`,
       Key: sanitizeKey(dst),
     };
 
     try {
       if (opts.addMetadata) {
-        const meta = await this.metadata(src);
+        const meta = await this.metadata(key);
         input.Metadata = { ...meta, ...opts.addMetadata };
         input.MetadataDirective = 'REPLACE';
       }
@@ -464,7 +465,7 @@ class Bucket {
       };
       try {
         if (opts.addMetadata) {
-          const meta = await this.metadata(src);
+          const meta = await this.metadata(task.src);
           input.Metadata = { ...meta, ...opts.addMetadata };
           input.MetadataDirective = 'REPLACE';
         }
