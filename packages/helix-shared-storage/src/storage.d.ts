@@ -12,12 +12,32 @@
 
 import { S3Client } from "@aws-sdk/client-s3";
 
+
+export interface ObjectInfo {
+  key: string;
+  /** the path to the object, w/o the prefix */
+  path: string;
+  lastModified: string;
+  contentLength: number;
+  contentType: string;
+}
+
+/**
+ * @returns {boolean} {@code true} if the object is accepted
+ */
+export type ObjectFilter = (info: ObjectInfo) => boolean;
+
+export interface CopyOptions {
+  /** metadata to merge with existing metadata */
+  addMetadata?: Record<string, unknown>;
+}
+
 export declare interface Bucket {
-  get client():S3Client;
+  get client(): S3Client;
 
-  get bucket():string;
+  get bucket(): string;
 
-  get log():Console;
+  get log(): Console;
 
   get(key: string, meta?: object): Promise<Buffer | null>;
 
@@ -51,7 +71,7 @@ export declare interface Bucket {
    * @param {boolean} [compress = true]
    * @returns result obtained from S3
    */
-  put(path: string, body: Buffer, contentType?: string, meta?: object, compress?: bool): Promise<object>;
+  put(path: string, body: Buffer, contentType?: string, meta?: object, compress?: boolean): Promise<object>;
 
   /**
    * Updates the metadata
@@ -67,9 +87,10 @@ export declare interface Bucket {
    *
    * @param {string} src source key
    * @param {string} dst destination key
+   * @param {CopyOptions} [opts]
    * @returns result obtained from S3
    */
-  copy(src: string, dst: string): Promise<void>;
+  copy(src: string, dst: string, opts?: CopyOptions): Promise<void>;
 
   /**
    * Remove object(s)
@@ -93,9 +114,10 @@ export declare interface Bucket {
    * @param {string} src Source prefix
    * @param {string} dst Destination prefix
    * @param {ObjectFilter} filter Filter function
+   * @param {CopyOptions} [opts]
    * @returns {Promise<*[]>}
    */
-  copyDeep(src: string, dst: string, filter?: function): Promise<object[]>;
+  copyDeep(src: string, dst: string, filter?: ObjectFilter, opts?: CopyOptions): Promise<object[]>;
 
   rmdir(src: string): Promise<void>;
 }
@@ -103,40 +125,40 @@ export declare interface Bucket {
 /**
  * The Helix Storage provides a factory for simplified bucket operations to S3 and R2
  */
-export class HelixStorage {
-  static fromContext(context:AdminContext):HelixStorage;
+export declare class HelixStorage {
+  static fromContext(context: AdminContext): HelixStorage;
 
-  s3():S3Client;
+  s3(): S3Client;
 
   /**
    * creates a bucket instance that allows to perform storage related operations.
    * @param bucketId
    * @returns {Bucket}
    */
-  bucket(bucketId:string):Bucket;;
+  bucket(bucketId: string): Bucket;;
 
   /**
    * @returns {Bucket}
    */
-  contentBus():Bucket;
+  contentBus(): Bucket;
 
   /**
    * @returns {Bucket}
    */
-  codeBus():Bucket;
+  codeBus(): Bucket;
 
   /**
    * @returns {Bucket}
    */
-  mediaBus():Bucket;
+  mediaBus(): Bucket;
 
   /**
    * @returns {Bucket}
    */
-  configBus():Bucket;
+  configBus(): Bucket;
 
   /**
    * Close this storage. Destroys the S3 client used.
    */
-  close()
+  close(): void;
 }
