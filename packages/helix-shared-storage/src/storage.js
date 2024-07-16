@@ -465,7 +465,7 @@ class Bucket {
       };
       try {
         if (opts.addMetadata) {
-          const meta = await this.metadata(task.src) || {};
+          const meta = await this.metadata(task.src) ?? {};
           input.Metadata = { ...meta, ...opts.addMetadata };
           input.MetadataDirective = 'REPLACE';
         }
