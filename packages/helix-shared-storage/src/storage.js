@@ -35,21 +35,11 @@ const gunzip = promisify(zlib.gunzip);
 
 /**
  * @typedef {import('@aws-sdk/client-s3').CommandInput} CommandInput
- */
-
-/**
- * @typedef ObjectInfo
- * @property {string} key
- * @property {string} path the path to the object, w/o the prefix
- * @property {string} lastModified
- * @property {number} contentLength
- * @property {string} contentType
- */
-
-/**
- * @callback ObjectFilter
- * @param {ObjectInfo} info of the object to filter
- * @returns {boolean} {@code true} if the object is accepted
+ * @typedef {import('./storage.d').Bucket} BucketType
+ * @typedef {import('./storage.d').HelixStorage} HelixStorageType
+ * @typedef {import('./storage.d').ObjectInfo} ObjectInfo
+ * @typedef {import('./storage.d').ObjectFilter} ObjectFilter
+ * @typedef {import('./storage.d').CopyOptions} CopyOptions
  */
 
 /**
@@ -92,6 +82,7 @@ function sanitizeKey(keyOrPath) {
 
 /**
  * Bucket class
+ * @implements {BucketType}
  */
 class Bucket {
   constructor(opts) {
@@ -308,16 +299,23 @@ class Bucket {
    *
    * @param {string} src source key
    * @param {string} dst destination key
+   * @param {CopyOptions} [opts]
    * @returns result obtained from S3
    */
-  async copy(src, dst) {
+  async copy(src, dst, opts = {}) {
+    const key = sanitizeKey(src);
     const input = {
       Bucket: this.bucket,
-      CopySource: `${this.bucket}/${sanitizeKey(src)}`,
+      CopySource: `${this.bucket}/${key}`,
       Key: sanitizeKey(dst),
     };
 
     try {
+      if (opts.addMetadata) {
+        const meta = await this.metadata(key) ?? {};
+        input.Metadata = { ...meta, ...opts.addMetadata };
+        input.MetadataDirective = 'REPLACE';
+      }
       // write to s3 and r2 (mirror) in parallel
       await this.sendToS3andR2(CopyObjectCommand, input);
       this.log.info(`object copied from ${input.CopySource} to: ${input.Bucket}/${input.Key}`);
@@ -432,9 +430,10 @@ class Bucket {
    * @param {string} src Source prefix
    * @param {string} dst Destination prefix
    * @param {ObjectFilter} filter Filter function
+   * @param {CopyOptions} [opts={}]
    * @returns {Promise<*[]>}
    */
-  async copyDeep(src, dst, filter = () => true) {
+  async copyDeep(src, dst, filter = () => true, opts = {}) {
     const { log } = this;
     const tasks = [];
     const Prefix = sanitizeKey(src);
@@ -465,6 +464,11 @@ class Bucket {
         Key: task.dst,
       };
       try {
+        if (opts.addMetadata) {
+          const meta = await this.metadata(task.src) ?? {};
+          input.Metadata = { ...meta, ...opts.addMetadata };
+          input.MetadataDirective = 'REPLACE';
+        }
         // write to s3 and r2 (mirror) in parallel
         await this.sendToS3andR2(CopyObjectCommand, input);
         changes.push(task);
@@ -510,6 +514,7 @@ class Bucket {
 
 /**
  * The Helix Storage provides a factory for simplified bucket operations to S3 and R2
+ * @implements {HelixStorageType}
  */
 export class HelixStorage {
   static fromContext(context) {
