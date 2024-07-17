@@ -494,7 +494,9 @@ describe('Storage test', () => {
         if (heads.length <= 2) {
           return [404];
         }
-        return [200, undefined, {
+        return [200, [], {
+          'content-type': 'text/plain',
+          'content-encoding': 'gzip',
           'x-amz-meta-x-dont-overwrite': 'foo',
           'x-amz-meta-x-last-modified-by': 'anonymous',
         }];
@@ -504,6 +506,8 @@ describe('Storage test', () => {
       .reply(function f(uri) {
         puts.s3.push(uri);
         putsHeaders.s3.push({
+          'content-type': this.req.headers['content-type'],
+          'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
@@ -520,6 +524,8 @@ describe('Storage test', () => {
       .reply(function f(uri) {
         puts.r2.push(uri);
         putsHeaders.r2.push({
+          'content-type': this.req.headers['content-type'],
+          'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
@@ -544,11 +550,23 @@ describe('Storage test', () => {
     Object.values(putsHeaders).forEach((s3r2) => {
       s3r2.forEach((headers, i) => {
         // first 2 returned 404, so no meta existed
-        assert.deepEqual(headers, {
-          'x-amz-meta-x-dont-overwrite': i <= 1 ? undefined : 'foo',
-          'x-amz-meta-x-last-modified-by': 'foo@example.com',
-          'x-amz-metadata-directive': 'REPLACE',
-        });
+        if (i <= 1) {
+          assert.deepEqual(headers, {
+            'content-type': undefined,
+            'content-encoding': undefined,
+            'x-amz-meta-x-dont-overwrite': undefined,
+            'x-amz-meta-x-last-modified-by': 'foo@example.com',
+            'x-amz-metadata-directive': 'REPLACE',
+          });
+        } else {
+          assert.deepEqual(headers, {
+            'content-type': 'text/plain',
+            'content-encoding': 'gzip',
+            'x-amz-meta-x-dont-overwrite': 'foo',
+            'x-amz-meta-x-last-modified-by': 'foo@example.com',
+            'x-amz-metadata-directive': 'REPLACE',
+          });
+        }
       });
     });
 
@@ -614,13 +632,17 @@ describe('Storage test', () => {
     const putsHeaders = { s3: undefined, r2: undefined };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .head('/owner/repo/ref/foo.md')
-      .reply(200, undefined, {
+      .reply(200, [], {
         'x-amz-meta-x-dont-overwrite': 'foo',
         'x-amz-meta-x-last-modified-by': 'anonymous',
+        'content-type': 'text/plain',
+        'content-encoding': 'gzip',
       })
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
       .reply(function f(uri) {
         putsHeaders.s3 = {
+          'content-type': this.req.headers['content-type'],
+          'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
@@ -632,6 +654,8 @@ describe('Storage test', () => {
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
       .reply(function f(uri) {
         putsHeaders.r2 = {
+          'content-type': this.req.headers['content-type'],
+          'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
@@ -652,11 +676,15 @@ describe('Storage test', () => {
     assert.deepEqual(puts.r2, expectedPuts);
 
     assert.deepEqual(putsHeaders.s3, {
+      'content-type': 'text/plain',
+      'content-encoding': 'gzip',
       'x-amz-metadata-directive': 'REPLACE',
       'x-amz-meta-x-dont-overwrite': 'foo',
       'x-amz-meta-x-last-modified-by': 'foo@example.com',
     });
     assert.deepEqual(putsHeaders.r2, {
+      'content-type': 'text/plain',
+      'content-encoding': 'gzip',
       'x-amz-metadata-directive': 'REPLACE',
       'x-amz-meta-x-dont-overwrite': 'foo',
       'x-amz-meta-x-last-modified-by': 'foo@example.com',
@@ -672,6 +700,8 @@ describe('Storage test', () => {
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
       .reply(function f(uri) {
         putsHeaders.s3 = {
+          'content-type': this.req.headers['content-type'],
+          'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
@@ -683,6 +713,8 @@ describe('Storage test', () => {
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
       .reply(function f(uri) {
         putsHeaders.r2 = {
+          'content-type': this.req.headers['content-type'],
+          'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
@@ -703,11 +735,15 @@ describe('Storage test', () => {
     assert.deepEqual(puts.r2, expectedPuts);
 
     assert.deepEqual(putsHeaders.s3, {
+      'content-type': undefined,
+      'content-encoding': undefined,
       'x-amz-metadata-directive': 'REPLACE',
       'x-amz-meta-x-dont-overwrite': undefined,
       'x-amz-meta-x-last-modified-by': 'foo@example.com',
     });
     assert.deepEqual(putsHeaders.r2, {
+      'content-type': undefined,
+      'content-encoding': undefined,
       'x-amz-metadata-directive': 'REPLACE',
       'x-amz-meta-x-dont-overwrite': undefined,
       'x-amz-meta-x-last-modified-by': 'foo@example.com',
