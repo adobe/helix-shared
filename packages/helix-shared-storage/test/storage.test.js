@@ -747,13 +747,19 @@ describe('Storage test', () => {
     });
   });
 
-  it('copy and add metadata should halt when source not found', async () => {
+  it('copy and add metadata should throw error when source not found', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .head('/owner/repo/ref/foo.md')
       .reply(404);
 
     const bus = storage.codeBus();
-    await bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md', { addMetadata: { 'x-last-modified-by': 'foo@example.com' } });
+    await assert.rejects(
+      bus.copy(
+        '/owner/repo/ref/foo.md',
+        '/owner/repo/ref/foo/bar.md',
+        { addMetadata: { 'x-last-modified-by': 'foo@example.com' } },
+      ),
+    );
   });
 
   it('can copy object can fail (non deep)', async () => {

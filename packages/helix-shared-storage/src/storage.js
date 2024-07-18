@@ -316,7 +316,9 @@ class Bucket {
       if (opts.addMetadata) {
         const headers = await this.head(key);
         if (!headers) {
-          return;
+          const e = new Error('not found');
+          e.Code = 'NoSuchKey';
+          throw e;
         }
         ['ContentType', 'ContentEncoding', 'CacheControl', 'ContentDisposition', 'Expires'].forEach((name) => {
           if (headers[name]) {
