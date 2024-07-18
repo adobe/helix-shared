@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.3...@adobe/helix-shared-storage-v1.0.4) (2024-07-18)
+
+
+### Bug Fixes
+
+* copy more than just metadata ([#976](https://github.com/adobe/helix-shared/issues/976)) ([70279a2](https://github.com/adobe/helix-shared/commit/70279a249d9484ec03569bee442dfa030d6859c6))
+
 # [@adobe/helix-shared-storage-v1.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.2...@adobe/helix-shared-storage-v1.0.3) (2024-07-16)
 
 
