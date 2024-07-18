@@ -98,10 +98,12 @@ class Bucket {
     }
   }
 
+  /** @type {S3Client} */
   get client() {
     return this._s3;
   }
 
+  /** @type {string} */
   get bucket() {
     return this._bucket;
   }
@@ -312,8 +314,19 @@ class Bucket {
 
     try {
       if (opts.addMetadata) {
-        const meta = await this.metadata(key) ?? {};
-        input.Metadata = { ...meta, ...opts.addMetadata };
+        const headers = await this.head(key);
+        if (!headers) {
+          const e = new Error('not found');
+          e.Code = 'NoSuchKey';
+          throw e;
+        }
+        ['ContentType', 'ContentEncoding', 'CacheControl', 'ContentDisposition', 'Expires'].forEach((name) => {
+          if (headers[name]) {
+            input[name] = headers[name];
+          }
+        });
+        /* c8 ignore next */
+        input.Metadata = { ...(headers?.Metadata ?? {}), ...opts.addMetadata };
         input.MetadataDirective = 'REPLACE';
       }
       // write to s3 and r2 (mirror) in parallel
@@ -465,8 +478,18 @@ class Bucket {
       };
       try {
         if (opts.addMetadata) {
-          const meta = await this.metadata(task.src) ?? {};
-          input.Metadata = { ...meta, ...opts.addMetadata };
+          const headers = await this.head(task.src);
+          if (!headers) {
+            // this should never happen, since we just listed it
+            return;
+          }
+          ['ContentType', 'ContentEncoding', 'CacheControl', 'ContentDisposition', 'Expires'].forEach((name) => {
+            if (headers[name]) {
+              input[name] = headers[name];
+            }
+          });
+          /* c8 ignore next */
+          input.Metadata = { ...(headers?.Metadata ?? {}), ...opts.addMetadata };
           input.MetadataDirective = 'REPLACE';
         }
         // write to s3 and r2 (mirror) in parallel
