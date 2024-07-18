@@ -315,12 +315,15 @@ class Bucket {
     try {
       if (opts.addMetadata) {
         const headers = await this.head(key);
-        if (headers) {
-          input.ContentType = headers.ContentType;
-          input.ContentEncoding = headers.ContentEncoding;
-          input.CacheControl = headers.CacheControl;
-          input.ContentDisposition = headers.ContentDisposition;
+        if (!headers) {
+          return;
         }
+        ['ContentType', 'ContentEncoding', 'CacheControl', 'ContentDisposition', 'Expires'].forEach((name) => {
+          if (headers[name]) {
+            input[name] = headers[name];
+          }
+        });
+        /* c8 ignore next */
         input.Metadata = { ...(headers?.Metadata ?? {}), ...opts.addMetadata };
         input.MetadataDirective = 'REPLACE';
       }
@@ -474,12 +477,16 @@ class Bucket {
       try {
         if (opts.addMetadata) {
           const headers = await this.head(task.src);
-          if (headers) {
-            input.ContentType = headers.ContentType;
-            input.ContentEncoding = headers.ContentEncoding;
-            input.CacheControl = headers.CacheControl;
-            input.ContentDisposition = headers.ContentDisposition;
+          if (!headers) {
+            // this should never happen, since we just listed it
+            return;
           }
+          ['ContentType', 'ContentEncoding', 'CacheControl', 'ContentDisposition', 'Expires'].forEach((name) => {
+            if (headers[name]) {
+              input[name] = headers[name];
+            }
+          });
+          /* c8 ignore next */
           input.Metadata = { ...(headers?.Metadata ?? {}), ...opts.addMetadata };
           input.MetadataDirective = 'REPLACE';
         }

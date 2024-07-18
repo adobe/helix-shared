@@ -490,11 +490,12 @@ describe('Storage test', () => {
       .times(10)
       .reply((uri) => {
         heads.push(uri);
-        // reject first 2 uris
-        if (heads.length <= 2) {
+        // reject first uri, this skips the copy entirely
+        if (heads.length === 1) {
           return [404];
         }
         return [200, [], {
+          expires: 'Thu, 23 Nov 2023 10:35:10 GMT',
           'content-type': 'text/plain',
           'content-encoding': 'gzip',
           'x-amz-meta-x-dont-overwrite': 'foo',
@@ -502,10 +503,11 @@ describe('Storage test', () => {
         }];
       })
       .put(/.*/)
-      .times(10)
+      .times(9)
       .reply(function f(uri) {
         puts.s3.push(uri);
         putsHeaders.s3.push({
+          expires: this.req.headers.expires,
           'content-type': this.req.headers['content-type'],
           'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
@@ -520,10 +522,11 @@ describe('Storage test', () => {
       });
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
       .put(/.*/)
-      .times(10)
+      .times(9)
       .reply(function f(uri) {
         puts.r2.push(uri);
         putsHeaders.r2.push({
+          expires: this.req.headers.expires,
           'content-type': this.req.headers['content-type'],
           'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
@@ -544,29 +547,19 @@ describe('Storage test', () => {
     puts.r2.sort();
     heads.sort();
 
-    assert.strictEqual(putsHeaders.s3.length, 10);
-    assert.strictEqual(putsHeaders.r2.length, 10);
+    assert.strictEqual(putsHeaders.s3.length, 9);
+    assert.strictEqual(putsHeaders.r2.length, 9);
 
     Object.values(putsHeaders).forEach((s3r2) => {
-      s3r2.forEach((headers, i) => {
-        // first 2 returned 404, so no meta existed
-        if (i <= 1) {
-          assert.deepEqual(headers, {
-            'content-type': undefined,
-            'content-encoding': undefined,
-            'x-amz-meta-x-dont-overwrite': undefined,
-            'x-amz-meta-x-last-modified-by': 'foo@example.com',
-            'x-amz-metadata-directive': 'REPLACE',
-          });
-        } else {
-          assert.deepEqual(headers, {
-            'content-type': 'text/plain',
-            'content-encoding': 'gzip',
-            'x-amz-meta-x-dont-overwrite': 'foo',
-            'x-amz-meta-x-last-modified-by': 'foo@example.com',
-            'x-amz-metadata-directive': 'REPLACE',
-          });
-        }
+      s3r2.forEach((headers) => {
+        assert.deepEqual(headers, {
+          expires: 'Thu, 23 Nov 2023 10:35:10 GMT',
+          'content-type': 'text/plain',
+          'content-encoding': 'gzip',
+          'x-amz-meta-x-dont-overwrite': 'foo',
+          'x-amz-meta-x-last-modified-by': 'foo@example.com',
+          'x-amz-metadata-directive': 'REPLACE',
+        });
       });
     });
 
@@ -585,7 +578,7 @@ describe('Storage test', () => {
     assert.deepEqual(heads, expectedHeads);
 
     const expectedPuts = [
-      '/bar/.circleci/config.yml?x-id=CopyObject',
+      // '/bar/.circleci/config.yml?x-id=CopyObject', // 404, skipped
       '/bar/.gitignore?x-id=CopyObject',
       '/bar/.vscode/launch.json?x-id=CopyObject',
       '/bar/.vscode/settings.json?x-id=CopyObject',
@@ -696,10 +689,11 @@ describe('Storage test', () => {
     const putsHeaders = { s3: undefined, r2: undefined };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .head('/owner/repo/ref/foo.md')
-      .reply(404)
+      .reply(200, [], { 'content-type': 'text/plain' })
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
       .reply(function f(uri) {
         putsHeaders.s3 = {
+          expires: this.req.headers.expires,
           'content-type': this.req.headers['content-type'],
           'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
@@ -713,6 +707,7 @@ describe('Storage test', () => {
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
       .reply(function f(uri) {
         putsHeaders.r2 = {
+          expires: this.req.headers.expires,
           'content-type': this.req.headers['content-type'],
           'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
@@ -735,19 +730,30 @@ describe('Storage test', () => {
     assert.deepEqual(puts.r2, expectedPuts);
 
     assert.deepEqual(putsHeaders.s3, {
-      'content-type': undefined,
+      expires: undefined,
+      'content-type': 'text/plain',
       'content-encoding': undefined,
       'x-amz-metadata-directive': 'REPLACE',
       'x-amz-meta-x-dont-overwrite': undefined,
       'x-amz-meta-x-last-modified-by': 'foo@example.com',
     });
     assert.deepEqual(putsHeaders.r2, {
-      'content-type': undefined,
+      expires: undefined,
+      'content-type': 'text/plain',
       'content-encoding': undefined,
       'x-amz-metadata-directive': 'REPLACE',
       'x-amz-meta-x-dont-overwrite': undefined,
       'x-amz-meta-x-last-modified-by': 'foo@example.com',
     });
+  });
+
+  it('copy and add metadata should halt when source not found', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .head('/owner/repo/ref/foo.md')
+      .reply(404);
+
+    const bus = storage.codeBus();
+    await bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md', { addMetadata: { 'x-last-modified-by': 'foo@example.com' } });
   });
 
   it('can copy object can fail (non deep)', async () => {
