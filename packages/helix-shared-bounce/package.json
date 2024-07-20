@@ -39,7 +39,7 @@
     "@adobe/helix-universal": "^5.0.0"
   },
   "devDependencies": {
-    "esmock": "2.6.6",
+    "esmock": "2.6.7",
     "nock": "13.5.4"
   }
 }
