@@ -12,7 +12,7 @@
     "lint": "npm run lint -ws",
     "semantic-release": "npx --no -ws semantic-release",
     "semantic-release-dry": "npx --no -ws semantic-release --dry-run --branches $CI_BRANCH",
-    "prepare": "husky install",
+    "prepare": "husky",
     "clean": "rm -rf package-lock.json node_modules"
   },
   "repository": {
