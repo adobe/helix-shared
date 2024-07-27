@@ -48,7 +48,7 @@
     "lru-cache": "11.0.0",
     "object-hash": "3.0.0",
     "uri-js": "4.4.1",
-    "yaml": "2.4.5"
+    "yaml": "2.5.0"
   },
   "devDependencies": {
     "@adobe/helix-shared-wrap": "^1.0.5",
