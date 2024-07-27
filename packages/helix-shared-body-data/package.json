@@ -38,6 +38,6 @@
     "@adobe/helix-universal": "^5.0.0"
   },
   "devDependencies": {
-    "yaml": "2.4.5"
+    "yaml": "2.5.0"
   }
 }
