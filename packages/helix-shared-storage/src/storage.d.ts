@@ -28,7 +28,16 @@ export interface ObjectInfo {
 export type ObjectFilter = (info: ObjectInfo) => boolean;
 
 export interface CopyOptions {
-  /** metadata to merge with existing metadata */
+  /** 
+   * metadata to rename, { [from:string] => to:string } 
+   * Removes existing `from` metadata property from the copied object.
+   * Use `addMetadata` to include the `from` property if needed.
+   */
+  renameMetadata?: Record<string, string>;
+  /** 
+   * Metadata to merge with existing metadata.
+   * Properties are applied after `renameMetadata`.
+   */
   addMetadata?: Record<string, unknown>;
 }
 
