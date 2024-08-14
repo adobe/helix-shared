@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.4...@adobe/helix-shared-storage-v1.0.5) (2024-08-14)
+
+
+### Bug Fixes
+
+* **storage:** add renameMetadata copy option ([#986](https://github.com/adobe/helix-shared/issues/986)) ([18905cb](https://github.com/adobe/helix-shared/commit/18905cb7f07a9ccdff54544351d8911cb0b828e3))
+
 # [@adobe/helix-shared-storage-v1.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.3...@adobe/helix-shared-storage-v1.0.4) (2024-07-18)
 
 
