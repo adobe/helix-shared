@@ -81,6 +81,50 @@ function sanitizeKey(keyOrPath) {
 }
 
 /**
+ * Resolve metadata object for copy operations.
+ *
+ * @param {Record<string, string>} s3Headers response headers from S3
+ * @param {Record<string, string>} renameMeta { srcKey -> dstKey }
+ * @param {Record<string, string>} addMeta { key -> value }
+ * @returns {Record<string, string>}
+ */
+export function resolveMetadataForCopy(s3Headers = {}, renameMeta = {}, addMeta = {}) {
+  const { Metadata: existingMeta = {}, LastModified } = s3Headers;
+  // for rename purposes, treat the amz controlled `last-modified` header as a regular header
+  const existingMetadata = {
+    ...existingMeta,
+    ...(LastModified ? {
+      'last-modified': LastModified instanceof Date
+        ? LastModified.toUTCString()
+        : LastModified,
+    } : {}),
+  };
+
+  const reverseRenameMap = Object.fromEntries(
+    Object.entries(renameMeta).map(([to, from]) => [from, to]),
+  );
+  const renameMetadata = Object.entries(renameMeta)
+    .reduce((acc, [from, to]) => {
+      if (existingMetadata[from]) {
+        acc[to] = existingMetadata[from];
+        if (!reverseRenameMap[from]) {
+          acc[from] = undefined;
+        }
+      }
+      return acc;
+    }, {});
+
+  // for application of exisitng meta, exclude the amz controlled `last-modified` header
+  const meta = { ...existingMeta, ...renameMetadata, ...addMeta };
+  Object.keys(meta).forEach((key) => {
+    if (meta[key] === undefined) {
+      delete meta[key];
+    }
+  });
+  return meta;
+}
+
+/**
  * Bucket class
  * @implements {BucketType}
  */
@@ -313,7 +357,7 @@ class Bucket {
     };
 
     try {
-      if (opts.addMetadata) {
+      if (opts.addMetadata || opts.renameMetadata) {
         const headers = await this.head(key);
         if (!headers) {
           const e = new Error('not found');
@@ -325,8 +369,12 @@ class Bucket {
             input[name] = headers[name];
           }
         });
-        /* c8 ignore next */
-        input.Metadata = { ...(headers?.Metadata ?? {}), ...opts.addMetadata };
+
+        input.Metadata = resolveMetadataForCopy(
+          headers,
+          opts.renameMetadata,
+          opts.addMetadata,
+        );
         input.MetadataDirective = 'REPLACE';
       }
       // write to s3 and r2 (mirror) in parallel
@@ -477,7 +525,7 @@ class Bucket {
         Key: task.dst,
       };
       try {
-        if (opts.addMetadata) {
+        if (opts.addMetadata || opts.renameMetadata) {
           const headers = await this.head(task.src);
           if (!headers) {
             // this should never happen, since we just listed it
@@ -488,8 +536,11 @@ class Bucket {
               input[name] = headers[name];
             }
           });
-          /* c8 ignore next */
-          input.Metadata = { ...(headers?.Metadata ?? {}), ...opts.addMetadata };
+          input.Metadata = resolveMetadataForCopy(
+            headers,
+            opts.renameMetadata,
+            opts.addMetadata,
+          );
           input.MetadataDirective = 'REPLACE';
         }
         // write to s3 and r2 (mirror) in parallel

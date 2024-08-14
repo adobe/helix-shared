@@ -19,7 +19,7 @@ import { promisify } from 'util';
 import xml2js from 'xml2js';
 import zlib from 'zlib';
 import { Nock } from './utils.js';
-import { HelixStorage } from '../src/storage.js';
+import { HelixStorage, resolveMetadataForCopy } from '../src/storage.js';
 
 const gzip = promisify(zlib.gzip);
 
@@ -55,6 +55,55 @@ describe('Storage test', () => {
   afterEach(() => {
     nock.done();
     storage.close();
+  });
+
+  it('resolveMetadataForCopy() resolves metadata', () => {
+    const meta = resolveMetadataForCopy(
+      {
+        Metadata: {
+          foo: 1,
+          bar: 2,
+          baz: 3,
+        },
+        LastModified: '0',
+      },
+      { foo: 'bar', baz: 'foo' },
+      { bar: 5, qux: 5 },
+    );
+    assert.deepStrictEqual(meta, {
+      foo: 3,
+      bar: 5,
+      qux: 5,
+    });
+  });
+
+  it('resolveMetadataForCopy() allows undefined params', () => {
+    let meta = resolveMetadataForCopy();
+    assert.deepStrictEqual(meta, {});
+
+    meta = resolveMetadataForCopy({ Metadata: { foo: '1' } });
+    assert.deepStrictEqual(meta, { foo: '1' });
+
+    meta = resolveMetadataForCopy(undefined, { foo: 'bar' });
+    assert.deepStrictEqual(meta, { });
+
+    meta = resolveMetadataForCopy(undefined, undefined, { foo: '1' });
+    assert.deepStrictEqual(meta, { foo: '1' });
+  });
+
+  it('resolveMetadataForCopy() prefers renameMetadata over existingMetadata', () => {
+    const meta = resolveMetadataForCopy({ Metadata: { foo: '1', bar: '2' } }, { foo: 'bar' });
+    assert.deepStrictEqual(meta, { bar: '1' });
+  });
+
+  it('resolveMetadataForCopy() prefers addMetadata over renameMetadata', () => {
+    const meta = resolveMetadataForCopy({ Metadata: { foo: '1' } }, { foo: 'bar' }, { bar: 'baz' });
+    assert.deepStrictEqual(meta, { bar: 'baz' });
+  });
+
+  it('resolveMetadataForCopy() rename allows cycles', () => {
+    const meta = resolveMetadataForCopy({ Metadata: { foo: '1', bar: '2' } }, { foo: 'bar', bar: 'foo' });
+    assert.deepStrictEqual(meta, { bar: '1', foo: '2' });
   });
 
   it('bucket() needs bucket', () => {
@@ -476,7 +525,7 @@ describe('Storage test', () => {
     assert.deepEqual(puts.r2, expectedPuts);
   });
 
-  it('can copy objects and add metadata', async () => {
+  it('can copy objects and add/rename metadata', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply-copy.json'), 'utf-8'));
     const puts = { s3: [], r2: [] };
     const putsHeaders = { s3: [], r2: [] };
@@ -499,6 +548,7 @@ describe('Storage test', () => {
           'content-type': 'text/plain',
           'content-encoding': 'gzip',
           'x-amz-meta-x-dont-overwrite': 'foo',
+          'x-amz-meta-x-rename-src': 'should-be-renamed',
           'x-amz-meta-x-last-modified-by': 'anonymous',
         }];
       })
@@ -512,6 +562,8 @@ describe('Storage test', () => {
           'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
+          'x-amz-meta-x-rename-src': this.req.headers['x-amz-meta-x-rename-src'],
+          'x-amz-meta-x-rename-dst': this.req.headers['x-amz-meta-x-rename-dst'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
         });
         // reject first uri
@@ -531,6 +583,8 @@ describe('Storage test', () => {
           'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
+          'x-amz-meta-x-rename-src': this.req.headers['x-amz-meta-x-rename-src'],
+          'x-amz-meta-x-rename-dst': this.req.headers['x-amz-meta-x-rename-dst'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
         });
         // reject first uri
@@ -541,7 +595,15 @@ describe('Storage test', () => {
       });
 
     const bus = storage.codeBus();
-    await bus.copyDeep('/owner/repo/ref/', '/bar/', undefined, { addMetadata: { 'x-last-modified-by': 'foo@example.com' } });
+    await bus.copyDeep(
+      '/owner/repo/ref/',
+      '/bar/',
+      undefined,
+      {
+        addMetadata: { 'x-last-modified-by': 'foo@example.com' },
+        renameMetadata: { 'x-rename-src': 'x-rename-dst' },
+      },
+    );
 
     puts.s3.sort();
     puts.r2.sort();
@@ -558,6 +620,8 @@ describe('Storage test', () => {
           'content-encoding': 'gzip',
           'x-amz-meta-x-dont-overwrite': 'foo',
           'x-amz-meta-x-last-modified-by': 'foo@example.com',
+          'x-amz-meta-x-rename-dst': 'should-be-renamed',
+          'x-amz-meta-x-rename-src': undefined,
           'x-amz-metadata-directive': 'REPLACE',
         });
       });
@@ -620,12 +684,13 @@ describe('Storage test', () => {
     assert.deepEqual(puts.r2, expectedPuts);
   });
 
-  it('can copy object, and add metadata (non deep)', async () => {
+  it('can copy object, and add/rename metadata (non deep)', async () => {
     const puts = { s3: [], r2: [] };
     const putsHeaders = { s3: undefined, r2: undefined };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .head('/owner/repo/ref/foo.md')
       .reply(200, [], {
+        'last-modified': 'Thu, 23 Nov 2023 10:35:10 GMT',
         'x-amz-meta-x-dont-overwrite': 'foo',
         'x-amz-meta-x-last-modified-by': 'anonymous',
         'content-type': 'text/plain',
@@ -638,6 +703,7 @@ describe('Storage test', () => {
           'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
+          'x-amz-meta-x-last-previewed': this.req.headers['x-amz-meta-x-last-previewed'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
         };
         puts.s3.push(uri);
@@ -650,6 +716,7 @@ describe('Storage test', () => {
           'content-type': this.req.headers['content-type'],
           'content-encoding': this.req.headers['content-encoding'],
           'x-amz-metadata-directive': this.req.headers['x-amz-metadata-directive'],
+          'x-amz-meta-x-last-previewed': this.req.headers['x-amz-meta-x-last-previewed'],
           'x-amz-meta-x-dont-overwrite': this.req.headers['x-amz-meta-x-dont-overwrite'],
           'x-amz-meta-x-last-modified-by': this.req.headers['x-amz-meta-x-last-modified-by'],
         };
@@ -658,7 +725,14 @@ describe('Storage test', () => {
       });
 
     const bus = storage.codeBus();
-    await bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md', { addMetadata: { 'x-last-modified-by': 'foo@example.com' } });
+    await bus.copy(
+      '/owner/repo/ref/foo.md',
+      '/owner/repo/ref/foo/bar.md',
+      {
+        addMetadata: { 'x-last-modified-by': 'foo@example.com' },
+        renameMetadata: { 'last-modified': 'x-last-previewed' },
+      },
+    );
 
     puts.s3.sort();
     puts.r2.sort();
@@ -674,6 +748,7 @@ describe('Storage test', () => {
       'x-amz-metadata-directive': 'REPLACE',
       'x-amz-meta-x-dont-overwrite': 'foo',
       'x-amz-meta-x-last-modified-by': 'foo@example.com',
+      'x-amz-meta-x-last-previewed': 'Thu, 23 Nov 2023 10:35:10 GMT',
     });
     assert.deepEqual(putsHeaders.r2, {
       'content-type': 'text/plain',
@@ -681,6 +756,7 @@ describe('Storage test', () => {
       'x-amz-metadata-directive': 'REPLACE',
       'x-amz-meta-x-dont-overwrite': 'foo',
       'x-amz-meta-x-last-modified-by': 'foo@example.com',
+      'x-amz-meta-x-last-previewed': 'Thu, 23 Nov 2023 10:35:10 GMT',
     });
   });
 
