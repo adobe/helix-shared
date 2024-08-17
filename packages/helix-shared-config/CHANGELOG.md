@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.6.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.6.5...@adobe/helix-shared-config-v10.6.6) (2024-08-17)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([46c83a4](https://github.com/adobe/helix-shared/commit/46c83a4eb0726faadb19dc0b68d3f17352c2c748))
+
 # [@adobe/helix-shared-config-v10.6.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.6.4...@adobe/helix-shared-config-v10.6.5) (2024-07-27)
 
 
