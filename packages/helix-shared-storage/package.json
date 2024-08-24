@@ -31,7 +31,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "nock": "13.5.4",
+    "nock": "13.5.5",
     "xml2js": "^0.6.2"
   },
   "dependencies": {
