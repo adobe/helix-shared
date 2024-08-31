@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.1.3...@adobe/helix-shared-indexer-v2.1.4) (2024-08-31)
+
+
+### Bug Fixes
+
+* **deps:** update dependency hast-util-to-html to v9.0.2 ([5d37060](https://github.com/adobe/helix-shared/commit/5d370603c52fe52a98d36f308e9b7f2e0a396637))
+
 # [@adobe/helix-shared-indexer-v2.1.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.1.2...@adobe/helix-shared-indexer-v2.1.3) (2024-08-24)
 
 
