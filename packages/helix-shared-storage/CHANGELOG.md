@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.6...@adobe/helix-shared-storage-v1.0.7) (2024-09-24)
+
+
+### Bug Fixes
+
+* hardcode s3 region ([#1000](https://github.com/adobe/helix-shared/issues/1000)) ([9e04361](https://github.com/adobe/helix-shared/commit/9e04361e6a12c8825eddd7c420c08321e980c678))
+
 # [@adobe/helix-shared-storage-v1.0.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.5...@adobe/helix-shared-storage-v1.0.6) (2024-08-24)
 
 
