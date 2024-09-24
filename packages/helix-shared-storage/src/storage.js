@@ -636,7 +636,7 @@ export class HelixStorage {
    */
   constructor(opts = {}) {
     const {
-      region, accessKeyId, secretAccessKey,
+      region = 'us-east-1', accessKeyId, secretAccessKey,
       connectionTimeout, socketTimeout,
       r2AccountId, r2AccessKeyId, r2SecretAccessKey,
       log = console,
@@ -662,6 +662,7 @@ export class HelixStorage {
     } else {
       log.debug('Creating S3Client without credentials');
       this._s3 = new S3Client({
+        region,
         requestHandler: new NodeHttpHandler({
           httpsAgent: new Agent({
             keepAlive,

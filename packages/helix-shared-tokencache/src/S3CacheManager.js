@@ -49,7 +49,9 @@ export class S3CacheManager {
     this.secret = opts.secret;
     this.readOnly = opts.readOnly;
     this.type = opts.type;
-    this.s3 = new S3Client();
+    this.s3 = new S3Client({
+      region: 'us-east-1',
+    });
   }
 
   getAuthObjectKey(key) {
