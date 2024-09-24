@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v10.6.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.6.8...@adobe/helix-shared-config-v10.6.9) (2024-09-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ignore to v6 ([#999](https://github.com/adobe/helix-shared/issues/999)) ([27ce8a9](https://github.com/adobe/helix-shared/commit/27ce8a9db4c2be8d5260d2475d2acb9b57c629f0))
+
 # [@adobe/helix-shared-config-v10.6.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.6.7...@adobe/helix-shared-config-v10.6.8) (2024-09-07)
 
 
