@@ -41,7 +41,9 @@ export class S3CachePlugin {
     this.secret = opts.secret;
     this.readOnly = opts.readOnly || false;
     this.type = opts.type;
-    this.s3 = new S3Client();
+    this.s3 = new S3Client({
+      region: 'us-east-1',
+    });
     this.meta = null;
     this.data = null;
   }
