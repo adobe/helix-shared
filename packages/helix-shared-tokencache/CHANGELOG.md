@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.33](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.32...@adobe/helix-shared-tokencache-v1.4.33) (2024-09-24)
+
+
+### Bug Fixes
+
+* hardcode s3 region ([#1000](https://github.com/adobe/helix-shared/issues/1000)) ([9e04361](https://github.com/adobe/helix-shared/commit/9e04361e6a12c8825eddd7c420c08321e980c678))
+
 # [@adobe/helix-shared-tokencache-v1.4.32](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.31...@adobe/helix-shared-tokencache-v1.4.32) (2024-09-21)
 
 
