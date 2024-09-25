@@ -1,3 +1,15 @@
+# [@adobe/helix-shared-config-v11.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.6.9...@adobe/helix-shared-config-v11.0.0) (2024-09-25)
+
+
+### Bug Fixes
+
+* IndexConfig should not allow broken config ([#1001](https://github.com/adobe/helix-shared/issues/1001)) ([35f28d1](https://github.com/adobe/helix-shared/commit/35f28d1f16e501eebce848ca4b0d89701107f252))
+
+
+### BREAKING CHANGES
+
+* some indexing configurations will no longer be accepted
+
 # [@adobe/helix-shared-config-v10.6.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v10.6.8...@adobe/helix-shared-config-v10.6.9) (2024-09-24)
 
 
