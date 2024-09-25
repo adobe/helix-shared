@@ -72,18 +72,18 @@ describe('Index Config Loading', () => {
     assert.deepEqual(actual, expected);
   });
 
-  it('Does not trip over broken config', async () => {
+  it('Trips over broken config', async () => {
     const cfg = new IndexConfig()
       .withConfigPath(path.resolve(SPEC_ROOT, 'broken.yaml'));
 
-    await cfg.init();
+    await assert.rejects(async () => cfg.init(), /Implicit map keys need to be followed by map value/);
+  });
 
-    assert.strictEqual(cfg.getQuery('foo', 'bar'), undefined);
+  it('Trips over config with duplicate property', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'duplicate.yaml'));
 
-    const actual = cfg.toJSON();
-    const expected = JSON.parse(await fs.readFile(path.resolve(SPEC_ROOT, 'broken.json'), 'utf-8'));
-
-    assert.deepEqual(actual, expected);
+    await assert.rejects(async () => cfg.init(), /Map keys must be unique at line 10, column 7/);
   });
 
   it('Does not trip over non-existing config', async () => {
