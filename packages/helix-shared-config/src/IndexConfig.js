@@ -193,4 +193,17 @@ export class IndexConfig extends SchemaDerivedConfig {
     this._version = this._cfg.version;
     return this;
   }
+
+  /**
+   * Validates the loaded configuration and coerces types and sets defaulst
+   */
+  async validate() {
+    await super.validate();
+
+    if (this._document?.errors?.length) {
+      const detail = this._document.errors.map(({ message }) => (message)).join('\n');
+      throw new Error(`Invalid index configuration:
+        ${detail}`);
+    }
+  }
 }
