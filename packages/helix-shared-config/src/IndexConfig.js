@@ -195,15 +195,11 @@ export class IndexConfig extends SchemaDerivedConfig {
   }
 
   /**
-   * Validates the loaded configuration and coerces types and sets defaulst
+   * Return errors encountered in parsing.
+   *
+   * @returns {String[]} parsing errors
    */
-  async validate() {
-    await super.validate();
-
-    if (this._document?.errors?.length) {
-      const detail = this._document.errors.map(({ message }) => (message)).join('\n');
-      throw new Error(`Invalid index configuration:
-        ${detail}`);
-    }
+  getErrors() {
+    return this._document?.errors ?? [];
   }
 }
