@@ -38,13 +38,13 @@
     "c8": "10.1.2",
     "eslint": "8.57.1",
     "husky": "9.1.6",
-    "jsdoc-to-markdown": "9.0.1",
+    "jsdoc-to-markdown": "9.0.2",
     "lint-staged": "15.2.10",
     "mocha": "10.7.3",
     "mocha-multi-reporters": "1.5.1",
     "mocha-suppress-logs": "0.5.1",
     "nock": "13.5.5",
-    "semantic-release": "24.1.1",
+    "semantic-release": "24.1.2",
     "semantic-release-monorepo": "8.0.2"
   },
   "lint-staged": {
