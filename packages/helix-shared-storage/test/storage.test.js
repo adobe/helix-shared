@@ -863,12 +863,23 @@ describe('Storage test', () => {
   });
 
   it('can delete objects', async () => {
-    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply.json'), 'utf-8'));
+    const keys = Array.from({ length: 1500 }, (v, k) => `key_${k + 1}`).sort();
+    const listReply = new xml2js.Builder().buildObject({
+      ListBucketResult: {
+        Name: 'helix-code-bus',
+        Prefix: 'owner/repo/new-branch/',
+        KeyCount: 1500,
+        MaxKeys: 1500,
+        IsTruncated: false,
+        Contents: keys.map((key) => ({ Key: key })),
+      },
+    });
     const deletes = { s3: [], r2: [] };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/?list-type=2&prefix=owner%2Frepo%2Fnew-branch%2F')
-      .reply(200, listReply.response)
+      .reply(200, listReply)
       .post('/?delete=')
+      .twice()
       .reply(async (uri, body) => {
         const xml = await xml2js.parseStringPromise(body);
         xml.Delete.Object.forEach((o) => {
@@ -878,6 +889,7 @@ describe('Storage test', () => {
       });
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
       .post('/?delete=')
+      .twice()
       .reply(async (uri, body) => {
         const xml = await xml2js.parseStringPromise(body);
         xml.Delete.Object.forEach((o) => {
@@ -891,20 +903,8 @@ describe('Storage test', () => {
 
     deletes.s3.sort();
     deletes.r2.sort();
-    const expectedDeletes = [
-      'owner/repo/ref/.circleci/config.yml',
-      'owner/repo/ref/.gitignore',
-      'owner/repo/ref/.vscode/launch.json',
-      'owner/repo/ref/.vscode/settings.json',
-      'owner/repo/ref/README.md',
-      'owner/repo/ref/helix_logo.png',
-      'owner/repo/ref/htdocs/favicon.ico',
-      'owner/repo/ref/htdocs/style.css',
-      'owner/repo/ref/index.md',
-      'owner/repo/ref/src/html.pre.js',
-    ];
-    assert.deepStrictEqual(deletes.s3, expectedDeletes);
-    assert.deepStrictEqual(deletes.r2, expectedDeletes);
+    assert.deepStrictEqual(deletes.s3, keys);
+    assert.deepStrictEqual(deletes.r2, keys);
   });
 
   it('delete objects can fail', async () => {
