@@ -34,6 +34,11 @@ const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
 /**
+ * Maximum number of objects to delete in one operation.
+ */
+const MAX_DELETE_OBJECTS = 1000;
+
+/**
  * @typedef {import('@aws-sdk/client-s3').CommandInput} CommandInput
  * @typedef {import('./storage.d').Bucket} BucketType
  * @typedef {import('./storage.d').HelixStorage} HelixStorageType
@@ -557,28 +562,34 @@ class Bucket {
   }
 
   async rmdir(src) {
-    const { log } = this;
+    const { bucket, log } = this;
     src = sanitizeKey(src);
     log.info(`fetching list of files to delete from ${this.bucket}/${src}`);
     const items = await this.list(src);
 
+    // slice into chunks of MAX_DELETE_OBJECTS at most
+    const chunks = Array.from({
+      length: Math.ceil(items.length / MAX_DELETE_OBJECTS),
+    }, (v, i) => items.slice(i * MAX_DELETE_OBJECTS, i * MAX_DELETE_OBJECTS + MAX_DELETE_OBJECTS));
+
     let oks = 0;
     let errors = 0;
-    await processQueue(items, async (item) => {
-      const { key } = item;
-      log.info(`deleting ${this.bucket}/${key}`);
+    await processQueue(chunks, async (chunk) => {
+      log.info(`deleting ${chunk.length} from ${bucket}`);
       const input = {
         Bucket: this.bucket,
-        Key: key,
+        Delete: {
+          Objects: items.map((item) => ({ Key: item.key })),
+        },
       };
 
       try {
         // delete on s3 and r2 (mirror) in parallel
-        await this.sendToS3andR2(DeleteObjectCommand, input);
+        await this.sendToS3andR2(DeleteObjectsCommand, input);
         oks += 1;
       } catch (e) {
         // at least 1 cmd failed
-        log.warn(`error while deleting ${key}: ${e.$metadata.httpStatusCode}`);
+        log.warn(`error while deleting ${items.length} from ${bucket}: ${e.$metadata.httpStatusCode}`);
         errors += 1;
       }
     }, 64);

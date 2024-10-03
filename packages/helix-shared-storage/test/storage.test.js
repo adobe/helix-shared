@@ -868,25 +868,21 @@ describe('Storage test', () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/?list-type=2&prefix=owner%2Frepo%2Fnew-branch%2F')
       .reply(200, listReply.response)
-      .delete(/.*/)
-      .times(10)
-      .reply((uri) => {
-        deletes.s3.push(uri);
-        // reject first uri
-        if (deletes.s3.length === 1) {
-          return [404];
-        }
+      .post('/?delete=')
+      .reply(async (uri, body) => {
+        const xml = await xml2js.parseStringPromise(body);
+        xml.Delete.Object.forEach((o) => {
+          deletes.s3.push(o.Key[0]);
+        });
         return [204];
       });
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
-      .delete(/.*/)
-      .times(10)
-      .reply((uri) => {
-        deletes.r2.push(uri);
-        // reject first uri
-        if (deletes.r2.length === 1) {
-          return [404];
-        }
+      .post('/?delete=')
+      .reply(async (uri, body) => {
+        const xml = await xml2js.parseStringPromise(body);
+        xml.Delete.Object.forEach((o) => {
+          deletes.r2.push(o.Key[0]);
+        });
         return [204];
       });
 
@@ -896,19 +892,35 @@ describe('Storage test', () => {
     deletes.s3.sort();
     deletes.r2.sort();
     const expectedDeletes = [
-      '/owner/repo/ref/.circleci/config.yml?x-id=DeleteObject',
-      '/owner/repo/ref/.gitignore?x-id=DeleteObject',
-      '/owner/repo/ref/.vscode/launch.json?x-id=DeleteObject',
-      '/owner/repo/ref/.vscode/settings.json?x-id=DeleteObject',
-      '/owner/repo/ref/README.md?x-id=DeleteObject',
-      '/owner/repo/ref/helix_logo.png?x-id=DeleteObject',
-      '/owner/repo/ref/htdocs/favicon.ico?x-id=DeleteObject',
-      '/owner/repo/ref/htdocs/style.css?x-id=DeleteObject',
-      '/owner/repo/ref/index.md?x-id=DeleteObject',
-      '/owner/repo/ref/src/html.pre.js?x-id=DeleteObject',
+      'owner/repo/ref/.circleci/config.yml',
+      'owner/repo/ref/.gitignore',
+      'owner/repo/ref/.vscode/launch.json',
+      'owner/repo/ref/.vscode/settings.json',
+      'owner/repo/ref/README.md',
+      'owner/repo/ref/helix_logo.png',
+      'owner/repo/ref/htdocs/favicon.ico',
+      'owner/repo/ref/htdocs/style.css',
+      'owner/repo/ref/index.md',
+      'owner/repo/ref/src/html.pre.js',
     ];
-    assert.deepEqual(deletes.s3, expectedDeletes);
-    assert.deepEqual(deletes.r2, expectedDeletes);
+    assert.deepStrictEqual(deletes.s3, expectedDeletes);
+    assert.deepStrictEqual(deletes.r2, expectedDeletes);
+  });
+
+  it('delete objects can fail', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply.json'), 'utf-8'));
+
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?list-type=2&prefix=owner%2Frepo%2Fnew-branch%2F')
+      .reply(200, listReply.response)
+      .post('/?delete=')
+      .reply(404);
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .post('/?delete=')
+      .reply(404);
+
+    const bus = storage.codeBus();
+    await bus.rmdir('/owner/repo/new-branch/');
   });
 
   it('rmdir works for empty dir', async () => {
