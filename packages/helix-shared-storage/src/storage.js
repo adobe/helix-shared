@@ -579,18 +579,18 @@ class Bucket {
       const input = {
         Bucket: bucket,
         Delete: {
-          Objects: items.map((item) => ({ Key: item.key })),
+          Objects: chunk.map((item) => ({ Key: item.key })),
         },
       };
 
       try {
         // delete on s3 and r2 (mirror) in parallel
         await this.sendToS3andR2(DeleteObjectsCommand, input);
-        oks += 1;
+        oks += chunk.length;
       } catch (e) {
         // at least 1 cmd failed
-        log.warn(`error while deleting ${items.length} from ${bucket}: ${e.$metadata.httpStatusCode}`);
-        errors += 1;
+        log.warn(`error while deleting ${chunk.length} from ${bucket}: ${e.$metadata.httpStatusCode}`);
+        errors += chunk.length;
       }
     }, 64);
     log.info(`deleted ${oks} files (${errors} errors)`);
