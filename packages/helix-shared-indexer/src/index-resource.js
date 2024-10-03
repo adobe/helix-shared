@@ -126,6 +126,17 @@ function evaluate(expression, context) {
       case Jsep.IDENTIFIER: {
         return vars[node.name];
       }
+      case Jsep.BINARY_EXP: {
+        switch (node.operator) {
+          case '+': {
+            return evalNode(node.left) + evalNode(node.right);
+          }
+          default: {
+            log.warn('evaluate binary operator not supported: ', node.operator);
+            return null;
+          }
+        }
+      }
       case Jsep.LITERAL: {
         return node.value;
       }
