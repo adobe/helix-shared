@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.0.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.7...@adobe/helix-shared-storage-v1.0.8) (2024-10-03)
+
+
+### Bug Fixes
+
+* Bucket.rmdir should delete files in batches ([#1009](https://github.com/adobe/helix-shared/issues/1009)) ([bb4a33f](https://github.com/adobe/helix-shared/commit/bb4a33f45a736b237ba3c7518ded826a23ab6cee))
+
 # [@adobe/helix-shared-storage-v1.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.6...@adobe/helix-shared-storage-v1.0.7) (2024-09-24)
 
 
