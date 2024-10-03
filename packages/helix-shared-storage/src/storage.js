@@ -564,7 +564,7 @@ class Bucket {
   async rmdir(src) {
     const { bucket, log } = this;
     src = sanitizeKey(src);
-    log.info(`fetching list of files to delete from ${this.bucket}/${src}`);
+    log.info(`fetching list of files to delete from ${bucket}/${src}`);
     const items = await this.list(src);
 
     // slice into chunks of MAX_DELETE_OBJECTS at most
@@ -577,7 +577,7 @@ class Bucket {
     await processQueue(chunks, async (chunk) => {
       log.info(`deleting ${chunk.length} from ${bucket}`);
       const input = {
-        Bucket: this.bucket,
+        Bucket: bucket,
         Delete: {
           Objects: items.map((item) => ({ Key: item.key })),
         },
