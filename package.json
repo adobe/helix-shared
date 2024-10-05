@@ -29,7 +29,7 @@
     "./packages/*"
   ],
   "devDependencies": {
-    "@adobe/eslint-config-helix": "2.0.7",
+    "@adobe/eslint-config-helix": "2.0.8",
     "@adobe/jsonschema2md": "8.0.2",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
