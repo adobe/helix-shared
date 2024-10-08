@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.0.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.8...@adobe/helix-shared-storage-v1.0.9) (2024-10-08)
+
+
+### Bug Fixes
+
+* use smaller queue size for multiple deletes ([#1012](https://github.com/adobe/helix-shared/issues/1012)) ([4eb1401](https://github.com/adobe/helix-shared/commit/4eb140196ae9151f6ddf7ff765bc20cf97cf77e8))
+
 # [@adobe/helix-shared-storage-v1.0.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.7...@adobe/helix-shared-storage-v1.0.8) (2024-10-03)
 
 
