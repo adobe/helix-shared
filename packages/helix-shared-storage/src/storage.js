@@ -575,7 +575,7 @@ class Bucket {
     let oks = 0;
     let errors = 0;
     await processQueue(chunks, async (chunk) => {
-      log.info(`deleting ${chunk.length} from ${bucket}`);
+      log.debug(`deleting ${chunk.length} from ${bucket}`);
       const input = {
         Bucket: bucket,
         Delete: {
@@ -589,10 +589,10 @@ class Bucket {
         oks += chunk.length;
       } catch (e) {
         // at least 1 cmd failed
-        log.warn(`error while deleting ${chunk.length} from ${bucket}: ${e.$metadata.httpStatusCode}`);
+        log.warn(`error while deleting ${chunk.length} from ${bucket}/${src}: ${e.message} (${e.$metadata.httpStatusCode})`);
         errors += chunk.length;
       }
-    }, 64);
+    }, 2);
     log.info(`deleted ${oks} files (${errors} errors)`);
   }
 }
