@@ -193,13 +193,4 @@ export class IndexConfig extends SchemaDerivedConfig {
     this._version = this._cfg.version;
     return this;
   }
-
-  /**
-   * Return errors encountered in parsing.
-   *
-   * @returns {String[]} parsing errors
-   */
-  getErrors() {
-    return this._document?.errors ?? [];
-  }
 }
