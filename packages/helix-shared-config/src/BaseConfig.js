@@ -220,4 +220,13 @@ export class BaseConfig {
     }
     return YAML.stringify(this.toJSON());
   }
+
+  /**
+   * Return errors encountered in parsing.
+   *
+   * @returns {String[]} parsing errors
+   */
+  getErrors() {
+    return this._document?.errors ?? [];
+  }
 }
