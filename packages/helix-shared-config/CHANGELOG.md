@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.2...@adobe/helix-shared-config-v11.0.3) (2024-10-09)
+
+
+### Bug Fixes
+
+* getErrors should be available in all configs ([#1013](https://github.com/adobe/helix-shared/issues/1013)) ([d607cd3](https://github.com/adobe/helix-shared/commit/d607cd301f9f5719ab85e00d19ca1b41ba9e0e5e))
+
 # [@adobe/helix-shared-config-v11.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.1...@adobe/helix-shared-config-v11.0.2) (2024-10-05)
 
 
