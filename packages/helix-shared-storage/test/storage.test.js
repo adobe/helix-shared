@@ -424,7 +424,7 @@ describe('Storage test', () => {
     await assert.rejects(async () => bus.remove('/does-not-exist'));
   });
 
-  it('remove objects can fail', async () => {
+  it('remove objects can report error', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .post('/?delete=')
       .reply(404);
@@ -433,7 +433,7 @@ describe('Storage test', () => {
       .reply(404);
 
     const bus = storage.codeBus();
-    await assert.rejects(async () => bus.remove(['/foo', '/bar']));
+    await assert.rejects(async () => bus.remove(['/foo', '/bar'], '', true));
   });
 
   it('can remove objects', async () => {
@@ -446,7 +446,12 @@ describe('Storage test', () => {
           headers: Object.fromEntries(Object.entries(this.req.headers)
             .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
         };
-        return [200, '<?xml version="1.0" encoding="UTF-8"?>\n<DeleteResult><Deleted><Key>/foo</Key></Deleted><Deleted><Key>/bar</Key></Deleted></DeleteResult>'];
+        return [200, '<?xml version="1.0" encoding="UTF-8"?>'
+        + '<DeleteResult>'
+        + '<Deleted><Key>/foo</Key></Deleted>'
+        + '<Deleted><Key>/bar</Key></Deleted>'
+        + '<Error><Code>kaputt</Code></Error>'
+        + '</DeleteResult>'];
       });
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
       .post('/?delete=')
