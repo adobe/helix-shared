@@ -400,42 +400,74 @@ class Bucket {
    * Remove object(s)
    *
    * @param {string|string[]} path source key(s)
+   * @param {string} [sourceInfo] informational message of the source
+   * @param {boolean} [stopOnError]
    * @returns result obtained from S3
    */
-  async remove(path) {
+  async remove(path, sourceInfo = '', stopOnError = false) {
+    const { log, bucket } = this;
+
     if (Array.isArray(path)) {
-      const input = {
-        Bucket: this.bucket,
-        Delete: {
-          Objects: path.map((p) => ({ Key: sanitizeKey(p) })),
-        },
+      // slice into chunks of MAX_DELETE_OBJECTS at most
+      const chunks = Array.from({
+        length: Math.ceil(path.length / MAX_DELETE_OBJECTS),
+      }, (v, i) => path.slice(i * MAX_DELETE_OBJECTS, i * MAX_DELETE_OBJECTS + MAX_DELETE_OBJECTS));
+
+      let oks = 0;
+      let errors = 0;
+      const result = {
+        Deleted: [],
+        Errors: [],
       };
-      // delete on s3 and r2 (mirror) in parallel
-      try {
-        const result = await this.sendToS3andR2(DeleteObjectsCommand, input);
-        this.log.info(`${result.Deleted.length} objects deleted from bucket ${input.Bucket}.`);
-        return result;
-      } catch (e) {
-        const msg = `removing ${input.Delete.length} objects from bucket ${input.Bucket} failed: ${e.message}`;
-        this.log.error(msg);
-        const e2 = new Error(msg);
-        e2.status = e.$metadata.httpStatusCode;
-        throw e2;
-      }
+      await processQueue(chunks, async (chunk) => {
+        log.debug(`deleting ${chunk.length} from ${bucket}`);
+        const input = {
+          Bucket: bucket,
+          Delete: {
+            Objects: chunk.map((p) => ({ Key: sanitizeKey(p) })),
+          },
+        };
+
+        try {
+          // delete on s3 and r2 (mirror) in parallel
+          const res = await this.sendToS3andR2(DeleteObjectsCommand, input);
+          if (res.Deleted) {
+            result.Deleted.push(...res.Deleted);
+          }
+          if (res.Errors) {
+            result.Errors.push(...res.Errors);
+            errors += res.Errors.length;
+          }
+          oks += chunk.length;
+        } catch (e) {
+          // at least 1 cmd failed
+          log.warn(`error while deleting ${chunk.length} from ${bucket}/${sourceInfo}: ${e.message} (${e.$metadata.httpStatusCode})`);
+          errors += chunk.length;
+          if (stopOnError) {
+            const msg = `removing ${input.Delete.length} objects from bucket ${input.Bucket} failed: ${e.message}`;
+            this.log.error(msg);
+            const e2 = new Error(msg);
+            e2.status = e.$metadata.httpStatusCode;
+            throw e2;
+          }
+        }
+      }, 2);
+      log.info(`deleted ${oks} files (${errors} errors)`);
+      return result;
     }
 
     const input = {
-      Bucket: this.bucket,
+      Bucket: bucket,
       Key: sanitizeKey(path),
     };
     // delete on s3 and r2 (mirror) in parallel
     try {
       const result = await this.sendToS3andR2(DeleteObjectCommand, input);
-      this.log.info(`object deleted: ${input.Bucket}/${input.Key}`);
+      log.info(`object deleted: ${bucket}/${input.Key}`);
       return result;
     } catch (e) {
-      const msg = `removing ${input.Bucket}/${input.Key} from storage failed: ${e.message}`;
-      this.log.error(msg);
+      const msg = `removing ${bucket}/${input.Key} from storage failed: ${e.message}`;
+      log.error(msg);
       const e2 = new Error(msg);
       e2.status = e.$metadata.httpStatusCode;
       throw e2;
@@ -562,38 +594,10 @@ class Bucket {
   }
 
   async rmdir(src) {
-    const { bucket, log } = this;
     src = sanitizeKey(src);
-    log.info(`fetching list of files to delete from ${bucket}/${src}`);
+    this.log.info(`fetching list of files to delete from ${this.bucket}/${src}`);
     const items = await this.list(src);
-
-    // slice into chunks of MAX_DELETE_OBJECTS at most
-    const chunks = Array.from({
-      length: Math.ceil(items.length / MAX_DELETE_OBJECTS),
-    }, (v, i) => items.slice(i * MAX_DELETE_OBJECTS, i * MAX_DELETE_OBJECTS + MAX_DELETE_OBJECTS));
-
-    let oks = 0;
-    let errors = 0;
-    await processQueue(chunks, async (chunk) => {
-      log.debug(`deleting ${chunk.length} from ${bucket}`);
-      const input = {
-        Bucket: bucket,
-        Delete: {
-          Objects: chunk.map((item) => ({ Key: item.key })),
-        },
-      };
-
-      try {
-        // delete on s3 and r2 (mirror) in parallel
-        await this.sendToS3andR2(DeleteObjectsCommand, input);
-        oks += chunk.length;
-      } catch (e) {
-        // at least 1 cmd failed
-        log.warn(`error while deleting ${chunk.length} from ${bucket}/${src}: ${e.message} (${e.$metadata.httpStatusCode})`);
-        errors += chunk.length;
-      }
-    }, 2);
-    log.info(`deleted ${oks} files (${errors} errors)`);
+    return this.remove(items.map((item) => item.key), src);
   }
 }
 
