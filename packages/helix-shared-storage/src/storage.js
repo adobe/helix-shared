@@ -433,18 +433,18 @@ class Bucket {
           const res = await this.sendToS3andR2(DeleteObjectsCommand, input);
           if (res.Deleted) {
             result.Deleted.push(...res.Deleted);
+            oks += res.Deleted.length;
           }
           if (res.Errors) {
             result.Errors.push(...res.Errors);
             errors += res.Errors.length;
           }
-          oks += chunk.length;
         } catch (e) {
           // at least 1 cmd failed
           log.warn(`error while deleting ${chunk.length} from ${bucket}/${sourceInfo}: ${e.message} (${e.$metadata.httpStatusCode})`);
           errors += chunk.length;
           if (stopOnError) {
-            const msg = `removing ${input.Delete.length} objects from bucket ${input.Bucket} failed: ${e.message}`;
+            const msg = `removing ${input.Delete.Objects.length} objects from bucket ${input.Bucket} failed: ${e.message}`;
             this.log.error(msg);
             const e2 = new Error(msg);
             e2.status = e.$metadata.httpStatusCode;
