@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.9...@adobe/helix-shared-storage-v1.1.0) (2024-10-11)
+
+
+### Features
+
+* use remove() for rmdir() ([#1014](https://github.com/adobe/helix-shared/issues/1014)) ([0d4ce8b](https://github.com/adobe/helix-shared/commit/0d4ce8bc5680437b77829ccb33be02fb92d18a8a))
+
 # [@adobe/helix-shared-storage-v1.0.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.8...@adobe/helix-shared-storage-v1.0.9) (2024-10-08)
 
 
