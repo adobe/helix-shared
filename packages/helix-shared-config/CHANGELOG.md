@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.4...@adobe/helix-shared-config-v11.0.5) (2024-10-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency cookie to v1 ([#1016](https://github.com/adobe/helix-shared/issues/1016)) ([9a0393f](https://github.com/adobe/helix-shared/commit/9a0393fbaf1b8711887d8eeb36a95a092287f95f))
+
 # [@adobe/helix-shared-config-v11.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.3...@adobe/helix-shared-config-v11.0.4) (2024-10-12)
 
 
