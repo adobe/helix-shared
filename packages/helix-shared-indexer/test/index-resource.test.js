@@ -24,6 +24,9 @@ version: 1
 indices:
   default:
     properties:
+      canonical:
+        select: main
+        value: path + '.html'
       author:
         select: main > div:nth-of-type(3) > p:nth-of-type(1)
         value: |
@@ -186,6 +189,7 @@ describe('Index Resource Tests', () => {
     const headers = new Headers({ 'last-modified': 'Mon, 22 Feb 2021 15:28:00 GMT' });
     const record = indexResource('/abc/de/ab/fg/abcd', { body: BODY, headers }, config.indices[0], console);
     assert.deepEqual(record, {
+      canonical: '/abc/de/ab/fg/abcd.html',
       'all-matches': [
         'https://my.domain.com/assets/asset-link',
         'https://my.domain.com/assets/asset-link2',
