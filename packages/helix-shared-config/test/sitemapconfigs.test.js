@@ -66,6 +66,12 @@ HREF Language must match pattern`,
     error: `Error: Invalid configuration:
 HREF Language must match pattern`,
   },
+  {
+    title: 'loads an example with a language defining lastmod',
+    config: 'broken5.yaml',
+    error: `Error: Invalid configuration:
+Sitemap Language has unknown property 'lastmod'`,
+  },
 ];
 
 describe('Sitemap Config Loading', () => {
