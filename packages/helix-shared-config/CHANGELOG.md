@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.6...@adobe/helix-shared-config-v11.0.7) (2024-10-29)
+
+
+### Bug Fixes
+
+* sitemap language should not allow `lastmod` ([#1020](https://github.com/adobe/helix-shared/issues/1020)) ([e3d5dd0](https://github.com/adobe/helix-shared/commit/e3d5dd06ed4a7ab7c8c424a2862883e99297c386))
+
 # [@adobe/helix-shared-config-v11.0.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.5...@adobe/helix-shared-config-v11.0.6) (2024-10-19)
 
 
