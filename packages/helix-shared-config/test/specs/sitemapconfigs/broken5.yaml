@@ -1,0 +1,11 @@
+version: 1
+
+sitemaps:
+  broken:
+    origin: https://www.example.com
+    languages:
+      en:
+        source: /query-index.json
+        destination: /sitemap-en.xml
+        hreflang: en
+        lastmod: YYYY-MM-DD
