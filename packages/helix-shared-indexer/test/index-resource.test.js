@@ -72,6 +72,14 @@ indices:
         select: main > div:nth-child(n+4) p
         value: |
           characters(textContent(el), 0, 20)
+      characters-negative-start:
+        select: main > div:nth-child(n+4) p
+        value: |
+          characters(textContent(el), -5)
+      characters-negative-end:
+        select: main > div:nth-child(n+4) p
+        value: |
+          characters(textContent(el), -5, -1)
       non-array-characters:
         select: none
         value: |
@@ -132,6 +140,9 @@ indices:
         selectFirst: foo
         value: |
           attribute(el, 'href')
+      unknown-operator:
+        select: none
+        value: '+5'
   `;
 
 const BODY = `
@@ -202,6 +213,8 @@ describe('Index Resource Tests', () => {
       'bad-selector': '',
       'call-unknown-function': '',
       characters: 'Lorem ipsum dolor si',
+      'characters-negative-start': 'after',
+      'characters-negative-end': 'afte',
       'condition-unsupported': '',
       date: 44313,
       'first-alternate': 'before',
@@ -227,6 +240,7 @@ describe('Index Resource Tests', () => {
         'B',
         'C',
       ],
+      'unknown-operator': '',
       words: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut',
     });
   });
