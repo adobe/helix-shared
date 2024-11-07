@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.1.7...@adobe/helix-shared-indexer-v2.2.0) (2024-11-07)
+
+
+### Features
+
+* support characters function ([#1022](https://github.com/adobe/helix-shared/issues/1022)) ([1f4e6f2](https://github.com/adobe/helix-shared/commit/1f4e6f255839c5494c4bb325481025d06d3ef5de))
+
 # [@adobe/helix-shared-indexer-v2.1.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.1.6...@adobe/helix-shared-indexer-v2.1.7) (2024-10-12)
 
 
