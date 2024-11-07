@@ -93,6 +93,13 @@ const helpers = {
     }
     return [text.split(/\s+/g).slice(start, end).join(' ')];
   },
+  characters: (/** @type {String|String[]} */ text, start, end) => {
+    if (Array.isArray(text)) {
+      // eslint-disable-next-line no-param-reassign
+      text = text.join(' ');
+    }
+    return [text.substring(start, end)];
+  },
   replace: (s, searchValue, replaceValue) => [s.replace(searchValue, replaceValue)],
   replaceAll: (s, searchValue, replaceValue) => [s.replaceAll(searchValue, replaceValue)],
 };
