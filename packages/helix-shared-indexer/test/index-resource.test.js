@@ -60,22 +60,38 @@ indices:
         select: main > div:nth-of-type(5)
         value: |
           innerHTML(el)
-      teaser:
+      words:
         select: main > div:nth-child(n+4) p
         value: |
           words(textContent(el), 0, 20)
-      last-modified:
-        select: none
-        value: |
-          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
-      last-modified-raw:
-        select: none
-        value: |
-          headers['last-modified']
       non-array-words:
         select: none
         value: |
           words(headers['last-modified'])
+      characters:
+        select: main > div:nth-child(n+4) p
+        value: |
+          characters(textContent(el), 0, 20)
+      characters-negative-start:
+        select: main > div:nth-child(n+4) p
+        value: |
+          characters(textContent(el), -5)
+      characters-negative-end:
+        select: main > div:nth-child(n+4) p
+        value: |
+          characters(textContent(el), -5, -1)
+      non-array-characters:
+        select: none
+        value: |
+          characters(headers['last-modified'], 0, 5)
+      parse-timestamp:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      headers-last-modified:
+        select: none
+        value: |
+          headers['last-modified']
       match-simple:
         select: meta[name="x-source-hash"]
         value: |
@@ -124,6 +140,9 @@ indices:
         selectFirst: foo
         value: |
           attribute(el, 'href')
+      unknown-operator:
+        select: none
+        value: '+5'
   `;
 
 const BODY = `
@@ -193,31 +212,36 @@ describe('Index Resource Tests', () => {
       author: 'Max',
       'bad-selector': '',
       'call-unknown-function': '',
+      characters: 'Lorem ipsum dolor si',
+      'characters-negative-start': 'after',
+      'characters-negative-end': 'afte',
       'condition-unsupported': '',
       date: 44313,
       'first-alternate': 'before',
       'first-href-in-a': 'https://my.domain.com/assets/asset-link',
       'first-href-in-foo': '',
-      'second-alternate': 'before<br>after',
-      'last-modified': 1614007680,
-      'last-modified-raw': 'Mon, 22 Feb 2021 15:28:00 GMT',
+      'first-segment': 'abc',
+      'headers-last-modified': 'Mon, 22 Feb 2021 15:28:00 GMT',
       'match-simple': '',
       'member-unknown-var': '',
       'member-without-get': '',
       'missing-header': '',
+      'non-array-characters': 'Mon, ',
       'non-array-words': 'Mon, 22 Feb 2021 15:28:00 GMT',
       paragraph: '\n    <p>consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>\n  ',
-      'first-segment': 'abc',
+      'parse-timestamp': 1614007680,
       'replace-path': '/zc/de/ab/fg/abcd',
       'replaceAll-path': '/zc/de/z/fg/zcd',
+      'second-alternate': 'before<br>after',
       sourceHash: 'JJYxCM1NDG4ahJm9f',
-      teaser: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut',
       title: 'I feel good',
       topics: [
         'A',
         'B',
         'C',
       ],
+      'unknown-operator': '',
+      words: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut',
     });
   });
 });

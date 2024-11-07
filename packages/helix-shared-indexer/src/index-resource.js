@@ -19,6 +19,37 @@ import { toText } from 'hast-util-to-text';
 import { toHtml } from 'hast-util-to-html';
 import { unified } from 'unified';
 
+/**
+ * Returns the substring from `start` to `end` of the given text. If `start` or `end` are
+ * negative, they address the position counted from the end of the text. `end` is optional,
+ * and defaults to the length of the text.
+ *
+ * Examples:
+ * - characters('hello, world.', 0, 5) = 'hello'
+ * - characters('hello, world.', 7) = 'world.'
+ * - characters('hello, world.', -6, -1) = 'world'
+ *
+ * @param {string|Array<string>} text
+ * @param {number} start The start position.
+ * @param {number} [end] The end position.
+ * @returns {Array<string>}
+ */
+const characters = (text, start, end) => {
+  if (Array.isArray(text)) {
+    // eslint-disable-next-line no-param-reassign
+    text = text.join(' ');
+  }
+  if (start < 0) {
+    // eslint-disable-next-line no-param-reassign
+    start += text.length;
+  }
+  if (end <= 0) {
+    // eslint-disable-next-line no-param-reassign
+    end += text.length;
+  }
+  return [text.substring(start, end)];
+};
+
 const helpers = {
   dateValue: (elements, format) => {
     const result = helpers.parseTimestamp(elements, format);
@@ -93,6 +124,7 @@ const helpers = {
     }
     return [text.split(/\s+/g).slice(start, end).join(' ')];
   },
+  characters,
   replace: (s, searchValue, replaceValue) => [s.replace(searchValue, replaceValue)],
   replaceAll: (s, searchValue, replaceValue) => [s.replaceAll(searchValue, replaceValue)],
 };
@@ -128,6 +160,14 @@ function evaluate(expression, context) {
       }
       case Jsep.LITERAL: {
         return node.value;
+      }
+      case Jsep.UNARY_EXP: {
+        const value = evalNode(node.argument);
+        if (node.operator === '-') {
+          return -value;
+        }
+        log.warn('operator not supported: ', node.operator);
+        return undefined;
       }
       default: {
         log.warn('evaluate type not supported: ', node.type);
