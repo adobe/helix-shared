@@ -43,6 +43,6 @@
     "@adobe/helix-universal": "^5.0.0"
   },
   "devDependencies": {
-    "nock": "13.5.5"
+    "nock": "13.5.6"
   }
 }
