@@ -5,6 +5,12 @@
   ],
   "timezone": "Europe/Zurich",
   "branchPrefix": "renovate-",
+  "hostRules": [
+    {
+      "matchHost": "registry.npmjs.org",
+      "token": "{{ secrets.HELIX_NPM_TOKEN }}"
+    }
+  ],
   "packageRules": [
     {
       "matchPackageNames": ["@adobe/fetch"],
@@ -81,8 +87,5 @@
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true
     }
-  ],
-  "encrypted": {
-    "npmToken": "wcFMA/xDdHCJBTolAQ//Y/YHTN7zdDncta/r7f9+FflkfkGzLPti42X8PTIw2oaOVKcREd3P9vo0c3BoFMZ0BKzwwr/4VpT5UlTCX1ERTnkkK4zSKN+90zTxmDnmgsCCNrCGt2Qb25Fkeaw8+1Gr5d9u8vEW6UL6lourLjI4CeRgOqhdkADgZ+A4SQgEwYQvIy8terWWewwe6CbbgZKVXx8NlvfYeA/L7v9PWpexmBt060QgDOogjtJXRccmE6NNMSrsFE73BIOg48JlyPHRDvSpKh68BDO5D+eIrcyR1bCrKtBZDoUCnK6THP7ODFEQDQ4RRXGAV3W3WqsZQEfqGRndNUsnqysi/yuQxU669njKpPRw6ASvvykxfCPRUCXSEXssWosPVW7MitG5UX5aYlIR4DJtKDeyy/bC1ZCDt460ZZ2HDIq4cCJst+ea8zoOwc6LYPHCM3VnuNrpmgpw15MaoT54/rVATc3z2fWZQHVUnVdrhS2apLV6un9BVlHvtKuh8EG7NVNthWxCkq4Zq9tNiC08ZsylHBqVzxiEhLsuUlEpFsNU+QKsdnx6x3qv/lpndTT8tjTgyj6+lvylZUMj5kv5GxdCAZAZQnNcWTH5zZGYtaxnvpSZzk3I4/r0AmILSrkw/QM+AHXL02An16CFxZWJLePVhwekGYgrIef7EGLRfCF2ZgVtPdH8qwDSdAF996PLff5LHDquDCFWmDxB8P/uExllyLdx8C9Av4Hsiv+EJN5ILS4PFrgTsE87mTYt7s4OcaoGlMQw3xMFETCY/b2LXiXBeLDLfyKrMejEo6mvrOT132JydyW7OWzApj4q+0M/lGi9r6McYJ8dQF3ZRxSf"
-  }
+  ]
 }
