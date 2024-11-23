@@ -42,13 +42,13 @@
     "@adobe/helix-shared-utils": "^2.1.0",
     "ajv": "8.17.1",
     "ajv-formats": "3.0.1",
-    "cookie": "1.0.1",
+    "cookie": "1.0.2",
     "fs-extra": "11.2.0",
     "ignore": "6.0.2",
     "lru-cache": "11.0.2",
     "object-hash": "3.0.0",
     "uri-js": "4.4.1",
-    "yaml": "2.6.0"
+    "yaml": "2.6.1"
   },
   "devDependencies": {
     "@adobe/helix-shared-wrap": "^1.0.5",
