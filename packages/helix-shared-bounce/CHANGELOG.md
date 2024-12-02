@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-bounce-v2.0.25](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.24...@adobe/helix-shared-bounce-v2.0.25) (2024-12-02)
+
+
+### Bug Fixes
+
+* remove unused packages (deprecated with node 22) ([#1030](https://github.com/adobe/helix-shared/issues/1030)) ([92f6a47](https://github.com/adobe/helix-shared/commit/92f6a47bc97ef06cee8385c955ffec767fa58e2a))
+
 # [@adobe/helix-shared-bounce-v2.0.24](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.23...@adobe/helix-shared-bounce-v2.0.24) (2024-11-09)
 
 
