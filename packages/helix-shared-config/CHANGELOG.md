@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.0.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.10...@adobe/helix-shared-config-v11.0.11) (2024-12-02)
+
+
+### Bug Fixes
+
+* remove unused packages (deprecated with node 22) ([#1030](https://github.com/adobe/helix-shared/issues/1030)) ([92f6a47](https://github.com/adobe/helix-shared/commit/92f6a47bc97ef06cee8385c955ffec767fa58e2a))
+
 # [@adobe/helix-shared-config-v11.0.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.9...@adobe/helix-shared-config-v11.0.10) (2024-11-23)
 
 
