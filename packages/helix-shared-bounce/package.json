@@ -13,7 +13,6 @@
   "mocha": {
     "reporter": "mocha-multi-reporters",
     "reporter-options": "configFile=.mocha-multi.json",
-    "loader": "esmock",
     "require": [
       "mocha-suppress-logs"
     ]
