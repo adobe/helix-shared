@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import fs from 'fs-extra';
+import fs from 'fs/promises';
 import path from 'path';
 import YAML from 'yaml';
 import { GitUrl } from '@adobe/helix-shared-git';
