@@ -8,7 +8,8 @@
   "hostRules": [
     {
       "matchHost": "registry.npmjs.org",
-      "token": "{{ secrets.HELIX_NPM_TOKEN }}"
+      "token": "{{ secrets.HELIX_NPM_TOKEN }}",
+      "hostType": "npm"
     }
   ],
   "packageRules": [
