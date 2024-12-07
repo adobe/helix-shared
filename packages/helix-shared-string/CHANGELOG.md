@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-string-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string-v2.0.2...@adobe/helix-shared-string-v2.1.0) (2024-12-07)
+
+
+### Features
+
+* move string utility methods from onedrive-support ([#1033](https://github.com/adobe/helix-shared/issues/1033)) ([334fdaf](https://github.com/adobe/helix-shared/commit/334fdaf4df7131968771435eed5b32cddd0744c1))
+
 # [@adobe/helix-shared-string-v2.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string-v2.0.1...@adobe/helix-shared-string-v2.0.2) (2024-04-17)
 
 
