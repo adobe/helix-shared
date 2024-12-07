@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.4.45](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.44...@adobe/helix-shared-tokencache-v1.4.45) (2024-12-07)
+
+
+### Bug Fixes
+
+* change aws-sdk dependencies to major ([e244c8a](https://github.com/adobe/helix-shared/commit/e244c8a2c3d906645338d2ce4a61aaee8ce4a78d))
+
 # [@adobe/helix-shared-tokencache-v1.4.44](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.43...@adobe/helix-shared-tokencache-v1.4.44) (2024-12-03)
 
 
