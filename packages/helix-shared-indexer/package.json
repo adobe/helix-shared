@@ -33,7 +33,7 @@
   "dependencies": {
     "dayjs": "1.11.13",
     "hast-util-select": "6.0.3",
-    "hast-util-to-html": "9.0.3",
+    "hast-util-to-html": "9.0.4",
     "hast-util-to-text": "4.0.2",
     "jsep": "1.4.0",
     "micromatch": "4.0.8",
@@ -43,6 +43,6 @@
   "devDependencies": {
     "@adobe/fetch": "4.1.11",
     "@adobe/helix-shared-config": "^10.5.0",
-    "c8": "10.1.2"
+    "c8": "10.1.3"
   }
 }
