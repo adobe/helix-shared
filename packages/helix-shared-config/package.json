@@ -46,7 +46,7 @@
     "fs-extra": "11.2.0",
     "ignore": "6.0.2",
     "lru-cache": "11.0.2",
-    "yaml": "2.6.1"
+    "yaml": "2.7.0"
   },
   "devDependencies": {
     "@adobe/helix-shared-wrap": "^1.0.5",
