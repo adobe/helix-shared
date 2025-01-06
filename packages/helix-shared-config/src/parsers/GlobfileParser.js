@@ -30,7 +30,7 @@ export class GlobfileParser extends BaseParser {
    *
    * @override
    */
-  parse(str) {
+  parse(str = '') {
     this._source = str;
     this._parsed = ignore().add(this._source);
     return this;
