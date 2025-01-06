@@ -71,7 +71,9 @@
       "groupName": "external fixes",
       "matchUpdateTypes": ["patch", "pin", "digest", "minor"],
       "automerge": true,
-      "schedule": ["after 2pm on Saturday"],
+      "schedule": [
+        "after 2pm on Monday"
+      ],
       "matchPackagePatterns": ["^.+"],
       "excludePackagePatterns": ["^@adobe/"]
     },
