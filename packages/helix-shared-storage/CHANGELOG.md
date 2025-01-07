@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.1.1...@adobe/helix-shared-storage-v1.1.2) (2025-01-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @smithy/node-http-handler to v4 ([#1043](https://github.com/adobe/helix-shared/issues/1043)) ([81432e9](https://github.com/adobe/helix-shared/commit/81432e96c81c1a413cdcb7734a2da28906e07dcd))
+
 # [@adobe/helix-shared-storage-v1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.1.0...@adobe/helix-shared-storage-v1.1.1) (2024-11-09)
 
 
