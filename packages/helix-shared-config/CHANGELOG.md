@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.0.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.14...@adobe/helix-shared-config-v11.0.15) (2025-01-20)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1047](https://github.com/adobe/helix-shared/issues/1047)) ([2241568](https://github.com/adobe/helix-shared/commit/224156876d572e69052fe8965ef5a9bca22afe1d))
+
 # [@adobe/helix-shared-config-v11.0.14](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.13...@adobe/helix-shared-config-v11.0.14) (2025-01-13)
 
 
