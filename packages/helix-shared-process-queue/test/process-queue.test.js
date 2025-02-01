@@ -12,6 +12,8 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import sinon from 'sinon';
 import processQueue from '../src/process-queue.js';
 
 const nop = () => {};
@@ -55,6 +57,11 @@ describe('Process Queue', () => {
       throw error;
     }
     results.push(number * number);
+  }
+
+  async function recordTask(task) {
+    task.timestamps.push(Date.now());
+    return task;
   }
 
   beforeEach(() => {
@@ -169,5 +176,80 @@ describe('Process Queue', () => {
   it('async iterators add return value to results', async () => {
     const result = await processQueue(await sleepOver(5), (number) => number);
     assert.deepStrictEqual(result, [0, 1, 2, 3, 4]);
+  });
+
+  describe('Rate Limiting', () => {
+    it('processes queue while enforcing rate limits', async () => {
+      // Use fake timers to simulate time passing
+      const clock = sinon.useFakeTimers();
+      const timestamps = [];
+
+      async function recordTestFunction(task) {
+        timestamps.push(clock.now);
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, task.time));
+        return task.number * task.number;
+      }
+
+      // Create 100 tasks with a duration of 100ms each
+      const tasks = [];
+      for (let i = 0; i < 100; i += 1) {
+        tasks.push({ time: 100, number: i });
+      }
+
+      // Concurrency of 2, 20 operations per 30000ms (30 seconds)
+      const processPromise = processQueue(tasks, recordTestFunction, 2, {
+        limit: 20,
+        interval: 30000,
+      });
+
+      // Increase time enough so that all tasks can complete
+      await clock.tickAsync(160000);
+
+      const result = await processPromise;
+      clock.restore();
+
+      assert.strictEqual(result.length, 100);
+
+      // With the rate limit, tasks 0-19 should start near time 0
+      // Tasks 20-39 should not start until after 30000ms
+      // Tasks 40-59 after 60000ms
+      // Tasks 60-79 after 90000ms
+      // Tasks 80-99 after 120000ms
+      assert(timestamps[20] >= 30000);
+      assert(timestamps[40] >= 60000);
+      assert(timestamps[60] >= 90000);
+      assert(timestamps[80] >= 120000);
+    });
+
+    it('falls back to no rate limit if partial options', async () => {
+      const timestamps = [];
+      const tasks = [
+        { id: 1, timestamps },
+        { id: 2, timestamps },
+        { id: 3, timestamps },
+      ];
+
+      await processQueue(tasks, recordTask, 10, { maxRequests: 2 });
+      assert.strictEqual(timestamps.length, 3);
+
+      const delay = timestamps[2] - timestamps[0];
+      assert(delay < 100, `Expected delay < 100ms, got ${delay}ms`);
+    });
+
+    it('falls back to no rate limit if invalid options are provided', async () => {
+      const timestamps = [];
+      const tasks = [
+        { id: 1, timestamps },
+        { id: 2, timestamps },
+        { id: 3, timestamps },
+      ];
+
+      await processQueue(tasks, recordTask, 10, {});
+      assert.strictEqual(timestamps.length, 3);
+
+      const delay = timestamps[2] - timestamps[0];
+      assert(delay < 100, `Expected delay < 100ms, got ${delay}ms`);
+    });
   });
 });

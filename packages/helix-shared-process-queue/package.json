@@ -29,5 +29,8 @@
   "homepage": "https://github.com/adobe/helix-shared#readme",
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "sinon": "19.0.2"
   }
 }
