@@ -75,6 +75,7 @@ export default function processQueue<
  * @property {number} maxConcurrent Maximum number of items processed concurrently
  * @property {number} limit Maximum number of items processed within the interval
  * @property {number} interval Time window in milliseconds
+ * @property {AbortSignal} abortSignal Optional abort signal
  */
 export declare type RateLimitOptions = {
   maxConcurrent: number;
