@@ -30,6 +30,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@adobe/helix-shared-async": "2.0.2"
+  },
   "devDependencies": {
     "sinon": "19.0.2"
   }

@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import { sleep } from '@adobe/helix-shared-async';
+
 /**
  * Simple dequeing iterator.
  * @param queue
@@ -42,7 +44,7 @@ function* dequeue(queue) {
  * @returns {Function} An async function that waits until a token is available
  */
 function createRateLimiter(limit, interval) {
-  let tokens = limit;
+  let numTokens = limit;
   let lastRefill = Date.now();
 
   return async function waitForToken() {
@@ -52,19 +54,19 @@ function createRateLimiter(limit, interval) {
 
       // Refill tokens if the interval has passed
       if (now - lastRefill >= interval) {
-        tokens = limit;
+        numTokens = limit;
         lastRefill = now;
       }
 
       // If a token is available, consume one and exit
-      if (tokens > 0) {
-        tokens -= 1;
+      if (numTokens > 0) {
+        numTokens -= 1;
         return;
       }
 
       // Else, wait before checking again
-      // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      // eslint-disable-next-line no-await-in-loop
+      await sleep(interval - (now - lastRefill));
     }
   };
 }
@@ -75,27 +77,34 @@ function createRateLimiter(limit, interval) {
  *
  * @param {Iterable|Array} queue A list of tasks
  * @param {ProcessQueueHandler} fn A handler function `fn(task:any, queue:array, results:array)`
- * @param {number} [maxConcurrent = 8] Concurrency level
- * @param {RateLimitOptions} [rateLimitOptions=null] Optional rate limiting options
+ * @param {RateLimitOptions|number} [rateLimitOptions=null] Optional rate limiting options
  * @returns {Promise<Array>} the results
  */
-export default async function processQueue(queue, fn, maxConcurrent = 8, rateLimitOptions = null) {
+export default async function processQueue(
+  queue,
+  fn,
+  rateLimitOptions,
+) {
   if (typeof queue !== 'object') {
     throw Error('invalid queue argument: iterable expected');
   }
 
-  // noop by default
-  let waitForToken = async () => {};
-
-  // If rate limiting options are provided, define a token bucket limiter.
-  if (
-    rateLimitOptions
-    && rateLimitOptions.limit != null
-    && rateLimitOptions.interval != null
-  ) {
-    const { limit, interval } = rateLimitOptions;
-    waitForToken = createRateLimiter(limit, interval);
+  if (rateLimitOptions !== undefined && typeof rateLimitOptions !== 'object' && typeof rateLimitOptions !== 'number') {
+    throw Error('invalid rate limit options argument: object or number expected');
   }
+
+  const {
+    limit,
+    interval,
+    maxConcurrent = 8,
+    abortSignal,
+  } = typeof rateLimitOptions === 'object'
+    ? rateLimitOptions
+    : { maxConcurrent: rateLimitOptions || 8 };
+
+  const waitForToken = (limit && interval != null)
+    ? createRateLimiter(limit, interval, abortSignal)
+    : async () => {};
 
   const running = [];
   const results = [];
@@ -127,6 +136,10 @@ export default async function processQueue(queue, fn, maxConcurrent = 8, rateLim
   }
 
   for await (const value of iter) {
+    if (abortSignal?.aborted) {
+      return results;
+    }
+
     await waitForToken();
 
     while (running.length >= maxConcurrent) {

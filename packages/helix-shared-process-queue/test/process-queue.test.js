@@ -198,7 +198,8 @@ describe('Process Queue', () => {
       }
 
       // Concurrency of 2, 20 operations per 30000ms (30 seconds)
-      const processPromise = processQueue(tasks, recordTestFunction, 2, {
+      const processPromise = processQueue(tasks, recordTestFunction, {
+        maxConcurrent: 2,
         limit: 20,
         interval: 30000,
       });
@@ -222,6 +223,57 @@ describe('Process Queue', () => {
       assert(timestamps[80] >= 120000);
     });
 
+    it('rate limited queue can be aborted', async () => {
+      const abortController = new AbortController();
+      // Use fake timers to simulate time passing
+      const clock = sinon.useFakeTimers();
+      const timestamps = [];
+
+      async function recordTestFunction(task) {
+        if (task.number === 50) {
+          abortController.abort();
+          return;
+        }
+
+        timestamps.push(clock.now);
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, task.time));
+
+        // eslint-disable-next-line consistent-return
+        return task.number * task.number;
+      }
+
+      // Create 100 tasks with a duration of 100ms each
+      const tasks = [];
+      for (let i = 0; i < 100; i += 1) {
+        tasks.push({ time: 100, number: i });
+      }
+
+      // Concurrency of 2, 20 operations per 30000ms (30 seconds)
+      const processPromise = processQueue(tasks, recordTestFunction, {
+        maxConcurrent: 2,
+        limit: 20,
+        interval: 30000,
+        abortSignal: abortController.signal,
+      });
+
+      // Increase time enough so that all tasks can complete
+      await clock.tickAsync(160000);
+
+      const result = await processPromise;
+      clock.restore();
+
+      assert.strictEqual(result.length, 50);
+
+      // With the rate limit, tasks 0-19 should start near time 0
+      // Tasks 20-39 should not start until after 30000ms
+      // Tasks 40-49 after 60000ms
+      // Tasks 50-99 should never start
+      assert(timestamps[20] >= 30000);
+      assert(timestamps[49] >= 60000);
+      assert(timestamps[50] === undefined);
+    });
+
     it('falls back to no rate limit if partial options', async () => {
       const timestamps = [];
       const tasks = [
@@ -237,7 +289,7 @@ describe('Process Queue', () => {
       assert(delay < 100, `Expected delay < 100ms, got ${delay}ms`);
     });
 
-    it('falls back to no rate limit if invalid options are provided', async () => {
+    it('falls back to no rate limit if empty rate limit options are provided', async () => {
       const timestamps = [];
       const tasks = [
         { id: 1, timestamps },
@@ -250,6 +302,17 @@ describe('Process Queue', () => {
 
       const delay = timestamps[2] - timestamps[0];
       assert(delay < 100, `Expected delay < 100ms, got ${delay}ms`);
+    });
+
+    it('throws error if invalid rate limit options are provided', async () => {
+      const timestamps = [];
+      const tasks = [
+        { id: 1, timestamps },
+        { id: 2, timestamps },
+        { id: 3, timestamps },
+      ];
+
+      await assert.rejects(processQueue(tasks, recordTask, 'invalid'));
     });
   });
 });

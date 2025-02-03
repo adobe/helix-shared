@@ -56,8 +56,7 @@ export declare type ProcessQueueHandler<
  *
  * @param queue A list of entries to be processed
  * @param fn A handler function
- * @param {number} [maxConcurrent=8] Concurrency level
- * @param {RateLimitOptions} [rateLimitOptions] Optional rate limit options for throttling processing.
+ * @param {RateLimitOptions|number} [rateLimitOptions=null] Optional rate limit options for throttling processing.
  * @returns the results
  */
 export default function processQueue<
@@ -67,17 +66,19 @@ export default function processQueue<
 >(
   queue: TQueue,
   fn: THandler,
-  maxConcurrent?: number,
-  rateLimitOptions?: RateLimitOptions | null
+  rateLimitOptions?: RateLimitOptions | number | null
 ): Promise<TReturn[]>;
 
 /**
  * Rate limiting options for processQueue
  *
+ * @property {number} maxConcurrent Maximum number of items processed concurrently
  * @property {number} limit Maximum number of items processed within the interval
  * @property {number} interval Time window in milliseconds
  */
 export declare type RateLimitOptions = {
+  maxConcurrent: number;
   limit: number;
   interval: number;
+  abortSignal?: AbortSignal;
 };
