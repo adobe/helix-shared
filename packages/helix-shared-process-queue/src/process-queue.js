@@ -102,7 +102,7 @@ export default async function processQueue(
     ? rateLimitOptions
     : { maxConcurrent: rateLimitOptions || 8 };
 
-  const waitForToken = (limit && interval != null)
+  const waitForToken = (limit > 0 && interval > 0)
     ? createRateLimiter(limit, interval, abortSignal)
     : async () => {};
 
