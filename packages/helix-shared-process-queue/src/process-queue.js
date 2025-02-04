@@ -137,11 +137,11 @@ export default async function processQueue(
   }
 
   for await (const value of iter) {
+    await waitForToken();
+
     if (abortSignal?.aborted) {
       return results;
     }
-
-    await waitForToken();
 
     while (running.length >= maxConcurrent) {
       // eslint-disable-next-line no-await-in-loop
