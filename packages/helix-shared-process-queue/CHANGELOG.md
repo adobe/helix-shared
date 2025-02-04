@@ -1,3 +1,19 @@
+# [@adobe/helix-shared-process-queue-v3.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.0.4...@adobe/helix-shared-process-queue-v3.1.0) (2025-02-04)
+
+
+### Bug Fixes
+
+* add missing type ([acc4c46](https://github.com/adobe/helix-shared/commit/acc4c46b7d57b15a671025be6fb3d9db1b86e46d))
+* address comment ([7a79bb3](https://github.com/adobe/helix-shared/commit/7a79bb3cb7b04184720ddfa101d0fca2f12c214a))
+* address comments ([dfa036c](https://github.com/adobe/helix-shared/commit/dfa036c8368d92de54a585cac15952fc2c4d2f0c))
+* ratelimiter condition ([c277872](https://github.com/adobe/helix-shared/commit/c277872279f384fc9d93eb1e616d87bc82fe38c7))
+* remove unused abortSignal from createRateLimiter ([a12f358](https://github.com/adobe/helix-shared/commit/a12f358e71cdcc951ba8cf23933eb40f99d1cbc0))
+
+
+### Features
+
+* support rate limiting in processQueue ([e4ad90d](https://github.com/adobe/helix-shared/commit/e4ad90d5770d7d1f1b28c0c6b399da85fa1c0e87))
+
 # [@adobe/helix-shared-process-queue-v3.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.0.3...@adobe/helix-shared-process-queue-v3.0.4) (2024-04-17)
 
 
