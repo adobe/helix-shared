@@ -51,9 +51,12 @@ export declare type ProcessQueueHandler<
  * entries during processing. It returns the `results` array which is either populated by the
  * queue handler function directly or with the return values of the handler functions.
  *
+ * Optionally, rate limiting can be applied using a Token Bucket algorithm to throttle the rate at
+ * which tasks are processed.
+ *
  * @param queue A list of entries to be processed
  * @param fn A handler function
- * @param {number} [maxConcurrent = 8] Concurrency level
+ * @param {RateLimitOptions|number} [rateLimitOptions=null] Optional rate limit options for throttling processing.
  * @returns the results
  */
 export default function processQueue<
@@ -63,7 +66,20 @@ export default function processQueue<
 >(
   queue: TQueue,
   fn: THandler,
-  maxConcurrent?: number
+  rateLimitOptions?: RateLimitOptions | number | null
 ): Promise<TReturn[]>;
 
-
+/**
+ * Rate limiting options for processQueue
+ *
+ * @property {number} maxConcurrent Maximum number of items processed concurrently
+ * @property {number} limit Maximum number of items processed within the interval
+ * @property {number} interval Time window in milliseconds
+ * @property {AbortSignal} abortSignal Optional abort signal
+ */
+export declare type RateLimitOptions = {
+  maxConcurrent: number;
+  limit: number;
+  interval: number;
+  abortSignal?: AbortSignal;
+};
