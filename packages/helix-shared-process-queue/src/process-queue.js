@@ -53,7 +53,8 @@ function createRateLimiter(limit, interval) {
       const now = Date.now();
 
       // Refill tokens if the interval has passed
-      if (now - lastRefill >= interval) {
+      const delta = now - lastRefill;
+      if (delta >= interval) {
         numTokens = limit;
         lastRefill = now;
       }
