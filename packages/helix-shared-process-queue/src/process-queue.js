@@ -67,7 +67,7 @@ function createRateLimiter(limit, interval) {
 
       // Else, wait before checking again
       // eslint-disable-next-line no-await-in-loop
-      await sleep(interval - (now - lastRefill));
+      await sleep(interval - delta);
     }
   };
 }
