@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-process-queue-v3.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.0...@adobe/helix-shared-process-queue-v3.1.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* pass abort controller instead ([468d46a](https://github.com/adobe/helix-shared/commit/468d46a97c813a8b916118f8be9f44ff15a41466))
+
 # [@adobe/helix-shared-process-queue-v3.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.0.4...@adobe/helix-shared-process-queue-v3.1.0) (2025-02-04)
 
 
