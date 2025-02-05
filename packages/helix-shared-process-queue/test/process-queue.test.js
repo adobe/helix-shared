@@ -254,7 +254,7 @@ describe('Process Queue', () => {
         maxConcurrent: 2,
         limit: 20,
         interval: 30000,
-        abortSignal: abortController.signal,
+        abortController,
       });
 
       // Increase time enough so that all tasks can complete
