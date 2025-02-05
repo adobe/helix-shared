@@ -98,7 +98,7 @@ export default async function processQueue(
     limit,
     interval,
     maxConcurrent = 8,
-    abortSignal,
+    abortController,
   } = typeof rateLimitOptions === 'object'
     ? rateLimitOptions
     : { maxConcurrent: rateLimitOptions || 8 };
@@ -139,7 +139,7 @@ export default async function processQueue(
   for await (const value of iter) {
     await waitForToken();
 
-    if (abortSignal?.aborted) {
+    if (abortController?.signal?.aborted) {
       return results;
     }
 
