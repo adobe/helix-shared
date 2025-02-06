@@ -615,6 +615,7 @@ export class HelixStorage {
         CLOUDFLARE_ACCOUNT_ID: r2AccountId,
         CLOUDFLARE_R2_ACCESS_KEY_ID: r2AccessKeyId,
         CLOUDFLARE_R2_SECRET_ACCESS_KEY: r2SecretAccessKey,
+        HELIX_STORAGE_DISABLE_R2: disableR2,
       } = context.env;
 
       context.attributes.storage = new HelixStorage({
@@ -623,6 +624,7 @@ export class HelixStorage {
         r2AccountId,
         r2AccessKeyId,
         r2SecretAccessKey,
+        disableR2: String(disableR2) === 'true',
         keepAlive: String(keepAlive) === 'true',
         log: context.log,
       });
@@ -653,7 +655,7 @@ export class HelixStorage {
     const {
       region = 'us-east-1', accessKeyId, secretAccessKey,
       connectionTimeout, socketTimeout,
-      r2AccountId, r2AccessKeyId, r2SecretAccessKey,
+      r2AccountId, r2AccessKeyId, r2SecretAccessKey, disableR2,
       log = console,
       keepAlive = true,
     } = opts;
@@ -689,22 +691,26 @@ export class HelixStorage {
     }
 
     // initializing the R2 client which is used for mirroring all S3 writes to R2
-    log.debug('Creating R2 S3Client');
-    this._r2 = new S3Client({
-      endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
-      region: 'us-east-1', // https://github.com/aws/aws-sdk-js-v3/issues/1845#issuecomment-754832210
-      credentials: {
-        accessKeyId: r2AccessKeyId,
-        secretAccessKey: r2SecretAccessKey,
-      },
-      requestHandler: new NodeHttpHandler({
-        httpsAgent: new Agent({
-          keepAlive,
+    if (disableR2) {
+      log.info('R2 S3Client disabled.');
+    } else {
+      log.debug('Creating R2 S3Client');
+      this._r2 = new S3Client({
+        endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
+        region: 'us-east-1', // https://github.com/aws/aws-sdk-js-v3/issues/1845#issuecomment-754832210
+        credentials: {
+          accessKeyId: r2AccessKeyId,
+          secretAccessKey: r2SecretAccessKey,
+        },
+        requestHandler: new NodeHttpHandler({
+          httpsAgent: new Agent({
+            keepAlive,
+          }),
+          connectionTimeout,
+          socketTimeout,
         }),
-        connectionTimeout,
-        socketTimeout,
-      }),
-    });
+      });
+    }
     this._log = log;
   }
 

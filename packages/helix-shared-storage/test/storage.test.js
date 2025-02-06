@@ -966,3 +966,69 @@ describe('Storage test', () => {
     assert.deepStrictEqual(folders, []);
   });
 });
+
+describe('Disabled R2 Storage test', () => {
+  let nock;
+  let storage;
+
+  beforeEach(() => {
+    nock = new Nock().env();
+
+    const context = {
+      attributes: {},
+      env: {
+        CLOUDFLARE_ACCOUNT_ID,
+        CLOUDFLARE_R2_ACCESS_KEY_ID,
+        CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+        HELIX_STORAGE_DISABLE_R2: 'true',
+      },
+    };
+    storage = HelixStorage.fromContext(context);
+  });
+
+  afterEach(() => {
+    nock.done();
+    storage.close();
+  });
+
+  it('can get an object', async () => {
+    nock('https://helix-code-bus.s3.us-east-1.amazonaws.com')
+      .get('/foo?x-id=GetObject')
+      .reply(200, 'hello, world.');
+    const bus = storage.codeBus();
+    const ret = await bus.get('/foo');
+    assert.strictEqual(ret.toString(), 'hello, world.');
+  });
+
+  it('can put object', async () => {
+    const reqs = { s3: {}, r2: {} };
+    nock('https://helix-code-bus.s3.us-east-1.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(function cb(uri) {
+        reqs.s3[uri] = {
+          body: Buffer.concat(this.req.requestBodyBuffers),
+          headers: Object.fromEntries(Object.entries(this.req.headers)
+            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
+        };
+        return [201];
+      });
+
+    const bus = storage.codeBus();
+    await bus.put('/foo', 'hello, world.', 'text/plain', {
+      myid: '1234',
+    });
+
+    const req = {
+      '/foo?x-id=PutObject': {
+        body: await gzip(Buffer.from('hello, world.', 'utf-8')),
+        headers: {
+          'content-encoding': 'gzip',
+          'content-type': 'text/plain',
+          'x-amz-meta-myid': '1234',
+        },
+      },
+    };
+    assert.deepEqual(reqs.s3, req);
+    assert.deepEqual(reqs.r2, {});
+  });
+});
