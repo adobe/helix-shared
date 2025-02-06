@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.1.2...@adobe/helix-shared-storage-v1.2.0) (2025-02-06)
+
+
+### Features
+
+* disable R2 from environment ([#1057](https://github.com/adobe/helix-shared/issues/1057)) ([622e16b](https://github.com/adobe/helix-shared/commit/622e16b6c158e0699c40db30f2727bec88b87d0f))
+
 # [@adobe/helix-shared-storage-v1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.1.1...@adobe/helix-shared-storage-v1.1.2) (2025-01-07)
 
 
