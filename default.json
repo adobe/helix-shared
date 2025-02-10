@@ -27,7 +27,7 @@
     },
     {
       "matchPackageNames": ["nock"],
-      "allowedVersions": "!/14\\.0\\.0/"
+      "allowedVersions": "!/14\\.0\\.?/"
     },
     {
       "matchPackageNames": ["quick-lru"],
