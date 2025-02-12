@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.5.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.45...@adobe/helix-shared-tokencache-v1.5.0) (2025-02-12)
+
+
+### Features
+
+* allow to set the content and code bus bucket names ([#1061](https://github.com/adobe/helix-shared/issues/1061)) ([86afca7](https://github.com/adobe/helix-shared/commit/86afca7f9fff17c318196ddaa29e33bd755047d3))
+
 # [@adobe/helix-shared-tokencache-v1.4.45](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.44...@adobe/helix-shared-tokencache-v1.4.45) (2024-12-07)
 
 
