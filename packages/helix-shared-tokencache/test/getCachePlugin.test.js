@@ -89,6 +89,26 @@ describe('getCachePlugin tests', () => {
     assert.strictEqual(cachePlugin.location, 'helix-code-bus/adobe/.helix-auth/auth-onedrive-content.json');
   });
 
+  it('can set content and code bus buckets', async () => {
+    nock('https://my-content-bus.s3.us-east-1.amazonaws.com')
+      .head(`/${contentBusId}/.helix-auth/auth-onedrive-content.json`)
+      .reply(404);
+    nock('https://my-code-bus.s3.us-east-1.amazonaws.com')
+      .head('/adobe/.helix-auth/auth-onedrive-content.json')
+      .reply(200);
+
+    const cachePlugin = await getCachePlugin({
+      log: console,
+      env: DEFAULT_ENV,
+      contentBusId,
+      owner: 'adobe',
+      contentBucket: 'my-content-bus',
+      codeBucket: 'my-code-bus',
+    }, 'onedrive');
+    assert.ok(cachePlugin);
+    assert.strictEqual(cachePlugin.location, 'my-code-bus/adobe/.helix-auth/auth-onedrive-content.json');
+  });
+
   it('falls back to default if contentBusId and owner not found', async () => {
     nock('https://helix-content-bus.s3.us-east-1.amazonaws.com')
       .head(`/${contentBusId}/.helix-auth/auth-onedrive-content.json`)
