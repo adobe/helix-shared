@@ -25,6 +25,8 @@ const BUCKET_CODE_BUS = 'helix-code-bus';
  * @property {string} owner  code owner
  * @property {string} [user = "content"] the user for which the cache is retrieved
  * @property {boolean} [readOnly = false] don't write to underlying persistence layer
+ * @property {boolean} [contentBucket = 'helix-content-bus'] name of the content-bus bucket
+ * @property {boolean} [codeBucket = 'helix-code-bus'] name of the code-bus bucket
  */
 
 /**
@@ -46,6 +48,8 @@ export async function getCachePlugin(opts, type) {
     owner,
     user = 'content',
     readOnly = false,
+    contentBucket = BUCKET_CONTENT_BUS,
+    codeBucket = BUCKET_CODE_BUS,
   } = opts;
 
   const derivedOpts = [];
@@ -53,21 +57,21 @@ export async function getCachePlugin(opts, type) {
     derivedOpts.push({
       prefix: `${contentBusId}/.helix-auth`,
       secret: contentBusId,
-      bucket: BUCKET_CONTENT_BUS,
+      bucket: contentBucket,
     });
   }
   if (owner) {
     derivedOpts.push({
       prefix: `${owner}/.helix-auth`,
       secret: owner,
-      bucket: BUCKET_CODE_BUS,
+      bucket: codeBucket,
     });
   }
   const basePlugin = await S3CacheManager.findCache(user, {
     log,
     prefix: 'default/.helix-auth',
     secret: 'default',
-    bucket: BUCKET_CONTENT_BUS,
+    bucket: contentBucket,
     type,
     readOnly,
   }, ...derivedOpts);
