@@ -21,6 +21,7 @@ export class IndexConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'helix-query.yaml',
+      type: 'index',
       schemas: {
         '^/$': indexConfigSchema,
         '^/indices/.*$': indexSchema,
