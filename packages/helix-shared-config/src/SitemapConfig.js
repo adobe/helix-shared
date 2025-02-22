@@ -21,6 +21,7 @@ export class SitemapConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'helix-sitemap.yaml',
+      type: 'sitemap',
       schemas: {
         '^/$': sitemapConfigSchema,
         '^/sitemaps/.*$': sitemapSchema,

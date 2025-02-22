@@ -13,13 +13,14 @@
 
 export class ValidationError extends Error {
   constructor(
+    type,
     msg,
     errors = [],
     mapError = ValidationError.mapError,
     prettyname = ValidationError.prettyname,
   ) {
     const detail = errors.map((e) => mapError(e, prettyname)).join('\n');
-    super(`Invalid configuration:
+    super(`Invalid ${type} configuration:
 ${detail}
 
 ${msg}`);

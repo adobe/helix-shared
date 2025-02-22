@@ -97,6 +97,7 @@ export class MountConfig extends SchemaDerivedConfig {
   constructor() {
     super({
       filename: 'fstab.yaml',
+      type: 'fstab',
       schemas: {
         '^/$': fstabSchema,
         '^/mountpoints/.*$': mountpointSchema,
