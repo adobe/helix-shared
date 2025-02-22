@@ -27,12 +27,14 @@ export class SchemaDerivedConfig extends BaseConfig {
    */
   constructor({
     filename,
+    type,
     schemas,
     handlers,
   }) {
     super(filename);
 
     this._content = null;
+    this._type = type;
 
     // ensure that sub classes don't accidentally override this properties.
     Object.defineProperties(this, {
@@ -67,7 +69,7 @@ export class SchemaDerivedConfig extends BaseConfig {
     if (res) {
       return res;
     }
-    throw new ValidationError(ajv.errorsText(), ajv.errors);
+    throw new ValidationError(this._type, ajv.errorsText(), ajv.errors);
   }
 
   /**
