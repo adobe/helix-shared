@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.15...@adobe/helix-shared-config-v11.1.0) (2025-02-22)
+
+
+### Features
+
+* add type to validation error ([#1065](https://github.com/adobe/helix-shared/issues/1065)) ([ae0b8a9](https://github.com/adobe/helix-shared/commit/ae0b8a9cc9b0380aa202c877080d755f7913322f))
+
 # [@adobe/helix-shared-config-v11.0.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.0.14...@adobe/helix-shared-config-v11.0.15) (2025-01-20)
 
 

@@ -45,31 +45,31 @@ const tests = [
   {
     title: 'loads an example without hreflang',
     config: 'broken.yaml',
-    error: `Error: Invalid configuration:
+    error: `Error: Invalid sitemap configuration:
 Sitemap Language must have required property 'hreflang'`,
   },
   {
     title: 'loads an example without destination',
     config: 'broken2.yaml',
-    error: `Error: Invalid configuration:
+    error: `Error: Invalid sitemap configuration:
 Sitemap Language must have required property 'destination'`,
   },
   {
     title: 'loads an example with invalid hreflang',
     config: 'broken3.yaml',
-    error: `Error: Invalid configuration:
+    error: `Error: Invalid sitemap configuration:
 HREF Language must match pattern`,
   },
   {
     title: 'loads an example with invalid hreflangs array',
     config: 'broken4.yaml',
-    error: `Error: Invalid configuration:
+    error: `Error: Invalid sitemap configuration:
 HREF Language must match pattern`,
   },
   {
     title: 'loads an example with a language defining lastmod',
     config: 'broken5.yaml',
-    error: `Error: Invalid configuration:
+    error: `Error: Invalid sitemap configuration:
 Sitemap Language has unknown property 'lastmod'`,
   },
 ];

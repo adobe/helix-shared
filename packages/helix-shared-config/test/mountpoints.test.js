@@ -100,7 +100,7 @@ const tests = [
     title: 'fails with a broken config',
     config: 'broken.yaml',
     result: null,
-    error: 'Error: Invalid configuration:\nFSTab (Mount Points) has unknown property \'mounts\'\n\ndata must NOT have additional properties',
+    error: 'Error: Invalid fstab configuration:\nFSTab (Mount Points) has unknown property \'mounts\'\n\ndata must NOT have additional properties',
   },
   {
     title: 'loads a theblog example',
