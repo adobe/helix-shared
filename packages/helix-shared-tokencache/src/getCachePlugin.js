@@ -14,9 +14,9 @@
 import { MemCachePlugin } from './MemCachePlugin.js';
 import { S3CacheManager } from './S3CacheManager.js';
 
-const BUCKET_CONTENT_BUS = 'helix-content-bus';
+const BUCKET_CONTENT_BUS = process.env.CONTENT_BUS_BUCKET || 'helix-content-bus';
 
-const BUCKET_CODE_BUS = 'helix-code-bus';
+const BUCKET_CODE_BUS = process.env.CODE_BUS_BUCKET || 'helix-code-bus';
 
 /**
  * @typedef GetCachePluginOptions
