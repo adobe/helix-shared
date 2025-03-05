@@ -24,51 +24,55 @@ function* dequeue(queue) {
 }
 
 /**
- * Creates a token bucket rate limiter.
+ * Creates a rate limiter that enforces an even spacing between task executions using a
+ * sliding window algorithm.
  *
- * The token bucket algorithm controls the rate of operations by maintaining a "bucket"
- * that holds a fixed number of tokens. Each operation that wishes to proceed must first
- * acquire a token. The bucket is initially filled with `limit` tokens and is refilled
- * back to that level after every `interval` milliseconds.
+ * The limiter calculates the required delay between tasks as `interval / limit` and
+ * ensures that each token is only granted permission to proceed after this
+ * minimum delay. It keeps track of the time when the last token was issued and,
+ * upon each request, waits if necessary to maintain the steady rate.
  *
- * The returned async function, `waitForToken`, implements this logic:
- * - It checks if enough time has elapsed since the last refill. If so, it refills the bucket
- * - If a token is available, it decrements the token count and returns immediately
- * - If no tokens are available, it waits for a short period before trying to refill
- *
- * This guarantes that no more than `limit` operations are performed within any
- * given `interval`, thus enforcing the specified rate limit.
+ * It returns a token object with a `release()` method that can be called to refund the token
+ * if the task didn't actually consume a resource (for example, when a resource is not modified).
  *
  * @param {number} limit Maximum tokens (operations) allowed per interval
- * @param {number} interval Time period in ms after which the token bucket is refilled
+ * @param {number} interval Time period in ms over which `limit` tokens are permitted.
  * @returns {Function} An async function that waits until a token is available
+ * and returns a token object.
  */
 function createRateLimiter(limit, interval) {
-  let numTokens = limit;
-  let lastRefill = Date.now();
+  // Calculate how much time should elapse between tasks.
+  const perTaskInterval = interval / limit;
+  let lastTokenTime = Date.now();
 
   return async function waitForToken() {
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const now = Date.now();
-
-      // Refill tokens if the interval has passed
-      const delta = now - lastRefill;
-      if (delta >= interval) {
-        numTokens = limit;
-        lastRefill = now;
-      }
-
-      // If a token is available, consume one and exit
-      if (numTokens > 0) {
-        numTokens -= 1;
-        return;
-      }
-
-      // Else, wait before checking again
-      // eslint-disable-next-line no-await-in-loop
-      await sleep(interval - delta);
+    const now = Date.now();
+    // Determine the earliest time the next token can be issued.
+    // Using max we prevent scheduling tasks in the past if there's been a long gap
+    const nextAllowedTime = Math.max(lastTokenTime + perTaskInterval, now);
+    const waitTime = nextAllowedTime - now;
+    if (waitTime > 0) {
+      await sleep(waitTime);
     }
+    // Update lastTokenTime to reflect when this token was granted.
+    lastTokenTime = nextAllowedTime;
+
+    // Return a token object that allows "releasing" the token if needed.
+    let refunded = false;
+    return {
+      /**
+       * Calling release() refunds the token by reducing the delay for subsequent tokens.
+       * Useful when a task did not consume a resource (unmodified resource)
+       * and should not count against the rate limit.
+       */
+      release() {
+        if (!refunded) {
+          // Refund token: rewind lastTokenTime by perTaskInterval
+          lastTokenTime = Date.now() - perTaskInterval;
+          refunded = true;
+        }
+      },
+    };
   };
 }
 
@@ -110,8 +114,8 @@ export default async function processQueue(
   const running = [];
   const results = [];
 
-  const handler = (entry) => {
-    const task = fn(entry, queue, results);
+  const handler = (entry, token) => {
+    const task = fn(entry, queue, results, token);
     if (task?.then) {
       running.push(task);
       task
@@ -137,7 +141,7 @@ export default async function processQueue(
   }
 
   for await (const value of iter) {
-    await waitForToken();
+    const token = await waitForToken();
 
     if (abortController?.signal?.aborted) {
       return results;
@@ -147,7 +151,7 @@ export default async function processQueue(
       // eslint-disable-next-line no-await-in-loop
       await Promise.race(running);
     }
-    handler(value);
+    handler(value, token);
   }
   // wait until remaining tasks have completed
   await Promise.all(running);
