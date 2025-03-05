@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-process-queue-v3.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.1...@adobe/helix-shared-process-queue-v3.1.2) (2025-03-05)
+
+
+### Bug Fixes
+
+* steady rate limiting with releasable tokens ([cf94712](https://github.com/adobe/helix-shared/commit/cf94712d805b5b074451e491c2c00cb6349ea870))
+
 # [@adobe/helix-shared-process-queue-v3.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.0...@adobe/helix-shared-process-queue-v3.1.1) (2025-02-05)
 
 
