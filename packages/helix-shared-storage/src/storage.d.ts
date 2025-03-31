@@ -28,13 +28,13 @@ export interface ObjectInfo {
 export type ObjectFilter = (info: ObjectInfo) => boolean;
 
 export interface CopyOptions {
-  /** 
-   * metadata to rename, { [from:string] => to:string } 
+  /**
+   * metadata to rename, { [from:string] => to:string }
    * Removes existing `from` metadata property from the copied object.
    * Use `addMetadata` to include the `from` property if needed.
    */
   renameMetadata?: Record<string, string>;
-  /** 
+  /**
    * Metadata to merge with existing metadata.
    * Properties are applied after `renameMetadata`.
    */
@@ -142,19 +142,22 @@ export declare class HelixStorage {
   /**
    * creates a bucket instance that allows to perform storage related operations.
    * @param bucketId
+   * @param disableR2 whether to disable writing to R2
    * @returns {Bucket}
    */
-  bucket(bucketId: string): Bucket;;
+  bucket(bucketId: string, disableR2: boolean = false): Bucket;;
 
   /**
+   * @param disableR2 whether to disable writing to R2
    * @returns {Bucket}
    */
-  contentBus(): Bucket;
+  contentBus(disableR2: boolean = false): Bucket;
 
   /**
+   * @param disableR2 whether to disable writing to R2
    * @returns {Bucket}
    */
-  codeBus(): Bucket;
+  codeBus(disableR2: boolean = false): Bucket;
 
   /**
    * @returns {Bucket}

@@ -721,9 +721,10 @@ export class HelixStorage {
   /**
    * creates a bucket instance that allows to perform storage related operations.
    * @param bucketId
+   * @param disableR2 whether to disable R2 for storing
    * @returns {Bucket}
    */
-  bucket(bucketId) {
+  bucket(bucketId, disableR2 = false) {
     if (!this._s3) {
       throw new Error('storage already closed.');
     }
@@ -733,7 +734,7 @@ export class HelixStorage {
     return new Bucket({
       bucketId,
       s3: this._s3,
-      r2: this._r2,
+      r2: disableR2 ? null : this._r2,
       log: this._log,
     });
   }
@@ -741,15 +742,15 @@ export class HelixStorage {
   /**
    * @returns {Bucket}
    */
-  contentBus() {
-    return this.bucket('helix-content-bus');
+  contentBus(disableR2 = false) {
+    return this.bucket('helix-content-bus', disableR2);
   }
 
   /**
    * @returns {Bucket}
    */
-  codeBus() {
-    return this.bucket('helix-code-bus');
+  codeBus(disableR2 = false) {
+    return this.bucket('helix-code-bus', disableR2);
   }
 
   /**
