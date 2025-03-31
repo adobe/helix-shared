@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.2.0...@adobe/helix-shared-storage-v1.3.0) (2025-03-31)
+
+
+### Features
+
+* support disable R2 on bucket itself ([#1077](https://github.com/adobe/helix-shared/issues/1077)) ([c432cb8](https://github.com/adobe/helix-shared/commit/c432cb8093ab6b6df676d2ea285b8b102f5b5bd1))
+
 # [@adobe/helix-shared-storage-v1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.1.2...@adobe/helix-shared-storage-v1.2.0) (2025-02-06)
 
 
