@@ -479,6 +479,37 @@ describe('Storage test', () => {
     assert.deepEqual(reqs.r2, req);
   });
 
+  it('can remove objects in S3 only', async () => {
+    const reqs = { s3: {} };
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .post('/?delete=')
+      .reply(function cb(uri, body) {
+        reqs.s3[uri] = {
+          body,
+          headers: Object.fromEntries(Object.entries(this.req.headers)
+            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
+        };
+        return [200, '<?xml version="1.0" encoding="UTF-8"?>'
+        + '<DeleteResult>'
+        + '<Deleted><Key>/foo</Key></Deleted>'
+        + '<Deleted><Key>/bar</Key></Deleted>'
+        + '<Error><Code>kaputt</Code></Error>'
+        + '</DeleteResult>'];
+      });
+    const bus = storage.codeBus(true);
+    await bus.remove(['/foo', '/bar']);
+
+    const req = {
+      '/?delete=': {
+        body: '<?xml version="1.0" encoding="UTF-8"?><Delete xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Object><Key>foo</Key></Object><Object><Key>bar</Key></Object></Delete>',
+        headers: {
+          'content-type': 'application/xml',
+        },
+      },
+    };
+    assert.deepEqual(reqs.s3, req);
+  });
+
   it('can copy objects', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply-copy.json'), 'utf-8'));
     const puts = { s3: [], r2: [] };
