@@ -56,6 +56,10 @@
         "Keywords": "Exactomento Mapped Folder",
         "og:publisher": "Adobe",
         "Short Title": "E"
+      },
+      {
+        "URL": "/onelevel/*",
+        "Keywords": "one level"
       }
     ]
   }
