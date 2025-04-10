@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.1.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.2...@adobe/helix-shared-config-v11.1.3) (2025-04-10)
+
+
+### Bug Fixes
+
+* match all path segment chars ([540863e](https://github.com/adobe/helix-shared/commit/540863e4eb3e3c671fbd2b009846c2095f0d2fd7))
+
 # [@adobe/helix-shared-config-v11.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.1...@adobe/helix-shared-config-v11.1.2) (2025-03-31)
 
 
