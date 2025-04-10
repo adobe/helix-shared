@@ -161,6 +161,17 @@ describe('ModifiersConfig', () => {
     });
   });
 
+  it('it matches 1 level', async () => {
+    const { default: { data } } = await readTestJSON('metadata.json');
+    const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/onelevel/MY_FONTS.wof');
+    assert.deepEqual(actual, {
+      keywords: 'one level',
+    });
+    const deep = ModifiersConfig.fromModifierSheet(data).getModifiers('/onelevel/sub/MY_FONTS.wof');
+    assert.deepEqual(deep, {
+    });
+  });
+
   it('it matches exact folder', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/exact-folder/');
