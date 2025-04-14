@@ -179,6 +179,156 @@ describe('Process Queue', () => {
   });
 
   describe('Rate Limiting', () => {
+    it('spacing between tasks is consistent and respects maxConcurrent', async () => {
+      const clock = sinon.useFakeTimers();
+
+      const timestamps = [];
+
+      let currentConcurrency = 0;
+      let maxConcurrencyObserved = 0;
+
+      async function simulateLongRunningTask() {
+        timestamps.push(clock.now);
+
+        currentConcurrency += 1;
+        maxConcurrencyObserved = Math.max(maxConcurrencyObserved, currentConcurrency);
+
+        // Simulate task processing time (2000ms) so tasks overlap.
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        currentConcurrency -= 1;
+      }
+
+      const numTasks = 100;
+      const tasks = Array.from({ length: numTasks }, (_, i) => ({ number: i }));
+
+      const options = {
+        maxConcurrent: 20,
+        limit: 50,
+        interval: 30000,
+      };
+
+      const processPromise = processQueue(tasks, simulateLongRunningTask, options);
+
+      // 600ms spacing between task starts, 100 tasks should span roughly 100 * 600 = 60000ms.
+      // Add a bit more to allow all tasks to have been started.
+      await clock.tickAsync(65000);
+      await processPromise;
+      clock.restore();
+
+      // calculate differences between start times.
+      const differences = [];
+      for (let i = 1; i < timestamps.length; i += 1) {
+        differences.push(timestamps[i] - timestamps[i - 1]);
+      }
+
+      // compute the average spacing, should be 600ms
+      let sum = 0;
+      for (const diff of differences) {
+        sum += diff;
+      }
+      const averageSpacing = sum / differences.length;
+
+      // average spacing should be 600ms
+      assert(averageSpacing === 600);
+
+      // Max concurrency should be greater than 1 (tasks overlapped)
+      // and does not exceed the specified maxConcurrent (20).
+      assert(maxConcurrencyObserved > 1);
+      assert(maxConcurrencyObserved <= 20);
+    });
+
+    it('check that token release partially refunds wait time in processQueue, reducing start delay for some tasks', async () => {
+      const clock = sinon.useFakeTimers();
+      const timestamps = [];
+
+      async function testTask(task, queue, results, token) {
+        timestamps.push(clock.now);
+        if (task.number % 5 === 4) {
+          token.release();
+        }
+      }
+
+      const numTasks = 20;
+      const tasks = Array.from({ length: numTasks }, (_, i) => ({ number: i }));
+
+      // Copy the tasks for reference since processQueue consumes the array.
+      const originalTasks = Array.from(tasks);
+
+      const options = {
+        maxConcurrent: 1,
+        limit: 50,
+        interval: 30000,
+      };
+
+      const processPromise = processQueue(tasks, testTask, options);
+
+      // Advance the fake clock by 15000ms to allow all 20 tasks to start.
+      await clock.tickAsync(15000);
+
+      await processPromise;
+      clock.restore();
+
+      // Compute the difference/gap between task start times.
+      const differences = [];
+      for (let i = 1; i < timestamps.length; i += 1) {
+        differences.push(timestamps[i] - timestamps[i - 1]);
+      }
+
+      differences.forEach((diff, i) => {
+        const precedingTask = originalTasks[i];
+        if (precedingTask.number % 5 === 4) {
+          // gap should be < 100ms
+          assert(
+            diff < 100,
+            `Expected gap after task ${precedingTask.number} (refunded token) to be < 100ms, but got ${differences[i]}ms`,
+          );
+        } else {
+          // gap should be around 600ms
+          assert(
+            Math.abs(diff - 600) < 100,
+            `Expected gap after task ${precedingTask.number} to be around 600ms, but got ${differences[i]}ms`,
+          );
+        }
+      });
+    });
+
+    it('check that released tokens do not count against the limit', async () => {
+      const clock = sinon.useFakeTimers();
+      const timestamps = [];
+
+      async function refundTask(task, queue, results, token) {
+        timestamps.push(clock.now);
+
+        // Refund the first 25 tasks.
+        if (task.number < 25) {
+          token.release();
+        }
+      }
+
+      const numTasks = 100;
+      const tasks = Array.from({ length: numTasks }, (_, i) => ({ number: i }));
+
+      const options = {
+        maxConcurrent: 1,
+        limit: 50,
+        interval: 30000,
+      };
+
+      const processPromise = processQueue(tasks, refundTask, options);
+
+      // Advance the fake clock by 30000ms (first window)
+      await clock.tickAsync(3000000);
+      await processPromise;
+      clock.restore();
+
+      // We released the first 25 tokens, so we expect 75 tasks in the first window
+      // 50 limit + the 25 released tokens.
+      const tasksInFirstWindow = timestamps.filter((t) => t <= 30000).length;
+      assert(tasksInFirstWindow === 75);
+    });
+
     it('processes queue while enforcing rate limits', async () => {
       // Use fake timers to simulate time passing
       const clock = sinon.useFakeTimers();

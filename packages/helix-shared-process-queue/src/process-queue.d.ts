@@ -30,6 +30,13 @@ export declare type QueueEntryType<TQueue extends Queue> = TQueue extends Array<
   ? T : never;
 
 /**
+ * A token object that can be released.
+ */
+export declare type Token = {
+  release(): void;
+};
+
+/**
  * A (asynchronous) handler function that is invoked for every queue entry.
  * Values added to the `results` array will be returned by `processQueue` function.
  * The handler can modify the `queue` if needed.
@@ -38,13 +45,14 @@ export declare type QueueEntryType<TQueue extends Queue> = TQueue extends Array<
  * @param entry The queue entry.
  * @param queue the queue.
  * @param results the process queue results
+ * @param token an object that can be used to release a token.
  * @return result or undefined.
  */
 export declare type ProcessQueueHandler<
   TQueue extends Queue,
   TEntry extends QueueEntry = QueueEntryType<TQueue>,
   TReturn = any
-> = (entry: TEntry, queue: TQueue, results: TReturn[]) => PromiseLike<TReturn>;
+> = (entry: TEntry, queue: TQueue, results: TReturn[], token: Token) => PromiseLike<TReturn>;
 
 /**
  * Processes the given queue concurrently. If the `queue` is an array it will remove the

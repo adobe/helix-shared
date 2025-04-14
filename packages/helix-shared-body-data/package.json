@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-body-data",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "Shared modules of the Helix Project - body-data",
   "main": "src/body-data-wrapper.js",
   "types": "src/body-data-wrapper.d.ts",
@@ -38,6 +38,6 @@
     "@adobe/helix-universal": "^5.0.0"
   },
   "devDependencies": {
-    "yaml": "2.7.0"
+    "yaml": "2.7.1"
   }
 }

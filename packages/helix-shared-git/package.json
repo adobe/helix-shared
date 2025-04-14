@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-git",
-  "version": "3.0.17",
+  "version": "3.0.18",
   "description": "Shared modules of the Helix Project - Git Utils",
   "main": "src/index.js",
   "type": "module",
@@ -31,6 +31,6 @@
   },
   "dependencies": {
     "@adobe/helix-shared-prune": "^1.0.5",
-    "yaml": "2.7.0"
+    "yaml": "2.7.1"
   }
 }
