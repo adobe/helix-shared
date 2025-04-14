@@ -616,6 +616,10 @@ export class HelixStorage {
         CLOUDFLARE_R2_ACCESS_KEY_ID: r2AccessKeyId,
         CLOUDFLARE_R2_SECRET_ACCESS_KEY: r2SecretAccessKey,
         HELIX_STORAGE_DISABLE_R2: disableR2,
+        CONTENT_BUS_BUCKET: contentBusBucket = 'helix-content-bus',
+        CODE_BUS_BUCKET: codeBusBucket = 'helix-code-bus',
+        MEDIA_BUS_BUCKET: mediaBusBucket = 'helix-media-bus',
+        CONFIG_BUS_BUCKET: configBusBucket = 'helix-config-bus',
       } = context.env;
 
       context.attributes.storage = new HelixStorage({
@@ -627,6 +631,10 @@ export class HelixStorage {
         disableR2: String(disableR2) === 'true',
         keepAlive: String(keepAlive) === 'true',
         log: context.log,
+        contentBusBucket,
+        codeBusBucket,
+        mediaBusBucket,
+        configBusBucket,
       });
     }
     return context.attributes.storage;
@@ -650,6 +658,10 @@ export class HelixStorage {
    * @param {strong} [opts.r2AccessKeyId]
    * @param {strong} [opts.r2SecretAccessKey]
    * @param {object} [opts.log] logger
+   * @param {string} [opts.contentBusBucket]
+   * @param {string} [opts.codeBusBucket]
+   * @param {string} [opts.mediaBusBucket]
+   * @param {string} [opts.configBusBucket]
    */
   constructor(opts = {}) {
     const {
@@ -658,7 +670,13 @@ export class HelixStorage {
       r2AccountId, r2AccessKeyId, r2SecretAccessKey, disableR2,
       log = console,
       keepAlive = true,
+      contentBusBucket, codeBusBucket, mediaBusBucket, configBusBucket,
     } = opts;
+
+    this._contentBusBucket = contentBusBucket;
+    this._codeBusBucket = codeBusBucket;
+    this._mediaBusBucket = mediaBusBucket;
+    this._configBusBucket = configBusBucket;
 
     if (region && accessKeyId && secretAccessKey) {
       log.debug('Creating S3Client with credentials');
@@ -757,14 +775,14 @@ export class HelixStorage {
    * @returns {Bucket}
    */
   mediaBus() {
-    return this.bucket('helix-media-bus');
+    return this.bucket(this._mediaBusBucket || 'helix-media-bus');
   }
 
   /**
    * @returns {Bucket}
    */
   configBus() {
-    return this.bucket('helix-config-bus');
+    return this.bucket(this._configBusBucket || 'helix-config-bus');
   }
 
   /**
