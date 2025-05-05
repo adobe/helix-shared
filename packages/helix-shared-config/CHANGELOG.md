@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.1.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.4...@adobe/helix-shared-config-v11.1.5) (2025-05-05)
+
+
+### Bug Fixes
+
+* guard against undefined m.url ([#1086](https://github.com/adobe/helix-shared/issues/1086)) ([22c7520](https://github.com/adobe/helix-shared/commit/22c7520a6cc312d5ee41b306da495d1f9e42449a))
+
 # [@adobe/helix-shared-config-v11.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.3...@adobe/helix-shared-config-v11.1.4) (2025-04-29)
 
 
