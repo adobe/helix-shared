@@ -44,7 +44,7 @@ function stripQuery(m, ...specialparams) {
 
 const onedriveDecorator = {
   test(m) {
-    return /^https:\/\/[a-z0-9-]+\.sharepoint\.com\//.test(m.url) || m.url.startsWith('https://1drv.ms/') || m.url.startsWith('onedrive:');
+    return /^https:\/\/[a-z0-9-]+\.sharepoint\.com\//.test(m.url) || m.url?.startsWith('https://1drv.ms/') || m.url?.startsWith('onedrive:');
   },
   decorate(m) {
     return {
@@ -56,7 +56,7 @@ const onedriveDecorator = {
 
 const googleDecorator = {
   test(m) {
-    return m.url.startsWith('https://drive.google.com/') || m.url.startsWith('gdrive:');
+    return m.url?.startsWith('https://drive.google.com/') || m.url?.startsWith('gdrive:');
   },
   decorate(m) {
     const url = new URL(m.url);
