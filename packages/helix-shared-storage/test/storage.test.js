@@ -139,6 +139,56 @@ describe('Storage test', () => {
     assert.strictEqual(storage.contentBus().bucket, 'helix-content-bus');
   });
 
+  it('Empty attributes override default buckets', () => {
+    process.env.CONTENT_BUS_BUCKET = 'content-test-bus';
+    process.env.CODE_BUS_BUCKET = 'code-test-bus';
+    process.env.MEDIA_BUS_BUCKET = 'media-test-bus';
+    process.env.CONFIG_BUS_BUCKET = 'config-test-bus';
+    delete process.env.AWS_REGION;
+
+    const ctx = {
+      env: {
+        AWS_ACCESS_KEY_ID: 'fake',
+        AWS_SECRET_ACCESS_KEY: 'fake',
+        CLOUDFLARE_ACCOUNT_ID: 'fake',
+        CLOUDFLARE_R2_ACCESS_KEY_ID: 'fake',
+        CLOUDFLARE_R2_SECRET_ACCESS_KEY: 'fake',
+      },
+      attributes: {},
+    };
+
+    const stor = HelixStorage.fromContext(ctx);
+    assert.strictEqual(stor.region, 'us-east-1');
+    assert.strictEqual(stor.contentBus().bucket, 'content-test-bus');
+    assert.strictEqual(stor.codeBus().bucket, 'code-test-bus');
+    assert.strictEqual(stor.mediaBus().bucket, 'media-test-bus');
+    assert.strictEqual(stor.configBus().bucket, 'config-test-bus');
+  });
+
+  it('No env variables populated bucket population', () => {
+    delete process.env.CONTENT_BUS_BUCKET;
+    delete process.env.CODE_BUS_BUCKET;
+    delete process.env.MEDIA_BUS_BUCKET;
+    delete process.env.CONFIG_BUS_BUCKET;
+
+    const ctx = {
+      env: {
+        AWS_ACCESS_KEY_ID: 'fake',
+        AWS_SECRET_ACCESS_KEY: 'fake',
+        CLOUDFLARE_ACCOUNT_ID: 'fake',
+        CLOUDFLARE_R2_ACCESS_KEY_ID: 'fake',
+        CLOUDFLARE_R2_SECRET_ACCESS_KEY: 'fake',
+      },
+      attributes: {},
+    };
+
+    const stor = HelixStorage.fromContext(ctx);
+    assert.strictEqual(stor.contentBus().bucket, 'helix-content-bus');
+    assert.strictEqual(stor.codeBus().bucket, 'helix-code-bus');
+    assert.strictEqual(stor.mediaBus().bucket, 'helix-media-bus');
+    assert.strictEqual(stor.configBus().bucket, 'helix-config-bus');
+  });
+
   it('can get the code-bus', () => {
     assert.strictEqual(storage.codeBus().bucket, 'helix-code-bus');
   });
