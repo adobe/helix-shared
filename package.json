@@ -39,7 +39,7 @@
     "eslint": "8.57.1",
     "husky": "9.1.7",
     "jsdoc-to-markdown": "9.1.1",
-    "lint-staged": "15.5.1",
+    "lint-staged": "15.5.2",
     "mocha": "11.2.2",
     "mocha-multi-reporters": "1.5.1",
     "mocha-suppress-logs": "0.5.1",
