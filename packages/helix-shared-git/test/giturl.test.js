@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-/* global describe, it */
-
 import assert from 'assert';
 import YAML from 'yaml';
 import { GitUrl } from '../src/index.js';
