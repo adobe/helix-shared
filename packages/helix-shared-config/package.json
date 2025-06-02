@@ -44,7 +44,7 @@
     "ajv-formats": "3.0.1",
     "cookie": "1.0.2",
     "fs-extra": "11.3.0",
-    "ignore": "7.0.4",
+    "ignore": "7.0.5",
     "lru-cache": "11.1.0",
     "yaml": "2.8.0"
   },
