@@ -140,6 +140,53 @@ describe('ModifiersConfig', () => {
     assert.deepEqual(actual, {});
   });
 
+  it('it merges metadata', async () => {
+    const data = [
+      {
+        URL: '/foo/',
+        title: '1. title',
+        desc: '1. desc',
+        template: 'a',
+      },
+      {
+        URL: '/foo/',
+        TitlE: '2. title',
+        more: 'more desc',
+      },
+      {
+        URL: '/foo/',
+        TitlE: '2. title',
+        more: 'more desc',
+      },
+      {
+        URL: '/foo/',
+        key: 'title',
+        value: '3. title',
+      },
+    ];
+    const actual = ModifiersConfig.parseModifierSheet(data);
+    assert.deepEqual(actual, {
+      '/foo/': [
+        {
+          key: 'desc',
+          value: '1. desc',
+        },
+        {
+          key: 'template',
+          value: 'a',
+        },
+        {
+          key: 'more',
+          value: 'more desc',
+        },
+        {
+          key: 'title',
+          value: '3. title',
+        },
+      ],
+    });
+  });
+
   it('it combines metadata', async () => {
     const { default: { data } } = await readTestJSON('metadata.json');
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/page-metadata-json.html');
