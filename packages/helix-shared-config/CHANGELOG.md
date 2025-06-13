@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.1.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.7...@adobe/helix-shared-config-v11.1.8) (2025-06-13)
+
+
+### Bug Fixes
+
+* collapse modifiers ([#1102](https://github.com/adobe/helix-shared/issues/1102)) ([90947fd](https://github.com/adobe/helix-shared/commit/90947fd5acb43dd685c644dd703f89f14ac8710f))
+
 # [@adobe/helix-shared-config-v11.1.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.6...@adobe/helix-shared-config-v11.1.7) (2025-06-02)
 
 
