@@ -160,13 +160,17 @@ describe('ModifiersConfig', () => {
       },
       {
         URL: '/foo/',
-        key: 'title',
+        key: 'titlE',
         value: '3. title',
       },
     ];
     const actual = ModifiersConfig.parseModifierSheet(data);
     assert.deepEqual(actual, {
       '/foo/': [
+        {
+          key: 'title',
+          value: '3. title',
+        },
         {
           key: 'desc',
           value: '1. desc',
@@ -178,10 +182,6 @@ describe('ModifiersConfig', () => {
         {
           key: 'more',
           value: 'more desc',
-        },
-        {
-          key: 'title',
-          value: '3. title',
         },
       ],
     });
