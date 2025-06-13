@@ -99,16 +99,16 @@ export class ModifiersConfig {
           if (keyFilter(k)) {
             let entry = res[url];
             if (!entry) {
-              entry = [];
+              entry = Object.create(null);
               res[url] = entry;
             }
-            entry.push({ key: k, value: v });
+            entry[k] = v;
           }
         };
 
         // note that all values are strings, i.e. never another falsy value
         if ('key' in row && 'value' in row && key && value) {
-          put(key, value);
+          put(key.toLowerCase(), value);
         } else {
           Object.entries(rest).forEach(([k, v]) => {
             if (k && v) {
@@ -117,6 +117,10 @@ export class ModifiersConfig {
           });
         }
       }
+    }
+    // convert res back to key/value pairs
+    for (const [url, mods] of Object.entries(res)) {
+      res[url] = Object.entries(mods).map(([key, value]) => ({ key, value }));
     }
     return res;
   }
