@@ -87,4 +87,27 @@ describe('IgnoreConfig', () => {
       'public/icons/foo.svg',
     ]);
   });
+
+  it('well-known directory exception', async () => {
+    const source = await fs.readFile(path.resolve(SPEC_ROOT, 'well-known'), 'utf-8');
+    const cfg = await new IgnoreConfig()
+      .withSource(source)
+      .init();
+
+    assert.ok(cfg);
+
+    shouldIgnore(cfg, [
+      '.git',
+      '.env',
+      '.config',
+      'src/.env',
+      'any/.hidden/file',
+    ]);
+
+    shouldNotIgnore(cfg, [
+      '.well-known/security.txt',
+      '.well-known/robots.txt',
+      '.well-known/com.apple.remotemanagement',
+    ]);
+  });
 });
