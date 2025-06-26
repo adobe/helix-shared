@@ -616,6 +616,11 @@ export class HelixStorage {
         CLOUDFLARE_R2_ACCESS_KEY_ID: r2AccessKeyId,
         CLOUDFLARE_R2_SECRET_ACCESS_KEY: r2SecretAccessKey,
         HELIX_STORAGE_DISABLE_R2: disableR2,
+        AWS_REGION: region = process.env.AWS_REGION || 'us-east-1',
+        CONTENT_BUS_BUCKET: contentBusBucket = process.env.CONTENT_BUS_BUCKET || 'helix-content-bus',
+        CODE_BUS_BUCKET: codeBusBucket = process.env.CODE_BUS_BUCKET || 'helix-code-bus',
+        MEDIA_BUS_BUCKET: mediaBusBucket = process.env.MEDIA_BUS_BUCKET || 'helix-media-bus',
+        CONFIG_BUS_BUCKET: configBusBucket = process.env.CONFIG_BUS_BUCKET || 'helix-config-bus',
       } = context.env;
 
       context.attributes.storage = new HelixStorage({
@@ -627,6 +632,11 @@ export class HelixStorage {
         disableR2: String(disableR2) === 'true',
         keepAlive: String(keepAlive) === 'true',
         log: context.log,
+        region,
+        contentBusBucket,
+        codeBusBucket,
+        mediaBusBucket,
+        configBusBucket,
       });
     }
     return context.attributes.storage;
@@ -650,15 +660,26 @@ export class HelixStorage {
    * @param {strong} [opts.r2AccessKeyId]
    * @param {strong} [opts.r2SecretAccessKey]
    * @param {object} [opts.log] logger
+   * @param {string} [opts.contentBusBucket]
+   * @param {string} [opts.codeBusBucket]
+   * @param {string} [opts.mediaBusBucket]
+   * @param {string} [opts.configBusBucket]
    */
   constructor(opts = {}) {
     const {
-      region = 'us-east-1', accessKeyId, secretAccessKey,
+      region, accessKeyId, secretAccessKey,
       connectionTimeout, socketTimeout,
       r2AccountId, r2AccessKeyId, r2SecretAccessKey, disableR2,
       log = console,
       keepAlive = true,
+      contentBusBucket, codeBusBucket, mediaBusBucket, configBusBucket,
     } = opts;
+
+    this.region = region;
+    this._contentBusBucket = contentBusBucket;
+    this._codeBusBucket = codeBusBucket;
+    this._mediaBusBucket = mediaBusBucket;
+    this._configBusBucket = configBusBucket;
 
     if (region && accessKeyId && secretAccessKey) {
       log.debug('Creating S3Client with credentials');
@@ -743,28 +764,28 @@ export class HelixStorage {
    * @returns {Bucket}
    */
   contentBus(disableR2 = false) {
-    return this.bucket('helix-content-bus', disableR2);
+    return this.bucket(this._contentBusBucket || 'helix-content-bus', disableR2);
   }
 
   /**
    * @returns {Bucket}
    */
   codeBus(disableR2 = false) {
-    return this.bucket('helix-code-bus', disableR2);
+    return this.bucket(this._codeBusBucket || 'helix-code-bus', disableR2);
   }
 
   /**
    * @returns {Bucket}
    */
   mediaBus() {
-    return this.bucket('helix-media-bus');
+    return this.bucket(this._mediaBusBucket || 'helix-media-bus');
   }
 
   /**
    * @returns {Bucket}
    */
   configBus() {
-    return this.bucket('helix-config-bus');
+    return this.bucket(this._configBusBucket || 'helix-config-bus');
   }
 
   /**
