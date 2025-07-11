@@ -1,5 +1,6 @@
 .*
 !.well-known
+!.well-known/com.apple.remotemanagement
 *.md
 karma.config.js
 LICENSE

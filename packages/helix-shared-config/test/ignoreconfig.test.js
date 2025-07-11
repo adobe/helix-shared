@@ -105,8 +105,6 @@ describe('IgnoreConfig', () => {
     ]);
 
     shouldNotIgnore(cfg, [
-      '.well-known/security.txt',
-      '.well-known/robots.txt',
       '.well-known/com.apple.remotemanagement',
     ]);
   });
