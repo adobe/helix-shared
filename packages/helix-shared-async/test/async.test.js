@@ -13,7 +13,6 @@
 /* eslint-env mocha */
 
 import assert from 'assert';
-import { exec } from 'ferrum';
 
 import { nextTick, sleep } from '../src/async.js';
 
@@ -27,10 +26,10 @@ describe('Async Tests', () => {
 
   it('nextTick', async () => {
     let x = 42;
-    const p = exec(async () => {
+    const p = (async () => {
       await nextTick();
       assert.strictEqual(x, 23);
-    });
+    })();
     x = 23;
     await p;
   });
