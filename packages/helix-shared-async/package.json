@@ -28,8 +28,5 @@
   "homepage": "https://github.com/adobe/helix-shared#readme",
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "ferrum": "1.9.4"
   }
 }
