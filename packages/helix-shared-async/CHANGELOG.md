@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-async-v2.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-async-v2.0.2...@adobe/helix-shared-async-v2.0.3) (2025-07-14)
+
+
+### Bug Fixes
+
+* remove helix-shared-dom ([#1116](https://github.com/adobe/helix-shared/issues/1116)) ([429c311](https://github.com/adobe/helix-shared/commit/429c3110537222181204f374f668401761f3ab86))
+
 # [@adobe/helix-shared-async-v2.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-async-v2.0.1...@adobe/helix-shared-async-v2.0.2) (2024-04-17)
 
 
