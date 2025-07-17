@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-server-timing",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "description": "Shared modules of the Helix Project - Server Timing",
   "main": "src/timing-wrapper.js",
   "types": "src/timing-wrapper.d.ts",
