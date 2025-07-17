@@ -1,0 +1,33 @@
+{
+  "name": "@adobe/helix-shared-server-timing",
+  "version": "0.0.9",
+  "description": "Shared modules of the Helix Project - Server Timing",
+  "main": "src/timing-wrapper.js",
+  "types": "src/timing-wrapper.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "mocha-suppress-logs"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}
