@@ -354,6 +354,56 @@ describe('Storage test', () => {
     assert.deepEqual(reqs.r2, req);
   });
 
+  it('can store gzipped object', async () => {
+    const reqs = { s3: {}, r2: {} };
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(function cb(uri) {
+        reqs.s3[uri] = {
+          body: Buffer.concat(this.req.requestBodyBuffers),
+          headers: Object.fromEntries(Object.entries(this.req.headers)
+            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
+        };
+        return [201];
+      });
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .put('/foo?x-id=PutObject')
+      .reply(function cb(uri) {
+        reqs.r2[uri] = {
+          body: Buffer.concat(this.req.requestBodyBuffers),
+          headers: Object.fromEntries(Object.entries(this.req.headers)
+            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
+        };
+        return [201];
+      });
+
+    const bus = storage.codeBus();
+
+    const zipped = await gzip('hello, world.');
+    const base64 = zipped.toString('base64');
+    const data = new Response(base64, {
+      headers: {
+        'content-type': 'text/plain',
+        'content-encoding': 'gzip',
+        myid: '1234',
+      },
+    });
+    await bus.store('/foo', data);
+
+    const req = {
+      '/foo?x-id=PutObject': {
+        body: await gzip(Buffer.from('hello, world.', 'utf-8')),
+        headers: {
+          'content-encoding': 'gzip',
+          'content-type': 'text/plain',
+          'x-amz-meta-myid': '1234',
+        },
+      },
+    };
+    assert.deepEqual(reqs.s3, req);
+    assert.deepEqual(reqs.r2, req);
+  });
+
   it('can remove object', async () => {
     const reqs = { s3: {}, r2: {} };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
