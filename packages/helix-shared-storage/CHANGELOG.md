@@ -1,3 +1,12 @@
+# [@adobe/helix-shared-storage-v1.3.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.3.0...@adobe/helix-shared-storage-v1.3.1) (2025-07-23)
+
+
+### Bug Fixes
+
+* remove base64 decoding, just handled gzipped ([d211fa6](https://github.com/adobe/helix-shared/commit/d211fa6a7b0ec27c5bd103706a0329b249342aeb))
+* spacing ([9160673](https://github.com/adobe/helix-shared/commit/91606732d6a7b1758fea95d8d1e238d5ba45fc0c))
+* support gzipped responses in store ([f900cc3](https://github.com/adobe/helix-shared/commit/f900cc3bab2d63adf4a486ad5f87b4c108d59b23))
+
 # [@adobe/helix-shared-storage-v1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.2.0...@adobe/helix-shared-storage-v1.3.0) (2025-03-31)
 
 
