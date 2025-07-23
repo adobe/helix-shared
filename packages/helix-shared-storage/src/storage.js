@@ -265,7 +265,6 @@ class Bucket {
    */
   async store(key, res) {
     const { log } = this;
-
     const buffer = await res.buffer();
     const contentEncoding = res.headers.get('content-encoding');
     const zipped = contentEncoding === 'gzip' ? buffer : await gzip(buffer);
