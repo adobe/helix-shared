@@ -380,8 +380,7 @@ describe('Storage test', () => {
     const bus = storage.codeBus();
 
     const zipped = await gzip('hello, world.');
-    const base64 = zipped.toString('base64');
-    const data = new Response(base64, {
+    const data = new Response(zipped, {
       headers: {
         'content-type': 'text/plain',
         'content-encoding': 'gzip',

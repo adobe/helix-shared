@@ -265,17 +265,10 @@ class Bucket {
    */
   async store(key, res) {
     const { log } = this;
-    let zipped;
 
+    const buffer = await res.buffer();
     const contentEncoding = res.headers.get('content-encoding');
-    if (contentEncoding === 'gzip') {
-      // assume the body is base64 encoded if content-encoding is gzip
-      const base64String = await res.text();
-      zipped = Buffer.from(base64String, 'base64');
-    } else {
-      const buffer = await res.buffer();
-      zipped = await gzip(buffer);
-    }
+    const zipped = contentEncoding === 'gzip' ? buffer : await gzip(buffer);
 
     const input = {
       Body: zipped,
