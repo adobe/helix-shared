@@ -29,8 +29,8 @@
     "./packages/*"
   ],
   "devDependencies": {
-    "@adobe/eslint-config-helix": "3.0.8",
-    "@adobe/jsonschema2md": "8.0.4",
+    "@adobe/eslint-config-helix": "3.0.9",
+    "@adobe/jsonschema2md": "8.0.5",
     "@eslint/config-helpers": "0.3.1",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
