@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-git",
-  "version": "3.0.19",
+  "version": "3.0.20",
   "description": "Shared modules of the Helix Project - Git Utils",
   "main": "src/index.js",
   "type": "module",
