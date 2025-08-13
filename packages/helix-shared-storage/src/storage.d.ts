@@ -112,9 +112,10 @@ export declare interface Bucket {
   /**
    * Returns a list of object below the given prefix
    * @param {string} prefix
+   * @param {boolean} [shallow=false]
    * @returns {Promise<ObjectInfo[]>}
    */
-  list(prefix: string): Promise<ObjectInfo[]>;
+  list(prefix: string, shallow: boolean): Promise<ObjectInfo[]>;
 
   listFolders(prefix: string): Promise<string[]>;
 
