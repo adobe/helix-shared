@@ -1058,6 +1058,40 @@ describe('Storage test', () => {
     ]);
   });
 
+  it('can list deep', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-deep-reply.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2F')
+      .reply(200, new xml2js.Builder().buildObject(listReply));
+
+    const bus = storage.codeBus();
+    const folders = await bus.list('/owner/repo/ref/');
+
+    assert.deepStrictEqual(folders, [
+      {
+        contentLength: 11,
+        contentType: null,
+        key: '/owner/repo/ref/.gitignore',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        path: '.gitignore',
+      },
+      {
+        contentLength: 1234,
+        contentType: 'text/markdown',
+        key: '/owner/repo/ref/README.md',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        path: 'README.md',
+      },
+      {
+        contentLength: 1234,
+        contentType: 'text/javascript',
+        key: '/owner/repo/ref/src/scripts.js',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        path: 'src/scripts.js',
+      },
+    ]);
+  });
+
   it('can return an empty list of folders', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/?delimiter=%2F&list-type=2&prefix=foo%2f')
