@@ -478,9 +478,10 @@ class Bucket {
   /**
    * Returns a list of object below the given prefix
    * @param {string} prefix
+   * @param {boolean} [shallow=false]
    * @returns {Promise<ObjectInfo[]>}
    */
-  async list(prefix) {
+  async list(prefix, shallow = false) {
     let ContinuationToken;
     const objects = [];
     do {
@@ -489,6 +490,7 @@ class Bucket {
         Bucket: this.bucket,
         ContinuationToken,
         Prefix: prefix,
+        Delimiter: shallow ? '/' : undefined,
       }));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
       (result.Contents || []).forEach((content) => {
