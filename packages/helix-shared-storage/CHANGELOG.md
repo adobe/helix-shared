@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.4.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.0...@adobe/helix-shared-storage-v1.4.1) (2025-08-13)
+
+
+### Bug Fixes
+
+* add shallow flag to types ([#1129](https://github.com/adobe/helix-shared/issues/1129)) ([69ad1a2](https://github.com/adobe/helix-shared/commit/69ad1a27e0a4e0ac394339563f7d20a75a370607))
+
 # [@adobe/helix-shared-storage-v1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.3.1...@adobe/helix-shared-storage-v1.4.0) (2025-08-13)
 
 
