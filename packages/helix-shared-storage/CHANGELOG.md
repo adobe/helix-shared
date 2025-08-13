@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.3.1...@adobe/helix-shared-storage-v1.4.0) (2025-08-13)
+
+
+### Features
+
+* add shallow flag to storage.list ([#1128](https://github.com/adobe/helix-shared/issues/1128)) ([07edb86](https://github.com/adobe/helix-shared/commit/07edb8656117f64225be42a6cf69c97c251c58c1))
+
 # [@adobe/helix-shared-storage-v1.3.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.3.0...@adobe/helix-shared-storage-v1.3.1) (2025-07-23)
 
 
