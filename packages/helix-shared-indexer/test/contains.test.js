@@ -111,7 +111,7 @@ describe('Exclude tests', () => {
     };
     assert.equal(contains(cfg, '/ms/Document.docx'), false);
   });
-  it('exclude dot files', () => {
+  it('exclude dot files when **.json is excluded', () => {
     const cfg = {
       exclude: [
         '**.json',
