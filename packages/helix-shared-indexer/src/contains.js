@@ -43,7 +43,7 @@ function match(globs, path, defaultValue) {
     .reduce((a, i) => {
       a.push(...i);
       return a;
-    }, []));
+    }, []), { dot: true });
 }
 
 /**
