@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.2.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.2.3...@adobe/helix-shared-indexer-v2.2.4) (2025-08-18)
+
+
+### Bug Fixes
+
+* dot files shouldn't be excluded from listing ([#1130](https://github.com/adobe/helix-shared/issues/1130)) ([4fbed25](https://github.com/adobe/helix-shared/commit/4fbed2545b0eded2810a0976ffe528fd30ec3b13))
+
 # [@adobe/helix-shared-indexer-v2.2.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.2.2...@adobe/helix-shared-indexer-v2.2.3) (2025-02-24)
 
 
