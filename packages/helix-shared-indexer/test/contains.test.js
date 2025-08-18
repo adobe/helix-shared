@@ -111,4 +111,12 @@ describe('Exclude tests', () => {
     };
     assert.equal(contains(cfg, '/ms/Document.docx'), false);
   });
+  it('exclude dot files', () => {
+    const cfg = {
+      exclude: [
+        '**.json',
+      ],
+    };
+    assert.equal(contains(cfg, '/.da/config.json'), false);
+  });
 });
