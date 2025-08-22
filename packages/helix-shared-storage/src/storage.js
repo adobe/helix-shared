@@ -245,7 +245,7 @@ class Bucket {
       const ret = await c.send(new CommandConstructor(input));
       const t1 = Date.now();
       if (measures) {
-        measures[index] = t1 - t0;
+        measures[index] = `${(t1 - t0) / 1000}s`;
       }
       return ret;
     });
