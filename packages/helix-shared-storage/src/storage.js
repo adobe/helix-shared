@@ -238,9 +238,17 @@ class Bucket {
    * @param {CommandInput} input command input
    * @returns {Promise<*>} the command result
    */
-  async sendToS3andR2(CommandConstructor, input) {
+  async sendToS3andR2(CommandConstructor, input, measures) {
     // send cmd to s3 and r2 (mirror) in parallel
-    const tasks = this._clients.map((c) => c.send(new CommandConstructor(input)));
+    const tasks = this._clients.map(async (c, index) => {
+      const t0 = Date.now();
+      const ret = await c.send(new CommandConstructor(input));
+      const t1 = Date.now();
+      if (measures) {
+        measures[index] = t1 - t0;
+      }
+      return ret;
+    });
     const result = await Promise.allSettled(tasks);
 
     const rejected = result.filter(({ status }) => status === 'rejected');
@@ -290,8 +298,9 @@ class Bucket {
     });
 
     // write to s3 and r2 (mirror) in parallel
-    await this.sendToS3andR2(PutObjectCommand, input);
-    log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
+    const measures = Array.from({ length: this._clients.length });
+    await this.sendToS3andR2(PutObjectCommand, input, measures);
+    log.info(`object uploaded to: ${input.Bucket}/${input.Key} (${measures.join('/')})`);
   }
 
   /**
@@ -317,8 +326,9 @@ class Bucket {
       input.Body = await gzip(body);
     }
     // write to s3 and r2 (mirror) in parallel
-    const res = await this.sendToS3andR2(PutObjectCommand, input);
-    this.log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
+    const measures = Array.from({ length: this._clients.length });
+    const res = await this.sendToS3andR2(PutObjectCommand, input, measures);
+    this.log.info(`object uploaded to: ${input.Bucket}/${input.Key} (${measures.join('/')})`);
     return res;
   }
 
@@ -384,8 +394,9 @@ class Bucket {
         input.MetadataDirective = 'REPLACE';
       }
       // write to s3 and r2 (mirror) in parallel
-      await this.sendToS3andR2(CopyObjectCommand, input);
-      this.log.info(`object copied from ${input.CopySource} to: ${input.Bucket}/${input.Key}`);
+      const measures = Array.from({ length: this._clients.length });
+      await this.sendToS3andR2(CopyObjectCommand, input, measures);
+      this.log.info(`object copied from ${input.CopySource} to: ${input.Bucket}/${input.Key} (${measures.join('/')})`);
     } catch (e) {
       /* c8 ignore next 3 */
       if (e.Code !== 'NoSuchKey') {
