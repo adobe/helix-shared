@@ -351,8 +351,9 @@ class Bucket {
     };
 
     // write to s3 and r2 (mirror) in parallel
-    const result = await this.sendToS3andR2(CopyObjectCommand, input);
-    this.log.info(`Metadata updated for: ${input.CopySource}`);
+    const measures = Array.from({ length: this._clients.length });
+    const result = await this.sendToS3andR2(CopyObjectCommand, input, measures);
+    this.log.info(`Metadata updated for: ${input.CopySource} (${measures.join('/')})`);
     return result;
   }
 
