@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.4.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.1...@adobe/helix-shared-storage-v1.4.2) (2025-08-22)
+
+
+### Bug Fixes
+
+* measure time for put and copy ([#1131](https://github.com/adobe/helix-shared/issues/1131)) ([85d33e7](https://github.com/adobe/helix-shared/commit/85d33e745623e39cd2f631542be811cc7daf2c7d))
+
 # [@adobe/helix-shared-storage-v1.4.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.0...@adobe/helix-shared-storage-v1.4.1) (2025-08-13)
 
 
