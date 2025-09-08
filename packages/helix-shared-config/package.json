@@ -45,7 +45,7 @@
     "cookie": "1.0.2",
     "fs-extra": "11.3.1",
     "ignore": "7.0.5",
-    "lru-cache": "11.1.0",
+    "lru-cache": "11.2.1",
     "yaml": "2.8.1"
   },
   "devDependencies": {
