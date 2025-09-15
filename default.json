@@ -79,7 +79,8 @@
         "after 2pm on Monday"
       ],
       "matchPackagePatterns": ["^.+"],
-      "excludePackagePatterns": ["^@adobe/"]
+      "excludePackagePatterns": ["^@adobe/"],
+      "minimumReleaseAge": "14 days"
     },
     {
       "groupName": "external major",
@@ -87,7 +88,8 @@
       "automerge": false,
       "matchPackagePatterns": ["^.+"],
       "excludePackagePatterns": ["^@adobe/"],
-      "schedule": ["after 2pm on Monday"]
+      "schedule": ["after 2pm on Monday"],
+      "minimumReleaseAge": "14 days"
     },
     {
       "matchDatasources": ["orb"],
