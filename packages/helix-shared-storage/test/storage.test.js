@@ -19,7 +19,7 @@ import { promisify } from 'util';
 import xml2js from 'xml2js';
 import zlib from 'zlib';
 import { Nock } from './utils.js';
-import { HelixStorage, resolveMetadataForCopy } from '../src/storage.js';
+import { HelixStorage, parseBucketNames, resolveMetadataForCopy } from '../src/storage.js';
 
 const gzip = promisify(zlib.gzip);
 
@@ -40,6 +40,7 @@ const TEST_HEADERS = [
 describe('Storage test', () => {
   let nock;
   let storage;
+
   beforeEach(() => {
     nock = new Nock().env();
     storage = new HelixStorage({
@@ -49,6 +50,7 @@ describe('Storage test', () => {
       r2AccountId: CLOUDFLARE_ACCOUNT_ID,
       r2AccessKeyId: CLOUDFLARE_R2_ACCESS_KEY_ID,
       r2SecretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+      bucketMap: parseBucketNames(),
     });
   });
 
@@ -104,6 +106,26 @@ describe('Storage test', () => {
   it('resolveMetadataForCopy() rename allows cycles', () => {
     const meta = resolveMetadataForCopy({ Metadata: { foo: '1', bar: '2' } }, { foo: 'bar', bar: 'foo' });
     assert.deepStrictEqual(meta, { bar: '1', foo: '2' });
+  });
+
+  it('parseBucketNames() returns default mapping', () => {
+    const map = parseBucketNames(null);
+    assert.deepStrictEqual(map, {
+      code: 'helix-code-bus',
+      config: 'helix-config-bus',
+      content: 'helix-content-bus',
+      media: 'helix-media-bus',
+    });
+  });
+
+  it('parseBucketNames() returns specified mapping', () => {
+    const map = {
+      code: 'bucket-01',
+      config: 'bucket-02',
+      content: 'bucket-03',
+      media: 'bucket-04',
+    };
+    assert.deepStrictEqual(parseBucketNames(JSON.stringify(map)), map);
   });
 
   it('bucket() needs bucket', () => {

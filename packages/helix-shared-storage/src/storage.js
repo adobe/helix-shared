@@ -85,6 +85,15 @@ function sanitizeKey(keyOrPath) {
   return keyOrPath;
 }
 
+const BUCKET_KEYS = ['config', 'code', 'content', 'media'];
+
+export function parseBucketNames(bucketNames) {
+  if (!bucketNames) {
+    return Object.fromEntries(BUCKET_KEYS.map((key) => [key, `helix-${key}-bus`]));
+  }
+  return JSON.parse(bucketNames);
+}
+
 /**
  * Resolve metadata object for copy operations.
  *
@@ -631,6 +640,7 @@ export class HelixStorage {
         CLOUDFLARE_R2_ACCESS_KEY_ID: r2AccessKeyId,
         CLOUDFLARE_R2_SECRET_ACCESS_KEY: r2SecretAccessKey,
         HELIX_STORAGE_DISABLE_R2: disableR2,
+        HELIX_BUCKET_NAMES: bucketNames,
       } = context.env;
 
       context.attributes.storage = new HelixStorage({
@@ -641,6 +651,7 @@ export class HelixStorage {
         r2SecretAccessKey,
         disableR2: String(disableR2) === 'true',
         keepAlive: String(keepAlive) === 'true',
+        bucketNames,
         log: context.log,
       });
     }
@@ -671,8 +682,9 @@ export class HelixStorage {
       region = 'us-east-1', accessKeyId, secretAccessKey,
       connectionTimeout, socketTimeout,
       r2AccountId, r2AccessKeyId, r2SecretAccessKey, disableR2,
-      log = console,
+      bucketNames,
       keepAlive = true,
+      log = console,
     } = opts;
 
     if (region && accessKeyId && secretAccessKey) {
@@ -726,6 +738,7 @@ export class HelixStorage {
         }),
       });
     }
+    this._bucketMap = parseBucketNames(bucketNames);
     this._log = log;
   }
 
@@ -758,28 +771,28 @@ export class HelixStorage {
    * @returns {Bucket}
    */
   contentBus(disableR2 = false) {
-    return this.bucket('helix-content-bus', disableR2);
+    return this.bucket(this._bucketMap.content, disableR2);
   }
 
   /**
    * @returns {Bucket}
    */
   codeBus(disableR2 = false) {
-    return this.bucket('helix-code-bus', disableR2);
+    return this.bucket(this._bucketMap.code, disableR2);
   }
 
   /**
    * @returns {Bucket}
    */
   mediaBus() {
-    return this.bucket('helix-media-bus');
+    return this.bucket(this._bucketMap.media);
   }
 
   /**
    * @returns {Bucket}
    */
   configBus() {
-    return this.bucket('helix-config-bus');
+    return this.bucket(this._bucketMap.config);
   }
 
   /**
