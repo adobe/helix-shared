@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.5.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.2...@adobe/helix-shared-storage-v1.5.0) (2025-10-13)
+
+
+### Features
+
+* **storage:** support mapping for bucket names ([#1141](https://github.com/adobe/helix-shared/issues/1141)) ([e9e3ef9](https://github.com/adobe/helix-shared/commit/e9e3ef937401e00a0125a126a4c4da298ff3917e))
+
 # [@adobe/helix-shared-storage-v1.4.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.1...@adobe/helix-shared-storage-v1.4.2) (2025-08-22)
 
 
