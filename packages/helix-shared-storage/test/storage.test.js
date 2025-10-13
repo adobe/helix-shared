@@ -128,6 +128,31 @@ describe('Storage test', () => {
     assert.deepStrictEqual(parseBucketNames(JSON.stringify(map)), map);
   });
 
+  it('can get an object with a different bucket name', async () => {
+    const map = {
+      code: 'bucket-01',
+      config: 'bucket-02',
+      content: 'bucket-03',
+      media: 'bucket-04',
+    };
+    storage = new HelixStorage({
+      region: AWS_REGION,
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      r2AccountId: CLOUDFLARE_ACCOUNT_ID,
+      r2AccessKeyId: CLOUDFLARE_R2_ACCESS_KEY_ID,
+      r2SecretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+      bucketNames: JSON.stringify(map),
+    });
+
+    nock('https://bucket-01.s3.fake.amazonaws.com')
+      .get('/foo?x-id=GetObject')
+      .reply(200, 'hello, world.');
+    const bus = storage.codeBus();
+    const ret = await bus.get('/foo');
+    assert.strictEqual(ret.toString(), 'hello, world.');
+  });
+
   it('bucket() needs bucket', () => {
     assert.throws(() => storage.bucket(), Error('bucketId is required.'));
   });
