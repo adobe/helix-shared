@@ -1,1 +1,1 @@
-# Helix Shared - string
+# Helix Shared - prune
