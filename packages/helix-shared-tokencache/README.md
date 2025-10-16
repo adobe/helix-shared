@@ -2,9 +2,15 @@
 
 The tokencache package provides cache plugins for storing and retrieving OAuth tokens used by MSAL (Microsoft Authentication Library). It supports multiple storage backends including in-memory caching, filesystem storage, and S3-based persistence with optional encryption.
 
-Token caches can be layered, with a fast in-memory cache backed by a persistent storage layer. This enables efficient token retrieval while maintaining durability across application restarts.
+## Installation
+
+```bash
+npm install @adobe/helix-shared-tokencache
+```
 
 ## Usage
+
+Token caches can be layered, with a fast in-memory cache backed by a persistent storage layer. This enables efficient token retrieval while maintaining durability across application restarts.
 
 ### Basic Usage with getCachePlugin
 

@@ -1,18 +1,6 @@
 # Helix Shared - config
 
-The config package provides a set of configuration classes for managing various Helix project configurations. These classes handle loading, validating, and managing YAML-based configuration files from local directories or remote GitHub repositories, with built-in caching and schema validation.
-
-## Features
-
-- Load configuration from local files or GitHub repositories
-- Automatic schema validation with JSON Schema
-- Built-in caching for remote configurations
-- Support for multiple configuration types:
-  - **IndexConfig** - Search index configurations (`helix-query.yaml`)
-  - **MountConfig** - Mount point configurations (`fstab.yaml`)
-  - **SitemapConfig** - Sitemap configurations (`helix-sitemap.yaml`)
-  - **IgnoreConfig** - Ignore patterns (`.hlxignore`)
-  - **ModifiersConfig** - Metadata and header modifiers
+The config package provides a set of configuration classes for managing various Helix project configurations. These classes handle loading, validating, and managing YAML-based configuration files from local directories or remote GitHub repositories.
 
 ## Installation
 

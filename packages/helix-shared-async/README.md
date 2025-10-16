@@ -2,6 +2,12 @@
 
 Utility functions for working with asynchronous operations in JavaScript. This package provides commonly needed async primitives like sleep timers and event loop management.
 
+## Installation
+
+```bash
+npm install @adobe/helix-shared-async
+```
+
 ## Usage
 
 ```js

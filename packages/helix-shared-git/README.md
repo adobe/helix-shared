@@ -1,6 +1,6 @@
 # Helix Shared - Git
 
-The `GitUrl` class provides utilities for parsing, manipulating, and working with Git repository URLs. It supports various Git URL formats including standard HTTP/HTTPS URLs, SSH URLs, and SCP-style Git URLs, making it easy to extract repository information and construct API or raw content URLs.
+The `GitUrl` class provides utilities for parsing, manipulating, and working with Git repository URLs across various formats including HTTP/HTTPS, SSH, and SCP-style URLs.
 
 ## Installation
 

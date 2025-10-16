@@ -2,6 +2,12 @@
 
 The storage module provides a unified interface for managing objects in AWS S3 and Cloudflare R2 storage. It offers simplified bucket operations with automatic mirroring to R2, compression support, and comprehensive file management capabilities.
 
+## Installation
+
+```bash
+npm install @adobe/helix-shared-storage
+```
+
 ## Basic Usage
 
 ```js

@@ -2,6 +2,14 @@
 
 The `pruneEmptyValues` function is a utility for cleaning up objects by removing properties with empty values. This is particularly useful when preparing data for serialization, API responses, or when you need to ensure that only meaningful data is present in an object.
 
+## Installation
+
+```bash
+npm install @adobe/helix-shared-prune
+```
+
+## Usage
+
 A value is considered empty if it's not truthy (falsy values like `''`, `undefined`, `null`, `0`, `false`) or if it's an empty array (`[]`).
 
 ```js

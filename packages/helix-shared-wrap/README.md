@@ -2,6 +2,12 @@
 
 The wrap utility provides a clean and elegant way to compose middleware functions around your main handler function. It enables you to chain multiple wrappers together in a readable and maintainable way, allowing you to add cross-cutting concerns like logging, monitoring, authentication, and error handling without cluttering your core business logic.
 
+## Installation
+
+```bash
+npm install @adobe/helix-shared-wrap
+```
+
 ## Basic Usage
 
 ```js

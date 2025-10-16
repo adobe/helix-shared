@@ -2,6 +2,12 @@
 
 The IMS middleware provides Adobe Identity Management System (IMS) authentication for Helix Universal functions. It handles the complete OAuth2 authentication flow, including login redirects, token management, and profile retrieval, allowing you to easily protect your functions with Adobe authentication.
 
+## Installation
+
+```bash
+npm install @adobe/helix-shared-ims
+```
+
 ## Usage
 
 Wrap your function with the IMS middleware to add authentication support:

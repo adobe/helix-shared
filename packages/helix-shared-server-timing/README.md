@@ -2,10 +2,18 @@
 
 The Server Timing middleware provides automatic performance monitoring and profiling for your serverless functions by tracking execution time and adding standardized `Server-Timing` HTTP headers to responses. This enables performance analysis using browser DevTools or other monitoring tools that support the [Server Timing API](https://www.w3.org/TR/server-timing/).
 
+## Installation
+
+```bash
+npm install @adobe/helix-shared-server-timing
+```
+
+## Usage
+
 When wrapped around a function, the middleware creates a timer object on the context that you can use to record timestamps at important execution milestones. Upon completion, it automatically generates a `Server-Timing` header with all recorded metrics.
 
 ```js
-import { wrap } from '@adobe/helix-universal';
+import { wrap } from '@adobe/helix-shared-wrap';
 import serverTiming from '@adobe/helix-shared-server-timing';
 
 async function main(req, context) {

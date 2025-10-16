@@ -2,6 +2,12 @@
 
 A collection of utility functions for Helix Project applications, providing common functionality for HTTP status code handling, header sanitization, and cryptographic operations.
 
+## Installation
+
+```bash
+npm install @adobe/helix-shared-utils
+```
+
 ## Features
 
 ### Backend Response Mapping
@@ -109,12 +115,6 @@ This is handled transparently through package.json imports mapping:
     "worker": "./src/crypto.worker.js"
   }
 }
-```
-
-## Installation
-
-```bash
-npm install @adobe/helix-shared-utils
 ```
 
 ## Requirements
