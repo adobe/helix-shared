@@ -41,6 +41,17 @@ export interface CopyOptions {
   addMetadata?: Record<string, unknown>;
 }
 
+export interface ListOptions {
+  /**
+   * whether to list shallow i.e. not recursive
+   */
+  shallow: boolean;
+  /**
+   * max number of items to return
+   */
+  maxItems: number;
+}
+
 export declare interface Bucket {
   get client(): S3Client;
 
@@ -112,10 +123,10 @@ export declare interface Bucket {
   /**
    * Returns a list of object below the given prefix
    * @param {string} prefix
-   * @param {boolean} [shallow=false]
+   * @param {boolean|ListOptions} [opts]
    * @returns {Promise<ObjectInfo[]>}
    */
-  list(prefix: string, shallow: boolean): Promise<ObjectInfo[]>;
+  list(prefix: string, opts: boolean|ListOptions): Promise<ObjectInfo[]>;
 
   listFolders(prefix: string): Promise<string[]>;
 

@@ -497,22 +497,32 @@ class Bucket {
   }
 
   /**
-   * Returns a list of object below the given prefix
+   * Returns a list of object below the given prefix.
+   *
    * @param {string} prefix
-   * @param {boolean} [shallow=false]
+   * @param {boolean|import('./storage.d').ListOptions} [opts]
+   *  options or boolean for backward compatibility
    * @returns {Promise<ObjectInfo[]>}
    */
-  async list(prefix, shallow = false) {
+  async list(prefix, opts = false) {
+    const {
+      shallow = false, maxItems = Number.POSITIVE_INFINITY,
+    } = typeof opts === 'boolean' ? { shallow: opts } : opts;
+
     let ContinuationToken;
     const objects = [];
     do {
-      // eslint-disable-next-line no-await-in-loop
-      const result = await this.client.send(new ListObjectsV2Command({
+      const input = {
         Bucket: this.bucket,
         ContinuationToken,
         Prefix: prefix,
         Delimiter: shallow ? '/' : undefined,
-      }));
+      };
+      if (maxItems - objects.length < 1000) {
+        input.MaxKeys = maxItems - objects.length;
+      }
+      // eslint-disable-next-line no-await-in-loop
+      const result = await this.client.send(new ListObjectsV2Command(input));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
       (result.Contents || []).forEach((content) => {
         const key = content.Key;
@@ -524,7 +534,7 @@ class Bucket {
           path: `${key.substring(prefix.length)}`,
         });
       });
-    } while (ContinuationToken);
+    } while (ContinuationToken && objects.length < maxItems);
     return objects;
   }
 
