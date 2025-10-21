@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.6.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.5.0...@adobe/helix-shared-storage-v1.6.0) (2025-10-21)
+
+
+### Features
+
+* **storage:** add `maxItems` option to `list()` ([#1149](https://github.com/adobe/helix-shared/issues/1149)) ([b2f017e](https://github.com/adobe/helix-shared/commit/b2f017e77efc4ed4f91f2532d82a165959e1c21d))
+
 # [@adobe/helix-shared-storage-v1.5.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.2...@adobe/helix-shared-storage-v1.5.0) (2025-10-13)
 
 
