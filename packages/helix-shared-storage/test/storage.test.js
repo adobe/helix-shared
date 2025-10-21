@@ -1139,6 +1139,37 @@ describe('Storage test', () => {
     ]);
   });
 
+  it('can list fewer items than are available', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-truncated-reply.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({ 'list-type': 2, 'max-keys': 2, prefix: '/owner/repo/ref/' })
+      .reply(200, new xml2js.Builder().buildObject(listReply));
+
+    const bus = storage.codeBus();
+    const items = await bus.list('/owner/repo/ref/', {
+      shallow: false,
+      maxItems: 2,
+    });
+
+    assert.deepStrictEqual(items, [
+      {
+        contentLength: 11,
+        contentType: null,
+        key: '/owner/repo/ref/.gitignore',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        path: '.gitignore',
+      },
+      {
+        contentLength: 1234,
+        contentType: 'text/markdown',
+        key: '/owner/repo/ref/README.md',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        path: 'README.md',
+      },
+    ]);
+  });
+
   it('can return an empty list of folders', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/?delimiter=%2F&list-type=2&prefix=foo%2f')
