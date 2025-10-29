@@ -31,6 +31,7 @@ export default class SecretsManager {
       AWS_ACCESS_KEY_ID: accessKeyId,
       AWS_SECRET_ACCESS_KEY: secretAccessKey,
       AWS_SESSION_TOKEN: sessionToken,
+      AWS_ENDPOINT_URL: endpointUrl,
     } = opts;
 
     if (!accessKeyId || !secretAccessKey) {
@@ -42,6 +43,7 @@ export default class SecretsManager {
       accessKeyId,
       secretAccessKey,
       sessionToken,
+      endpointUrl,
     };
   }
 
@@ -54,11 +56,20 @@ export default class SecretsManager {
   async _request(target, input) {
     try {
       const { awsConfig } = this;
-      const { region } = awsConfig;
+      const { region, endpointUrl } = awsConfig;
 
       const { fetch } = fetchContext;
+
+      let host;
+      if (endpointUrl) {
+        const endpointParsed = new URL(endpointUrl);
+        host = endpointParsed.host;
+      } else {
+        host = `secretsmanager.${region}.amazonaws.com`;
+      }
+
       const opts = {
-        host: `secretsmanager.${region}.amazonaws.com`,
+        host,
         service: 'secretsmanager',
         region,
         method: 'POST',
@@ -74,7 +85,15 @@ export default class SecretsManager {
         secretAccessKey: awsConfig.secretAccessKey,
         sessionToken: awsConfig.sessionToken,
       });
-      const resp = await fetch(`https://${req.host}${req.path}`, {
+
+      let url;
+      if (endpointUrl) {
+        url = `${endpointUrl}${req.path}`;
+      } else {
+        url = `https://${req.host}${req.path}`;
+      }
+
+      const resp = await fetch(url, {
         method: req.method,
         headers: req.headers,
         body: req.body,
