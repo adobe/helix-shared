@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.7.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.6.0...@adobe/helix-shared-storage-v1.7.0) (2025-10-30)
+
+
+### Features
+
+* **storage:** add `HELIX_STORAGE_MAX_ATTEMPTS` ([#1152](https://github.com/adobe/helix-shared/issues/1152)) ([39fb6fe](https://github.com/adobe/helix-shared/commit/39fb6fec47909786c8ce3a0574a7fa9f35559b58))
+
 # [@adobe/helix-shared-storage-v1.6.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.5.0...@adobe/helix-shared-storage-v1.6.0) (2025-10-21)
 
 
