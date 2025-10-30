@@ -651,6 +651,7 @@ export class HelixStorage {
         CLOUDFLARE_R2_SECRET_ACCESS_KEY: r2SecretAccessKey,
         HELIX_STORAGE_DISABLE_R2: disableR2,
         HELIX_BUCKET_NAMES: bucketNames,
+        HELIX_STORAGE_MAX_ATTEMPTS: maxAttempts,
       } = context.env;
 
       context.attributes.storage = new HelixStorage({
@@ -663,6 +664,7 @@ export class HelixStorage {
         keepAlive: String(keepAlive) === 'true',
         bucketNames,
         log: context.log,
+        maxAttempts: Number.parseInt(maxAttempts, 10),
       });
     }
     return context.attributes.storage;
@@ -682,10 +684,11 @@ export class HelixStorage {
    * @param {string} [opts.region] AWS region
    * @param {string} [opts.accessKeyId] AWS access key
    * @param {string} [opts.secretAccessKey] AWS secret access key
-   * @param {strong} [opts.r2AccountId]
-   * @param {strong} [opts.r2AccessKeyId]
-   * @param {strong} [opts.r2SecretAccessKey]
+   * @param {string} [opts.r2AccountId]
+   * @param {string} [opts.r2AccessKeyId]
+   * @param {string} [opts.r2SecretAccessKey]
    * @param {object} [opts.log] logger
+   * @param {string} [opts.maxAttempts] max attempts or Number.NaN
    */
   constructor(opts = {}) {
     const {
@@ -695,36 +698,35 @@ export class HelixStorage {
       bucketNames,
       keepAlive = true,
       log = console,
+      maxAttempts = Number.NaN,
     } = opts;
+
+    const baseOpts = {
+      region,
+      requestHandler: new NodeHttpHandler({
+        httpsAgent: new Agent({
+          keepAlive,
+        }),
+        connectionTimeout,
+        socketTimeout,
+      }),
+    };
+    if (!Number.isNaN(maxAttempts)) {
+      baseOpts.maxAttempts = maxAttempts;
+    }
 
     if (region && accessKeyId && secretAccessKey) {
       log.debug('Creating S3Client with credentials');
       this._s3 = new S3Client({
-        region,
         credentials: {
           accessKeyId,
           secretAccessKey,
         },
-        requestHandler: new NodeHttpHandler({
-          httpsAgent: new Agent({
-            keepAlive,
-          }),
-          connectionTimeout,
-          socketTimeout,
-        }),
+        ...baseOpts,
       });
     } else {
       log.debug('Creating S3Client without credentials');
-      this._s3 = new S3Client({
-        region,
-        requestHandler: new NodeHttpHandler({
-          httpsAgent: new Agent({
-            keepAlive,
-          }),
-          connectionTimeout,
-          socketTimeout,
-        }),
-      });
+      this._s3 = new S3Client(baseOpts);
     }
 
     // initializing the R2 client which is used for mirroring all S3 writes to R2

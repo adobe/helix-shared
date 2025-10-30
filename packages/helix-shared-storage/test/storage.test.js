@@ -1200,6 +1200,7 @@ describe('Disabled R2 Storage test', () => {
         CLOUDFLARE_R2_ACCESS_KEY_ID,
         CLOUDFLARE_R2_SECRET_ACCESS_KEY,
         HELIX_STORAGE_DISABLE_R2: 'true',
+        HELIX_STORAGE_MAX_ATTEMPTS: '1',
       },
     };
     storage = HelixStorage.fromContext(context);
