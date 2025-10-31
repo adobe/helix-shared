@@ -56,17 +56,12 @@ export default class SecretsManager {
   async _request(target, input) {
     try {
       const { awsConfig } = this;
-      const { region, endpointUrl } = awsConfig;
+      const { region } = awsConfig;
+      const { endpointUrl = `https://secretsmanager.${region}.amazonaws.com` } = awsConfig;
 
       const { fetch } = fetchContext;
 
-      let host;
-      if (endpointUrl) {
-        const endpointParsed = new URL(endpointUrl);
-        host = endpointParsed.host;
-      } else {
-        host = `secretsmanager.${region}.amazonaws.com`;
-      }
+      const { host, protocol } = new URL(endpointUrl);
 
       const opts = {
         host,
@@ -86,14 +81,7 @@ export default class SecretsManager {
         sessionToken: awsConfig.sessionToken,
       });
 
-      let url;
-      if (endpointUrl) {
-        url = `${endpointUrl}${req.path}`;
-      } else {
-        url = `https://${req.host}${req.path}`;
-      }
-
-      const resp = await fetch(url, {
+      const resp = await fetch(`${protocol}//${req.host}${req.path}`, {
         method: req.method,
         headers: req.headers,
         body: req.body,
