@@ -85,7 +85,7 @@ function sanitizeKey(keyOrPath) {
   return keyOrPath;
 }
 
-const BUCKET_KEYS = ['config', 'code', 'content', 'media'];
+const BUCKET_KEYS = ['config', 'code', 'content', 'media', 'source'];
 
 export function parseBucketNames(bucketNames) {
   if (!bucketNames) {
@@ -798,6 +798,13 @@ export class HelixStorage {
    */
   mediaBus() {
     return this.bucket(this._bucketMap.media);
+  }
+
+  /**
+   * @returns {Bucket}
+   */
+  sourceBus(disableR2 = false) {
+    return this.bucket(this._bucketMap.source, disableR2);
   }
 
   /**

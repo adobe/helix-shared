@@ -115,6 +115,7 @@ describe('Storage test', () => {
       config: 'helix-config-bus',
       content: 'helix-content-bus',
       media: 'helix-media-bus',
+      source: 'helix-source-bus',
     });
   });
 
@@ -124,6 +125,7 @@ describe('Storage test', () => {
       config: 'bucket-02',
       content: 'bucket-03',
       media: 'bucket-04',
+      source: 'bucket-05',
     };
     assert.deepStrictEqual(parseBucketNames(JSON.stringify(map)), map);
   });
@@ -134,6 +136,7 @@ describe('Storage test', () => {
       config: 'bucket-02',
       content: 'bucket-03',
       media: 'bucket-04',
+      source: 'bucket-05',
     };
     storage = new HelixStorage({
       region: AWS_REGION,
@@ -196,6 +199,10 @@ describe('Storage test', () => {
 
   it('can get the config-bus', () => {
     assert.strictEqual(storage.configBus().bucket, 'helix-config-bus');
+  });
+
+  it('can get the source-bus', () => {
+    assert.strictEqual(storage.sourceBus().bucket, 'helix-source-bus');
   });
 
   it('can get an object', async () => {
