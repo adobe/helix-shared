@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.8.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.7.1...@adobe/helix-shared-storage-v1.8.0) (2025-11-03)
+
+
+### Features
+
+* add sourceBus() ([186bc43](https://github.com/adobe/helix-shared/commit/186bc4336d42a3113e8ad2d712fb024571892537))
+
 # [@adobe/helix-shared-storage-v1.7.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.7.0...@adobe/helix-shared-storage-v1.7.1) (2025-11-03)
 
 
