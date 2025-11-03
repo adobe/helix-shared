@@ -63,7 +63,9 @@ const AWS_META_HEADERS = [
   'CacheControl',
   'ContentType',
   'ContentEncoding',
+  'ETag',
   'Expires',
+  'LastModified',
 ];
 
 /**

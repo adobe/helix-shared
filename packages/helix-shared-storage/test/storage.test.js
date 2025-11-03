@@ -214,7 +214,9 @@ describe('Storage test', () => {
         'content-type': 'text/plain',
         'content-encoding': 'gzip',
         'cache-control': 'no-store',
+        etag: '"499455814df5a2001612b12b575bfaaa"',
         expires: 'Thu, 23 Nov 2023 10:35:10 GMT',
+        'last-modified': 'Mon, 03 Nov 2025 07:08:10 GMT',
         'x-amz-meta-x-source-location': 'github',
       });
     const bus = storage.codeBus();
@@ -226,7 +228,9 @@ describe('Storage test', () => {
       CacheControl: 'no-store',
       ContentEncoding: 'gzip',
       ContentType: 'text/plain',
+      ETag: '"499455814df5a2001612b12b575bfaaa"',
       Expires: new Date('Thu, 23 Nov 2023 10:35:10 GMT'),
+      LastModified: new Date('Mon, 03 Nov 2025 07:08:10 GMT'),
     });
   });
 
