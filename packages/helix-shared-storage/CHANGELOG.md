@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.7.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.7.0...@adobe/helix-shared-storage-v1.7.1) (2025-11-03)
+
+
+### Bug Fixes
+
+* add ETag and LastModified to `meta` in `storage.get` ([#1154](https://github.com/adobe/helix-shared/issues/1154)) ([a2da95f](https://github.com/adobe/helix-shared/commit/a2da95f5972cbc1aaa61783d1a062fabfc057e3d))
+
 # [@adobe/helix-shared-storage-v1.7.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.6.0...@adobe/helix-shared-storage-v1.7.0) (2025-10-30)
 
 
