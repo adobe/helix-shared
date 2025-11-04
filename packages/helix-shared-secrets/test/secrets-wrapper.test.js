@@ -428,4 +428,31 @@ describe('Secrets Wrapper Unit Tests', () => {
     assert.strictEqual(resp.status, 502);
     assert.strictEqual(resp.headers.get('x-error'), 'error fetching secrets.');
   });
+
+  it('fetches secrets from custom endpoint', async () => {
+    process.env.AWS_ENDPOINT_URL = 'http://localhost:4566';
+    nock('http://localhost:4566/')
+      .post('/')
+      .reply((uri, body) => {
+        assert.strictEqual(body, '{"SecretId":"/helix-deploy/helix3/helix-admin"}');
+        return [200, {
+          SecretString: JSON.stringify({
+            OVERRIDE: '42',
+            SOME_SECRET: 'pssst',
+          }),
+        }, {
+          'content-type': 'application/json',
+        }];
+      });
+
+    const main = wrap((req, ctx) => {
+      assert.deepStrictEqual(ctx.env, {
+        OVERRIDE: '42',
+        SOME_SECRET: 'pssst',
+      });
+      return new Response(200);
+    }).with(secrets);
+    const resp = await main(new Request('http://localhost'), DEFAULT_CONTEXT({ OVERRIDE: '0' }));
+    assert.strictEqual(resp.status, 200);
+  });
 });
