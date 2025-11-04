@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.2.10...@adobe/helix-shared-secrets-v2.3.0) (2025-11-04)
+
+
+### Features
+
+* **secrets:** Support custom AWS endpoint ([#1151](https://github.com/adobe/helix-shared/issues/1151)) ([6908f69](https://github.com/adobe/helix-shared/commit/6908f694bd9d2233589126a6d8b92ad985e5d58c))
+
 # [@adobe/helix-shared-secrets-v2.2.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.2.9...@adobe/helix-shared-secrets-v2.2.10) (2024-11-09)
 
 
