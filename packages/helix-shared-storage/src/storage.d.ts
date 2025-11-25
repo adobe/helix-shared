@@ -49,7 +49,7 @@ export interface ListOptions {
   /**
    * whether to include prefixes (for subfolders)
    */
-  prefixes: boolean;
+  includePrefixes: boolean;
   /**
    * max number of items to return
    */
