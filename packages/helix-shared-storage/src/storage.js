@@ -508,7 +508,7 @@ class Bucket {
    */
   async list(prefix, opts = false) {
     const {
-      shallow = false, maxItems = Number.POSITIVE_INFINITY,
+      shallow = false, maxItems = Number.POSITIVE_INFINITY, subPrefixes = false,
     } = typeof opts === 'boolean' ? { shallow: opts } : opts;
 
     let ContinuationToken;
@@ -526,6 +526,16 @@ class Bucket {
       // eslint-disable-next-line no-await-in-loop
       const result = await this.client.send(new ListObjectsV2Command(input));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
+
+      if (subPrefixes) {
+        (result.CommonPrefixes || []).forEach(({ Prefix }) => {
+          objects.push({
+            key: Prefix,
+            path: `${Prefix.substring(prefix.length)}`,
+          });
+        });
+      }
+
       (result.Contents || []).forEach((content) => {
         const key = content.Key;
         objects.push({

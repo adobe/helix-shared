@@ -1,0 +1,21 @@
+{
+  "ListBucketResult": {
+    "Name": "helix-code-bus",
+    "Prefix": "",
+    "NextContinuationToken": "next",
+    "KeyCount": 1,
+    "MaxKeys": 1,
+    "Delimiter": "/",
+    "IsTruncated": false,
+    "Contents": [{
+      "Key": "/owner/repo/ref/myfolder/somefile.html",
+      "LastModified": "2021-06-06T04:05:06.000Z",
+      "Size": "999999"
+    }],
+    "CommonPrefixes": [{
+      "Prefix": "/owner/repo/ref/myfolder/sub1/"
+    }, {
+      "Prefix": "/owner/repo/ref/myfolder/sub2/"
+    }]
+  }
+}
