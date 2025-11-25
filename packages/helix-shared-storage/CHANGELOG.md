@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.9.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.9.0...@adobe/helix-shared-storage-v1.9.1) (2025-11-25)
+
+
+### Bug Fixes
+
+* change bucket.list() prefixes option to be includePrefixes ([#1169](https://github.com/adobe/helix-shared/issues/1169)) ([d27f5bf](https://github.com/adobe/helix-shared/commit/d27f5bf536e6d765a02c092b6f04541692579d9e))
+
 # [@adobe/helix-shared-storage-v1.9.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.8.0...@adobe/helix-shared-storage-v1.9.0) (2025-11-25)
 
 
