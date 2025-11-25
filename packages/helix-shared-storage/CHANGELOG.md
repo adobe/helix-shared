@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.9.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.8.0...@adobe/helix-shared-storage-v1.9.0) (2025-11-25)
+
+
+### Features
+
+* option to include subfolder prefixes in bucket.list() ([#1168](https://github.com/adobe/helix-shared/issues/1168)) ([fa6758f](https://github.com/adobe/helix-shared/commit/fa6758fb2cee9a11e366c645e3c25463239e3c15))
+
 # [@adobe/helix-shared-storage-v1.8.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.7.1...@adobe/helix-shared-storage-v1.8.0) (2025-11-03)
 
 
