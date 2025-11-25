@@ -1123,7 +1123,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/');
+    const folders = await bus.list('/owner/repo/ref/', { prefixes: true });
 
     assert.deepStrictEqual(folders, [
       {
@@ -1146,6 +1146,54 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/src/scripts.js',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: 'src/scripts.js',
+      },
+    ]);
+  });
+
+  it('can list to include subfolder prefixes', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
+      .reply(200, new xml2js.Builder().buildObject(listReply));
+
+    const bus = storage.codeBus();
+    const folders = await bus.list('/owner/repo/ref/myfolder/', { prefixes: true });
+
+    assert.deepStrictEqual(folders, [
+      {
+        key: '/owner/repo/ref/myfolder/sub1/',
+        path: 'sub1/',
+      },
+      {
+        key: '/owner/repo/ref/myfolder/sub2/',
+        path: 'sub2/',
+      },
+      {
+        contentLength: 999999,
+        contentType: 'text/html',
+        key: '/owner/repo/ref/myfolder/somefile.html',
+        lastModified: new Date('2021-06-06T04:05:06.000Z'),
+        path: 'somefile.html',
+      },
+    ]);
+  });
+
+  it('can list to not include subfolder prefixes', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
+      .reply(200, new xml2js.Builder().buildObject(listReply));
+
+    const bus = storage.codeBus();
+    const folders = await bus.list('/owner/repo/ref/myfolder/');
+
+    assert.deepStrictEqual(folders, [
+      {
+        contentLength: 999999,
+        contentType: 'text/html',
+        key: '/owner/repo/ref/myfolder/somefile.html',
+        lastModified: new Date('2021-06-06T04:05:06.000Z'),
+        path: 'somefile.html',
       },
     ]);
   });
