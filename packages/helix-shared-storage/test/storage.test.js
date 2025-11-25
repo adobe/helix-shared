@@ -1123,7 +1123,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/', { subPrefixes: true });
+    const folders = await bus.list('/owner/repo/ref/', { prefixes: true });
 
     assert.deepStrictEqual(folders, [
       {
@@ -1157,7 +1157,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/myfolder/', { subPrefixes: true });
+    const folders = await bus.list('/owner/repo/ref/myfolder/', { prefixes: true });
 
     assert.deepStrictEqual(folders, [
       {

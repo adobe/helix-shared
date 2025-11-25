@@ -508,7 +508,7 @@ class Bucket {
    */
   async list(prefix, opts = false) {
     const {
-      shallow = false, maxItems = Number.POSITIVE_INFINITY, subPrefixes = false,
+      shallow = false, maxItems = Number.POSITIVE_INFINITY, prefixes = false,
     } = typeof opts === 'boolean' ? { shallow: opts } : opts;
 
     let ContinuationToken;
@@ -527,7 +527,7 @@ class Bucket {
       const result = await this.client.send(new ListObjectsV2Command(input));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
 
-      if (subPrefixes) {
+      if (prefixes) {
         (result.CommonPrefixes || []).forEach(({ Prefix }) => {
           objects.push({
             key: Prefix,

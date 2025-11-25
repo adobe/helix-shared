@@ -47,9 +47,9 @@ export interface ListOptions {
    */
   shallow: boolean;
   /**
-   * whether to include subfolder prefixes
+   * whether to include prefixes (for subfolders)
    */
-  subPrefixes: boolean;
+  prefixes: boolean;
   /**
    * max number of items to return
    */
