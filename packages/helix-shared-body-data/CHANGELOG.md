@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-body-data-v2.2.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.2.1...@adobe/helix-shared-body-data-v2.2.2) (2025-11-27)
+
+
+### Bug Fixes
+
+* **body-data:** detect YAML with /x-yaml content type ([#1171](https://github.com/adobe/helix-shared/issues/1171)) ([4a47315](https://github.com/adobe/helix-shared/commit/4a473151068e356cd18145b6a3b17d7a9ce2a5bf)), closes [#1170](https://github.com/adobe/helix-shared/issues/1170)
+
 # [@adobe/helix-shared-body-data-v2.2.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.2.0...@adobe/helix-shared-body-data-v2.2.1) (2025-08-11)
 
 
