@@ -273,24 +273,26 @@ describe('Body Data Wrapper Unit Tests (YAML Body)', () => {
   const contents = { indices: [] };
 
   ['POST', 'post', 'PUT', 'PATCH'].forEach((method) => {
-    it(`Loads YAML (${method})`, async () => {
-      const universalfunct = async (request, context) => {
-        const yaml = YAML.parse(context.data);
-        assert.deepStrictEqual(yaml, contents);
-        return new Response('ok');
-      };
+    ['text/yaml', 'application/x-yaml'].forEach((yamlType) => {
+      it(`Loads YAML with type ${yamlType} (${method})`, async () => {
+        const universalfunct = async (request, context) => {
+          const yaml = YAML.parse(context.data);
+          assert.deepStrictEqual(yaml, contents);
+          return new Response('ok');
+        };
 
-      const actualfunct = wrap(universalfunct).with(bodyData, { supportYAML: true });
-      const response = await actualfunct(new Request('http://localhost', {
-        body: YAML.stringify(contents),
-        method,
-        headers: {
-          'content-type': 'text/yaml',
-        },
-      }), {
-        log,
+        const actualfunct = wrap(universalfunct).with(bodyData, { supportYAML: true });
+        const response = await actualfunct(new Request('http://localhost', {
+          body: YAML.stringify(contents),
+          method,
+          headers: {
+            'content-type': yamlType,
+          },
+        }), {
+          log,
+        });
+        assert.strictEqual(response.status, 200, 'universal function should be executed');
       });
-      assert.strictEqual(response.status, 200, 'universal function should be executed');
     });
   });
 

@@ -32,7 +32,7 @@ async function getData(request, opts) {
   }
 
   const { supportYAML } = opts;
-  if (supportYAML && /\/yaml/.test(contentType) && BODY_METHODS.includes(request.method)) {
+  if (supportYAML && /\/(x-)?yaml/.test(contentType) && BODY_METHODS.includes(request.method)) {
     return request.text();
   }
 
