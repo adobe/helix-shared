@@ -335,7 +335,7 @@ class Bucket {
     if (compress) {
       input.ContentEncoding = 'gzip';
       input.Body = await gzip(body);
-      input.Metadata['uncompressed-length'] = body.length.toString();
+      input.Metadata['uncompressed-length'] = String(body.length);
     }
     // write to s3 and r2 (mirror) in parallel
     const measures = Array.from({ length: this._clients.length });
