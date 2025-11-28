@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.10.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.9.1...@adobe/helix-shared-storage-v1.10.0) (2025-11-28)
+
+
+### Features
+
+* bucket.put() stores uncompressed length as metadata ([#1172](https://github.com/adobe/helix-shared/issues/1172)) ([f74105e](https://github.com/adobe/helix-shared/commit/f74105ec1f5f4ae02d61919483cee60b2b64cc10))
+
 # [@adobe/helix-shared-storage-v1.9.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.9.0...@adobe/helix-shared-storage-v1.9.1) (2025-11-25)
 
 
