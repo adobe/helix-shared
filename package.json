@@ -31,10 +31,10 @@
   "devDependencies": {
     "@adobe/eslint-config-helix": "3.0.14",
     "@adobe/jsonschema2md": "8.0.8",
-    "@eslint/config-helpers": "0.4.2",
+    "@eslint/config-helpers": "0.5.0",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
-    "@semantic-release/npm": "13.1.1",
+    "@semantic-release/npm": "13.1.2",
     "ajv": "8.17.1",
     "c8": "10.1.3",
     "eslint": "9.4.0",
