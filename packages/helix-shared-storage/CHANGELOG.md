@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.10.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.0...@adobe/helix-shared-storage-v1.10.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* disable R2 for source bus ([#1175](https://github.com/adobe/helix-shared/issues/1175)) ([d17b6dd](https://github.com/adobe/helix-shared/commit/d17b6dd8b62562b947bcf74fcdb7cf7f20b04752))
+
 # [@adobe/helix-shared-storage-v1.10.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.9.1...@adobe/helix-shared-storage-v1.10.0) (2025-11-28)
 
 
