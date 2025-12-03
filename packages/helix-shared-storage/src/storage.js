@@ -816,7 +816,7 @@ export class HelixStorage {
   /**
    * @returns {Bucket}
    */
-  sourceBus(disableR2 = false) {
+  sourceBus(disableR2 = true) {
     return this.bucket(this._bucketMap.source, disableR2);
   }
 

@@ -176,6 +176,12 @@ export declare class HelixStorage {
   codeBus(disableR2: boolean = false): Bucket;
 
   /**
+   * @param disableR2 whether to disable writing to R2
+   * @returns {Bucket}
+   */
+  sourceBus(disableR2: boolean = true): Bucket;
+
+  /**
    * @returns {Bucket}
    */
   mediaBus(): Bucket;
