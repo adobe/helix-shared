@@ -34,7 +34,6 @@ const CLOUDFLARE_R2_SECRET_ACCESS_KEY = 'fake';
 const TEST_HEADERS = [
   'content-type',
   'content-encoding',
-  'x-amz-meta-uncompressed-length',
   'x-amz-meta-myid',
 ];
 
@@ -318,7 +317,6 @@ describe('Storage test', () => {
         headers: {
           'content-encoding': 'gzip',
           'content-type': 'text/plain',
-          'x-amz-meta-uncompressed-length': '13',
           'x-amz-meta-myid': '1234',
         },
       },
@@ -1305,7 +1303,6 @@ describe('Disabled R2 Storage test', () => {
         headers: {
           'content-encoding': 'gzip',
           'content-type': 'text/plain',
-          'x-amz-meta-uncompressed-length': '13',
           'x-amz-meta-myid': '1234',
         },
       },
