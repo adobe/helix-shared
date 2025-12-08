@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.10.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.1...@adobe/helix-shared-storage-v1.10.2) (2025-12-08)
+
+
+### Reverts
+
+* Revert "feat: bucket.put() stores uncompressed length as metadata ([#1172](https://github.com/adobe/helix-shared/issues/1172))" ([#1176](https://github.com/adobe/helix-shared/issues/1176)) ([2aa7ee4](https://github.com/adobe/helix-shared/commit/2aa7ee41d68d7d2671ad5a2d973fb35eb2ba2a58))
+
 # [@adobe/helix-shared-storage-v1.10.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.0...@adobe/helix-shared-storage-v1.10.1) (2025-12-03)
 
 
