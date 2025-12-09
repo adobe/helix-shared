@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-string-v2.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string-v2.1.0...@adobe/helix-shared-string-v2.2.0) (2025-12-09)
+
+
+### Features
+
+* add toSISize function with comprehensive tests ([#1178](https://github.com/adobe/helix-shared/issues/1178)) ([6c1e65a](https://github.com/adobe/helix-shared/commit/6c1e65a8e821ba20052c8f229011086bd6dbc177))
+
 # [@adobe/helix-shared-string-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string-v2.0.2...@adobe/helix-shared-string-v2.1.0) (2024-12-07)
 
 
