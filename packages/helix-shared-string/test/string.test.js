@@ -14,7 +14,7 @@
 
 import assert from 'assert';
 import {
-  multiline, editDistance, sanitizeName, sanitizePath, splitByExtension,
+  multiline, editDistance, sanitizeName, sanitizePath, splitByExtension, toSISize,
 } from '../src/string.js';
 
 describe('String tests', () => {
@@ -175,5 +175,73 @@ describe('sanitizePath Tests', () => {
 
   it('sanitizePath normalizes unicode', () => {
     assert.strictEqual(sanitizePath('Föhren Smürd'), 'fohren-smurd');
+  });
+});
+
+describe('toSISize Tests', () => {
+  it('toSISize handles zero bytes', () => {
+    assert.strictEqual(toSISize(0), '0B');
+  });
+
+  it('toSISize handles bytes without decimals', () => {
+    assert.strictEqual(toSISize(1), '1B');
+    assert.strictEqual(toSISize(512), '512B');
+    assert.strictEqual(toSISize(1023), '1023B');
+  });
+
+  it('toSISize handles kilobytes with default precision', () => {
+    assert.strictEqual(toSISize(1024), '1.00KB');
+    assert.strictEqual(toSISize(1536), '1.50KB');
+    assert.strictEqual(toSISize(2048), '2.00KB');
+    assert.strictEqual(toSISize(10240), '10.00KB');
+  });
+
+  it('toSISize handles megabytes', () => {
+    assert.strictEqual(toSISize(1024 * 1024), '1.00MB');
+    assert.strictEqual(toSISize(1.5 * 1024 * 1024), '1.50MB');
+    assert.strictEqual(toSISize(100 * 1024 * 1024), '100.00MB');
+  });
+
+  it('toSISize handles gigabytes', () => {
+    assert.strictEqual(toSISize(1024 * 1024 * 1024), '1.00GB');
+    assert.strictEqual(toSISize(5.25 * 1024 * 1024 * 1024), '5.25GB');
+  });
+
+  it('toSISize handles terabytes', () => {
+    assert.strictEqual(toSISize(1024 * 1024 * 1024 * 1024), '1.00TB');
+    assert.strictEqual(toSISize(2.5 * 1024 * 1024 * 1024 * 1024), '2.50TB');
+  });
+
+  it('toSISize handles petabytes', () => {
+    assert.strictEqual(toSISize(1024 * 1024 * 1024 * 1024 * 1024), '1.00PB');
+  });
+
+  it('toSISize handles exabytes', () => {
+    assert.strictEqual(toSISize(1024 * 1024 * 1024 * 1024 * 1024 * 1024), '1.00EB');
+  });
+
+  it('toSISize handles custom precision', () => {
+    assert.strictEqual(toSISize(1536, 0), '2KB');
+    assert.strictEqual(toSISize(1536, 1), '1.5KB');
+    assert.strictEqual(toSISize(1536, 3), '1.500KB');
+    assert.strictEqual(toSISize(1.23456 * 1024 * 1024, 4), '1.2346MB');
+  });
+
+  it('toSISize handles negative numbers', () => {
+    assert.strictEqual(toSISize(-1024), '-1.00KB');
+    assert.strictEqual(toSISize(-1536), '-1.50KB');
+    assert.strictEqual(toSISize(-1024 * 1024), '-1.00MB');
+  });
+
+  it('toSISize handles fractional bytes', () => {
+    assert.strictEqual(toSISize(123.45), '123B');
+    assert.strictEqual(toSISize(999.99), '1000B');
+  });
+
+  it('toSISize handles edge cases near magnitude boundaries', () => {
+    assert.strictEqual(toSISize(1023.9), '1024B');
+    assert.strictEqual(toSISize(1024.1), '1.00KB');
+    assert.strictEqual(toSISize(1048575), '1024.00KB');
+    assert.strictEqual(toSISize(1048576), '1.00MB');
   });
 });
