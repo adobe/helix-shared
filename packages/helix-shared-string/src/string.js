@@ -157,3 +157,21 @@ export function editDistance(s0, s1) {
   }
   return resultMatrix[l0][l1];
 }
+
+/**
+ * Converts a number of bytes to a human-readable size string in SI units.
+ * @param {number} bytes The number of bytes to convert.
+ * @param {number} [precision=2] The number of decimal places to include in the result.
+ * @returns {string} A human-readable size string in SI units.
+ */
+export function toSISize(bytes, precision = 2) {
+  if (bytes === 0) {
+    return '0B';
+  }
+  const mags = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
+  const LOG_1024 = Math.log(1024);
+
+  const magnitude = Math.floor(Math.log(Math.abs(bytes)) / LOG_1024);
+  const result = bytes / (1024 ** magnitude);
+  return `${result.toFixed(magnitude === 0 ? 0 : precision)}${mags[magnitude]}`;
+}
