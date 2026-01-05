@@ -34,6 +34,6 @@
     "@adobe/helix-shared-async": "2.0.2"
   },
   "devDependencies": {
-    "sinon": "21.0.0"
+    "sinon": "21.0.1"
   }
 }
