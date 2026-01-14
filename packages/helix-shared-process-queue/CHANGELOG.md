@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-process-queue-v3.1.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.4...@adobe/helix-shared-process-queue-v3.1.5) (2026-01-14)
+
+
+### Bug Fixes
+
+* abort should wait until running tasks finished ([#1185](https://github.com/adobe/helix-shared/issues/1185)) ([6dfb329](https://github.com/adobe/helix-shared/commit/6dfb3292766395b37eaf6891db842af374bc13eb))
+
 # [@adobe/helix-shared-process-queue-v3.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.3...@adobe/helix-shared-process-queue-v3.1.4) (2026-01-05)
 
 
