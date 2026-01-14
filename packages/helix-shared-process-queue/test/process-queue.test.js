@@ -375,8 +375,6 @@ describe('Process Queue', () => {
 
     it('rate limited queue can be aborted', async () => {
       const abortController = new AbortController();
-      // Use fake timers to simulate time passing
-      // const clock = sinon.useFakeTimers();
       const timestamps = [];
 
       async function recordTestFunction(task) {
