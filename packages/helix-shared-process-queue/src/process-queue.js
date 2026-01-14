@@ -144,7 +144,7 @@ export default async function processQueue(
     const token = await waitForToken();
 
     if (abortController?.signal?.aborted) {
-      return results;
+      break;
     }
 
     while (running.length >= maxConcurrent) {
