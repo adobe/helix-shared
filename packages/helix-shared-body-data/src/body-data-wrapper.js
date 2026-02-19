@@ -12,7 +12,7 @@
 /* eslint-disable no-param-reassign */
 import { Request, Response } from '@adobe/fetch';
 
-const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
+const BODY_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
 /**
  * Extracts the _data_ from the given request. The data can be provided either as request

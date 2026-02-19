@@ -28,7 +28,7 @@ const log = {
 };
 
 describe('Body Data Wrapper Unit Tests (JSON Body)', () => {
-  ['POST', 'post', 'PUT', 'PATCH'].forEach((method) => {
+  ['POST', 'post', 'PUT', 'PATCH', 'DELETE'].forEach((method) => {
     it(`Loads JSON (${method})`, async () => {
       const universalfunct = async (request, context) => {
         assert.deepStrictEqual(context.data, { foo: 'bar' });
@@ -250,14 +250,15 @@ describe('Body Data Wrapper Unit Tests (Form Data)', () => {
     assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 
-  it('Ignores Form Data for non POST requests', async () => {
+  it('Loads Form Data for DELETE requests', async () => {
     const universalfunct = async (request, context) => {
-      assert.deepEqual(context.data, { foo: 'zoo' });
+      assert.deepEqual(context.data, { foo: 'bar' });
       return new Response('ok');
     };
 
     const actualfunct = wrap(universalfunct).with(bodyData);
-    const response = await actualfunct(new Request('http://localhost?foo=zoo', {
+    const response = await actualfunct(new Request('http://localhost', {
+      body: 'foo=bar',
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -272,7 +273,7 @@ describe('Body Data Wrapper Unit Tests (Form Data)', () => {
 describe('Body Data Wrapper Unit Tests (YAML Body)', () => {
   const contents = { indices: [] };
 
-  ['POST', 'post', 'PUT', 'PATCH'].forEach((method) => {
+  ['POST', 'post', 'PUT', 'PATCH', 'DELETE'].forEach((method) => {
     ['text/yaml', 'application/x-yaml'].forEach((yamlType) => {
       it(`Loads YAML with type ${yamlType} (${method})`, async () => {
         const universalfunct = async (request, context) => {
