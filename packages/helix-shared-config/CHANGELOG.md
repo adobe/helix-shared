@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.1.16](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.15...@adobe/helix-shared-config-v11.1.16) (2026-02-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ajv to v8.18.0 [security] ([#1195](https://github.com/adobe/helix-shared/issues/1195)) ([17685fb](https://github.com/adobe/helix-shared/commit/17685fbf307d8772aa5dc274d1d03efc869e0690))
+
 # [@adobe/helix-shared-config-v11.1.15](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.14...@adobe/helix-shared-config-v11.1.15) (2026-02-09)
 
 
