@@ -39,6 +39,10 @@ export interface CopyOptions {
    * Properties are applied after `renameMetadata`.
    */
   addMetadata?: Record<string, unknown>;
+  /**
+   * Options to pass to the CopyObjectCommand.
+   */
+  copyOpts?: Record<string, string>;
 }
 
 export interface ListOptions {

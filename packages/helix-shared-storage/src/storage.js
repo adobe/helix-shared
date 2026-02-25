@@ -382,6 +382,7 @@ class Bucket {
       Bucket: this.bucket,
       CopySource: `${this.bucket}/${key}`,
       Key: sanitizeKey(dst),
+      ...(opts.copyOpts || {}),
     };
 
     try {
@@ -606,6 +607,7 @@ class Bucket {
         Bucket: this.bucket,
         CopySource: `${this.bucket}/${task.src}`,
         Key: task.dst,
+        ...(opts.copyOpts || {}),
       };
       try {
         if (opts.addMetadata || opts.renameMetadata) {

@@ -1005,6 +1005,22 @@ describe('Storage test', () => {
     await assert.rejects(bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md'));
   });
 
+  it('can copy object with copy options (non deep)', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
+      .matchHeader('if-none-match', '*')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>');
+
+    const bus = storage.codeBus(true);
+    await bus.copy(
+      '/owner/repo/ref/foo.md',
+      '/owner/repo/ref/foo/bar.md',
+      {
+        copyOpts: { IfNoneMatch: '*' },
+      },
+    );
+  });
+
   it('can delete objects', async () => {
     const keys = Array.from({ length: 1500 }, (v, k) => `key_${k + 1}`).sort();
     const listReply = new xml2js.Builder().buildObject({
