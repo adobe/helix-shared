@@ -668,6 +668,46 @@ describe('Storage test', () => {
     assert.deepEqual(puts.r2, expectedPuts);
   });
 
+  it('can copy objects with copy options', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply-copy.json'), 'utf-8'));
+    const puts = { s3: [], r2: [] };
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?list-type=2&prefix=owner%2Frepo%2Fref%2F')
+      .reply(200, listReply[0])
+      .get('/?continuation-token=1%2Fs4dr7BSKNScrN4njX9%2BCpBNimYkuEzMWg3niTSAPMdculBmycyUPM6kv0xi46j4hdc1lFPkE%2FICI8TxG%2BVNV9Hh91Ou0hqeBYzqTRzSBSs%3D&list-type=2&prefix=owner%2Frepo%2Fref%2F')
+      .reply(200, listReply[1])
+      .put(/.*/)
+      .matchHeader('x-amz-copy-source-if-match', 'abc')
+      .times(10)
+      .reply((uri) => {
+        puts.s3.push(uri);
+        // reject first uri
+        if (puts.s3.length === 1) {
+          return [404];
+        }
+        return [200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>'];
+      });
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .put(/.*/)
+      .times(10)
+      .reply((uri) => {
+        puts.r2.push(uri);
+        // reject first uri
+        if (puts.s3.length === 1) {
+          return [404];
+        }
+        return [200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>'];
+      });
+
+    const bus = storage.codeBus();
+    await bus.copyDeep('/owner/repo/ref/', '/bar/', () => true, {
+      copyOpts: {
+        Bucket: 'ignore-me',
+        CopySourceIfMatch: 'abc',
+      },
+    });
+  });
+
   it('can copy objects and add/rename metadata', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply-copy.json'), 'utf-8'));
     const puts = { s3: [], r2: [] };
@@ -1016,7 +1056,10 @@ describe('Storage test', () => {
       '/owner/repo/ref/foo.md',
       '/owner/repo/ref/foo/bar.md',
       {
-        copyOpts: { CopySourceIfNoneMatch: '*' },
+        copyOpts: {
+          Key: 'should not use this one',
+          CopySourceIfNoneMatch: '*',
+        },
       },
     );
   });
