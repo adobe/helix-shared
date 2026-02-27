@@ -1008,7 +1008,7 @@ describe('Storage test', () => {
   it('can copy object with copy options (non deep)', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
-      .matchHeader('if-none-match', '*')
+      .matchHeader('x-amz-copy-source-if-none-match', '*')
       .reply(200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>');
 
     const bus = storage.codeBus(true);
@@ -1016,7 +1016,7 @@ describe('Storage test', () => {
       '/owner/repo/ref/foo.md',
       '/owner/repo/ref/foo/bar.md',
       {
-        copyOpts: { IfNoneMatch: '*' },
+        copyOpts: { CopySourceIfNoneMatch: '*' },
       },
     );
   });
