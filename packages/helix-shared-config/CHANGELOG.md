@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.1.17](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.16...@adobe/helix-shared-config-v11.1.17) (2026-03-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lru-cache to v11.2.6 ([#1200](https://github.com/adobe/helix-shared/issues/1200)) ([d24dfb3](https://github.com/adobe/helix-shared/commit/d24dfb36be229e0515399438431f37bb8c9597f8))
+
 # [@adobe/helix-shared-config-v11.1.16](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.15...@adobe/helix-shared-config-v11.1.16) (2026-02-24)
 
 
