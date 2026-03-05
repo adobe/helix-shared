@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.11.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.2...@adobe/helix-shared-storage-v1.11.0) (2026-03-05)
+
+
+### Features
+
+* **storage:** allow querying for CRC checksum ([#1201](https://github.com/adobe/helix-shared/issues/1201)) ([5cdcd88](https://github.com/adobe/helix-shared/commit/5cdcd8882e88757d6a2f010eee94da2301195453))
+
 # [@adobe/helix-shared-storage-v1.10.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.1...@adobe/helix-shared-storage-v1.10.2) (2025-12-08)
 
 
