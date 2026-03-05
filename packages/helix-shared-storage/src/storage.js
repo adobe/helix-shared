@@ -148,7 +148,7 @@ class Bucket {
   /** @type {S3Client} */
   _s3;
 
-  /** @type {R2Client} */
+  /** @type {S3Client} */
   _r2;
 
   /** @type {Console} */
