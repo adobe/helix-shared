@@ -395,6 +395,7 @@ class Bucket {
   async copy(src, dst, opts = {}) {
     const key = sanitizeKey(src);
     const input = {
+      ...opts.copyOpts,
       Bucket: this.bucket,
       CopySource: `${this.bucket}/${key}`,
       Key: sanitizeKey(dst),
@@ -620,6 +621,7 @@ class Bucket {
     await processQueue(tasks, async (task) => {
       log.info(`copy to ${task.dst}`);
       const input = {
+        ...opts.copyOpts,
         Bucket: this.bucket,
         CopySource: `${this.bucket}/${task.src}`,
         Key: task.dst,
