@@ -65,7 +65,7 @@ export declare interface Bucket {
 
   get(key: string, meta?: object): Promise<Buffer | null>;
 
-  head(path: string): Promise<object | null>;
+  head(path: string, headOpts?: object): Promise<object | null>;
 
   /**
    * Return an object's metadata.
@@ -112,9 +112,9 @@ export declare interface Bucket {
    * @param {string} src source key
    * @param {string} dst destination key
    * @param {CopyOptions} [opts]
-   * @returns result obtained from S3
+   * @returns {Promise<import('@aws-sdk/client-s3').CopyObjectResult>}
    */
-  copy(src: string, dst: string, opts?: CopyOptions): Promise<void>;
+  copy(src: string, dst: string, opts?: CopyOptions): Promise<object>;
 
   /**
    * Remove object(s)

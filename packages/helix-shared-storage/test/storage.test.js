@@ -274,6 +274,21 @@ describe('Storage test', () => {
     });
   });
 
+  it('can get checksum of an object', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .head('/foo')
+      .matchHeader('x-amz-checksum-mode', 'ENABLED')
+      .reply(200, 'hello, world.', {
+        'content-type': 'text/plain',
+        'x-amz-meta-test-location': 'some-location',
+        'x-amz-checksum-crc64nvme': 'Y3y1rAE2GOM=',
+        'x-amz-checksum-type': 'FULL_OBJECT',
+      });
+    const bus = storage.codeBus();
+    const ret = await bus.head('foo', { ChecksumMode: 'ENABLED' });
+    assert.strictEqual(ret.ChecksumCRC64NVME, 'Y3y1rAE2GOM=');
+  });
+
   it('can get metadata of an object (404)', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .head('/foo')
@@ -806,7 +821,14 @@ describe('Storage test', () => {
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
       .reply((uri) => {
         puts.s3.push(uri);
-        return [200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>'];
+        return [200, new xml2js.Builder().buildObject({
+          CopyObjectResult: {
+            ETag: '"f278c0035a9b4398629613a33abe6451"',
+            LastModified: '2021-05-05T08:37:23.000Z',
+            ChecksumType: 'FULL_OBJECT',
+            ChecksumCRC64NVME: 'Y3y1rAE2GOM=',
+          },
+        })];
       });
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
@@ -816,7 +838,13 @@ describe('Storage test', () => {
       });
 
     const bus = storage.codeBus();
-    await bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md');
+    const result = await bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md');
+    assert.deepStrictEqual(result, {
+      ETag: '"f278c0035a9b4398629613a33abe6451"',
+      LastModified: new Date('2021-05-05T08:37:23.000Z'),
+      ChecksumType: 'FULL_OBJECT',
+      ChecksumCRC64NVME: 'Y3y1rAE2GOM=',
+    });
 
     puts.s3.sort();
     puts.r2.sort();
