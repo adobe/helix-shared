@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v1.12.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.11.0...@adobe/helix-shared-storage-v1.12.0) (2026-03-05)
+
+
+### Features
+
+* support copy options ([#1199](https://github.com/adobe/helix-shared/issues/1199)) ([a1eb197](https://github.com/adobe/helix-shared/commit/a1eb197dcb8a437e45380a9a5aa67af7101ddf00))
+
 # [@adobe/helix-shared-storage-v1.11.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.2...@adobe/helix-shared-storage-v1.11.0) (2026-03-05)
 
 
