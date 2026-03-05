@@ -145,6 +145,9 @@ export function resolveMetadataForCopy(s3Headers = {}, renameMeta = {}, addMeta 
  * @implements {BucketType}
  */
 class Bucket {
+  /** @type {S3Client[]} */
+  _clients;
+
   constructor(opts) {
     Object.assign(this, {
       _s3: opts.s3,
@@ -213,8 +216,9 @@ class Bucket {
     }
   }
 
-  async head(path) {
+  async head(path, headOpts = {}) {
     const input = {
+      ...headOpts,
       Bucket: this._bucket,
       Key: sanitizeKey(path),
     };
@@ -407,8 +411,9 @@ class Bucket {
       }
       // write to s3 and r2 (mirror) in parallel
       const measures = Array.from({ length: this._clients.length });
-      await this.sendToS3andR2(CopyObjectCommand, input, measures);
+      const result = await this.sendToS3andR2(CopyObjectCommand, input, measures);
       this.log.info(`object copied from ${input.CopySource} to: ${input.Bucket}/${input.Key} (${measures.join('/')})`);
+      return result.CopyObjectResult;
     } catch (e) {
       /* c8 ignore next 3 */
       if (e.Code !== 'NoSuchKey') {
