@@ -145,8 +145,20 @@ export function resolveMetadataForCopy(s3Headers = {}, renameMeta = {}, addMeta 
  * @implements {BucketType}
  */
 class Bucket {
+  /** @type {S3Client} */
+  _s3;
+
+  /** @type {R2Client} */
+  _r2;
+
+  /** @type {Console} */
+  _log;
+
   /** @type {S3Client[]} */
   _clients;
+
+  /** @type {string} */
+  _bucket;
 
   constructor(opts) {
     Object.assign(this, {
