@@ -83,9 +83,7 @@ export class GitUrl {
       }
 
       const { pathname } = this._url;
-      // If .git is present, use it as the boundary between owner/repo and path.
-      // Match .git only when followed by / or end-of-string to avoid false positives
-      // in names like "repo.github.io.git".
+      // Use .git (followed by / or end-of-string) as the boundary between owner/repo and path
       const gitMatch = MATCH_GIT_URL.exec(pathname);
       const ownerRepoPart = gitMatch ? pathname.substring(0, gitMatch.index) : pathname;
       const segments = ownerRepoPart.split('/').filter(Boolean);
