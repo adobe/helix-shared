@@ -18,7 +18,7 @@ const RAW_TYPE = 'raw';
 const API_TYPE = 'api';
 const DEFAULT_BRANCH = 'master';
 const MATCH_IP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
-const MATCH_GIT_URL = /\/([^/]+)\/([^/]+)\/?$/;
+const MATCH_GIT_URL = /\/([^/]+)\/([^/]+?)(?:\.git(\/.*)?|\/?)$/;
 /**
  * Represents a GIT url.
  */
@@ -82,15 +82,11 @@ export class GitUrl {
         this._url = new URL(url);
       }
 
-      const { pathname } = this._url;
-      const gitIdx = pathname.search(/\.git(\/|$)/);
-      const repoPath = gitIdx > -1 ? pathname.substring(0, gitIdx) : pathname;
-      const parts = MATCH_GIT_URL.exec(repoPath);
+      const parts = MATCH_GIT_URL.exec(this._url.pathname);
       if (parts === null) {
         throw Error(`Invalid URL: Not a valid git url: ${url}`);
       }
-      [, this._owner, this._repo] = parts;
-      this._path = gitIdx > -1 ? (pathname.substring(gitIdx + 4) || undefined) : undefined;
+      [, this._owner, this._repo, this._path] = parts;
       this._ref = this._url.hash.substring(1);
       // add defaults if missing
       if (!this._path && 'path' in defaults) {
