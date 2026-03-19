@@ -18,7 +18,7 @@ const RAW_TYPE = 'raw';
 const API_TYPE = 'api';
 const DEFAULT_BRANCH = 'master';
 const MATCH_IP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
-const MATCH_GIT_URL = /\.git(\/|$)/;
+const MATCH_GIT_URL = /\/([^/]+)\/([^/]+)\/?$/;
 /**
  * Represents a GIT url.
  */
@@ -83,16 +83,14 @@ export class GitUrl {
       }
 
       const { pathname } = this._url;
-      // Use .git (followed by / or end-of-string) as the boundary between owner/repo and path
-      const gitMatch = MATCH_GIT_URL.exec(pathname);
-      const ownerRepoPart = gitMatch ? pathname.substring(0, gitMatch.index) : pathname;
-      const segments = ownerRepoPart.split('/').filter(Boolean);
-      if (segments.length < 2) {
+      const gitIdx = pathname.search(/\.git(\/|$)/);
+      const repoPath = gitIdx > -1 ? pathname.substring(0, gitIdx) : pathname;
+      const parts = MATCH_GIT_URL.exec(repoPath);
+      if (parts === null) {
         throw Error(`Invalid URL: Not a valid git url: ${url}`);
       }
-      this._owner = segments[segments.length - 2];
-      this._repo = segments[segments.length - 1];
-      this._path = gitMatch ? (pathname.substring(gitMatch.index + 4) || undefined) : undefined;
+      [, this._owner, this._repo] = parts;
+      this._path = gitIdx > -1 ? (pathname.substring(gitIdx + 4) || undefined) : undefined;
       this._ref = this._url.hash.substring(1);
       // add defaults if missing
       if (!this._path && 'path' in defaults) {
