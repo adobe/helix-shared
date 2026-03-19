@@ -86,6 +86,7 @@ export class GitUrl {
       if (parts === null) {
         throw Error(`Invalid URL: Not a valid git url: ${url}`);
       }
+      // noinspection JSConsecutiveCommasInArrayLiteral
       [, this._owner, this._repo, this._path] = parts;
       this._ref = this._url.hash.substring(1);
       // add defaults if missing
