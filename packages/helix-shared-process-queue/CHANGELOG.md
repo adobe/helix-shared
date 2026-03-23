@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-process-queue-v3.1.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.5...@adobe/helix-shared-process-queue-v3.1.6) (2026-03-23)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1209](https://github.com/adobe/helix-shared/issues/1209)) ([f1173c1](https://github.com/adobe/helix-shared/commit/f1173c142dd1e5d83e5fb69b1c95eb46ec3cb348))
+
 # [@adobe/helix-shared-process-queue-v3.1.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.4...@adobe/helix-shared-process-queue-v3.1.5) (2026-01-14)
 
 
