@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-git-v3.0.23](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git-v3.0.22...@adobe/helix-shared-git-v3.0.23) (2026-03-31)
+
+
+### Bug Fixes
+
+* **git:** handle URL path prefixes in GitUrl parsing ([#1208](https://github.com/adobe/helix-shared/issues/1208)) ([fbd4c9d](https://github.com/adobe/helix-shared/commit/fbd4c9d1284d67d4e2aaef340522dea1931515e8))
+
 # [@adobe/helix-shared-git-v3.0.22](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git-v3.0.21...@adobe/helix-shared-git-v3.0.22) (2026-03-31)
 
 
