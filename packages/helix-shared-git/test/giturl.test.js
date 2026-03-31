@@ -391,6 +391,41 @@ describe('GitUrl from string tests', () => {
     assert.equal(url.isLocal, true);
   });
 
+  it('URL with path prefix (local proxy, no .git suffix)', () => {
+    const url = new GitUrl('http://local_proxy@127.0.0.1:45823/git/owner/my-repo');
+    assert.equal(url.owner, 'owner');
+    assert.equal(url.repo, 'my-repo');
+    assert.equal(url.hostname, '127.0.0.1');
+    assert.equal(url.port, '45823');
+    assert.equal(url.path, '');
+    assert.equal(url.ref, '');
+  });
+
+  it('URL with path prefix and .git suffix', () => {
+    const url = new GitUrl('http://proxy.example.com:8080/git/company/repository.git');
+    assert.equal(url.owner, 'company');
+    assert.equal(url.repo, 'repository');
+    assert.equal(url.path, '');
+    assert.equal(url.ref, '');
+  });
+
+  it('URL with deep path prefix, .git suffix, path, and ref', () => {
+    const url = new GitUrl('http://proxy.example.com/scm/git/company/repository.git/docs/main#products/v2');
+    assert.equal(url.owner, 'company');
+    assert.equal(url.repo, 'repository');
+    assert.equal(url.path, '/docs/main');
+    assert.equal(url.ref, 'products/v2');
+  });
+
+  it('Fails for .git URL with only one path segment', () => {
+    try {
+      const url = new GitUrl('https://github.com/repo.git');
+      assert.ok(!url, 'should fail');
+    } catch (e) {
+      assert.equal(e.message, 'Invalid URL: Not a valid git url: https://github.com/repo.git');
+    }
+  });
+
   it('Fails for non scp-url arguments', () => {
     try {
       const url = new GitUrl('git@github.com/no/git');

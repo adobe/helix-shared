@@ -18,7 +18,7 @@ const RAW_TYPE = 'raw';
 const API_TYPE = 'api';
 const DEFAULT_BRANCH = 'master';
 const MATCH_IP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
-const MATCH_GIT_URL = /^\/([^/]+)\/([^/]+)(\/.*)?$/;
+const MATCH_GIT_URL = /\/([^/]+)\/([^/]+?)(?:\.git(\/.*)?|\/?)$/;
 /**
  * Represents a GIT url.
  */
