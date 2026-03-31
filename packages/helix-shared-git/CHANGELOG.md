@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-git-v3.0.22](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git-v3.0.21...@adobe/helix-shared-git-v3.0.22) (2026-03-31)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yaml to v2.8.3 [security] ([#1212](https://github.com/adobe/helix-shared/issues/1212)) ([768be32](https://github.com/adobe/helix-shared/commit/768be32f3da2560274587034e31d688ddac5c597))
+
 # [@adobe/helix-shared-git-v3.0.21](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-git-v3.0.20...@adobe/helix-shared-git-v3.0.21) (2025-12-15)
 
 
