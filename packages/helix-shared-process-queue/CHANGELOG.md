@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-process-queue-v3.1.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.7...@adobe/helix-shared-process-queue-v3.1.8) (2026-04-08)
+
+
+### Bug Fixes
+
+* enqueue aborted tasks ([#1214](https://github.com/adobe/helix-shared/issues/1214)) ([c24aefb](https://github.com/adobe/helix-shared/commit/c24aefb3a65bf061fbe6c07011928bbadcae5cc2))
+
 # [@adobe/helix-shared-process-queue-v3.1.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-process-queue-v3.1.6...@adobe/helix-shared-process-queue-v3.1.7) (2026-03-30)
 
 
