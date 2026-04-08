@@ -377,8 +377,10 @@ describe('Process Queue', () => {
       const abortController = new AbortController();
       const timestamps = [];
 
-      async function recordTestFunction(task) {
-        if (task.number === 50) {
+      async function recordTestFunction(task, queue) {
+        if (task.number >= 50) {
+          // since we don't execute this task, add it back to the queue
+          queue.unshift(task);
           abortController.abort();
           return;
         }
@@ -413,6 +415,9 @@ describe('Process Queue', () => {
           assert.strictEqual(timestamps[i], undefined);
         }
       }
+
+      // there should still be 50 remaining tasks (even the ones scheduled but aborted)
+      assert.strictEqual(tasks.length, 50);
     });
 
     it('falls back to no rate limit if partial options', async () => {
