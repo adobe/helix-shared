@@ -144,6 +144,9 @@ export default async function processQueue(
     const token = await waitForToken();
 
     if (abortController?.signal?.aborted) {
+      if (Array.isArray(queue)) {
+        queue.unshift(value);
+      }
       break;
     }
 
