@@ -103,6 +103,39 @@ function sanitizeKey(keyOrPath) {
   return keyOrPath;
 }
 
+/**
+ * Map a `ListObjectsV2` response into {@link ObjectInfo} entries. Used by both
+ * {@link Bucket#list} (which calls it once per page) and {@link Bucket#browse}.
+ *
+ * @param {object} result the `ListObjectsV2Command` response
+ * @param {string} prefix the listing prefix; subtracted from each entry's `key`
+ *  to compute its `path`
+ * @param {boolean} includePrefixes whether to include common prefixes (folders)
+ * @returns {ObjectInfo[]}
+ */
+function listResultToObjectInfos(result, prefix, includePrefixes) {
+  const objects = [];
+  if (includePrefixes) {
+    (result.CommonPrefixes || []).forEach(({ Prefix }) => {
+      objects.push({
+        key: Prefix,
+        path: `${Prefix.substring(prefix.length)}`,
+      });
+    });
+  }
+  (result.Contents || []).forEach((content) => {
+    const key = content.Key;
+    objects.push({
+      key,
+      lastModified: content.LastModified,
+      contentLength: content.Size,
+      contentType: mime.getType(key),
+      path: `${key.substring(prefix.length)}`,
+    });
+  });
+  return objects;
+}
+
 const BUCKET_KEYS = ['config', 'code', 'content', 'media', 'source'];
 
 /**
@@ -609,26 +642,7 @@ class Bucket {
       // eslint-disable-next-line no-await-in-loop
       const result = await this.client.send(new ListObjectsV2Command(input));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
-
-      if (includePrefixes) {
-        (result.CommonPrefixes || []).forEach(({ Prefix }) => {
-          objects.push({
-            key: Prefix,
-            path: `${Prefix.substring(prefix.length)}`,
-          });
-        });
-      }
-
-      (result.Contents || []).forEach((content) => {
-        const key = content.Key;
-        objects.push({
-          key,
-          lastModified: content.LastModified,
-          contentLength: content.Size,
-          contentType: mime.getType(key),
-          path: `${key.substring(prefix.length)}`,
-        });
-      });
+      objects.push(...listResultToObjectInfos(result, prefix, includePrefixes));
     } while (ContinuationToken && objects.length < maxItems);
     return objects;
   }
@@ -660,28 +674,8 @@ class Bucket {
       MaxKeys: maxItems,
     }));
 
-    const objects = [];
-    if (includePrefixes) {
-      (result.CommonPrefixes || []).forEach(({ Prefix }) => {
-        objects.push({
-          key: Prefix,
-          path: `${Prefix.substring(prefix.length)}`,
-        });
-      });
-    }
-    (result.Contents || []).forEach((content) => {
-      const key = content.Key;
-      objects.push({
-        key,
-        lastModified: content.LastModified,
-        contentLength: content.Size,
-        contentType: mime.getType(key),
-        path: `${key.substring(prefix.length)}`,
-      });
-    });
-
     return {
-      objects,
+      objects: listResultToObjectInfos(result, prefix, includePrefixes),
       continuationToken: result.IsTruncated ? result.NextContinuationToken : undefined,
     };
   }
