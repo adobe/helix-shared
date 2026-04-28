@@ -1192,6 +1192,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '.gitignore',
+        name: '.gitignore',
       },
       {
         contentLength: 1234,
@@ -1199,6 +1200,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: 'README.md',
+        name: 'README.md',
       },
     ]);
   });
@@ -1219,6 +1221,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '.gitignore',
+        name: '.gitignore',
       },
       {
         contentLength: 1234,
@@ -1226,6 +1229,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: 'README.md',
+        name: 'README.md',
       },
       {
         contentLength: 1234,
@@ -1233,6 +1237,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/src/scripts.js',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: 'src/scripts.js',
+        name: 'scripts.js',
       },
     ]);
   });
@@ -1250,10 +1255,12 @@ describe('Storage test', () => {
       {
         key: '/owner/repo/ref/myfolder/sub1/',
         path: 'sub1/',
+        name: 'sub1',
       },
       {
         key: '/owner/repo/ref/myfolder/sub2/',
         path: 'sub2/',
+        name: 'sub2',
       },
       {
         contentLength: 999999,
@@ -1261,6 +1268,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
         path: 'somefile.html',
+        name: 'somefile.html',
       },
     ]);
   });
@@ -1281,6 +1289,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
         path: 'somefile.html',
+        name: 'somefile.html',
       },
     ]);
   });
@@ -1305,6 +1314,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '.gitignore',
+        name: '.gitignore',
       },
       {
         contentLength: 1234,
@@ -1312,6 +1322,7 @@ describe('Storage test', () => {
         key: '/owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: 'README.md',
+        name: 'README.md',
       },
     ]);
   });
@@ -1326,7 +1337,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.browse('/owner/repo/ref/', { maxItems: 2 });
+    const result = await bus.browse('/owner/repo/ref/', '/', { maxItems: 2 });
 
     assert.strictEqual(result.continuationToken, 'next');
     assert.deepStrictEqual(result.objects, [
@@ -1335,14 +1346,40 @@ describe('Storage test', () => {
         contentType: null,
         key: '/owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '.gitignore',
+        path: '/.gitignore',
+        name: '.gitignore',
       },
       {
         contentLength: 1234,
         contentType: 'text/markdown',
         key: '/owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'README.md',
+        path: '/README.md',
+        name: 'README.md',
+      },
+    ]);
+  });
+
+  it('browse navigates a sub-path with root-relative result paths', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?delimiter=%2F&list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
+      .reply(200, new xml2js.Builder().buildObject(listReply));
+
+    const bus = storage.codeBus();
+    // path is normalized: 'myfolder/' becomes '/myfolder/'
+    const result = await bus.browse('/owner/repo/ref/', 'myfolder/');
+
+    assert.deepStrictEqual(result.objects, [
+      { key: '/owner/repo/ref/myfolder/sub1/', path: '/myfolder/sub1/', name: 'sub1' },
+      { key: '/owner/repo/ref/myfolder/sub2/', path: '/myfolder/sub2/', name: 'sub2' },
+      {
+        contentLength: 999999,
+        contentType: 'text/html',
+        key: '/owner/repo/ref/myfolder/somefile.html',
+        lastModified: new Date('2021-06-06T04:05:06.000Z'),
+        path: '/myfolder/somefile.html',
+        name: 'somefile.html',
       },
     ]);
   });
@@ -1357,18 +1394,19 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.browse('/owner/repo/ref/myfolder/', { continuationToken: 'tok-1' });
+    const result = await bus.browse('/owner/repo/ref/', '/myfolder/', { continuationToken: 'tok-1' });
 
     assert.strictEqual(result.continuationToken, undefined);
     assert.deepStrictEqual(result.objects, [
-      { key: '/owner/repo/ref/myfolder/sub1/', path: 'sub1/' },
-      { key: '/owner/repo/ref/myfolder/sub2/', path: 'sub2/' },
+      { key: '/owner/repo/ref/myfolder/sub1/', path: '/myfolder/sub1/', name: 'sub1' },
+      { key: '/owner/repo/ref/myfolder/sub2/', path: '/myfolder/sub2/', name: 'sub2' },
       {
         contentLength: 999999,
         contentType: 'text/html',
         key: '/owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: 'somefile.html',
+        path: '/myfolder/somefile.html',
+        name: 'somefile.html',
       },
     ]);
   });
@@ -1383,7 +1421,7 @@ describe('Storage test', () => {
 `);
 
     const bus = storage.codeBus();
-    const result = await bus.browse('empty/');
+    const result = await bus.browse('empty');
 
     assert.deepStrictEqual(result, { objects: [], continuationToken: undefined });
   });
@@ -1395,7 +1433,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.browse('/owner/repo/ref/myfolder/', { includePrefixes: false });
+    const result = await bus.browse('/owner/repo/ref/', '/myfolder/', { includePrefixes: false });
 
     assert.deepStrictEqual(result.objects, [
       {
@@ -1403,7 +1441,8 @@ describe('Storage test', () => {
         contentType: 'text/html',
         key: '/owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: 'somefile.html',
+        path: '/myfolder/somefile.html',
+        name: 'somefile.html',
       },
     ]);
   });

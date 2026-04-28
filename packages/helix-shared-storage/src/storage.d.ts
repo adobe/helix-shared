@@ -32,8 +32,18 @@ import { Response } from "@adobe/fetch";
 export interface ObjectInfo {
   /** absolute object key (including the listing prefix) */
   key: string;
-  /** the path to the object, relative to the listing prefix */
+  /**
+   * the path to the object. For {@link Bucket.list} this is relative to the
+   * listed prefix; for {@link Bucket.browse} it is relative to the browse
+   * `prefix` (the root) and always starts with `/`.
+   */
   path: string;
+  /**
+   * the basename of the object — the last path segment, with any trailing
+   * `/` stripped. E.g. `2024` for a common prefix `/blog/2024/`,
+   * `post.md` for an object key `/blog/post.md`.
+   */
+  name: string;
   /** last-modified timestamp as returned by S3; absent for common prefixes */
   lastModified?: Date;
   /** object size in bytes; absent for common prefixes */
@@ -323,13 +333,24 @@ export declare interface Bucket {
   /**
    * Single-page, always-shallow listing intended for paginated UI browsing.
    *
+   * `prefix` is the fixed root of the subtree being browsed (constant during
+   * navigation); `path` is the subdirectory within that root currently being
+   * listed. The actual S3 prefix sent is `prefix + path`. Each returned
+   * `ObjectInfo.path` is relative to `prefix` (and starts with `/`), so the
+   * caller can pass an entry's `path` straight back as the next call's `path`
+   * argument to drill in.
+   *
    * Unlike {@link Bucket.list}, `browse` does not auto-page through the result:
    * it issues one `ListObjectsV2` call, returns the entries it received, and
    * exposes the `NextContinuationToken` (if any) so the caller can request the
    * next page when the user navigates forward. `maxItems` controls the page
    * size only.
+   *
+   * @param prefix root of the subtree being browsed
+   * @param path subdirectory within `prefix` to list. Normalized to start
+   *  with `/`. Defaults to `'/'`.
    */
-  browse(prefix: string, opts?: BrowseOptions): Promise<BrowseResult>;
+  browse(prefix: string, path?: string, opts?: BrowseOptions): Promise<BrowseResult>;
 
   /**
    * Copies the tree below `src` to `dst`. Concurrency is fixed at 64; per-object errors are

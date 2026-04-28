@@ -104,22 +104,43 @@ function sanitizeKey(keyOrPath) {
 }
 
 /**
+ * Returns the last segment of a key, treating an optional trailing `/` as a
+ * folder separator. E.g. `/blog/2024/post.md` → `post.md`,
+ * `/blog/2024/` → `2024`, `foo` → `foo`.
+ *
+ * @param {string} key
+ * @returns {string}
+ */
+function basename(key) {
+  const trimmed = key.endsWith('/') ? key.slice(0, -1) : key;
+  const slash = trimmed.lastIndexOf('/');
+  return slash >= 0 ? trimmed.substring(slash + 1) : trimmed;
+}
+
+/**
  * Map a `ListObjectsV2` response into {@link ObjectInfo} entries. Used by both
  * {@link Bucket#list} (which calls it once per page) and {@link Bucket#browse}.
  *
+ * The `path` field on each entry is computed by stripping `pathBase` from the
+ * front of the entry's key. Pass the listed prefix as `pathBase` to get
+ * paths relative to the listing (the {@link Bucket#list} convention); pass a
+ * fixed root as `pathBase` to get paths relative to that root regardless of
+ * how deep the listing is (the {@link Bucket#browse} convention).
+ *
  * @param {object} result the `ListObjectsV2Command` response
- * @param {string} prefix the listing prefix; subtracted from each entry's `key`
- *  to compute its `path`
+ * @param {string} pathBase prefix to strip from each entry's `key` to compute
+ *  its `path`
  * @param {boolean} includePrefixes whether to include common prefixes (folders)
  * @returns {ObjectInfo[]}
  */
-function listResultToObjectInfos(result, prefix, includePrefixes) {
+function listResultToObjectInfos(result, pathBase, includePrefixes) {
   const objects = [];
   if (includePrefixes) {
     (result.CommonPrefixes || []).forEach(({ Prefix }) => {
       objects.push({
         key: Prefix,
-        path: `${Prefix.substring(prefix.length)}`,
+        path: `${Prefix.substring(pathBase.length)}`,
+        name: basename(Prefix),
       });
     });
   }
@@ -130,7 +151,8 @@ function listResultToObjectInfos(result, prefix, includePrefixes) {
       lastModified: content.LastModified,
       contentLength: content.Size,
       contentType: mime.getType(key),
-      path: `${key.substring(prefix.length)}`,
+      path: `${key.substring(pathBase.length)}`,
+      name: basename(key),
     });
   });
   return objects;
@@ -650,32 +672,56 @@ class Bucket {
   /**
    * Single-page, always-shallow listing intended for paginated UI browsing.
    *
-   * Unlike {@link Bucket#list}, this does not auto-page: it issues one
-   * `ListObjectsV2` call (with `Delimiter: '/'`), returns the entries it
-   * received, and exposes the `NextContinuationToken` so the caller can request
-   * the next page on demand. `maxItems` controls the page size only.
+   * `prefix` is the fixed *root* of the subtree being browsed; it does not
+   * change as the user navigates. `path` is the *subdirectory* within that
+   * root currently being listed; the actual S3 prefix sent is `prefix + path`.
+   * The returned `path` on each entry is always relative to `prefix` (i.e. it
+   * starts with `/` and contains the navigated `path`), so the caller can
+   * pass an entry's `path` straight back as the next call's `path` argument
+   * without having to reconstruct breadcrumbs.
    *
-   * @param {string} prefix
+   * `path` is normalized to start with `/` (and `prefix`'s trailing `/`, if
+   * any, is stripped before concatenation). For example:
+   *
+   * ```js
+   * const ROOT = 'owner/repo/main/';
+   * const r1 = await bus.browse(ROOT, '/');
+   * // r1.objects[i].path -> '/blog/', '/images/', '/index.md', ...
+   * const r2 = await bus.browse(ROOT, '/blog/');
+   * // r2.objects[i].path -> '/blog/2024/', '/blog/index.md', ...
+   * ```
+   *
+   * Unlike {@link Bucket#list}, this does not auto-page: it issues one
+   * `ListObjectsV2` call, returns the entries it received, and exposes the
+   * `NextContinuationToken` so the caller can request the next page on
+   * demand. `maxItems` controls the page size only.
+   *
+   * @param {string} prefix root of the subtree being browsed
+   * @param {string} [path] subdirectory within `prefix` to list; defaults to
+   *  `'/'`. Normalized to start with `/`.
    * @param {BrowseOptions} [opts]
    * @returns {Promise<BrowseResult>}
    */
-  async browse(prefix, opts = {}) {
+  async browse(prefix, path = '/', opts = {}) {
     const {
       continuationToken,
       maxItems,
       includePrefixes = true,
     } = opts;
 
+    const root = prefix.endsWith('/') ? prefix.slice(0, -1) : prefix;
+    const subPath = path.startsWith('/') ? path : `/${path}`;
+
     const result = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
-      Prefix: prefix,
+      Prefix: `${root}${subPath}`,
       Delimiter: '/',
       ContinuationToken: continuationToken || undefined,
       MaxKeys: maxItems,
     }));
 
     return {
-      objects: listResultToObjectInfos(result, prefix, includePrefixes),
+      objects: listResultToObjectInfos(result, root, includePrefixes),
       continuationToken: result.IsTruncated ? result.NextContinuationToken : undefined,
     };
   }
