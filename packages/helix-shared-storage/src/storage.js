@@ -140,7 +140,7 @@ function listResultToObjectInfos(result, pathBase, includePrefixes) {
     (result.CommonPrefixes || []).forEach(({ Prefix }) => {
       objects.push({
         key: Prefix,
-        path: `${Prefix.substring(baseLen)}`,
+        path: Prefix.substring(baseLen),
         name: basename(Prefix),
       });
     });
@@ -152,7 +152,7 @@ function listResultToObjectInfos(result, pathBase, includePrefixes) {
       lastModified: content.LastModified,
       contentLength: content.Size,
       contentType: mime.getType(key),
-      path: `${key.substring(baseLen)}`,
+      path: key.substring(baseLen),
       name: basename(key),
     });
   });
