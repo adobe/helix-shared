@@ -723,7 +723,9 @@ class Bucket {
 
     return {
       objects: listResultToObjectInfos(result, root, includePrefixes),
-      continuationToken: result.IsTruncated ? result.NextContinuationToken : undefined,
+      continuationToken: result.IsTruncated
+        ? result.NextContinuationToken
+        : undefined,
     };
   }
 
