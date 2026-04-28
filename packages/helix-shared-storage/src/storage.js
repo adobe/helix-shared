@@ -134,12 +134,13 @@ function basename(key) {
  * @returns {ObjectInfo[]}
  */
 function listResultToObjectInfos(result, pathBase, includePrefixes) {
+  const baseLen = pathBase.length;
   const objects = [];
   if (includePrefixes) {
     (result.CommonPrefixes || []).forEach(({ Prefix }) => {
       objects.push({
         key: Prefix,
-        path: `${Prefix.substring(pathBase.length)}`,
+        path: `${Prefix.substring(baseLen)}`,
         name: basename(Prefix),
       });
     });
@@ -151,7 +152,7 @@ function listResultToObjectInfos(result, pathBase, includePrefixes) {
       lastModified: content.LastModified,
       contentLength: content.Size,
       contentType: mime.getType(key),
-      path: `${key.substring(pathBase.length)}`,
+      path: `${key.substring(baseLen)}`,
       name: basename(key),
     });
   });
