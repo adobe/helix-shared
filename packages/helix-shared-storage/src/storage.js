@@ -55,6 +55,8 @@ const MAX_DELETE_OBJECTS = 1000;
  * @typedef {import('./storage.d').ObjectFilter} ObjectFilter
  * @typedef {import('./storage.d').CopyOptions} CopyOptions
  * @typedef {import('./storage.d').ListOptions} ListOptions
+ * @typedef {import('./storage.d').BrowseOptions} BrowseOptions
+ * @typedef {import('./storage.d').BrowseResult} BrowseResult
  */
 
 /**
@@ -629,6 +631,59 @@ class Bucket {
       });
     } while (ContinuationToken && objects.length < maxItems);
     return objects;
+  }
+
+  /**
+   * Single-page, always-shallow listing intended for paginated UI browsing.
+   *
+   * Unlike {@link Bucket#list}, this does not auto-page: it issues one
+   * `ListObjectsV2` call (with `Delimiter: '/'`), returns the entries it
+   * received, and exposes the `NextContinuationToken` so the caller can request
+   * the next page on demand. `maxItems` controls the page size only.
+   *
+   * @param {string} prefix
+   * @param {BrowseOptions} [opts]
+   * @returns {Promise<BrowseResult>}
+   */
+  async browse(prefix, opts = {}) {
+    const {
+      continuationToken,
+      maxItems,
+      includePrefixes = true,
+    } = opts;
+
+    const result = await this.client.send(new ListObjectsV2Command({
+      Bucket: this.bucket,
+      Prefix: prefix,
+      Delimiter: '/',
+      ContinuationToken: continuationToken || undefined,
+      MaxKeys: maxItems,
+    }));
+
+    const objects = [];
+    if (includePrefixes) {
+      (result.CommonPrefixes || []).forEach(({ Prefix }) => {
+        objects.push({
+          key: Prefix,
+          path: `${Prefix.substring(prefix.length)}`,
+        });
+      });
+    }
+    (result.Contents || []).forEach((content) => {
+      const key = content.Key;
+      objects.push({
+        key,
+        lastModified: content.LastModified,
+        contentLength: content.Size,
+        contentType: mime.getType(key),
+        path: `${key.substring(prefix.length)}`,
+      });
+    });
+
+    return {
+      objects,
+      continuationToken: result.IsTruncated ? result.NextContinuationToken : undefined,
+    };
   }
 
   /**

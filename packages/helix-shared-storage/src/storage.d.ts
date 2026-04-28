@@ -68,6 +68,35 @@ export interface CopyOptions {
   copyOpts?: Partial<CopyObjectCommandInput>;
 }
 
+export interface BrowseOptions {
+  /**
+   * Continuation token returned by a previous {@link Bucket.browse} call.
+   * Pass it back unchanged to fetch the next page; omit to start from the
+   * beginning of the listing.
+   */
+  continuationToken?: string;
+  /**
+   * Maximum number of entries to return in this page (S3 `MaxKeys`). Capped
+   * at 1000 by S3; defaults to the S3 default when omitted.
+   */
+  maxItems?: number;
+  /**
+   * Whether to include common prefixes (subfolders) as entries in the result.
+   * Defaults to `true`, since browsing typically wants folder-style navigation.
+   */
+  includePrefixes?: boolean;
+}
+
+export interface BrowseResult {
+  /** the page of objects (and, when {@link BrowseOptions.includePrefixes}, common prefixes) */
+  objects: ObjectInfo[];
+  /**
+   * Continuation token to pass back to {@link Bucket.browse} to fetch the next
+   * page. `undefined` when the listing has been exhausted.
+   */
+  continuationToken?: string;
+}
+
 export interface ListOptions {
   /** whether to list shallow, i.e. not recursive (uses `/` as delimiter). Default `false`. */
   shallow?: boolean;
@@ -290,6 +319,17 @@ export declare interface Bucket {
    * List the common prefixes (subfolders) directly below `prefix`. Always shallow.
    */
   listFolders(prefix: string): Promise<string[]>;
+
+  /**
+   * Single-page, always-shallow listing intended for paginated UI browsing.
+   *
+   * Unlike {@link Bucket.list}, `browse` does not auto-page through the result:
+   * it issues one `ListObjectsV2` call, returns the entries it received, and
+   * exposes the `NextContinuationToken` (if any) so the caller can request the
+   * next page when the user navigates forward. `maxItems` controls the page
+   * size only.
+   */
+  browse(prefix: string, opts?: BrowseOptions): Promise<BrowseResult>;
 
   /**
    * Copies the tree below `src` to `dst`. Concurrency is fixed at 64; per-object errors are
