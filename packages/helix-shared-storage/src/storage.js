@@ -785,7 +785,9 @@ class Bucket {
    */
   async listFolders(prefix, path = '/') {
     const { objects } = await this.list(prefix, path, { shallow: true });
-    return objects.filter((o) => o.isFolder).map((o) => o.path);
+    return objects
+      .filter((o) => o.isFolder)
+      .map((o) => o.path);
   }
 
   /**
@@ -808,8 +810,7 @@ class Bucket {
     const tasks = [];
     const Prefix = sanitizeKey(src);
     // dst is sanitized to canonical form (no leading/trailing `/`) so it
-    // can be concatenated with `path`, which is root-relative and always
-    // starts with `/`.
+    // can be concatenated with `path`, which is root-relative and always starts with `/`.
     const dstRoot = sanitizeKey(dst);
     this.log.info(`fetching list of files to copy ${this.bucket}/${Prefix} => ${dstRoot}`);
     const { objects } = await this.list(Prefix);
