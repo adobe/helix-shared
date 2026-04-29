@@ -118,11 +118,22 @@ function sanitizeKey(keyOrPath) {
  * @returns {string}
  */
 function ensureDirPath(path) {
-  let p = path.startsWith('/') ? path : `/${path}`;
-  if (!p.endsWith('/')) {
+  let p = path.charAt(0) === '/' ? path : `/${path}`;
+  if (p.charAt(p.length - 1) !== '/') {
     p += '/';
   }
   return p;
+}
+
+/**
+ * Strip a leading `/` if present. Used after concatenating a (possibly
+ * empty) root with a leading-slashed path to produce a canonical S3 key.
+ *
+ * @param {string} s
+ * @returns {string}
+ */
+function stripLeadingSlash(s) {
+  return s.charAt(0) === '/' ? s.substring(1) : s;
 }
 
 /**
@@ -683,8 +694,8 @@ class Bucket {
     const dir = ensureDirPath(path);
     // strip any leading `/` from the concatenation: it only appears when
     // `root` is empty (canonical S3 keys don't start with `/`).
-    const Prefix = `${root}${dir}`.replace(/^\//, '');
-    const pathBase = `${root}/`.replace(/^\//, '');
+    const Prefix = stripLeadingSlash(`${root}${dir}`);
+    const pathBase = stripLeadingSlash(`${root}/`);
 
     let ContinuationToken;
     const objects = [];
@@ -743,8 +754,8 @@ class Bucket {
     const { continuationToken, maxItems } = opts;
     const root = sanitizeKey(prefix);
     const dir = ensureDirPath(path);
-    const Prefix = `${root}${dir}`.replace(/^\//, '');
-    const pathBase = `${root}/`.replace(/^\//, '');
+    const Prefix = stripLeadingSlash(`${root}${dir}`);
+    const pathBase = stripLeadingSlash(`${root}/`);
 
     const result = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
@@ -801,7 +812,7 @@ class Bucket {
           // `dstRoot` the leading `/` acts as the separator, for empty
           // `dstRoot` (copying to the bucket root) we'd otherwise end up
           // with a non-canonical S3 key.
-          dst: `${dstRoot}${path}`.replace(/^\//, ''),
+          dst: stripLeadingSlash(`${dstRoot}${path}`),
         });
       }
     });
