@@ -333,6 +333,18 @@ export declare interface Bucket {
   list(prefix: string, path?: string, opts?: ListOptions): Promise<ListResult>;
 
   /**
+   * Convenience wrapper around {@link Bucket.list} that returns only the
+   * folder paths directly below `prefix + path`. Equivalent to
+   * `(await list(prefix, path, { shallow: true })).objects.filter(o => o.isFolder).map(o => o.path)`.
+   *
+   * @param prefix root of the subtree
+   * @param path subdirectory within `prefix`. Defaults to `'/'`.
+   * @returns folder paths, each relative to `prefix`, starting with `/`,
+   *  never ending with `/`
+   */
+  listFolders(prefix: string, path?: string): Promise<string[]>;
+
+  /**
    * Single-page, always-shallow listing intended for paginated UI browsing.
    *
    * Same `prefix` / `path` conventions as {@link Bucket.list}. Unlike `list`,

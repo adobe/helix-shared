@@ -1202,6 +1202,20 @@ describe('Storage test', () => {
     ]);
   });
 
+  it('listFolders returns just the folder paths', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-folders-reply.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?delimiter=%2F&list-type=2&prefix=foo%2F')
+      .reply(200, new xml2js.Builder().buildObject(listReply[0]))
+      .get('/?continuation-token=next&delimiter=%2F&list-type=2&prefix=foo%2F')
+      .reply(200, new xml2js.Builder().buildObject(listReply[1]));
+
+    const bus = storage.codeBus();
+    const folders = await bus.listFolders('foo');
+
+    assert.deepStrictEqual(folders, ['/owner', '/other']);
+  });
+
   it('can list shallow across multiple pages', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-folders-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')

@@ -774,6 +774,21 @@ class Bucket {
   }
 
   /**
+   * Convenience wrapper around {@link Bucket#list} that returns only the
+   * folder (common-prefix) paths directly below `prefix + path`. Always
+   * shallow.
+   *
+   * @param {string} prefix root of the subtree
+   * @param {string} [path] subdirectory within `prefix`. Defaults to `'/'`.
+   * @returns {Promise<string[]>} folder paths, each relative to `prefix`,
+   *  starting with `/`, never ending with `/`
+   */
+  async listFolders(prefix, path = '/') {
+    const { objects } = await this.list(prefix, path, { shallow: true });
+    return objects.filter((o) => o.isFolder).map((o) => o.path);
+  }
+
+  /**
    * Recursively copy the tree below `src` to `dst`. Lists every object under
    * `src`, applies `filter`, then issues per-object `CopyObject` commands with
    * concurrency 64. Errors on individual objects are logged but do not abort
