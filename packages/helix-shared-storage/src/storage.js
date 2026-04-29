@@ -92,15 +92,37 @@ const METADATA_HEADER_MAP = new Map([
 ]);
 
 /**
- * Sanitizes the input key or path and returns a bucket relative key (without leading / ).
+ * Sanitizes the input key or path and returns a canonical S3 form: no
+ * leading and no trailing `/`.
+ *
  * @param {string} keyOrPath
  * @returns {string}
  */
 function sanitizeKey(keyOrPath) {
-  if (keyOrPath.charAt(0) === '/') {
-    return keyOrPath.substring(1);
+  let s = keyOrPath;
+  if (s.startsWith('/')) {
+    s = s.substring(1);
   }
-  return keyOrPath;
+  if (s.endsWith('/')) {
+    s = s.slice(0, -1);
+  }
+  return s;
+}
+
+/**
+ * Normalize a directory-style path: ensures it starts *and* ends with `/`.
+ * Used when building an S3 list prefix from a `prefix + path` pair where
+ * `path` is always interpreted as a directory.
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+function ensureDirPath(path) {
+  let p = path.startsWith('/') ? path : `/${path}`;
+  if (!p.endsWith('/')) {
+    p += '/';
+  }
+  return p;
 }
 
 /**
@@ -115,30 +137,6 @@ function basename(key) {
   const trimmed = key.endsWith('/') ? key.slice(0, -1) : key;
   const slash = trimmed.lastIndexOf('/');
   return slash >= 0 ? trimmed.substring(slash + 1) : trimmed;
-}
-
-/**
- * Normalize the `prefix` + `path` arguments shared by {@link Bucket#list}
- * and {@link Bucket#browse} into:
- * - `root`: `prefix` with any leading and trailing `/` stripped — the
- *   strip-base for computing each entry's root-relative `path`. Stripped
- *   to canonical S3 form (S3 keys don't start with `/`).
- * - `dir`: the path argument, always interpreted as a directory (starts
- *   with `/` and ends with `/`).
- *
- * The actual S3 prefix sent for the listing is `root + dir`.
- *
- * @param {string} prefix
- * @param {string} path
- * @returns {{ root: string, dir: string }}
- */
-function normalizePrefixAndPath(prefix, path) {
-  const root = sanitizeKey(prefix).replace(/\/$/, '');
-  let dir = path.startsWith('/') ? path : `/${path}`;
-  if (!dir.endsWith('/')) {
-    dir += '/';
-  }
-  return { root, dir };
 }
 
 /**
@@ -679,7 +677,8 @@ class Bucket {
    */
   async list(prefix, path = '/', opts = {}) {
     const { shallow = false, maxItems = Number.POSITIVE_INFINITY } = opts;
-    const { root, dir } = normalizePrefixAndPath(prefix, path);
+    const root = sanitizeKey(prefix);
+    const dir = ensureDirPath(path);
 
     let ContinuationToken;
     const objects = [];
@@ -736,7 +735,8 @@ class Bucket {
    */
   async browse(prefix, path = '/', opts = {}) {
     const { continuationToken, maxItems } = opts;
-    const { root, dir } = normalizePrefixAndPath(prefix, path);
+    const root = sanitizeKey(prefix);
+    const dir = ensureDirPath(path);
 
     const result = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
@@ -773,11 +773,11 @@ class Bucket {
     const { log } = this;
     const tasks = [];
     const Prefix = sanitizeKey(src);
-    // strip trailing `/` from dst so we can concatenate with `path` which
-    // is root-relative and always starts with `/`
-    const dstPrefix = sanitizeKey(dst);
-    const dstRoot = dstPrefix.replace(/\/$/, '');
-    this.log.info(`fetching list of files to copy ${this.bucket}/${Prefix} => ${dstPrefix}`);
+    // dst is sanitized to canonical form (no leading/trailing `/`) so it
+    // can be concatenated with `path`, which is root-relative and always
+    // starts with `/`.
+    const dstRoot = sanitizeKey(dst);
+    this.log.info(`fetching list of files to copy ${this.bucket}/${Prefix} => ${dstRoot}`);
     const { objects } = await this.list(Prefix);
     objects.forEach((obj) => {
       const {
