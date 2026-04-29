@@ -1162,6 +1162,46 @@ describe('Storage test', () => {
     await bus.rmdir('/owner/repo/new-branch/');
   });
 
+  it('list with empty prefix uses canonical S3 form (no leading slash)', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?delimiter=%2F&list-type=2&prefix=foo%2F')
+      .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <Name>helix-code-bus</Name>
+  <Prefix>foo/</Prefix>
+  <KeyCount>2</KeyCount>
+  <MaxKeys>1000</MaxKeys>
+  <IsTruncated>false</IsTruncated>
+  <Contents>
+    <Key>foo/bar.md</Key>
+    <LastModified>2021-05-05T08:00:30.000Z</LastModified>
+    <Size>11</Size>
+  </Contents>
+  <CommonPrefixes>
+    <Prefix>foo/sub/</Prefix>
+  </CommonPrefixes>
+</ListBucketResult>
+`);
+
+    const bus = storage.codeBus();
+    const result = await bus.list('', '/foo', { shallow: true });
+
+    assert.deepStrictEqual(result.objects, [
+      {
+        key: 'foo/sub/', path: '/foo/sub', name: 'sub', isFolder: true,
+      },
+      {
+        contentLength: 11,
+        contentType: 'text/markdown',
+        key: 'foo/bar.md',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        path: '/foo/bar.md',
+        name: 'bar.md',
+        isFolder: false,
+      },
+    ]);
+  });
+
   it('can list shallow across multiple pages', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-folders-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')

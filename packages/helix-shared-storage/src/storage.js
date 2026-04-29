@@ -145,13 +145,15 @@ function basename(key) {
  * the underlying request determines whether `CommonPrefixes` are present.
  *
  * The `path` field on each entry is computed by stripping `pathBase` from the
- * front of the entry's key, and any trailing `/` (for common prefixes) is
- * dropped — every `path` value is uniform: starts with `/`, never ends with
- * `/`. The `isFolder` flag carries the file/folder distinction.
+ * front of the entry's key. `pathBase` is `''` when the listing root is the
+ * bucket root, otherwise `${root}/`. A leading `/` is then prepended so every
+ * returned path starts with `/`, and any trailing `/` (for common prefixes)
+ * is dropped — paths are uniform: start with `/`, never end with `/`. The
+ * `isFolder` flag carries the file/folder distinction.
  *
  * @param {object} result the `ListObjectsV2Command` response
  * @param {string} pathBase prefix to strip from each entry's `key` to compute
- *  its `path`
+ *  its `path` (empty string when the listing root is the bucket root)
  * @returns {ObjectInfo[]}
  */
 function listResultToObjectInfos(result, pathBase) {
@@ -161,7 +163,7 @@ function listResultToObjectInfos(result, pathBase) {
     objects.push({
       key: Prefix,
       // S3 always returns CommonPrefix values ending with `/`; drop it.
-      path: Prefix.substring(baseLen).replace(/\/$/, ''),
+      path: `/${Prefix.substring(baseLen).replace(/\/$/, '')}`,
       name: basename(Prefix),
       isFolder: true,
     });
@@ -170,7 +172,7 @@ function listResultToObjectInfos(result, pathBase) {
     const key = content.Key;
     objects.push({
       key,
-      path: key.substring(baseLen),
+      path: `/${key.substring(baseLen)}`,
       name: basename(key),
       isFolder: false,
       lastModified: content.LastModified,
@@ -679,6 +681,10 @@ class Bucket {
     const { shallow = false, maxItems = Number.POSITIVE_INFINITY } = opts;
     const root = sanitizeKey(prefix);
     const dir = ensureDirPath(path);
+    // strip any leading `/` from the concatenation: it only appears when
+    // `root` is empty (canonical S3 keys don't start with `/`).
+    const Prefix = `${root}${dir}`.replace(/^\//, '');
+    const pathBase = `${root}/`.replace(/^\//, '');
 
     let ContinuationToken;
     const objects = [];
@@ -686,7 +692,7 @@ class Bucket {
       const input = {
         Bucket: this.bucket,
         ContinuationToken,
-        Prefix: `${root}${dir}`,
+        Prefix,
         Delimiter: shallow ? '/' : undefined,
       };
       if (maxItems - objects.length < 1000) {
@@ -695,7 +701,7 @@ class Bucket {
       // eslint-disable-next-line no-await-in-loop
       const result = await this.client.send(new ListObjectsV2Command(input));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
-      objects.push(...listResultToObjectInfos(result, root));
+      objects.push(...listResultToObjectInfos(result, pathBase));
     } while (ContinuationToken && objects.length < maxItems);
     return { objects, continuationToken: undefined };
   }
@@ -737,17 +743,19 @@ class Bucket {
     const { continuationToken, maxItems } = opts;
     const root = sanitizeKey(prefix);
     const dir = ensureDirPath(path);
+    const Prefix = `${root}${dir}`.replace(/^\//, '');
+    const pathBase = `${root}/`.replace(/^\//, '');
 
     const result = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
-      Prefix: `${root}${dir}`,
+      Prefix,
       Delimiter: '/',
       ContinuationToken: continuationToken || undefined,
       MaxKeys: maxItems,
     }));
 
     return {
-      objects: listResultToObjectInfos(result, root),
+      objects: listResultToObjectInfos(result, pathBase),
       continuationToken: result.IsTruncated
         ? result.NextContinuationToken
         : undefined,
@@ -789,7 +797,11 @@ class Bucket {
           path,
           contentLength,
           contentType,
-          dst: `${dstRoot}${path}`,
+          // strip the leading `/` that `path` always carries; for non-empty
+          // `dstRoot` the leading `/` acts as the separator, for empty
+          // `dstRoot` (copying to the bucket root) we'd otherwise end up
+          // with a non-canonical S3 key.
+          dst: `${dstRoot}${path}`.replace(/^\//, ''),
         });
       }
     });
