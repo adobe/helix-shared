@@ -120,8 +120,9 @@ function basename(key) {
 /**
  * Normalize the `prefix` + `path` arguments shared by {@link Bucket#list}
  * and {@link Bucket#browse} into:
- * - `root`: `prefix` with any trailing `/` stripped — the strip-base for
- *   computing each entry's root-relative `path`.
+ * - `root`: `prefix` with any leading and trailing `/` stripped — the
+ *   strip-base for computing each entry's root-relative `path`. Stripped
+ *   to canonical S3 form (S3 keys don't start with `/`).
  * - `dir`: the path argument, always interpreted as a directory (starts
  *   with `/` and ends with `/`).
  *
@@ -132,7 +133,7 @@ function basename(key) {
  * @returns {{ root: string, dir: string }}
  */
 function normalizePrefixAndPath(prefix, path) {
-  const root = prefix.endsWith('/') ? prefix.slice(0, -1) : prefix;
+  const root = sanitizeKey(prefix).replace(/\/$/, '');
   let dir = path.startsWith('/') ? path : `/${path}`;
   if (!dir.endsWith('/')) {
     dir += '/';

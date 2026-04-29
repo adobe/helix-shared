@@ -8,11 +8,11 @@
     "Delimiter": "/",
     "IsTruncated": true,
     "Contents": [{
-      "Key": "/owner/repo/ref/.gitignore",
+      "Key": "owner/repo/ref/.gitignore",
       "LastModified": "2021-05-05T08:00:30.000Z",
       "Size": "11"
     }, {
-      "Key": "/owner/repo/ref/README.md",
+      "Key": "owner/repo/ref/README.md",
       "LastModified": "2021-05-05T08:00:30.000Z",
       "Size": "1234"
     }]

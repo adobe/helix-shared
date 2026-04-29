@@ -1189,7 +1189,7 @@ describe('Storage test', () => {
   it('can list shallow', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-shallow-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=%2Fowner%2Frepo%2Fref%2F')
+      .get('/?delimiter=%2F&list-type=2&prefix=owner%2Frepo%2Fref%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
@@ -1200,7 +1200,7 @@ describe('Storage test', () => {
         {
           contentLength: 11,
           contentType: null,
-          key: '/owner/repo/ref/.gitignore',
+          key: 'owner/repo/ref/.gitignore',
           lastModified: new Date('2021-05-05T08:00:30.000Z'),
           path: '/.gitignore',
           name: '.gitignore',
@@ -1209,7 +1209,7 @@ describe('Storage test', () => {
         {
           contentLength: 1234,
           contentType: 'text/markdown',
-          key: '/owner/repo/ref/README.md',
+          key: 'owner/repo/ref/README.md',
           lastModified: new Date('2021-05-05T08:00:30.000Z'),
           path: '/README.md',
           name: 'README.md',
@@ -1223,7 +1223,7 @@ describe('Storage test', () => {
   it('can list deep', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-deep-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2F')
+      .get('/?list-type=2&prefix=owner%2Frepo%2Fref%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
@@ -1233,7 +1233,7 @@ describe('Storage test', () => {
       {
         contentLength: 11,
         contentType: null,
-        key: '/owner/repo/ref/.gitignore',
+        key: 'owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/.gitignore',
         name: '.gitignore',
@@ -1242,7 +1242,7 @@ describe('Storage test', () => {
       {
         contentLength: 1234,
         contentType: 'text/markdown',
-        key: '/owner/repo/ref/README.md',
+        key: 'owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/README.md',
         name: 'README.md',
@@ -1251,7 +1251,7 @@ describe('Storage test', () => {
       {
         contentLength: 1234,
         contentType: 'text/javascript',
-        key: '/owner/repo/ref/src/scripts.js',
+        key: 'owner/repo/ref/src/scripts.js',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/src/scripts.js',
         name: 'scripts.js',
@@ -1263,7 +1263,7 @@ describe('Storage test', () => {
   it('shallow list returns mixed files and folders', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
+      .get('/?delimiter=%2F&list-type=2&prefix=owner%2Frepo%2Fref%2Fmyfolder%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
@@ -1271,13 +1271,13 @@ describe('Storage test', () => {
 
     assert.deepStrictEqual(result.objects, [
       {
-        key: '/owner/repo/ref/myfolder/sub1/',
+        key: 'owner/repo/ref/myfolder/sub1/',
         path: '/myfolder/sub1',
         name: 'sub1',
         isFolder: true,
       },
       {
-        key: '/owner/repo/ref/myfolder/sub2/',
+        key: 'owner/repo/ref/myfolder/sub2/',
         path: '/myfolder/sub2',
         name: 'sub2',
         isFolder: true,
@@ -1285,7 +1285,7 @@ describe('Storage test', () => {
       {
         contentLength: 999999,
         contentType: 'text/html',
-        key: '/owner/repo/ref/myfolder/somefile.html',
+        key: 'owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
         path: '/myfolder/somefile.html',
         name: 'somefile.html',
@@ -1298,7 +1298,7 @@ describe('Storage test', () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-truncated-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/')
-      .query({ 'list-type': 2, 'max-keys': 2, prefix: '/owner/repo/ref/' })
+      .query({ 'list-type': 2, 'max-keys': 2, prefix: 'owner/repo/ref/' })
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
@@ -1308,7 +1308,7 @@ describe('Storage test', () => {
       {
         contentLength: 11,
         contentType: null,
-        key: '/owner/repo/ref/.gitignore',
+        key: 'owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/.gitignore',
         name: '.gitignore',
@@ -1317,7 +1317,7 @@ describe('Storage test', () => {
       {
         contentLength: 1234,
         contentType: 'text/markdown',
-        key: '/owner/repo/ref/README.md',
+        key: 'owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/README.md',
         name: 'README.md',
@@ -1331,7 +1331,7 @@ describe('Storage test', () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/')
       .query({
-        'list-type': 2, delimiter: '/', 'max-keys': 2, prefix: '/owner/repo/ref/',
+        'list-type': 2, delimiter: '/', 'max-keys': 2, prefix: 'owner/repo/ref/',
       })
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
@@ -1343,7 +1343,7 @@ describe('Storage test', () => {
       {
         contentLength: 11,
         contentType: null,
-        key: '/owner/repo/ref/.gitignore',
+        key: 'owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/.gitignore',
         name: '.gitignore',
@@ -1352,7 +1352,7 @@ describe('Storage test', () => {
       {
         contentLength: 1234,
         contentType: 'text/markdown',
-        key: '/owner/repo/ref/README.md',
+        key: 'owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/README.md',
         name: 'README.md',
@@ -1364,7 +1364,7 @@ describe('Storage test', () => {
   it('browse navigates a sub-path with root-relative result paths and normalizes path', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
+      .get('/?delimiter=%2F&list-type=2&prefix=owner%2Frepo%2Fref%2Fmyfolder%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
@@ -1373,15 +1373,15 @@ describe('Storage test', () => {
 
     assert.deepStrictEqual(result.objects, [
       {
-        key: '/owner/repo/ref/myfolder/sub1/', path: '/myfolder/sub1', name: 'sub1', isFolder: true,
+        key: 'owner/repo/ref/myfolder/sub1/', path: '/myfolder/sub1', name: 'sub1', isFolder: true,
       },
       {
-        key: '/owner/repo/ref/myfolder/sub2/', path: '/myfolder/sub2', name: 'sub2', isFolder: true,
+        key: 'owner/repo/ref/myfolder/sub2/', path: '/myfolder/sub2', name: 'sub2', isFolder: true,
       },
       {
         contentLength: 999999,
         contentType: 'text/html',
-        key: '/owner/repo/ref/myfolder/somefile.html',
+        key: 'owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
         path: '/myfolder/somefile.html',
         name: 'somefile.html',
@@ -1395,7 +1395,7 @@ describe('Storage test', () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/')
       .query({
-        'list-type': 2, delimiter: '/', 'continuation-token': 'tok-1', prefix: '/owner/repo/ref/myfolder/',
+        'list-type': 2, delimiter: '/', 'continuation-token': 'tok-1', prefix: 'owner/repo/ref/myfolder/',
       })
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
