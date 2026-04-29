@@ -1162,18 +1162,28 @@ describe('Storage test', () => {
     await bus.rmdir('/owner/repo/new-branch/');
   });
 
-  it('can list folders', async () => {
+  it('can list shallow across multiple pages', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-folders-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=')
+      .get('/?delimiter=%2F&list-type=2&prefix=foo%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply[0]))
-      .get('/?continuation-token=next&delimiter=%2F&list-type=2&prefix=')
+      .get('/?continuation-token=next&delimiter=%2F&list-type=2&prefix=foo%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply[1]));
 
     const bus = storage.codeBus();
-    const folders = await bus.listFolders('');
+    const result = await bus.list('foo', '/', { shallow: true });
 
-    assert.deepStrictEqual(folders, ['owner/', 'other/']);
+    assert.deepStrictEqual(result, {
+      objects: [
+        {
+          key: 'foo/owner/', path: '/owner', name: 'owner', isFolder: true,
+        },
+        {
+          key: 'foo/other/', path: '/other', name: 'other', isFolder: true,
+        },
+      ],
+      continuationToken: undefined,
+    });
   });
 
   it('can list shallow', async () => {
@@ -1183,26 +1193,31 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/', true);
+    const result = await bus.list('/owner/repo/ref/', '/', { shallow: true });
 
-    assert.deepStrictEqual(folders, [
-      {
-        contentLength: 11,
-        contentType: null,
-        key: '/owner/repo/ref/.gitignore',
-        lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '.gitignore',
-        name: '.gitignore',
-      },
-      {
-        contentLength: 1234,
-        contentType: 'text/markdown',
-        key: '/owner/repo/ref/README.md',
-        lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'README.md',
-        name: 'README.md',
-      },
-    ]);
+    assert.deepStrictEqual(result, {
+      objects: [
+        {
+          contentLength: 11,
+          contentType: null,
+          key: '/owner/repo/ref/.gitignore',
+          lastModified: new Date('2021-05-05T08:00:30.000Z'),
+          path: '/.gitignore',
+          name: '.gitignore',
+          isFolder: false,
+        },
+        {
+          contentLength: 1234,
+          contentType: 'text/markdown',
+          key: '/owner/repo/ref/README.md',
+          lastModified: new Date('2021-05-05T08:00:30.000Z'),
+          path: '/README.md',
+          name: 'README.md',
+          isFolder: false,
+        },
+      ],
+      continuationToken: undefined,
+    });
   });
 
   it('can list deep', async () => {
@@ -1212,84 +1227,69 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/', { includePrefixes: true });
+    const result = await bus.list('/owner/repo/ref/');
 
-    assert.deepStrictEqual(folders, [
+    assert.deepStrictEqual(result.objects, [
       {
         contentLength: 11,
         contentType: null,
         key: '/owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '.gitignore',
+        path: '/.gitignore',
         name: '.gitignore',
+        isFolder: false,
       },
       {
         contentLength: 1234,
         contentType: 'text/markdown',
         key: '/owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'README.md',
+        path: '/README.md',
         name: 'README.md',
+        isFolder: false,
       },
       {
         contentLength: 1234,
         contentType: 'text/javascript',
         key: '/owner/repo/ref/src/scripts.js',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'src/scripts.js',
+        path: '/src/scripts.js',
         name: 'scripts.js',
+        isFolder: false,
       },
     ]);
   });
 
-  it('can list to include subfolder prefixes', async () => {
+  it('shallow list returns mixed files and folders', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
+      .get('/?delimiter=%2F&list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/myfolder/', { includePrefixes: true });
+    const result = await bus.list('/owner/repo/ref/', '/myfolder', { shallow: true });
 
-    assert.deepStrictEqual(folders, [
+    assert.deepStrictEqual(result.objects, [
       {
         key: '/owner/repo/ref/myfolder/sub1/',
-        path: 'sub1/',
+        path: '/myfolder/sub1',
         name: 'sub1',
+        isFolder: true,
       },
       {
         key: '/owner/repo/ref/myfolder/sub2/',
-        path: 'sub2/',
+        path: '/myfolder/sub2',
         name: 'sub2',
+        isFolder: true,
       },
       {
         contentLength: 999999,
         contentType: 'text/html',
         key: '/owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: 'somefile.html',
+        path: '/myfolder/somefile.html',
         name: 'somefile.html',
-      },
-    ]);
-  });
-
-  it('can list to not include subfolder prefixes', async () => {
-    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
-    nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
-      .reply(200, new xml2js.Builder().buildObject(listReply));
-
-    const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/myfolder/');
-
-    assert.deepStrictEqual(folders, [
-      {
-        contentLength: 999999,
-        contentType: 'text/html',
-        key: '/owner/repo/ref/myfolder/somefile.html',
-        lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: 'somefile.html',
-        name: 'somefile.html',
+        isFolder: false,
       },
     ]);
   });
@@ -1302,27 +1302,26 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const items = await bus.list('/owner/repo/ref/', {
-      shallow: false,
-      maxItems: 2,
-    });
+    const result = await bus.list('/owner/repo/ref/', '/', { maxItems: 2 });
 
-    assert.deepStrictEqual(items, [
+    assert.deepStrictEqual(result.objects, [
       {
         contentLength: 11,
         contentType: null,
         key: '/owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '.gitignore',
+        path: '/.gitignore',
         name: '.gitignore',
+        isFolder: false,
       },
       {
         contentLength: 1234,
         contentType: 'text/markdown',
         key: '/owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'README.md',
+        path: '/README.md',
         name: 'README.md',
+        isFolder: false,
       },
     ]);
   });
@@ -1348,6 +1347,7 @@ describe('Storage test', () => {
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/.gitignore',
         name: '.gitignore',
+        isFolder: false,
       },
       {
         contentLength: 1234,
@@ -1356,23 +1356,28 @@ describe('Storage test', () => {
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
         path: '/README.md',
         name: 'README.md',
+        isFolder: false,
       },
     ]);
   });
 
-  it('browse navigates a sub-path with root-relative result paths', async () => {
+  it('browse navigates a sub-path with root-relative result paths and normalizes path', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/?delimiter=%2F&list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    // path is normalized: 'myfolder/' becomes '/myfolder/'
-    const result = await bus.browse('/owner/repo/ref/', 'myfolder/');
+    // 'myfolder' (no leading or trailing slash) is normalized to '/myfolder/'.
+    const result = await bus.browse('/owner/repo/ref/', 'myfolder');
 
     assert.deepStrictEqual(result.objects, [
-      { key: '/owner/repo/ref/myfolder/sub1/', path: '/myfolder/sub1/', name: 'sub1' },
-      { key: '/owner/repo/ref/myfolder/sub2/', path: '/myfolder/sub2/', name: 'sub2' },
+      {
+        key: '/owner/repo/ref/myfolder/sub1/', path: '/myfolder/sub1', name: 'sub1', isFolder: true,
+      },
+      {
+        key: '/owner/repo/ref/myfolder/sub2/', path: '/myfolder/sub2', name: 'sub2', isFolder: true,
+      },
       {
         contentLength: 999999,
         contentType: 'text/html',
@@ -1380,11 +1385,12 @@ describe('Storage test', () => {
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
         path: '/myfolder/somefile.html',
         name: 'somefile.html',
+        isFolder: false,
       },
     ]);
   });
 
-  it('browse forwards the continuation token and includes prefixes by default', async () => {
+  it('browse forwards the continuation token', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/')
@@ -1397,18 +1403,7 @@ describe('Storage test', () => {
     const result = await bus.browse('/owner/repo/ref/', '/myfolder/', { continuationToken: 'tok-1' });
 
     assert.strictEqual(result.continuationToken, undefined);
-    assert.deepStrictEqual(result.objects, [
-      { key: '/owner/repo/ref/myfolder/sub1/', path: '/myfolder/sub1/', name: 'sub1' },
-      { key: '/owner/repo/ref/myfolder/sub2/', path: '/myfolder/sub2/', name: 'sub2' },
-      {
-        contentLength: 999999,
-        contentType: 'text/html',
-        key: '/owner/repo/ref/myfolder/somefile.html',
-        lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: '/myfolder/somefile.html',
-        name: 'somefile.html',
-      },
-    ]);
+    assert.strictEqual(result.objects.length, 3);
   });
 
   it('browse can return an empty page', async () => {
@@ -1424,42 +1419,6 @@ describe('Storage test', () => {
     const result = await bus.browse('empty');
 
     assert.deepStrictEqual(result, { objects: [], continuationToken: undefined });
-  });
-
-  it('browse can omit prefixes', async () => {
-    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
-    nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
-      .reply(200, new xml2js.Builder().buildObject(listReply));
-
-    const bus = storage.codeBus();
-    const result = await bus.browse('/owner/repo/ref/', '/myfolder/', { includePrefixes: false });
-
-    assert.deepStrictEqual(result.objects, [
-      {
-        contentLength: 999999,
-        contentType: 'text/html',
-        key: '/owner/repo/ref/myfolder/somefile.html',
-        lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: '/myfolder/somefile.html',
-        name: 'somefile.html',
-      },
-    ]);
-  });
-
-  it('can return an empty list of folders', async () => {
-    nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=foo%2f')
-      .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
-<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-  <KeyCount>0</KeyCount>
-</ListBucketResult>
-`);
-
-    const bus = storage.codeBus();
-    const folders = await bus.listFolders('foo/');
-
-    assert.deepStrictEqual(folders, []);
   });
 });
 

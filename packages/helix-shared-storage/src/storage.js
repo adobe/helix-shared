@@ -56,7 +56,7 @@ const MAX_DELETE_OBJECTS = 1000;
  * @typedef {import('./storage.d').CopyOptions} CopyOptions
  * @typedef {import('./storage.d').ListOptions} ListOptions
  * @typedef {import('./storage.d').BrowseOptions} BrowseOptions
- * @typedef {import('./storage.d').BrowseResult} BrowseResult
+ * @typedef {import('./storage.d').ListResult} ListResult
  */
 
 /**
@@ -118,42 +118,65 @@ function basename(key) {
 }
 
 /**
+ * Normalize the `prefix` + `path` arguments shared by {@link Bucket#list}
+ * and {@link Bucket#browse} into:
+ * - `root`: `prefix` with any trailing `/` stripped — the strip-base for
+ *   computing each entry's root-relative `path`.
+ * - `dir`: the path argument, always interpreted as a directory (starts
+ *   with `/` and ends with `/`).
+ *
+ * The actual S3 prefix sent for the listing is `root + dir`.
+ *
+ * @param {string} prefix
+ * @param {string} path
+ * @returns {{ root: string, dir: string }}
+ */
+function normalizePrefixAndPath(prefix, path) {
+  const root = prefix.endsWith('/') ? prefix.slice(0, -1) : prefix;
+  let dir = path.startsWith('/') ? path : `/${path}`;
+  if (!dir.endsWith('/')) {
+    dir += '/';
+  }
+  return { root, dir };
+}
+
+/**
  * Map a `ListObjectsV2` response into {@link ObjectInfo} entries. Used by both
- * {@link Bucket#list} (which calls it once per page) and {@link Bucket#browse}.
+ * {@link Bucket#list} and {@link Bucket#browse}; the `Delimiter` setting on
+ * the underlying request determines whether `CommonPrefixes` are present.
  *
  * The `path` field on each entry is computed by stripping `pathBase` from the
- * front of the entry's key. Pass the listed prefix as `pathBase` to get
- * paths relative to the listing (the {@link Bucket#list} convention); pass a
- * fixed root as `pathBase` to get paths relative to that root regardless of
- * how deep the listing is (the {@link Bucket#browse} convention).
+ * front of the entry's key, and any trailing `/` (for common prefixes) is
+ * dropped — every `path` value is uniform: starts with `/`, never ends with
+ * `/`. The `isFolder` flag carries the file/folder distinction.
  *
  * @param {object} result the `ListObjectsV2Command` response
  * @param {string} pathBase prefix to strip from each entry's `key` to compute
  *  its `path`
- * @param {boolean} includePrefixes whether to include common prefixes (folders)
  * @returns {ObjectInfo[]}
  */
-function listResultToObjectInfos(result, pathBase, includePrefixes) {
+function listResultToObjectInfos(result, pathBase) {
   const baseLen = pathBase.length;
   const objects = [];
-  if (includePrefixes) {
-    (result.CommonPrefixes || []).forEach(({ Prefix }) => {
-      objects.push({
-        key: Prefix,
-        path: Prefix.substring(baseLen),
-        name: basename(Prefix),
-      });
+  (result.CommonPrefixes || []).forEach(({ Prefix }) => {
+    objects.push({
+      key: Prefix,
+      // S3 always returns CommonPrefix values ending with `/`; drop it.
+      path: Prefix.substring(baseLen).replace(/\/$/, ''),
+      name: basename(Prefix),
+      isFolder: true,
     });
-  }
+  });
   (result.Contents || []).forEach((content) => {
     const key = content.Key;
     objects.push({
       key,
+      path: key.substring(baseLen),
+      name: basename(key),
+      isFolder: false,
       lastModified: content.LastModified,
       contentLength: content.Size,
       contentType: mime.getType(key),
-      path: key.substring(baseLen),
-      name: basename(key),
     });
   });
   return objects;
@@ -637,18 +660,25 @@ class Bucket {
   }
 
   /**
-   * List objects below `prefix`. Pages through `ListObjectsV2` until the result
-   * is no longer truncated or `maxItems` is reached.
+   * List objects below `prefix + path`. Pages through `ListObjectsV2` until the
+   * result is no longer truncated or `maxItems` is reached.
    *
-   * @param {string} prefix the key prefix to list under
-   * @param {boolean|ListOptions} [opts] list options. As a backward-compatibility
-   *  shortcut, passing `true` is equivalent to `{ shallow: true }`.
-   * @returns {Promise<ObjectInfo[]>}
+   * `prefix` is the fixed root of the subtree; `path` is the subdirectory
+   * within it (always interpreted as a directory: normalized to start *and*
+   * end with `/`). Each returned `ObjectInfo.path` is relative to `prefix`,
+   * starts with `/`, and never ends with `/` — the `isFolder` flag carries
+   * the file/folder distinction. When `shallow: true`, common prefixes
+   * (folders directly below the listed dir) are returned alongside files;
+   * callers filter by `isFolder` if they want only one kind.
+   *
+   * @param {string} prefix root of the subtree to list under
+   * @param {string} [path] subdirectory within `prefix`. Defaults to `'/'`.
+   * @param {ListOptions} [opts]
+   * @returns {Promise<ListResult>}
    */
-  async list(prefix, opts = false) {
-    const {
-      shallow = false, maxItems = Number.POSITIVE_INFINITY, includePrefixes = false,
-    } = typeof opts === 'boolean' ? { shallow: opts } : opts;
+  async list(prefix, path = '/', opts = {}) {
+    const { shallow = false, maxItems = Number.POSITIVE_INFINITY } = opts;
+    const { root, dir } = normalizePrefixAndPath(prefix, path);
 
     let ContinuationToken;
     const objects = [];
@@ -656,7 +686,7 @@ class Bucket {
       const input = {
         Bucket: this.bucket,
         ContinuationToken,
-        Prefix: prefix,
+        Prefix: `${root}${dir}`,
         Delimiter: shallow ? '/' : undefined,
       };
       if (maxItems - objects.length < 1000) {
@@ -665,31 +695,31 @@ class Bucket {
       // eslint-disable-next-line no-await-in-loop
       const result = await this.client.send(new ListObjectsV2Command(input));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
-      objects.push(...listResultToObjectInfos(result, prefix, includePrefixes));
+      objects.push(...listResultToObjectInfos(result, root));
     } while (ContinuationToken && objects.length < maxItems);
-    return objects;
+    return { objects, continuationToken: undefined };
   }
 
   /**
    * Single-page, always-shallow listing intended for paginated UI browsing.
    *
-   * `prefix` is the fixed *root* of the subtree being browsed; it does not
-   * change as the user navigates. `path` is the *subdirectory* within that
-   * root currently being listed; the actual S3 prefix sent is `prefix + path`.
-   * The returned `path` on each entry is always relative to `prefix` (i.e. it
-   * starts with `/` and contains the navigated `path`), so the caller can
-   * pass an entry's `path` straight back as the next call's `path` argument
-   * without having to reconstruct breadcrumbs.
+   * `prefix` is the fixed root (constant during navigation); `path` is the
+   * subdirectory within it (always interpreted as a directory: normalized
+   * to start *and* end with `/`). The actual S3 prefix sent is
+   * `prefix + path`. Each returned `ObjectInfo.path` is relative to
+   * `prefix`, starts with `/`, and never ends with `/`; the `isFolder` flag
+   * carries the file/folder distinction. The caller can pass an entry's
+   * `path` straight back as the next call's `path` argument to drill in
+   * without reconstructing breadcrumbs.
    *
-   * `path` is normalized to start with `/` (and `prefix`'s trailing `/`, if
-   * any, is stripped before concatenation). For example:
+   * Example:
    *
    * ```js
    * const ROOT = 'owner/repo/main/';
-   * const r1 = await bus.browse(ROOT, '/');
-   * // r1.objects[i].path -> '/blog/', '/images/', '/index.md', ...
-   * const r2 = await bus.browse(ROOT, '/blog/');
-   * // r2.objects[i].path -> '/blog/2024/', '/blog/index.md', ...
+   * const r1 = await bus.browse(ROOT);
+   * // r1.objects[i].path -> '/blog', '/images', '/index.md', ...
+   * const r2 = await bus.browse(ROOT, r1.objects[0].path); // '/blog'
+   * // r2.objects[i].path -> '/blog/2024', '/blog/index.md', ...
    * ```
    *
    * Unlike {@link Bucket#list}, this does not auto-page: it issues one
@@ -698,62 +728,29 @@ class Bucket {
    * demand. `maxItems` controls the page size only.
    *
    * @param {string} prefix root of the subtree being browsed
-   * @param {string} [path] subdirectory within `prefix` to list; defaults to
-   *  `'/'`. Normalized to start with `/`.
+   * @param {string} [path] subdirectory within `prefix` to list. Defaults
+   *  to `'/'`.
    * @param {BrowseOptions} [opts]
-   * @returns {Promise<BrowseResult>}
+   * @returns {Promise<ListResult>}
    */
   async browse(prefix, path = '/', opts = {}) {
-    const {
-      continuationToken,
-      maxItems,
-      includePrefixes = true,
-    } = opts;
-
-    const root = prefix.endsWith('/') ? prefix.slice(0, -1) : prefix;
-    const subPath = path.startsWith('/') ? path : `/${path}`;
+    const { continuationToken, maxItems } = opts;
+    const { root, dir } = normalizePrefixAndPath(prefix, path);
 
     const result = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
-      Prefix: `${root}${subPath}`,
+      Prefix: `${root}${dir}`,
       Delimiter: '/',
       ContinuationToken: continuationToken || undefined,
       MaxKeys: maxItems,
     }));
 
     return {
-      objects: listResultToObjectInfos(result, root, includePrefixes),
+      objects: listResultToObjectInfos(result, root),
       continuationToken: result.IsTruncated
         ? result.NextContinuationToken
         : undefined,
     };
-  }
-
-  /**
-   * List the common prefixes (subfolders) directly below `prefix`. Equivalent
-   * to a `ListObjectsV2` with `Delimiter: '/'`, returning only the
-   * `CommonPrefixes` aggregated across pages.
-   *
-   * @param {string} prefix
-   * @returns {Promise<string[]>} the list of common prefixes (each ending with `/`)
-   */
-  async listFolders(prefix) {
-    let ContinuationToken;
-    const folders = [];
-    do {
-      // eslint-disable-next-line no-await-in-loop
-      const result = await this.client.send(new ListObjectsV2Command({
-        Bucket: this.bucket,
-        ContinuationToken,
-        Prefix: prefix,
-        Delimiter: '/',
-      }));
-      ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
-      (result.CommonPrefixes || []).forEach(({ Prefix }) => {
-        folders.push(Prefix);
-      });
-    } while (ContinuationToken);
-    return folders;
   }
 
   /**
@@ -775,9 +772,13 @@ class Bucket {
     const { log } = this;
     const tasks = [];
     const Prefix = sanitizeKey(src);
+    // strip trailing `/` from dst so we can concatenate with `path` which
+    // is root-relative and always starts with `/`
     const dstPrefix = sanitizeKey(dst);
+    const dstRoot = dstPrefix.replace(/\/$/, '');
     this.log.info(`fetching list of files to copy ${this.bucket}/${Prefix} => ${dstPrefix}`);
-    (await this.list(Prefix)).forEach((obj) => {
+    const { objects } = await this.list(Prefix);
+    objects.forEach((obj) => {
       const {
         path, key, contentLength, contentType,
       } = obj;
@@ -787,7 +788,7 @@ class Bucket {
           path,
           contentLength,
           contentType,
-          dst: `${dstPrefix}${path}`,
+          dst: `${dstRoot}${path}`,
         });
       }
     });
@@ -844,8 +845,8 @@ class Bucket {
   async rmdir(src) {
     src = sanitizeKey(src);
     this.log.info(`fetching list of files to delete from ${this.bucket}/${src}`);
-    const items = await this.list(src);
-    return this.remove(items.map((item) => item.key), src);
+    const { objects } = await this.list(src);
+    return this.remove(objects.map((item) => item.key), src);
   }
 }
 

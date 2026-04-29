@@ -24,31 +24,35 @@ import {
 import { Response } from "@adobe/fetch";
 
 /**
- * Information about a single object (or common prefix) returned by {@link Bucket.list}.
+ * Information about a single entry — file or folder — returned by
+ * {@link Bucket.list} or {@link Bucket.browse}.
  *
- * When the entry represents a common prefix (folder) — i.e. when {@link ListOptions.includePrefixes}
- * is `true` — only `key` and `path` are populated.
+ * When the entry represents a common prefix (folder), `isFolder` is `true`
+ * and `lastModified`/`contentLength`/`contentType` are absent.
  */
 export interface ObjectInfo {
-  /** absolute object key (including the listing prefix) */
+  /** absolute object key. For folders, S3's `CommonPrefix` value (ends with `/`). */
   key: string;
   /**
-   * the path to the object. For {@link Bucket.list} this is relative to the
-   * listed prefix; for {@link Bucket.browse} it is relative to the browse
-   * `prefix` (the root) and always starts with `/`.
+   * Path relative to the listing's `prefix` argument. Always starts with
+   * `/` and never ends with `/` — the {@link ObjectInfo.isFolder} flag
+   * carries the file/folder distinction. The same form the caller would
+   * pass back as the `path` argument to drill into a folder.
    */
   path: string;
   /**
-   * the basename of the object — the last path segment, with any trailing
-   * `/` stripped. E.g. `2024` for a common prefix `/blog/2024/`,
-   * `post.md` for an object key `/blog/post.md`.
+   * Basename of the entry — the last path segment, with any trailing `/`
+   * stripped. E.g. `2024` for a folder `/blog/2024/`, `post.md` for an
+   * object key `/blog/post.md`.
    */
   name: string;
-  /** last-modified timestamp as returned by S3; absent for common prefixes */
+  /** `true` for common prefixes (folders); `false` for object keys (files). */
+  isFolder: boolean;
+  /** last-modified timestamp as returned by S3. Files only. */
   lastModified?: Date;
-  /** object size in bytes; absent for common prefixes */
+  /** object size in bytes. Files only. */
   contentLength?: number;
-  /** content type guessed from the key extension; absent for common prefixes */
+  /** content type guessed from the key extension. Files only. */
   contentType?: string | null;
 }
 
@@ -90,30 +94,27 @@ export interface BrowseOptions {
    * at 1000 by S3; defaults to the S3 default when omitted.
    */
   maxItems?: number;
-  /**
-   * Whether to include common prefixes (subfolders) as entries in the result.
-   * Defaults to `true`, since browsing typically wants folder-style navigation.
-   */
-  includePrefixes?: boolean;
-}
-
-export interface BrowseResult {
-  /** the page of objects (and, when {@link BrowseOptions.includePrefixes}, common prefixes) */
-  objects: ObjectInfo[];
-  /**
-   * Continuation token to pass back to {@link Bucket.browse} to fetch the next
-   * page. `undefined` when the listing has been exhausted.
-   */
-  continuationToken?: string;
 }
 
 export interface ListOptions {
   /** whether to list shallow, i.e. not recursive (uses `/` as delimiter). Default `false`. */
   shallow?: boolean;
-  /** whether to include common prefixes (subfolders) as entries. Default `false`. */
-  includePrefixes?: boolean;
-  /** maximum number of items to return. Default unlimited. */
+  /** maximum number of items to return across all pages. Default unlimited. */
   maxItems?: number;
+}
+
+/**
+ * Common return shape for {@link Bucket.list} and {@link Bucket.browse}.
+ *
+ * `continuationToken` is `undefined` for {@link Bucket.list} (which always
+ * auto-paginates) and for an exhausted {@link Bucket.browse} call; it is set
+ * when {@link Bucket.browse} hits a truncated S3 response.
+ */
+export interface ListResult {
+  /** the page of entries (files and, for shallow listings, folders) */
+  objects: ObjectInfo[];
+  /** continuation token to pass back to {@link Bucket.browse} for the next page */
+  continuationToken?: string;
 }
 
 /**
@@ -317,40 +318,37 @@ export declare interface Bucket {
   ): Promise<BulkDeleteResult>;
 
   /**
-   * List objects below `prefix`.
+   * Auto-paginated listing of entries below `prefix + path`.
    *
-   * @param prefix the key prefix to list under
-   * @param opts list options. As a backward-compatibility shortcut, passing `true` is
-   *  equivalent to `{ shallow: true }`.
+   * `prefix` is the fixed root of the subtree; `path` is the subdirectory
+   * within it (always interpreted as a directory: normalized to start *and*
+   * end with `/`). When `shallow: true`, common prefixes (folders directly
+   * below the listed dir) are returned alongside files; callers filter by
+   * `isFolder` if they want only one kind. Each returned `ObjectInfo.path`
+   * is relative to `prefix`.
+   *
+   * @param prefix root of the subtree to list under
+   * @param path subdirectory within `prefix`. Defaults to `'/'`.
    */
-  list(prefix: string, opts?: boolean | ListOptions): Promise<ObjectInfo[]>;
-
-  /**
-   * List the common prefixes (subfolders) directly below `prefix`. Always shallow.
-   */
-  listFolders(prefix: string): Promise<string[]>;
+  list(prefix: string, path?: string, opts?: ListOptions): Promise<ListResult>;
 
   /**
    * Single-page, always-shallow listing intended for paginated UI browsing.
    *
-   * `prefix` is the fixed root of the subtree being browsed (constant during
-   * navigation); `path` is the subdirectory within that root currently being
-   * listed. The actual S3 prefix sent is `prefix + path`. Each returned
-   * `ObjectInfo.path` is relative to `prefix` (and starts with `/`), so the
-   * caller can pass an entry's `path` straight back as the next call's `path`
-   * argument to drill in.
+   * Same `prefix` / `path` conventions as {@link Bucket.list}. Unlike `list`,
+   * `browse` does not auto-page: it issues one `ListObjectsV2` call, returns
+   * the entries it received, and exposes the `NextContinuationToken` (if
+   * any) so the caller can request the next page on demand. `maxItems`
+   * controls the page size only.
    *
-   * Unlike {@link Bucket.list}, `browse` does not auto-page through the result:
-   * it issues one `ListObjectsV2` call, returns the entries it received, and
-   * exposes the `NextContinuationToken` (if any) so the caller can request the
-   * next page when the user navigates forward. `maxItems` controls the page
-   * size only.
+   * Each returned `ObjectInfo.path` is in the same form as the `path`
+   * argument, so the caller can pass an entry's `path` straight back to
+   * drill in.
    *
    * @param prefix root of the subtree being browsed
-   * @param path subdirectory within `prefix` to list. Normalized to start
-   *  with `/`. Defaults to `'/'`.
+   * @param path subdirectory within `prefix` to list. Defaults to `'/'`.
    */
-  browse(prefix: string, path?: string, opts?: BrowseOptions): Promise<BrowseResult>;
+  browse(prefix: string, path?: string, opts?: BrowseOptions): Promise<ListResult>;
 
   /**
    * Copies the tree below `src` to `dst`. Concurrency is fixed at 64; per-object errors are
