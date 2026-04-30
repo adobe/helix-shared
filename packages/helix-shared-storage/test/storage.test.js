@@ -1184,18 +1184,17 @@ describe('Storage test', () => {
 `);
 
     const bus = storage.codeBus();
-    const result = await bus.list('', '/foo', { shallow: true });
+    const result = await bus.list('foo', { shallow: true });
 
     assert.deepStrictEqual(result.objects, [
       {
-        key: 'foo/sub/', path: '/foo/sub', name: 'sub', isFolder: true,
+        key: 'foo/sub/', name: 'sub', isFolder: true,
       },
       {
         contentLength: 11,
         contentType: 'text/markdown',
         key: 'foo/bar.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '/foo/bar.md',
         name: 'bar.md',
         isFolder: false,
       },
@@ -1213,7 +1212,7 @@ describe('Storage test', () => {
     const bus = storage.codeBus();
     const folders = await bus.listFolders('foo');
 
-    assert.deepStrictEqual(folders, ['/owner', '/other']);
+    assert.deepStrictEqual(folders, ['owner', 'other']);
   });
 
   it('can list shallow across multiple pages', async () => {
@@ -1225,15 +1224,16 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply[1]));
 
     const bus = storage.codeBus();
-    const result = await bus.list('foo', '/', { shallow: true });
+    const result = await bus.list('foo', { shallow: true });
 
     assert.deepStrictEqual(result, {
+      prefix: 'foo/',
       objects: [
         {
-          key: 'foo/owner/', path: '/owner', name: 'owner', isFolder: true,
+          key: 'foo/owner/', name: 'owner', isFolder: true,
         },
         {
-          key: 'foo/other/', path: '/other', name: 'other', isFolder: true,
+          key: 'foo/other/', name: 'other', isFolder: true,
         },
       ],
       continuationToken: undefined,
@@ -1247,16 +1247,16 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.list('/owner/repo/ref/', '/', { shallow: true });
+    const result = await bus.list('owner/repo/ref/', { shallow: true });
 
     assert.deepStrictEqual(result, {
+      prefix: 'owner/repo/ref/',
       objects: [
         {
           contentLength: 11,
           contentType: null,
           key: 'owner/repo/ref/.gitignore',
           lastModified: new Date('2021-05-05T08:00:30.000Z'),
-          path: '/.gitignore',
           name: '.gitignore',
           isFolder: false,
         },
@@ -1265,7 +1265,6 @@ describe('Storage test', () => {
           contentType: 'text/markdown',
           key: 'owner/repo/ref/README.md',
           lastModified: new Date('2021-05-05T08:00:30.000Z'),
-          path: '/README.md',
           name: 'README.md',
           isFolder: false,
         },
@@ -1281,7 +1280,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.list('/owner/repo/ref/');
+    const result = await bus.list('owner/repo/ref/');
 
     assert.deepStrictEqual(result.objects, [
       {
@@ -1289,7 +1288,6 @@ describe('Storage test', () => {
         contentType: null,
         key: 'owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '/.gitignore',
         name: '.gitignore',
         isFolder: false,
       },
@@ -1298,7 +1296,6 @@ describe('Storage test', () => {
         contentType: 'text/markdown',
         key: 'owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '/README.md',
         name: 'README.md',
         isFolder: false,
       },
@@ -1307,7 +1304,6 @@ describe('Storage test', () => {
         contentType: 'text/javascript',
         key: 'owner/repo/ref/src/scripts.js',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '/src/scripts.js',
         name: 'scripts.js',
         isFolder: false,
       },
@@ -1321,18 +1317,16 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.list('/owner/repo/ref/', '/myfolder', { shallow: true });
+    const result = await bus.list('owner/repo/ref/myfolder/', { shallow: true });
 
     assert.deepStrictEqual(result.objects, [
       {
         key: 'owner/repo/ref/myfolder/sub1/',
-        path: '/myfolder/sub1',
         name: 'sub1',
         isFolder: true,
       },
       {
         key: 'owner/repo/ref/myfolder/sub2/',
-        path: '/myfolder/sub2',
         name: 'sub2',
         isFolder: true,
       },
@@ -1341,7 +1335,6 @@ describe('Storage test', () => {
         contentType: 'text/html',
         key: 'owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: '/myfolder/somefile.html',
         name: 'somefile.html',
         isFolder: false,
       },
@@ -1356,7 +1349,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.list('/owner/repo/ref/', '/', { maxItems: 2 });
+    const result = await bus.list('owner/repo/ref/', { maxItems: 2 });
 
     assert.deepStrictEqual(result.objects, [
       {
@@ -1364,7 +1357,6 @@ describe('Storage test', () => {
         contentType: null,
         key: 'owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '/.gitignore',
         name: '.gitignore',
         isFolder: false,
       },
@@ -1373,7 +1365,6 @@ describe('Storage test', () => {
         contentType: 'text/markdown',
         key: 'owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '/README.md',
         name: 'README.md',
         isFolder: false,
       },
@@ -1390,7 +1381,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.browse('/owner/repo/ref/', '/', { maxItems: 2 });
+    const result = await bus.browse('owner/repo/ref/', { maxItems: 2 });
 
     assert.strictEqual(result.continuationToken, 'next');
     assert.deepStrictEqual(result.objects, [
@@ -1399,7 +1390,6 @@ describe('Storage test', () => {
         contentType: null,
         key: 'owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '/.gitignore',
         name: '.gitignore',
         isFolder: false,
       },
@@ -1408,36 +1398,33 @@ describe('Storage test', () => {
         contentType: 'text/markdown',
         key: 'owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '/README.md',
         name: 'README.md',
         isFolder: false,
       },
     ]);
   });
 
-  it('browse navigates a sub-path with root-relative result paths and normalizes path', async () => {
+  it('browse navigates a sub-path', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/?delimiter=%2F&list-type=2&prefix=owner%2Frepo%2Fref%2Fmyfolder%2F')
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    // 'myfolder' (no leading or trailing slash) is normalized to '/myfolder/'.
-    const result = await bus.browse('/owner/repo/ref/', 'myfolder');
+    const result = await bus.browse('owner/repo/ref/myfolder/');
 
     assert.deepStrictEqual(result.objects, [
       {
-        key: 'owner/repo/ref/myfolder/sub1/', path: '/myfolder/sub1', name: 'sub1', isFolder: true,
+        key: 'owner/repo/ref/myfolder/sub1/', name: 'sub1', isFolder: true,
       },
       {
-        key: 'owner/repo/ref/myfolder/sub2/', path: '/myfolder/sub2', name: 'sub2', isFolder: true,
+        key: 'owner/repo/ref/myfolder/sub2/', name: 'sub2', isFolder: true,
       },
       {
         contentLength: 999999,
         contentType: 'text/html',
         key: 'owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: '/myfolder/somefile.html',
         name: 'somefile.html',
         isFolder: false,
       },
@@ -1454,7 +1441,7 @@ describe('Storage test', () => {
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const result = await bus.browse('/owner/repo/ref/', '/myfolder/', { continuationToken: 'tok-1' });
+    const result = await bus.browse('owner/repo/ref/myfolder/', { continuationToken: 'tok-1' });
 
     assert.strictEqual(result.continuationToken, undefined);
     assert.strictEqual(result.objects.length, 3);
@@ -1472,7 +1459,27 @@ describe('Storage test', () => {
     const bus = storage.codeBus();
     const result = await bus.browse('empty');
 
-    assert.deepStrictEqual(result, { objects: [], continuationToken: undefined });
+    assert.deepStrictEqual(result, { prefix: 'empty/', objects: [], continuationToken: undefined });
+  });
+
+  it('copyDeep with empty dst places files at bucket root', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/?list-type=2&prefix=src%2F')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?>'
+        + '<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">'
+        + '<IsTruncated>false</IsTruncated>'
+        + '<Contents><Key>src/foo.txt</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><Size>10</Size></Contents>'
+        + '</ListBucketResult>')
+      .put('/foo.txt?x-id=CopyObject')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?><CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;abc&quot;</ETag></CopyObjectResult>');
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .put('/foo.txt?x-id=CopyObject')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?><CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;abc&quot;</ETag></CopyObjectResult>');
+
+    const bus = storage.codeBus();
+    const changes = await bus.copyDeep('src/', '');
+    assert.strictEqual(changes.length, 1);
+    assert.strictEqual(changes[0].dst, 'foo.txt');
   });
 });
 

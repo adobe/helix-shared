@@ -110,33 +110,6 @@ function sanitizeKey(keyOrPath) {
 }
 
 /**
- * Normalize a directory-style path: ensures it starts *and* ends with `/`.
- * Used when building an S3 list prefix from a `prefix + path` pair where
- * `path` is always interpreted as a directory.
- *
- * @param {string} path
- * @returns {string}
- */
-function ensureDirPath(path) {
-  let p = path.charAt(0) === '/' ? path : `/${path}`;
-  if (p.charAt(p.length - 1) !== '/') {
-    p += '/';
-  }
-  return p;
-}
-
-/**
- * Strip a leading `/` if present. Used after concatenating a (possibly
- * empty) root with a leading-slashed path to produce a canonical S3 key.
- *
- * @param {string} s
- * @returns {string}
- */
-function stripLeadingSlash(s) {
-  return s.charAt(0) === '/' ? s.substring(1) : s;
-}
-
-/**
  * Returns the last segment of a key, treating an optional trailing `/` as a
  * folder separator. E.g. `/blog/2024/post.md` → `post.md`,
  * `/blog/2024/` → `2024`, `foo` → `foo`.
@@ -155,35 +128,18 @@ function basename(key) {
  * {@link Bucket#list} and {@link Bucket#browse}; the `Delimiter` setting on
  * the underlying request determines whether `CommonPrefixes` are present.
  *
- * The `path` field on each entry is computed by stripping `pathBase` from the
- * front of the entry's key. `pathBase` is `''` when the listing root is the
- * bucket root, otherwise `${root}/`. A leading `/` is then prepended so every
- * returned path starts with `/`, and any trailing `/` (for common prefixes)
- * is dropped — paths are uniform: start with `/`, never end with `/`. The
- * `isFolder` flag carries the file/folder distinction.
- *
  * @param {object} result the `ListObjectsV2Command` response
- * @param {string} pathBase prefix to strip from each entry's `key` to compute
- *  its `path` (empty string when the listing root is the bucket root)
  * @returns {ObjectInfo[]}
  */
-function listResultToObjectInfos(result, pathBase) {
-  const baseLen = pathBase.length;
+function listResultToObjectInfos(result) {
   const objects = [];
   (result.CommonPrefixes || []).forEach(({ Prefix }) => {
-    objects.push({
-      key: Prefix,
-      // S3 always returns CommonPrefix values ending with `/`; drop it.
-      path: `/${Prefix.substring(baseLen).replace(/\/$/, '')}`,
-      name: basename(Prefix),
-      isFolder: true,
-    });
+    objects.push({ key: Prefix, name: basename(Prefix), isFolder: true });
   });
   (result.Contents || []).forEach((content) => {
     const key = content.Key;
     objects.push({
       key,
-      path: `/${key.substring(baseLen)}`,
       name: basename(key),
       isFolder: false,
       lastModified: content.LastModified,
@@ -672,30 +628,21 @@ class Bucket {
   }
 
   /**
-   * List objects below `prefix + path`. Pages through `ListObjectsV2` until the
+   * List objects below `prefix`. Pages through `ListObjectsV2` until the
    * result is no longer truncated or `maxItems` is reached.
    *
-   * `prefix` is the fixed root of the subtree; `path` is the subdirectory
-   * within it (always interpreted as a directory: normalized to start *and*
-   * end with `/`). Each returned `ObjectInfo.path` is relative to `prefix`,
-   * starts with `/`, and never ends with `/` — the `isFolder` flag carries
-   * the file/folder distinction. When `shallow: true`, common prefixes
-   * (folders directly below the listed dir) are returned alongside files;
-   * callers filter by `isFolder` if they want only one kind.
+   * `prefix` is sanitized to canonical S3 form (no leading/trailing `/`).
+   * When `shallow: true`, common prefixes (folders directly below the prefix)
+   * are returned alongside files; callers filter by `isFolder` if they want
+   * only one kind.
    *
-   * @param {string} prefix root of the subtree to list under
-   * @param {string} [path] subdirectory within `prefix`. Defaults to `'/'`.
+   * @param {string} prefix key prefix to list under
    * @param {ListOptions} [opts]
    * @returns {Promise<ListResult>}
    */
-  async list(prefix, path = '/', opts = {}) {
+  async list(prefix, opts = {}) {
     const { shallow = false, maxItems = Number.POSITIVE_INFINITY } = opts;
-    const root = sanitizeKey(prefix);
-    const dir = ensureDirPath(path);
-    // strip any leading `/` from the concatenation: it only appears when
-    // `root` is empty (canonical S3 keys don't start with `/`).
-    const Prefix = stripLeadingSlash(`${root}${dir}`);
-    const pathBase = stripLeadingSlash(`${root}/`);
+    const Prefix = sanitizeKey(prefix).replace(/^.+$/, '$&/');
 
     let ContinuationToken;
     const objects = [];
@@ -712,50 +659,31 @@ class Bucket {
       // eslint-disable-next-line no-await-in-loop
       const result = await this.client.send(new ListObjectsV2Command(input));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
-      objects.push(...listResultToObjectInfos(result, pathBase));
+      objects.push(...listResultToObjectInfos(result));
     } while (ContinuationToken && objects.length < maxItems);
-    return { objects, continuationToken: undefined };
+    return { prefix: Prefix, objects, continuationToken: undefined };
   }
 
   /**
    * Single-page, always-shallow listing intended for paginated UI browsing.
    *
-   * `prefix` is the fixed root (constant during navigation); `path` is the
-   * subdirectory within it (always interpreted as a directory: normalized
-   * to start *and* end with `/`). The actual S3 prefix sent is
-   * `prefix + path`. Each returned `ObjectInfo.path` is relative to
-   * `prefix`, starts with `/`, and never ends with `/`; the `isFolder` flag
-   * carries the file/folder distinction. The caller can pass an entry's
-   * `path` straight back as the next call's `path` argument to drill in
-   * without reconstructing breadcrumbs.
-   *
-   * Example:
-   *
-   * ```js
-   * const ROOT = 'owner/repo/main/';
-   * const r1 = await bus.browse(ROOT);
-   * // r1.objects[i].path -> '/blog', '/images', '/index.md', ...
-   * const r2 = await bus.browse(ROOT, r1.objects[0].path); // '/blog'
-   * // r2.objects[i].path -> '/blog/2024', '/blog/index.md', ...
-   * ```
+   * `prefix` is sanitized to canonical S3 form (no leading/trailing `/`).
+   * Common prefixes (folders) and files at the first level below `prefix`
+   * are returned; callers filter by `isFolder` if they want only one kind.
+   * The `isFolder` flag carries the file/folder distinction.
    *
    * Unlike {@link Bucket#list}, this does not auto-page: it issues one
-   * `ListObjectsV2` call, returns the entries it received, and exposes the
+   * `ListObjectsV2` call, returns the entries received, and exposes the
    * `NextContinuationToken` so the caller can request the next page on
    * demand. `maxItems` controls the page size only.
    *
-   * @param {string} prefix root of the subtree being browsed
-   * @param {string} [path] subdirectory within `prefix` to list. Defaults
-   *  to `'/'`.
+   * @param {string} prefix key prefix to browse (the directory to list)
    * @param {BrowseOptions} [opts]
    * @returns {Promise<ListResult>}
    */
-  async browse(prefix, path = '/', opts = {}) {
+  async browse(prefix, opts = {}) {
     const { continuationToken, maxItems } = opts;
-    const root = sanitizeKey(prefix);
-    const dir = ensureDirPath(path);
-    const Prefix = stripLeadingSlash(`${root}${dir}`);
-    const pathBase = stripLeadingSlash(`${root}/`);
+    const Prefix = sanitizeKey(prefix).replace(/^.+$/, '$&/');
 
     const result = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
@@ -766,7 +694,8 @@ class Bucket {
     }));
 
     return {
-      objects: listResultToObjectInfos(result, pathBase),
+      prefix: Prefix,
+      objects: listResultToObjectInfos(result),
       continuationToken: result.IsTruncated
         ? result.NextContinuationToken
         : undefined,
@@ -775,19 +704,17 @@ class Bucket {
 
   /**
    * Convenience wrapper around {@link Bucket#list} that returns only the
-   * folder (common-prefix) paths directly below `prefix + path`. Always
-   * shallow.
+   * folder (common-prefix) basenames directly below `prefix`. Always shallow.
    *
-   * @param {string} prefix root of the subtree
-   * @param {string} [path] subdirectory within `prefix`. Defaults to `'/'`.
-   * @returns {Promise<string[]>} folder paths, each relative to `prefix`,
-   *  starting with `/`, never ending with `/`
+   * @param {string} prefix key prefix to list under
+   * @returns {Promise<string[]>} folder basenames (the {@link ObjectInfo.name}
+   *  of each folder entry)
    */
-  async listFolders(prefix, path = '/') {
-    const { objects } = await this.list(prefix, path, { shallow: true });
+  async listFolders(prefix) {
+    const { objects } = await this.list(prefix, { shallow: true });
     return objects
       .filter((o) => o.isFolder)
-      .map((o) => o.path);
+      .map((o) => o.name);
   }
 
   /**
@@ -801,7 +728,7 @@ class Bucket {
    * @param {ObjectFilter} [filter] filter function; only objects for which it
    *  returns truthy are copied
    * @param {CopyOptions} [opts]
-   * @returns {Promise<Array<{src: string, dst: string, path: string,
+   * @returns {Promise<Array<{src: string, dst: string,
    *  contentLength?: number, contentType?: string|null}>>}
    *  the list of tasks that were copied successfully
    */
@@ -809,26 +736,21 @@ class Bucket {
     const { log } = this;
     const tasks = [];
     const Prefix = sanitizeKey(src);
-    // dst is sanitized to canonical form (no leading/trailing `/`) so it
-    // can be concatenated with `path`, which is root-relative and always starts with `/`.
     const dstRoot = sanitizeKey(dst);
     this.log.info(`fetching list of files to copy ${this.bucket}/${Prefix} => ${dstRoot}`);
     const { objects } = await this.list(Prefix);
     objects.forEach((obj) => {
-      const {
-        path, key, contentLength, contentType,
-      } = obj;
+      const { key, contentLength, contentType } = obj;
       if (filter(obj)) {
+        // compute the path relative to Prefix; key starts with `Prefix/`
+        // so key.substring(Prefix.length) has a leading `/` (or is empty
+        // at the bucket root).  sanitizeKey strips that leading `/`.
+        const relPath = sanitizeKey(key.substring(Prefix.length));
         tasks.push({
           src: key,
-          path,
           contentLength,
           contentType,
-          // strip the leading `/` that `path` always carries; for non-empty
-          // `dstRoot` the leading `/` acts as the separator, for empty
-          // `dstRoot` (copying to the bucket root) we'd otherwise end up
-          // with a non-canonical S3 key.
-          dst: stripLeadingSlash(`${dstRoot}${path}`),
+          dst: dstRoot ? `${dstRoot}/${relPath}` : relPath,
         });
       }
     });
