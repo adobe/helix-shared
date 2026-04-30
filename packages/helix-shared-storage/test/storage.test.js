@@ -1562,6 +1562,26 @@ describe('Storage test', () => {
     assert.deepStrictEqual(result, { prefix: 'empty/', objects: [], continuationToken: undefined });
   });
 
+  it('browse with empty prefix lists the entire bucket', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: '',
+      })
+      .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <KeyCount>0</KeyCount>
+</ListBucketResult>
+`);
+
+    const bus = storage.codeBus();
+    const result = await bus.browse('');
+
+    assert.deepStrictEqual(result, { prefix: '', objects: [], continuationToken: undefined });
+  });
+
   it('copyDeep with empty dst places files at bucket root', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/')

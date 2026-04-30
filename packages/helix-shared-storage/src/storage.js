@@ -110,6 +110,19 @@ function sanitizeKey(keyOrPath) {
 }
 
 /**
+ * Sanitizes a listing prefix: strips leading/trailing `/` then appends a
+ * single trailing `/` for non-empty values, giving canonical S3 directory
+ * form. An empty input returns `''` (list the entire bucket).
+ *
+ * @param {string} prefix
+ * @returns {string}
+ */
+function sanitizePrefix(prefix) {
+  const key = sanitizeKey(prefix);
+  return key ? `${key}/` : '';
+}
+
+/**
  * Returns the last segment of a key, treating an optional trailing `/` as a
  * folder separator. E.g. `/blog/2024/post.md` → `post.md`,
  * `/blog/2024/` → `2024`, `foo` → `foo`.
@@ -642,7 +655,7 @@ class Bucket {
    */
   async list(prefix, opts = {}) {
     const { shallow = false, maxItems = Number.POSITIVE_INFINITY } = opts;
-    const Prefix = sanitizeKey(prefix).replace(/^.+$/, '$&/');
+    const Prefix = sanitizePrefix(prefix);
 
     let ContinuationToken;
     const objects = [];
@@ -683,7 +696,7 @@ class Bucket {
    */
   async browse(prefix, opts = {}) {
     const { continuationToken, maxItems } = opts;
-    const Prefix = sanitizeKey(prefix).replace(/^.+$/, '$&/');
+    const Prefix = sanitizePrefix(prefix);
 
     const result = await this.client.send(new ListObjectsV2Command({
       Bucket: this.bucket,
@@ -735,17 +748,16 @@ class Bucket {
   async copyDeep(src, dst, filter = () => true, opts = {}) {
     const { log } = this;
     const tasks = [];
-    const Prefix = sanitizeKey(src);
     const dstRoot = sanitizeKey(dst);
-    this.log.info(`fetching list of files to copy ${this.bucket}/${Prefix} => ${dstRoot}`);
-    const { objects } = await this.list(Prefix);
+    this.log.info(`fetching list of files to copy ${this.bucket}/${src} => ${dstRoot}`);
+    const { prefix, objects } = await this.list(src);
     objects.forEach((obj) => {
       const { key, contentLength, contentType } = obj;
       if (filter(obj)) {
         // compute the path relative to Prefix; key starts with `Prefix/`
         // so key.substring(Prefix.length) has a leading `/` (or is empty
         // at the bucket root).  sanitizeKey strips that leading `/`.
-        const relPath = sanitizeKey(key.substring(Prefix.length));
+        const relPath = sanitizeKey(key.substring(prefix.length));
         tasks.push({
           src: key,
           contentLength,
