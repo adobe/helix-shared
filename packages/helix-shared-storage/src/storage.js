@@ -611,7 +611,7 @@ class Bucket {
           errors += chunk.length;
           if (stopOnError) {
             const msg = `removing ${input.Delete.Objects.length} objects from bucket ${input.Bucket} failed: ${e.message}`;
-            this.log.error(msg);
+            log.error(msg);
             const e2 = new Error(msg);
             e2.status = e.$metadata.httpStatusCode;
             throw e2;
@@ -749,8 +749,10 @@ class Bucket {
     const { log } = this;
     const tasks = [];
     const dstRoot = sanitizeKey(dst);
-    this.log.info(`fetching list of files to copy ${this.bucket}/${src} => ${dstRoot}`);
-    const { prefix, objects } = await this.list(src);
+    const prefix = sanitizePrefix(src);
+    log.info(`fetching list of files to copy ${this.bucket}/${prefix} => ${dstRoot}`);
+
+    const { objects } = await this.list(src);
     objects.forEach((obj) => {
       const { key, contentLength, contentType } = obj;
       if (filter(obj)) {
