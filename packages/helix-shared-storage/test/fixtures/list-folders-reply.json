@@ -2,27 +2,27 @@
   {
     "ListBucketResult": {
       "Name": "helix-code-bus",
-      "Prefix": "",
+      "Prefix": "foo/",
       "NextContinuationToken": "next",
       "KeyCount": 1,
       "MaxKeys": 1,
       "Delimiter": "/",
       "IsTruncated": true,
       "CommonPrefixes": [{
-        "Prefix": "owner/"
+        "Prefix": "foo/owner/"
       }]
     }
   },
   {
     "ListBucketResult": {
       "Name": "helix-code-bus",
-      "Prefix": "",
+      "Prefix": "foo/",
       "KeyCount": 1,
       "MaxKeys": 1,
       "Delimiter": "/",
       "IsTruncated": false,
       "CommonPrefixes": [{
-        "Prefix": "other/"
+        "Prefix": "foo/other/"
       }]
     }
   }

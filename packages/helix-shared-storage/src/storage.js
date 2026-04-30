@@ -34,21 +34,35 @@ const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
 /**
- * Maximum number of objects to delete in one operation.
+ * Maximum number of keys that can be deleted in a single `DeleteObjects` call (S3 limit).
  */
 const MAX_DELETE_OBJECTS = 1000;
 
 /**
  * @typedef {import('@aws-sdk/client-s3').CommandInput} CommandInput
+ * @typedef {import('@aws-sdk/client-s3').HeadObjectCommandOutput} HeadObjectCommandOutput
+ * @typedef {import('@aws-sdk/client-s3').PutObjectCommandOutput} PutObjectCommandOutput
+ * @typedef {import('@aws-sdk/client-s3').CopyObjectCommandOutput} CopyObjectCommandOutput
+ * @typedef {import('@aws-sdk/client-s3').CopyObjectResult} CopyObjectResult
+ * @typedef {import('@aws-sdk/client-s3').DeleteObjectCommandOutput} DeleteObjectCommandOutput
  * @typedef {import('./storage.d').Bucket} BucketType
  * @typedef {import('./storage.d').HelixStorage} HelixStorageType
+ * @typedef {import('./storage.d').HelixStorageOptions} HelixStorageOptions
+ * @typedef {import('./storage.d').HelixStorageContext} HelixStorageContext
+ * @typedef {import('./storage.d').BucketMap} BucketMap
+ * @typedef {import('./storage.d').BulkDeleteResult} BulkDeleteResult
  * @typedef {import('./storage.d').ObjectInfo} ObjectInfo
  * @typedef {import('./storage.d').ObjectFilter} ObjectFilter
  * @typedef {import('./storage.d').CopyOptions} CopyOptions
+ * @typedef {import('./storage.d').ListOptions} ListOptions
+ * @typedef {import('./storage.d').BrowseOptions} BrowseOptions
+ * @typedef {import('./storage.d').ListResult} ListResult
  */
 
 /**
- * Header names that AWS considers system defined.
+ * Response header names treated as S3 system fields. When `store()` encounters one of
+ * these, it forwards the value to the corresponding `*Command` input property
+ * (e.g. `content-type` -> `ContentType`) rather than writing it as user metadata.
  */
 const AWS_S3_SYSTEM_HEADERS = [
   'cache-control',
@@ -57,7 +71,8 @@ const AWS_S3_SYSTEM_HEADERS = [
 ];
 
 /**
- * result object headers
+ * Fields on a `GetObject` response that are surfaced as metadata when the caller of
+ * {@link Bucket#get} provides a `meta` output object.
  */
 const AWS_META_HEADERS = [
   'CacheControl',
@@ -69,26 +84,94 @@ const AWS_META_HEADERS = [
 ];
 
 /**
- * Response header names that need a different metadata name.
+ * Response headers that need to be renamed before being written as user metadata,
+ * to avoid colliding with S3-controlled headers.
  */
 const METADATA_HEADER_MAP = new Map([
   ['last-modified', 'x-source-last-modified'],
 ]);
 
 /**
- * Sanitizes the input key or path and returns a bucket relative key (without leading / ).
+ * Sanitizes the input key or path and returns a canonical S3 form: no
+ * leading and no trailing `/`.
+ *
  * @param {string} keyOrPath
  * @returns {string}
  */
 function sanitizeKey(keyOrPath) {
-  if (keyOrPath.charAt(0) === '/') {
-    return keyOrPath.substring(1);
+  let s = keyOrPath;
+  if (s.startsWith('/')) {
+    s = s.substring(1);
   }
-  return keyOrPath;
+  if (s.endsWith('/')) {
+    s = s.slice(0, -1);
+  }
+  return s;
+}
+
+/**
+ * Sanitizes a listing prefix: strips leading/trailing `/` then appends a
+ * single trailing `/` for non-empty values, giving canonical S3 directory
+ * form. An empty input returns `''` (list the entire bucket).
+ *
+ * @param {string} prefix
+ * @returns {string}
+ */
+function sanitizePrefix(prefix) {
+  const key = sanitizeKey(prefix);
+  return key ? `${key}/` : '';
+}
+
+/**
+ * Returns the last segment of a key, treating an optional trailing `/` as a
+ * folder separator. E.g. `/blog/2024/post.md` → `post.md`,
+ * `/blog/2024/` → `2024`, `foo` → `foo`.
+ *
+ * @param {string} key
+ * @returns {string}
+ */
+function basename(key) {
+  const trimmed = key.endsWith('/') ? key.slice(0, -1) : key;
+  const slash = trimmed.lastIndexOf('/');
+  return slash >= 0 ? trimmed.substring(slash + 1) : trimmed;
+}
+
+/**
+ * Map a `ListObjectsV2` response into {@link ObjectInfo} entries. Used by both
+ * {@link Bucket#list} and {@link Bucket#browse}; the `Delimiter` setting on
+ * the underlying request determines whether `CommonPrefixes` are present.
+ *
+ * @param {object} result the `ListObjectsV2Command` response
+ * @returns {ObjectInfo[]}
+ */
+function listResultToObjectInfos(result) {
+  const objects = [];
+  (result.CommonPrefixes || []).forEach(({ Prefix }) => {
+    objects.push({ key: Prefix, name: basename(Prefix), isFolder: true });
+  });
+  (result.Contents || []).forEach((content) => {
+    const key = content.Key;
+    objects.push({
+      key,
+      name: basename(key),
+      isFolder: false,
+      lastModified: content.LastModified,
+      contentLength: content.Size,
+      contentType: mime.getType(key),
+    });
+  });
+  return objects;
 }
 
 const BUCKET_KEYS = ['config', 'code', 'content', 'media', 'source'];
 
+/**
+ * Parses the `HELIX_BUCKET_NAMES` env var into a {@link BucketMap}. When `bucketNames`
+ * is falsy, returns the default `helix-<key>-bus` mapping for each well-known bus.
+ *
+ * @param {string} [bucketNames] JSON-encoded bus-key -> bucket-name map
+ * @returns {BucketMap}
+ */
 export function parseBucketNames(bucketNames) {
   if (!bucketNames) {
     return Object.fromEntries(BUCKET_KEYS.map((key) => [key, `helix-${key}-bus`]));
@@ -228,6 +311,15 @@ class Bucket {
     }
   }
 
+  /**
+   * Issue a HEAD on the object and return the raw S3 response.
+   *
+   * @param {string} path object key
+   * @param {object} [headOpts] extra fields merged into the `HeadObjectCommand` input
+   * @returns {Promise<HeadObjectCommandOutput|null>}
+   *  the HEAD response, or `null` when the key does not exist
+   * @throws an error if the object could not be loaded due to an unexpected error.
+   */
   async head(path, headOpts = {}) {
     const input = {
       ...headOpts,
@@ -260,10 +352,16 @@ class Bucket {
   }
 
   /**
-   * Internal helper for sending a command to both S3 and R2 clients.
-   * @param {function} CommandConstructor constructor of command to send to the client
+   * Internal helper that sends the same command to both S3 and R2 in parallel.
+   * The result of the primary (S3) call is returned. If only one client fails,
+   * the rejection from that client is rethrown with an `[S3]` or `[R2]` prefix
+   * on its message so the failing leg is identifiable.
+   *
+   * @param {function} CommandConstructor command class to instantiate
    * @param {CommandInput} input command input
-   * @returns {Promise<*>} the command result
+   * @param {string[]} [measures] when provided, populated with the per-client
+   *  latency in seconds (one entry per client, in `_clients` order)
+   * @returns {Promise<*>} the command result from the primary (S3) client
    */
   async sendToS3andR2(CommandConstructor, input, measures) {
     // send cmd to s3 and r2 (mirror) in parallel
@@ -292,11 +390,15 @@ class Bucket {
   }
 
   /**
-   * Store an object contents, along with headers.
+   * Store an object body and headers from a fetch `Response`. The body is gzipped
+   * (or passed through if the response already has `content-encoding: gzip`);
+   * response headers are translated into S3 system fields (for `cache-control`,
+   * `content-type`, `expires`) or written as user metadata. Mirrored to R2 when
+   * enabled.
    *
    * @param {string} key object key
-   * @param {Response} res response to store
-   * @returns result obtained from S3
+   * @param {Response} res response whose body and headers should be stored
+   * @returns {Promise<void>} resolves once both clients have completed; failures throw
    */
   async store(key, res) {
     const { log } = this;
@@ -331,14 +433,15 @@ class Bucket {
   }
 
   /**
-   * Store an object contents, along with metadata.
+   * Store an object's contents along with metadata. Mirrored to R2 when enabled.
    *
    * @param {string} path object key
    * @param {Buffer|string} body data to store
-   * @param {string} [contentType] content type. defaults to 'application/octet-stream'
-   * @param {object} [meta] metadata to store with the object. defaults to '{}'
-   * @param {boolean} [compress = true]
-   * @returns result obtained from S3
+   * @param {string} [contentType] content type. Defaults to `application/octet-stream`.
+   * @param {Record<string, string>} [meta] metadata to store with the object. Defaults to `{}`.
+   * @param {boolean} [compress] whether to gzip the body and set
+   *  `ContentEncoding: gzip`. Defaults to `true`.
+   * @returns {Promise<PutObjectCommandOutput>} result of the primary S3 PutObject call
    */
   async put(path, body, contentType = 'application/octet-stream', meta = {}, compress = true) {
     const input = {
@@ -360,11 +463,13 @@ class Bucket {
   }
 
   /**
-   * Updates the metadata
-   * @param {string} path
-   * @param {object} meta
-   * @param {object} opts
-   * @returns {Promise<*>}
+   * Replace an object's user metadata via a self-copy with `MetadataDirective: REPLACE`.
+   * Mirrored to R2 when enabled.
+   *
+   * @param {string} path object key
+   * @param {Record<string, string>} meta new metadata (fully replaces existing metadata)
+   * @param {object} [opts] extra fields merged into the underlying `CopyObjectCommand` input
+   * @returns {Promise<CopyObjectCommandOutput>}
    */
   async putMeta(path, meta, opts = {}) {
     const key = sanitizeKey(path);
@@ -385,12 +490,18 @@ class Bucket {
   }
 
   /**
-   * Copy an object in the same bucket.
+   * Copy an object within the same bucket. When `addMetadata` or `renameMetadata`
+   * are provided, the source's HEAD is consulted so that selected system headers
+   * (`ContentType`, `ContentEncoding`, `CacheControl`, `ContentDisposition`,
+   * `Expires`) are preserved and metadata is rewritten with
+   * `MetadataDirective: REPLACE`. Mirrored to R2 when enabled.
    *
    * @param {string} src source key
    * @param {string} dst destination key
    * @param {CopyOptions} [opts]
-   * @returns result obtained from S3
+   * @returns {Promise<CopyObjectResult|undefined>} the `CopyObjectResult` from the
+   *  primary S3 call (S3 may omit it under some conditions)
+   * @throws an error with `status: 404` if the source object does not exist
    */
   async copy(src, dst, opts = {}) {
     const key = sanitizeKey(src);
@@ -439,12 +550,25 @@ class Bucket {
   }
 
   /**
-   * Remove object(s)
+   * Remove one or more objects. Mirrored to R2 when enabled.
    *
-   * @param {string|string[]} path source key(s)
-   * @param {string} [sourceInfo] informational message of the source
-   * @param {boolean} [stopOnError]
-   * @returns result obtained from S3
+   * When passed an array, the input is sliced into chunks of up to
+   * {@link MAX_DELETE_OBJECTS} keys (the S3 limit) and the chunks are processed
+   * in parallel (concurrency 2). Errors per chunk are accumulated into the
+   * returned `Errors` array unless `stopOnError` is set, in which case the first
+   * failing chunk throws.
+   *
+   * When passed a single key string, a `DeleteObject` command is sent and any
+   * failure is rethrown as an error with `status` set to the HTTP status code.
+   *
+   * @param {string|string[]} path single key, or array of keys
+   * @param {string} [sourceInfo] informational message used in log output
+   *  (only relevant for the array form)
+   * @param {boolean} [stopOnError] when `true` and `path` is an array, throw on
+   *  the first chunk that fails instead of collecting errors
+   * @returns {Promise<DeleteObjectCommandOutput|BulkDeleteResult>}
+   *  the raw `DeleteObject` response for a single key, or an aggregated
+   *  `{ Deleted, Errors }` object for an array of keys
    */
   async remove(path, sourceInfo = '', stopOnError = false) {
     const { log, bucket } = this;
@@ -517,17 +641,21 @@ class Bucket {
   }
 
   /**
-   * Returns a list of object below the given prefix.
+   * List objects below `prefix`. Pages through `ListObjectsV2` until the
+   * result is no longer truncated or `maxItems` is reached.
    *
-   * @param {string} prefix
-   * @param {boolean|import('./storage.d').ListOptions} [opts]
-   *  options or boolean for backward compatibility
-   * @returns {Promise<ObjectInfo[]>}
+   * `prefix` is sanitized to canonical S3 form (no leading/trailing `/`).
+   * When `shallow: true`, common prefixes (folders directly below the prefix)
+   * are returned alongside files; callers filter by `isFolder` if they want
+   * only one kind.
+   *
+   * @param {string} prefix key prefix to list under
+   * @param {ListOptions} [opts]
+   * @returns {Promise<ListResult>}
    */
-  async list(prefix, opts = false) {
-    const {
-      shallow = false, maxItems = Number.POSITIVE_INFINITY, includePrefixes = false,
-    } = typeof opts === 'boolean' ? { shallow: opts } : opts;
+  async list(prefix, opts = {}) {
+    const { shallow = false, maxItems = Number.POSITIVE_INFINITY } = opts;
+    const Prefix = sanitizePrefix(prefix);
 
     let ContinuationToken;
     const objects = [];
@@ -535,7 +663,7 @@ class Bucket {
       const input = {
         Bucket: this.bucket,
         ContinuationToken,
-        Prefix: prefix,
+        Prefix,
         Delimiter: shallow ? '/' : undefined,
       };
       if (maxItems - objects.length < 1000) {
@@ -544,74 +672,97 @@ class Bucket {
       // eslint-disable-next-line no-await-in-loop
       const result = await this.client.send(new ListObjectsV2Command(input));
       ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
-
-      if (includePrefixes) {
-        (result.CommonPrefixes || []).forEach(({ Prefix }) => {
-          objects.push({
-            key: Prefix,
-            path: `${Prefix.substring(prefix.length)}`,
-          });
-        });
-      }
-
-      (result.Contents || []).forEach((content) => {
-        const key = content.Key;
-        objects.push({
-          key,
-          lastModified: content.LastModified,
-          contentLength: content.Size,
-          contentType: mime.getType(key),
-          path: `${key.substring(prefix.length)}`,
-        });
-      });
+      objects.push(...listResultToObjectInfos(result));
     } while (ContinuationToken && objects.length < maxItems);
-    return objects;
-  }
-
-  async listFolders(prefix) {
-    let ContinuationToken;
-    const folders = [];
-    do {
-      // eslint-disable-next-line no-await-in-loop
-      const result = await this.client.send(new ListObjectsV2Command({
-        Bucket: this.bucket,
-        ContinuationToken,
-        Prefix: prefix,
-        Delimiter: '/',
-      }));
-      ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
-      (result.CommonPrefixes || []).forEach(({ Prefix }) => {
-        folders.push(Prefix);
-      });
-    } while (ContinuationToken);
-    return folders;
+    return { prefix: Prefix, objects, continuationToken: undefined };
   }
 
   /**
-   * Copies the tree below src to dst.
-   * @param {string} src Source prefix
-   * @param {string} dst Destination prefix
-   * @param {ObjectFilter} filter Filter function
-   * @param {CopyOptions} [opts={}]
-   * @returns {Promise<*[]>}
+   * Single-page, always-shallow listing intended for paginated UI browsing.
+   *
+   * `prefix` is sanitized to canonical S3 form (no leading/trailing `/`).
+   * Common prefixes (folders) and files at the first level below `prefix`
+   * are returned; callers filter by `isFolder` if they want only one kind.
+   * The `isFolder` flag carries the file/folder distinction.
+   *
+   * Unlike {@link Bucket#list}, this does not auto-page: it issues one
+   * `ListObjectsV2` call, returns the entries received, and exposes the
+   * `NextContinuationToken` so the caller can request the next page on
+   * demand. `maxItems` controls the page size only.
+   *
+   * @param {string} prefix key prefix to browse (the directory to list)
+   * @param {BrowseOptions} [opts]
+   * @returns {Promise<ListResult>}
+   */
+  async browse(prefix, opts = {}) {
+    const { continuationToken, maxItems } = opts;
+    const Prefix = sanitizePrefix(prefix);
+
+    const result = await this.client.send(new ListObjectsV2Command({
+      Bucket: this.bucket,
+      Prefix,
+      Delimiter: '/',
+      ContinuationToken: continuationToken || undefined,
+      MaxKeys: maxItems,
+    }));
+
+    return {
+      prefix: Prefix,
+      objects: listResultToObjectInfos(result),
+      continuationToken: result.IsTruncated
+        ? result.NextContinuationToken
+        : undefined,
+    };
+  }
+
+  /**
+   * Convenience wrapper around {@link Bucket#list} that returns only the
+   * folder (common-prefix) basenames directly below `prefix`. Always shallow.
+   *
+   * @param {string} prefix key prefix to list under
+   * @returns {Promise<string[]>} folder basenames (the {@link ObjectInfo.name}
+   *  of each folder entry)
+   */
+  async listFolders(prefix) {
+    const { objects } = await this.list(prefix, { shallow: true });
+    return objects
+      .filter((o) => o.isFolder)
+      .map((o) => o.name);
+  }
+
+  /**
+   * Recursively copy the tree below `src` to `dst`. Lists every object under
+   * `src`, applies `filter`, then issues per-object `CopyObject` commands with
+   * concurrency 64. Errors on individual objects are logged but do not abort
+   * the operation.
+   *
+   * @param {string} src source prefix
+   * @param {string} dst destination prefix
+   * @param {ObjectFilter} [filter] filter function; only objects for which it
+   *  returns truthy are copied
+   * @param {CopyOptions} [opts]
+   * @returns {Promise<Array<{src: string, dst: string,
+   *  contentLength?: number, contentType?: string|null}>>}
+   *  the list of tasks that were copied successfully
    */
   async copyDeep(src, dst, filter = () => true, opts = {}) {
     const { log } = this;
     const tasks = [];
-    const Prefix = sanitizeKey(src);
-    const dstPrefix = sanitizeKey(dst);
-    this.log.info(`fetching list of files to copy ${this.bucket}/${Prefix} => ${dstPrefix}`);
-    (await this.list(Prefix)).forEach((obj) => {
-      const {
-        path, key, contentLength, contentType,
-      } = obj;
+    const dstRoot = sanitizeKey(dst);
+    this.log.info(`fetching list of files to copy ${this.bucket}/${src} => ${dstRoot}`);
+    const { prefix, objects } = await this.list(src);
+    objects.forEach((obj) => {
+      const { key, contentLength, contentType } = obj;
       if (filter(obj)) {
+        // compute the path relative to Prefix; key starts with `Prefix/`
+        // so key.substring(Prefix.length) has a leading `/` (or is empty
+        // at the bucket root).  sanitizeKey strips that leading `/`.
+        const relPath = sanitizeKey(key.substring(prefix.length));
         tasks.push({
           src: key,
-          path,
           contentLength,
           contentType,
-          dst: `${dstPrefix}${path}`,
+          dst: dstRoot ? `${dstRoot}/${relPath}` : relPath,
         });
       }
     });
@@ -658,11 +809,18 @@ class Bucket {
     return changes;
   }
 
+  /**
+   * Recursively delete every object below `src`. Equivalent to listing the
+   * prefix and then bulk-deleting all returned keys.
+   *
+   * @param {string} src key prefix
+   * @returns {Promise<BulkDeleteResult>}
+   */
   async rmdir(src) {
     src = sanitizeKey(src);
     this.log.info(`fetching list of files to delete from ${this.bucket}/${src}`);
-    const items = await this.list(src);
-    return this.remove(items.map((item) => item.key), src);
+    const { objects } = await this.list(src);
+    return this.remove(objects.map((item) => item.key), src);
   }
 }
 
@@ -671,6 +829,16 @@ class Bucket {
  * @implements {HelixStorageType}
  */
 export class HelixStorage {
+  /**
+   * Get (and lazily construct + cache) a {@link HelixStorage} for a Helix function
+   * `context`. Reads configuration from `context.env` (region, credentials, R2
+   * settings, timeouts, bucket-name overrides) and caches the resulting instance
+   * on `context.attributes.storage` so repeat calls within the same invocation
+   * share clients.
+   *
+   * @param {HelixStorageContext} context
+   * @returns {HelixStorage}
+   */
   static fromContext(context) {
     if (!context.attributes.storage) {
       const {
@@ -711,17 +879,11 @@ export class HelixStorage {
   };
 
   /**
-   * Create an instance
+   * Create a storage instance. Constructs an S3 client (using explicit credentials
+   * if provided, otherwise the SDK default credential chain) and an R2 client
+   * unless `disableR2` is `true`.
    *
-   * @param {object} [opts] options
-   * @param {string} [opts.region] AWS region
-   * @param {string} [opts.accessKeyId] AWS access key
-   * @param {string} [opts.secretAccessKey] AWS secret access key
-   * @param {string} [opts.r2AccountId]
-   * @param {string} [opts.r2AccessKeyId]
-   * @param {string} [opts.r2SecretAccessKey]
-   * @param {object} [opts.log] logger
-   * @param {string} [opts.maxAttempts] max attempts or Number.NaN
+   * @param {HelixStorageOptions} [opts]
    */
   constructor(opts = {}) {
     const {
@@ -792,15 +954,22 @@ export class HelixStorage {
     this._log = log;
   }
 
+  /**
+   * @returns {S3Client} the underlying primary S3 client
+   */
   s3() {
     return this._s3;
   }
 
   /**
-   * creates a bucket instance that allows to perform storage related operations.
-   * @param bucketId
-   * @param disableR2 whether to disable R2 for storing
+   * Create a {@link Bucket} for the given bucket id. The returned bucket reuses
+   * the storage's S3 client (and R2 client unless `disableR2` is `true`).
+   *
+   * @param {string} bucketId bucket name
+   * @param {boolean} [disableR2] when `true`, this bucket will not mirror writes
+   *  to R2 even if R2 is otherwise configured
    * @returns {Bucket}
+   * @throws if the storage has been closed or if `bucketId` is empty
    */
   bucket(bucketId, disableR2 = false) {
     if (!this._s3) {
@@ -818,6 +987,9 @@ export class HelixStorage {
   }
 
   /**
+   * Bucket for the configured `content` bus.
+   *
+   * @param {boolean} [disableR2]
    * @returns {Bucket}
    */
   contentBus(disableR2 = false) {
@@ -825,6 +997,9 @@ export class HelixStorage {
   }
 
   /**
+   * Bucket for the configured `code` bus.
+   *
+   * @param {boolean} [disableR2]
    * @returns {Bucket}
    */
   codeBus(disableR2 = false) {
@@ -832,6 +1007,8 @@ export class HelixStorage {
   }
 
   /**
+   * Bucket for the configured `media` bus. R2 mirroring is always disabled here.
+   *
    * @returns {Bucket}
    */
   mediaBus() {
@@ -839,6 +1016,10 @@ export class HelixStorage {
   }
 
   /**
+   * Bucket for the configured `source` bus. R2 mirroring defaults to disabled
+   * since the source bus is typically not mirrored.
+   *
+   * @param {boolean} [disableR2]
    * @returns {Bucket}
    */
   sourceBus(disableR2 = true) {
@@ -846,6 +1027,8 @@ export class HelixStorage {
   }
 
   /**
+   * Bucket for the configured `config` bus. R2 mirroring is always disabled here.
+   *
    * @returns {Bucket}
    */
   configBus() {
@@ -853,7 +1036,9 @@ export class HelixStorage {
   }
 
   /**
-   * Close this storage. Destroys the S3 client used.
+   * Close this storage. Destroys the underlying S3 (and R2) clients and renders
+   * this instance unusable; subsequent calls to {@link HelixStorage#bucket}
+   * throw.
    */
   close() {
     this._s3?.destroy();
