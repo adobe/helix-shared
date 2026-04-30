@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.5.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.5.0...@adobe/helix-shared-tokencache-v1.5.1) (2026-04-30)
+
+
+### Bug Fixes
+
+* trigger release ([60b0b8b](https://github.com/adobe/helix-shared/commit/60b0b8bd044e66938323f2577c2103b365e4d537))
+
 # [@adobe/helix-shared-tokencache-v1.5.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.4.45...@adobe/helix-shared-tokencache-v1.5.0) (2025-02-12)
 
 
