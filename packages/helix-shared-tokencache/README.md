@@ -91,10 +91,34 @@ const s3Cache = new S3CachePlugin({
   log: console,
   bucket: 'helix-content-bus',
   key: 'default/.helix-auth/auth-onedrive-content.json',
-  secret: 'encryption-secret', // optional, enables encryption
+  secret: 'encryption-secret',          // optional, enables AES-256-GCM encryption
   readOnly: false,
-  type: 'onedrive'
+  type: 'onedrive',
+  disableExpectContinueHeader: false,   // set true to omit Expect: 100-continue
 });
+```
+
+### Using FSCacheManager
+
+The FSCacheManager manages filesystem-based token caches:
+
+```js
+import { FSCacheManager } from '@adobe/helix-shared-tokencache';
+
+const manager = new FSCacheManager({
+  log: console,
+  dirPath: '/path/to/cache/dir',
+  type: 'onedrive',
+});
+
+// Check for a cache and retrieve it
+if (await manager.hasCache('content')) {
+  const plugin = await manager.getCache('content');
+  // plugin.location === '/path/to/cache/dir/auth-onedrive-content.json'
+}
+
+// List all stored cache keys
+const keys = await manager.listCacheKeys();
 ```
 
 ### Using S3CacheManager
@@ -164,6 +188,7 @@ console.log(decrypted.toString('utf-8')); // 'sensitive token data'
 - `readOnly` (boolean): If true, prevents writing to the underlying storage (default: false)
 - `contentBucket` (string): Name of the content bus bucket (default: 'helix-content-bus')
 - `codeBucket` (string): Name of the code bus bucket (default: 'helix-code-bus')
+- `caches` (Map): Custom in-memory cache Map for local development (used when `HELIX_ONEDRIVE_LOCAL_AUTH_CACHE` is set)
 
 ### Cache Plugin Methods
 

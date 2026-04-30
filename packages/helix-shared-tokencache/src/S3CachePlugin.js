@@ -41,8 +41,11 @@ export class S3CachePlugin {
     this.secret = opts.secret;
     this.readOnly = opts.readOnly || false;
     this.type = opts.type;
+    const disableExpectContinueHeader = opts.disableExpectContinueHeader
+      ?? (process.env.HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE === 'true');
     this.s3 = new S3Client({
       region: 'us-east-1',
+      ...(disableExpectContinueHeader && { expectContinueHeader: false }),
     });
     this.meta = null;
     this.data = null;

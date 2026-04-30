@@ -49,8 +49,11 @@ export class S3CacheManager {
     this.secret = opts.secret;
     this.readOnly = opts.readOnly;
     this.type = opts.type;
+    const disableExpectContinueHeader = opts.disableExpectContinueHeader
+      ?? (process.env.HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE === 'true');
     this.s3 = new S3Client({
       region: 'us-east-1',
+      ...(disableExpectContinueHeader && { expectContinueHeader: false }),
     });
   }
 

@@ -51,6 +51,7 @@ describe('Storage test', () => {
       r2AccessKeyId: CLOUDFLARE_R2_ACCESS_KEY_ID,
       r2SecretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY,
       bucketMap: parseBucketNames(),
+      disableExpectContinueHeader: true,
     });
   });
 
@@ -256,7 +257,7 @@ describe('Storage test', () => {
       .reply(401);
     const bus = storage.codeBus();
     const error = Error('UnknownError');
-    error.name = '401';
+    error.name = 'Unknown';
     await assert.rejects(bus.get('/foo'), error);
   });
 
@@ -1064,11 +1065,10 @@ describe('Storage test', () => {
   it('can copy object can fail if not found (non deep)', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
-      .reply(200, '<?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code></Error>');
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code></Error><Key>/owner/repo/ref/foo.md</Key>');
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
-      .reply(200, '<?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code></Error>');
-
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code></Error><Key>/owner/repo/ref/foo.md</Key>');
     const bus = storage.codeBus();
     await assert.rejects(bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md'));
   });
@@ -1491,6 +1491,7 @@ describe('Disabled R2 Storage test', () => {
         CLOUDFLARE_R2_SECRET_ACCESS_KEY,
         HELIX_STORAGE_DISABLE_R2: 'true',
         HELIX_STORAGE_MAX_ATTEMPTS: '1',
+        HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE: 'true',
       },
     };
     storage = HelixStorage.fromContext(context);

@@ -911,6 +911,7 @@ export class HelixStorage {
         HELIX_HTTP_CONNECTION_TIMEOUT: connectionTimeout = 5000,
         HELIX_HTTP_SOCKET_TIMEOUT: socketTimeout = 15000,
         HELIX_HTTP_S3_KEEP_ALIVE: keepAlive,
+        HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE: disableExpectContinueHeader,
         CLOUDFLARE_ACCOUNT_ID: r2AccountId,
         CLOUDFLARE_R2_ACCESS_KEY_ID: r2AccessKeyId,
         CLOUDFLARE_R2_SECRET_ACCESS_KEY: r2SecretAccessKey,
@@ -927,6 +928,7 @@ export class HelixStorage {
         r2SecretAccessKey,
         disableR2: String(disableR2) === 'true',
         keepAlive: String(keepAlive) === 'true',
+        disableExpectContinueHeader: String(disableExpectContinueHeader) === 'true',
         bucketNames,
         log: context.log,
         maxAttempts: Number.parseInt(maxAttempts, 10),
@@ -956,6 +958,7 @@ export class HelixStorage {
       r2AccountId, r2AccessKeyId, r2SecretAccessKey, disableR2,
       bucketNames,
       keepAlive = true,
+      disableExpectContinueHeader = false,
       log = console,
       maxAttempts = Number.NaN,
     } = opts;
@@ -972,6 +975,9 @@ export class HelixStorage {
     };
     if (!Number.isNaN(maxAttempts)) {
       baseOpts.maxAttempts = maxAttempts;
+    }
+    if (disableExpectContinueHeader) {
+      baseOpts.expectContinueHeader = false;
     }
 
     if (region && accessKeyId && secretAccessKey) {
@@ -1007,6 +1013,7 @@ export class HelixStorage {
           connectionTimeout,
           socketTimeout,
         }),
+        ...(disableExpectContinueHeader && { expectContinueHeader: false }),
       });
     }
     this._bucketMap = parseBucketNames(bucketNames);
