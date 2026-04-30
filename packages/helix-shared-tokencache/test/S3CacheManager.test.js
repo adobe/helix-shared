@@ -26,6 +26,7 @@ describe('S3CacheManager Test', () => {
       AWS_REGION: 'us-east-1',
       AWS_ACCESS_KEY_ID: 'fake-key-id',
       AWS_SECRET_ACCESS_KEY: 'fake-secret',
+      HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE: 'true',
     };
   });
 
