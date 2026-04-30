@@ -66,6 +66,7 @@ const contentBucket = storage.contentBus();
 const codeBucket = storage.codeBus();
 const mediaBucket = storage.mediaBus();
 const configBucket = storage.configBus();
+const sourceBucket = storage.sourceBus(); // R2 mirroring disabled by default
 ```
 
 ## Bucket Operations
@@ -177,7 +178,15 @@ objects.forEach((obj) => {
 List objects in a shallow manner (only direct children):
 
 ```js
+// Boolean shorthand for shallow
 const objects = await bucket.list('path/to/folder/', true);
+
+// Or use the options object for more control
+const objects = await bucket.list('path/to/folder/', {
+  shallow: true,
+  includePrefixes: true, // include folder prefix entries in results
+  maxItems: 100,         // limit result count
+});
 ```
 
 List folders:
@@ -301,13 +310,15 @@ export HELIX_STORAGE_DISABLE_R2=true
 
 ### HTTP Configuration
 
-Configure connection timeouts and keep-alive:
+Configure connection timeouts, keep-alive, and retry behavior:
 
 ```js
 const storage = new HelixStorage({
-  connectionTimeout: 5000, // milliseconds
-  socketTimeout: 15000, // milliseconds
+  connectionTimeout: 5000,           // milliseconds
+  socketTimeout: 15000,              // milliseconds
   keepAlive: true,
+  disableExpectContinueHeader: false, // set true to omit Expect: 100-continue
+  maxAttempts: 3,                    // max S3 retry attempts
 });
 ```
 
@@ -315,6 +326,8 @@ These can also be set via environment variables:
 - `HELIX_HTTP_CONNECTION_TIMEOUT` - Connection timeout in milliseconds
 - `HELIX_HTTP_SOCKET_TIMEOUT` - Socket timeout in milliseconds
 - `HELIX_HTTP_S3_KEEP_ALIVE` - Enable HTTP keep-alive (true/false)
+- `HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE` - Disable Expect: 100-continue header (true/false)
+- `HELIX_STORAGE_MAX_ATTEMPTS` - Max S3 retry attempts
 
 ## Important Behaviors
 
