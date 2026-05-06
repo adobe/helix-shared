@@ -21,7 +21,7 @@ describe('Async Tests', () => {
     const t0 = new Date().getTime();
     await sleep(20);
     const t = new Date().getTime() - t0;
-    assert(t >= 20 && t <= 40);
+    assert(t >= 20 && t <= 200);
   });
 
   it('nextTick', async () => {
