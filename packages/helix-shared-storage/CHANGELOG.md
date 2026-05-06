@@ -1,3 +1,15 @@
+# [@adobe/helix-shared-storage-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.12.1...@adobe/helix-shared-storage-v2.0.0) (2026-05-06)
+
+
+* feat(storage)!: overhaul Bucket listing API ([503567b](https://github.com/adobe/helix-shared/commit/503567b0cdf3aac8508e9d9eb0dad5f47ba68ab0))
+
+
+### BREAKING CHANGES
+
+* list() return type changed from ObjectInfo[] to ListResult;
+  ObjectInfo.path removed; ObjectInfo.lastModified type changed from string to
+  Date; ListOptions.includePrefixes removed; listFolders() returns basenames
+
 # [@adobe/helix-shared-storage-v1.12.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.12.0...@adobe/helix-shared-storage-v1.12.1) (2026-04-30)
 
 
