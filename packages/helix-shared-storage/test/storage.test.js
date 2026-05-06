@@ -637,9 +637,18 @@ describe('Storage test', () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply-copy.json'), 'utf-8'));
     const puts = { s3: [], r2: [] };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=owner%2Frepo%2Fref%2F')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, listReply[0])
-      .get('/?continuation-token=1%2Fs4dr7BSKNScrN4njX9%2BCpBNimYkuEzMWg3niTSAPMdculBmycyUPM6kv0xi46j4hdc1lFPkE%2FICI8TxG%2BVNV9Hh91Ou0hqeBYzqTRzSBSs%3D&list-type=2&prefix=owner%2Frepo%2Fref%2F')
+      .get('/')
+      .query({
+        'continuation-token': '1/s4dr7BSKNScrN4njX9+CpBNimYkuEzMWg3niTSAPMdculBmycyUPM6kv0xi46j4hdc1lFPkE/ICI8TxG+VNV9Hh91Ou0hqeBYzqTRzSBSs=',
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, listReply[1])
       .put(/.*/)
       .times(10)
@@ -688,9 +697,18 @@ describe('Storage test', () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply-copy.json'), 'utf-8'));
     const puts = { s3: [], r2: [] };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=owner%2Frepo%2Fref%2F')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, listReply[0])
-      .get('/?continuation-token=1%2Fs4dr7BSKNScrN4njX9%2BCpBNimYkuEzMWg3niTSAPMdculBmycyUPM6kv0xi46j4hdc1lFPkE%2FICI8TxG%2BVNV9Hh91Ou0hqeBYzqTRzSBSs%3D&list-type=2&prefix=owner%2Frepo%2Fref%2F')
+      .get('/')
+      .query({
+        'continuation-token': '1/s4dr7BSKNScrN4njX9+CpBNimYkuEzMWg3niTSAPMdculBmycyUPM6kv0xi46j4hdc1lFPkE/ICI8TxG+VNV9Hh91Ou0hqeBYzqTRzSBSs=',
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, listReply[1])
       .put(/.*/)
       .matchHeader('x-amz-copy-source-if-match', 'abc')
@@ -730,9 +748,18 @@ describe('Storage test', () => {
     const putsHeaders = { s3: [], r2: [] };
     const heads = [];
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=owner%2Frepo%2Fref%2F')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, listReply[0])
-      .get('/?continuation-token=1%2Fs4dr7BSKNScrN4njX9%2BCpBNimYkuEzMWg3niTSAPMdculBmycyUPM6kv0xi46j4hdc1lFPkE%2FICI8TxG%2BVNV9Hh91Ou0hqeBYzqTRzSBSs%3D&list-type=2&prefix=owner%2Frepo%2Fref%2F')
+      .get('/')
+      .query({
+        'continuation-token': '1/s4dr7BSKNScrN4njX9+CpBNimYkuEzMWg3niTSAPMdculBmycyUPM6kv0xi46j4hdc1lFPkE/ICI8TxG+VNV9Hh91Ou0hqeBYzqTRzSBSs=',
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, listReply[1])
       .head(/.*/)
       .times(10)
@@ -1106,7 +1133,11 @@ describe('Storage test', () => {
     });
     const deletes = { s3: [], r2: [] };
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=owner%2Frepo%2Fnew-branch%2F')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'owner/repo/new-branch/',
+      })
       .reply(200, listReply)
       .post('/?delete=')
       .twice()
@@ -1141,7 +1172,11 @@ describe('Storage test', () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply.json'), 'utf-8'));
 
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=owner%2Frepo%2Fnew-branch%2F')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'owner/repo/new-branch/',
+      })
       .reply(200, listReply.response)
       .post('/?delete=')
       .reply(404);
@@ -1155,132 +1190,233 @@ describe('Storage test', () => {
 
   it('rmdir works for empty dir', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=owner%2Frepo%2Fnew-branch%2F')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'owner/repo/new-branch/',
+      })
       .reply(200, '<?xml version="1.0" encoding="UTF-8"?>\n<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>helix-code-bus</Name><Prefix>owner/repo/new-branch/</Prefix><KeyCount>0</KeyCount><MaxKeys>1000</MaxKeys><IsTruncated>false</IsTruncated></ListBucketResult>');
 
     const bus = storage.codeBus();
     await bus.rmdir('/owner/repo/new-branch/');
   });
 
-  it('can list folders', async () => {
+  it('list with empty prefix uses canonical S3 form (no leading slash)', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'foo/',
+      })
+      .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <Name>helix-code-bus</Name>
+  <Prefix>foo/</Prefix>
+  <KeyCount>2</KeyCount>
+  <MaxKeys>1000</MaxKeys>
+  <IsTruncated>false</IsTruncated>
+  <Contents>
+    <Key>foo/bar.md</Key>
+    <LastModified>2021-05-05T08:00:30.000Z</LastModified>
+    <Size>11</Size>
+  </Contents>
+  <CommonPrefixes>
+    <Prefix>foo/sub/</Prefix>
+  </CommonPrefixes>
+</ListBucketResult>
+`);
+
+    const bus = storage.codeBus();
+    const result = await bus.list('foo', { shallow: true });
+
+    assert.deepStrictEqual(result.objects, [
+      {
+        key: 'foo/sub/', name: 'sub', isFolder: true,
+      },
+      {
+        contentLength: 11,
+        contentType: 'text/markdown',
+        key: 'foo/bar.md',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        name: 'bar.md',
+        isFolder: false,
+      },
+    ]);
+  });
+
+  it('listFolders returns just the folder paths', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-folders-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'foo/',
+      })
       .reply(200, new xml2js.Builder().buildObject(listReply[0]))
-      .get('/?continuation-token=next&delimiter=%2F&list-type=2&prefix=')
+      .get('/')
+      .query({
+        'continuation-token': 'next',
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'foo/',
+      })
       .reply(200, new xml2js.Builder().buildObject(listReply[1]));
 
     const bus = storage.codeBus();
-    const folders = await bus.listFolders('');
+    const folders = await bus.listFolders('foo');
 
-    assert.deepStrictEqual(folders, ['owner/', 'other/']);
+    assert.deepStrictEqual(folders, ['owner', 'other']);
+  });
+
+  it('can list shallow across multiple pages', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-folders-reply.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'foo/',
+      })
+      .reply(200, new xml2js.Builder().buildObject(listReply[0]))
+      .get('/')
+      .query({
+        'continuation-token': 'next',
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'foo/',
+      })
+      .reply(200, new xml2js.Builder().buildObject(listReply[1]));
+
+    const bus = storage.codeBus();
+    const result = await bus.list('foo', { shallow: true });
+
+    assert.deepStrictEqual(result, {
+      prefix: 'foo/',
+      objects: [
+        {
+          key: 'foo/owner/', name: 'owner', isFolder: true,
+        },
+        {
+          key: 'foo/other/', name: 'other', isFolder: true,
+        },
+      ],
+      continuationToken: undefined,
+    });
   });
 
   it('can list shallow', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-shallow-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=%2Fowner%2Frepo%2Fref%2F')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/', true);
+    const result = await bus.list('owner/repo/ref/', { shallow: true });
 
-    assert.deepStrictEqual(folders, [
-      {
-        contentLength: 11,
-        contentType: null,
-        key: '/owner/repo/ref/.gitignore',
-        lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '.gitignore',
-      },
-      {
-        contentLength: 1234,
-        contentType: 'text/markdown',
-        key: '/owner/repo/ref/README.md',
-        lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'README.md',
-      },
-    ]);
+    assert.deepStrictEqual(result, {
+      prefix: 'owner/repo/ref/',
+      objects: [
+        {
+          contentLength: 11,
+          contentType: null,
+          key: 'owner/repo/ref/.gitignore',
+          lastModified: new Date('2021-05-05T08:00:30.000Z'),
+          name: '.gitignore',
+          isFolder: false,
+        },
+        {
+          contentLength: 1234,
+          contentType: 'text/markdown',
+          key: 'owner/repo/ref/README.md',
+          lastModified: new Date('2021-05-05T08:00:30.000Z'),
+          name: 'README.md',
+          isFolder: false,
+        },
+      ],
+      continuationToken: undefined,
+    });
   });
 
   it('can list deep', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-deep-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2F')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/', { includePrefixes: true });
+    const result = await bus.list('owner/repo/ref/');
 
-    assert.deepStrictEqual(folders, [
+    assert.deepStrictEqual(result.objects, [
       {
         contentLength: 11,
         contentType: null,
-        key: '/owner/repo/ref/.gitignore',
+        key: 'owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '.gitignore',
+        name: '.gitignore',
+        isFolder: false,
       },
       {
         contentLength: 1234,
         contentType: 'text/markdown',
-        key: '/owner/repo/ref/README.md',
+        key: 'owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'README.md',
+        name: 'README.md',
+        isFolder: false,
       },
       {
         contentLength: 1234,
         contentType: 'text/javascript',
-        key: '/owner/repo/ref/src/scripts.js',
+        key: 'owner/repo/ref/src/scripts.js',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'src/scripts.js',
+        name: 'scripts.js',
+        isFolder: false,
       },
     ]);
   });
 
-  it('can list to include subfolder prefixes', async () => {
+  it('shallow list returns mixed files and folders', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'owner/repo/ref/myfolder/',
+      })
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/myfolder/', { includePrefixes: true });
+    const result = await bus.list('owner/repo/ref/myfolder/', { shallow: true });
 
-    assert.deepStrictEqual(folders, [
+    assert.deepStrictEqual(result.objects, [
       {
-        key: '/owner/repo/ref/myfolder/sub1/',
-        path: 'sub1/',
+        key: 'owner/repo/ref/myfolder/sub1/',
+        name: 'sub1',
+        isFolder: true,
       },
       {
-        key: '/owner/repo/ref/myfolder/sub2/',
-        path: 'sub2/',
+        key: 'owner/repo/ref/myfolder/sub2/',
+        name: 'sub2',
+        isFolder: true,
       },
       {
         contentLength: 999999,
         contentType: 'text/html',
-        key: '/owner/repo/ref/myfolder/somefile.html',
+        key: 'owner/repo/ref/myfolder/somefile.html',
         lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: 'somefile.html',
-      },
-    ]);
-  });
-
-  it('can list to not include subfolder prefixes', async () => {
-    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
-    nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?list-type=2&prefix=%2Fowner%2Frepo%2Fref%2Fmyfolder%2F')
-      .reply(200, new xml2js.Builder().buildObject(listReply));
-
-    const bus = storage.codeBus();
-    const folders = await bus.list('/owner/repo/ref/myfolder/');
-
-    assert.deepStrictEqual(folders, [
-      {
-        contentLength: 999999,
-        contentType: 'text/html',
-        key: '/owner/repo/ref/myfolder/somefile.html',
-        lastModified: new Date('2021-06-06T04:05:06.000Z'),
-        path: 'somefile.html',
+        name: 'somefile.html',
+        isFolder: false,
       },
     ]);
   });
@@ -1289,36 +1425,131 @@ describe('Storage test', () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-truncated-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .get('/')
-      .query({ 'list-type': 2, 'max-keys': 2, prefix: '/owner/repo/ref/' })
+      .query({
+        'list-type': 2,
+        'max-keys': 2,
+        prefix: 'owner/repo/ref/',
+      })
       .reply(200, new xml2js.Builder().buildObject(listReply));
 
     const bus = storage.codeBus();
-    const items = await bus.list('/owner/repo/ref/', {
-      shallow: false,
-      maxItems: 2,
-    });
+    const result = await bus.list('owner/repo/ref/', { maxItems: 2 });
 
-    assert.deepStrictEqual(items, [
+    assert.deepStrictEqual(result.objects, [
       {
         contentLength: 11,
         contentType: null,
-        key: '/owner/repo/ref/.gitignore',
+        key: 'owner/repo/ref/.gitignore',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: '.gitignore',
+        name: '.gitignore',
+        isFolder: false,
       },
       {
         contentLength: 1234,
         contentType: 'text/markdown',
-        key: '/owner/repo/ref/README.md',
+        key: 'owner/repo/ref/README.md',
         lastModified: new Date('2021-05-05T08:00:30.000Z'),
-        path: 'README.md',
+        name: 'README.md',
+        isFolder: false,
       },
     ]);
   });
 
-  it('can return an empty list of folders', async () => {
+  it('can browse a single page with continuation', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-truncated-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .get('/?delimiter=%2F&list-type=2&prefix=foo%2f')
+      .get('/')
+      .query({
+        'list-type': 2,
+        delimiter: '/',
+        'max-keys': 2,
+        prefix: 'owner/repo/ref/',
+      })
+      .reply(200, new xml2js.Builder().buildObject(listReply));
+
+    const bus = storage.codeBus();
+    const result = await bus.browse('owner/repo/ref/', { maxItems: 2 });
+
+    assert.strictEqual(result.continuationToken, 'next');
+    assert.deepStrictEqual(result.objects, [
+      {
+        contentLength: 11,
+        contentType: null,
+        key: 'owner/repo/ref/.gitignore',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        name: '.gitignore',
+        isFolder: false,
+      },
+      {
+        contentLength: 1234,
+        contentType: 'text/markdown',
+        key: 'owner/repo/ref/README.md',
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        name: 'README.md',
+        isFolder: false,
+      },
+    ]);
+  });
+
+  it('browse navigates a sub-path', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'owner/repo/ref/myfolder/',
+      })
+      .reply(200, new xml2js.Builder().buildObject(listReply));
+
+    const bus = storage.codeBus();
+    const result = await bus.browse('owner/repo/ref/myfolder/');
+
+    assert.deepStrictEqual(result.objects, [
+      {
+        key: 'owner/repo/ref/myfolder/sub1/', name: 'sub1', isFolder: true,
+      },
+      {
+        key: 'owner/repo/ref/myfolder/sub2/', name: 'sub2', isFolder: true,
+      },
+      {
+        contentLength: 999999,
+        contentType: 'text/html',
+        key: 'owner/repo/ref/myfolder/somefile.html',
+        lastModified: new Date('2021-06-06T04:05:06.000Z'),
+        name: 'somefile.html',
+        isFolder: false,
+      },
+    ]);
+  });
+
+  it('browse forwards the continuation token', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-subfolder-prefixes.json'), 'utf-8'));
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        'list-type': 2,
+        delimiter: '/',
+        'continuation-token': 'tok-1',
+        prefix: 'owner/repo/ref/myfolder/',
+      })
+      .reply(200, new xml2js.Builder().buildObject(listReply));
+
+    const bus = storage.codeBus();
+    const result = await bus.browse('owner/repo/ref/myfolder/', { continuationToken: 'tok-1' });
+
+    assert.strictEqual(result.continuationToken, undefined);
+    assert.strictEqual(result.objects.length, 3);
+  });
+
+  it('browse can return an empty page', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: 'empty/',
+      })
       .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
 <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
   <KeyCount>0</KeyCount>
@@ -1326,9 +1557,53 @@ describe('Storage test', () => {
 `);
 
     const bus = storage.codeBus();
-    const folders = await bus.listFolders('foo/');
+    const result = await bus.browse('empty');
 
-    assert.deepStrictEqual(folders, []);
+    assert.deepStrictEqual(result, { prefix: 'empty/', objects: [], continuationToken: undefined });
+  });
+
+  it('browse with empty prefix lists the entire bucket', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        delimiter: '/',
+        'list-type': 2,
+        prefix: '',
+      })
+      .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <KeyCount>0</KeyCount>
+</ListBucketResult>
+`);
+
+    const bus = storage.codeBus();
+    const result = await bus.browse('');
+
+    assert.deepStrictEqual(result, { prefix: '', objects: [], continuationToken: undefined });
+  });
+
+  it('copyDeep with empty dst places files at bucket root', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'src/',
+      })
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?>'
+        + '<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">'
+        + '<IsTruncated>false</IsTruncated>'
+        + '<Contents><Key>src/foo.txt</Key><LastModified>2021-05-05T08:00:30.000Z</LastModified><Size>10</Size></Contents>'
+        + '</ListBucketResult>')
+      .put('/foo.txt?x-id=CopyObject')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?><CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;abc&quot;</ETag></CopyObjectResult>');
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .put('/foo.txt?x-id=CopyObject')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?><CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;abc&quot;</ETag></CopyObjectResult>');
+
+    const bus = storage.codeBus();
+    const changes = await bus.copyDeep('src/', '');
+    assert.strictEqual(changes.length, 1);
+    assert.strictEqual(changes[0].dst, 'foo.txt');
   });
 });
 
