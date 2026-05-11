@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-bounce-v2.0.30](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.29...@adobe/helix-shared-bounce-v2.0.30) (2026-05-11)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1221](https://github.com/adobe/helix-shared/issues/1221)) ([af7b828](https://github.com/adobe/helix-shared/commit/af7b82885dc2201dc588266aaf72893aa802c242))
+
 # [@adobe/helix-shared-bounce-v2.0.29](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-bounce-v2.0.28...@adobe/helix-shared-bounce-v2.0.29) (2025-09-30)
 
 
