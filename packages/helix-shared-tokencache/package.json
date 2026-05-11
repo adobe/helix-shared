@@ -32,7 +32,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "nock": "14.0.12"
+    "nock": "14.0.13"
   },
   "dependencies": {
     "@adobe/fetch": "^4.0.10",
