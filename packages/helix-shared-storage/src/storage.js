@@ -757,7 +757,7 @@ class Bucket {
       const relPath = key.substring(prefix.length);
       if (filter({
         ...obj,
-        relPath: `/${key.substring(prefix.length)}`,
+        relPath: `/${relPath}`,
       })) {
         tasks.push({
           src: key,
