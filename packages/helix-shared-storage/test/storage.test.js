@@ -693,6 +693,80 @@ describe('Storage test', () => {
     assert.deepEqual(puts.r2, expectedPuts);
   });
 
+  it('can copy objects (with unsanitized src)', async () => {
+    const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply-copy.json'), 'utf-8'));
+    const puts = { s3: [], r2: [] };
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
+      .reply(200, listReply[0])
+      .get('/')
+      .query({
+        'continuation-token': '1/s4dr7BSKNScrN4njX9+CpBNimYkuEzMWg3niTSAPMdculBmycyUPM6kv0xi46j4hdc1lFPkE/ICI8TxG+VNV9Hh91Ou0hqeBYzqTRzSBSs=',
+        'list-type': 2,
+        prefix: 'owner/repo/ref/',
+      })
+      .reply(200, listReply[1])
+      .put(/.*/)
+      .times(6)
+      .reply((uri) => {
+        puts.s3.push(uri);
+        // reject first uri
+        if (puts.s3.length === 1) {
+          return [404];
+        }
+        return [200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>'];
+      });
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .put(/.*/)
+      .times(6)
+      .reply((uri) => {
+        puts.r2.push(uri);
+        // reject first uri
+        if (puts.s3.length === 1) {
+          return [404];
+        }
+        return [200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>'];
+      });
+
+    const bus = storage.codeBus();
+    const filtered = [];
+    const filter = (obj) => {
+      filtered.push(obj.relPath);
+      return !obj.relPath.startsWith('/.');
+    };
+
+    await bus.copyDeep('owner/repo/ref', 'bar', filter);
+
+    puts.s3.sort();
+    puts.r2.sort();
+    const expectedPuts = [
+      '/bar/README.md?x-id=CopyObject',
+      '/bar/helix_logo.png?x-id=CopyObject',
+      '/bar/htdocs/favicon.ico?x-id=CopyObject',
+      '/bar/htdocs/style.css?x-id=CopyObject',
+      '/bar/index.md?x-id=CopyObject',
+      '/bar/src/html.pre.js?x-id=CopyObject',
+    ];
+    assert.deepEqual(puts.s3, expectedPuts);
+    assert.deepEqual(puts.r2, expectedPuts);
+    assert.deepEqual(filtered, [
+      '/.circleci/config.yml',
+      '/.gitignore',
+      '/.vscode/launch.json',
+      '/.vscode/settings.json',
+      '/README.md',
+      '/helix_logo.png',
+      '/htdocs/favicon.ico',
+      '/htdocs/style.css',
+      '/index.md',
+      '/src/html.pre.js',
+    ]);
+  });
+
   it('can copy objects with copy options', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-reply-copy.json'), 'utf-8'));
     const puts = { s3: [], r2: [] };

@@ -8,3 +8,4 @@ logs
 test-results.xml
 lerna-debug.log
 .npmrc
+.claude

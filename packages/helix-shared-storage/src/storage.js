@@ -749,17 +749,16 @@ class Bucket {
     const { log } = this;
     const tasks = [];
     const dstRoot = sanitizeKey(dst);
-    const prefix = sanitizePrefix(src);
-    log.info(`fetching list of files to copy ${this.bucket}/${prefix} => ${dstRoot}`);
+    log.info(`fetching list of files to copy ${this.bucket}/${sanitizePrefix(src)} => ${dstRoot}`);
 
-    const { objects } = await this.list(src);
+    const { objects, prefix } = await this.list(src);
     objects.forEach((obj) => {
       const { key, contentLength, contentType } = obj;
-      if (filter(obj)) {
-        // compute the path relative to Prefix; key starts with `Prefix/`
-        // so key.substring(Prefix.length) has a leading `/` (or is empty
-        // at the bucket root).  sanitizeKey strips that leading `/`.
-        const relPath = sanitizeKey(key.substring(prefix.length));
+      const relPath = key.substring(prefix.length);
+      if (filter({
+        ...obj,
+        relPath: `/${key.substring(prefix.length)}`,
+      })) {
         tasks.push({
           src: key,
           contentLength,
