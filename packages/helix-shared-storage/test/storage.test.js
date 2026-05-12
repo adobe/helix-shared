@@ -736,7 +736,7 @@ describe('Storage test', () => {
     const filtered = [];
     const filter = (obj) => {
       filtered.push(obj.relPath);
-      return !obj.relPath.startsWith('/.');
+      return !obj.relPath.startsWith('.');
     };
 
     await bus.copyDeep('owner/repo/ref', 'bar', filter);
@@ -754,16 +754,16 @@ describe('Storage test', () => {
     assert.deepEqual(puts.s3, expectedPuts);
     assert.deepEqual(puts.r2, expectedPuts);
     assert.deepEqual(filtered, [
-      '/.circleci/config.yml',
-      '/.gitignore',
-      '/.vscode/launch.json',
-      '/.vscode/settings.json',
-      '/README.md',
-      '/helix_logo.png',
-      '/htdocs/favicon.ico',
-      '/htdocs/style.css',
-      '/index.md',
-      '/src/html.pre.js',
+      '.circleci/config.yml',
+      '.gitignore',
+      '.vscode/launch.json',
+      '.vscode/settings.json',
+      'README.md',
+      'helix_logo.png',
+      'htdocs/favicon.ico',
+      'htdocs/style.css',
+      'index.md',
+      'src/html.pre.js',
     ]);
   });
 
