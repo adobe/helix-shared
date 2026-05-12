@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.0.1...@adobe/helix-shared-storage-v2.1.0) (2026-05-12)
+
+
+### Features
+
+* add a 'relPath' to the object info passed to the copy filter ([#1222](https://github.com/adobe/helix-shared/issues/1222)) ([f6d2ff9](https://github.com/adobe/helix-shared/commit/f6d2ff970f119330cae5afbd1bac3e8585f83d86))
+
 # [@adobe/helix-shared-storage-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.0.0...@adobe/helix-shared-storage-v2.0.1) (2026-05-11)
 
 
