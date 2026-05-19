@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v2.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.1.1...@adobe/helix-shared-storage-v2.1.2) (2026-05-19)
+
+
+### Bug Fixes
+
+* **storage:** correctly set isFolder for folder placeholders in deep list ([#1224](https://github.com/adobe/helix-shared/issues/1224)) ([97dab52](https://github.com/adobe/helix-shared/commit/97dab524a8091aabc6d549641a30e453b5dae840))
+
 # [@adobe/helix-shared-storage-v2.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.1.0...@adobe/helix-shared-storage-v2.1.1) (2026-05-19)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-storage",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Shared modules of the Helix Project - storage",
   "main": "src/index.js",
   "type": "module",
