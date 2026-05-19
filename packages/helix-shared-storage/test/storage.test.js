@@ -1319,6 +1319,56 @@ describe('Storage test', () => {
     ]);
   });
 
+  it('deep list marks folder placeholder keys (trailing /) as isFolder=true', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .get('/')
+      .query({
+        'list-type': 2,
+        prefix: 'foo/',
+      })
+      .reply(200, `<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <Name>helix-code-bus</Name>
+  <Prefix>foo/</Prefix>
+  <KeyCount>2</KeyCount>
+  <MaxKeys>1000</MaxKeys>
+  <IsTruncated>false</IsTruncated>
+  <Contents>
+    <Key>foo/sub/</Key>
+    <LastModified>2021-05-05T08:00:30.000Z</LastModified>
+    <Size>0</Size>
+  </Contents>
+  <Contents>
+    <Key>foo/bar.md</Key>
+    <LastModified>2021-05-05T08:00:30.000Z</LastModified>
+    <Size>11</Size>
+  </Contents>
+</ListBucketResult>
+`);
+
+    const bus = storage.codeBus();
+    const result = await bus.list('foo');
+
+    assert.deepStrictEqual(result.objects, [
+      {
+        key: 'foo/sub/',
+        name: 'sub',
+        isFolder: true,
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        contentLength: 0,
+        contentType: null,
+      },
+      {
+        key: 'foo/bar.md',
+        name: 'bar.md',
+        isFolder: false,
+        lastModified: new Date('2021-05-05T08:00:30.000Z'),
+        contentLength: 11,
+        contentType: 'text/markdown',
+      },
+    ]);
+  });
+
   it('listFolders returns just the folder paths', async () => {
     const listReply = JSON.parse(await fs.readFile(path.resolve(__testdir, 'fixtures', 'list-folders-reply.json'), 'utf-8'));
     nock('https://helix-code-bus.s3.fake.amazonaws.com')

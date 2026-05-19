@@ -151,10 +151,11 @@ function listResultToObjectInfos(result) {
   });
   (result.Contents || []).forEach((content) => {
     const key = content.Key;
+    const isFolder = key.endsWith('/');
     objects.push({
       key,
       name: basename(key),
-      isFolder: false,
+      isFolder,
       lastModified: content.LastModified,
       contentLength: content.Size,
       contentType: mime.getType(key),
