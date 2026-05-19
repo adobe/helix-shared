@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v2.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.1.0...@adobe/helix-shared-storage-v2.1.1) (2026-05-19)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1223](https://github.com/adobe/helix-shared/issues/1223)) ([d0c8d9a](https://github.com/adobe/helix-shared/commit/d0c8d9ac2ba1684232224f7382b9a7a759049c1e))
+
 # [@adobe/helix-shared-storage-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.0.1...@adobe/helix-shared-storage-v2.1.0) (2026-05-12)
 
 
