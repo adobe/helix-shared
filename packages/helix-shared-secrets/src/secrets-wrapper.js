@@ -101,7 +101,7 @@ export async function loadSecrets(ctx, opts) {
     const params = await sm.loadSecrets(secretsPath);
     const nower = Date.now();
     // eslint-disable-next-line no-console
-    console.info(`loaded ${Object.entries(params).length} package parameter in ${nower - now}ms`);
+    console.debug(`loaded ${Object.entries(params).length} package parameter in ${nower - now}ms`);
     cache.data = params;
     cache.loaded = nower;
   }
