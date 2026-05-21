@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.3.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.3.2...@adobe/helix-shared-secrets-v2.3.3) (2026-05-21)
+
+
+### Bug Fixes
+
+* log package parameter loaded with level debug ([#1226](https://github.com/adobe/helix-shared/issues/1226)) ([81363cb](https://github.com/adobe/helix-shared/commit/81363cbf3310fbf544026a7ea1da93a75e0fe691))
+
 # [@adobe/helix-shared-secrets-v2.3.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.3.1...@adobe/helix-shared-secrets-v2.3.2) (2026-05-19)
 
 
