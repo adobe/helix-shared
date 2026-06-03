@@ -29,7 +29,7 @@ async function getData(request, opts) {
   const contentType = request.headers.get('content-type');
   if (/\/json/.test(contentType) && BODY_METHODS.includes(request.method)) {
     const json = await request.json();
-    if (typeof json !== 'object' || json === null || Array.isArray(json)) {
+    if (typeof json !== 'object' || json === null) {
       throw new Error('JSON body must be an object');
     }
     return json;
