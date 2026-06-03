@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-body-data-v2.2.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.2.6...@adobe/helix-shared-body-data-v2.2.7) (2026-06-03)
+
+
+### Bug Fixes
+
+* **body-data:** reject non-object JSON bodies with 400 ([#1230](https://github.com/adobe/helix-shared/issues/1230)) ([a9dced9](https://github.com/adobe/helix-shared/commit/a9dced98f396c1b60b0d7edbcc2d52f0a7f2d583))
+
 # [@adobe/helix-shared-body-data-v2.2.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.2.5...@adobe/helix-shared-body-data-v2.2.6) (2026-05-25)
 
 
