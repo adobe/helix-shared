@@ -28,7 +28,11 @@ const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 async function getData(request, opts) {
   const contentType = request.headers.get('content-type');
   if (/\/json/.test(contentType) && BODY_METHODS.includes(request.method)) {
-    return request.json();
+    const json = await request.json();
+    if (typeof json !== 'object' || json === null || Array.isArray(json)) {
+      throw new Error('JSON body must be an object');
+    }
+    return json;
   }
 
   const { supportYAML } = opts;

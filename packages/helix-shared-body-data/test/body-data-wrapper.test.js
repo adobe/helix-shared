@@ -105,6 +105,23 @@ describe('Body Data Wrapper Unit Tests (JSON Body)', () => {
     });
     assert.strictEqual(response.status, 200);
   });
+
+  it('Responds with 400 for non-object JSON body (e.g. empty string "")', async () => {
+    const universalfunct = async () => new Response('ok');
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost', {
+      body: '""',
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.headers.get('x-error'), 'error parsing request body');
+  });
 });
 
 describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
