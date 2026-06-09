@@ -22,7 +22,7 @@ const loaders = {
 };
 
 /**
- * Exported only for testisg
+ * Exported only for testing
  * @param {Request} request a fetch-API Request
  * @param  {...string} names the parameter names to extract
  * @returns {object} an object with the provided parameter names as keys

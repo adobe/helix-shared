@@ -22,7 +22,7 @@ function toMetaName(text) {
 }
 
 /**
- * The modifiers class help manage the metadata and headers modifiers.
+ * The modifiers class helps manage the metadata and headers modifiers.
  */
 export class ModifiersConfig {
   /**
