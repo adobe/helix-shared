@@ -1,0 +1,45 @@
+{
+  "name": "@adobe/helix-shared-utils",
+  "version": "3.0.2",
+  "description": "Shared modules of the Helix Project - Utils",
+  "main": "src/utils.js",
+  "type": "module",
+  "imports": {
+    "#crypto": {
+      "node": "./src/crypto.node.js",
+      "browser": "./src/crypto.worker.js",
+      "worker": "./src/crypto.worker.js"
+    }
+  },
+  "scripts": {
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "mocha-suppress-logs"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@adobe/helix-shared-git": "^3.0.10"
+  },
+  "engines": {
+    "node": ">= 14.18"
+  }
+}

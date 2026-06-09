@@ -1,0 +1,53 @@
+{
+  "name": "@adobe/helix-shared-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Shared modules of the Helix Project - monorepo",
+  "type": "module",
+  "scripts": {
+    "docs:schema": "jsonschema2md -d packages/helix-shared-config/src/schemas -o docs -x docs -f yaml",
+    "docs:api": "jsdoc2md -c .jsdoc.json --files packages/*/src/*.js > docs/API.md",
+    "docs": "npm run docs:schema && npm run docs:api",
+    "test": "npm test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "semantic-release": "npx --no --workspaces semantic-release",
+    "semantic-release-dry": "npx --no --workspaces semantic-release --dry-run --branches $CI_BRANCH",
+    "prepare": "husky",
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "workspaces": [
+    "./packages/*"
+  ],
+  "devDependencies": {
+    "@adobe/eslint-config-helix": "3.0.28",
+    "@adobe/jsonschema2md": "8.0.11",
+    "@eslint/config-helpers": "0.6.0",
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/npm": "13.1.5",
+    "ajv": "8.20.0",
+    "c8": "11.0.0",
+    "eslint": "9.4.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.0.5",
+    "mocha": "11.7.6",
+    "mocha-multi-reporters": "1.5.1",
+    "mocha-suppress-logs": "0.6.0",
+    "nock": "14.0.15",
+    "semantic-release": "25.0.3",
+    "semantic-release-monorepo": "8.0.2"
+  },
+  "lint-staged": {
+    "*.js": "eslint"
+  }
+}

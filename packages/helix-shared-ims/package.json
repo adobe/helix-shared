@@ -1,0 +1,48 @@
+{
+  "name": "@adobe/helix-shared-ims",
+  "version": "2.0.19",
+  "description": "Shared modules of the Helix Project - ims",
+  "main": "src/ims.js",
+  "types": "src/ims.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json",
+    "spec": "test/*.test.js",
+    "require": [
+      "test/setup-env.js",
+      "mocha-suppress-logs"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@adobe/fetch": "^4.0.1",
+    "@adobe/helix-shared-body-data": "^1.1.19",
+    "@adobe/helix-shared-utils": "^2.1.0",
+    "@adobe/helix-shared-wrap": "^1.0.5",
+    "cookie": "1.1.1"
+  },
+  "optionalDependencies": {
+    "@adobe/helix-universal": "^5.0.0"
+  },
+  "devDependencies": {
+    "nock": "14.0.15"
+  }
+}

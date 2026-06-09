@@ -1,0 +1,43 @@
+{
+  "name": "@adobe/helix-shared-body-data",
+  "version": "2.2.7",
+  "description": "Shared modules of the Helix Project - body-data",
+  "main": "src/body-data-wrapper.js",
+  "types": "src/body-data-wrapper.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "mocha-suppress-logs"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@adobe/fetch": "^4.0.1",
+    "@adobe/helix-shared-wrap": "^1.0.5"
+  },
+  "optionalDependencies": {
+    "@adobe/helix-universal": "^5.0.0"
+  },
+  "devDependencies": {
+    "yaml": "2.9.0"
+  }
+}

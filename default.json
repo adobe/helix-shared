@@ -1,0 +1,96 @@
+{
+  "extends": [
+    "config:recommended",
+    ":semanticCommits"
+  ],
+  "timezone": "Europe/Zurich",
+  "branchPrefix": "renovate-",
+  "hostRules": [
+    {
+      "matchHost": "registry.npmjs.org",
+      "token": "{{ secrets.HELIX_NPM_TOKEN }}",
+      "hostType": "npm"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["@adobe/fetch"],
+      "rangeStrategy": "replace"
+    },
+    {
+      "matchPackageNames": ["^@adobe/helix-shared-.*"],
+      "rangeStrategy": "replace"
+    },
+    {
+      "matchPackageNames": ["eslint"],
+      "allowedVersions": "<9.0.0"
+    },
+    {
+      "matchPackageNames": ["quick-lru"],
+      "allowedVersions": "<6.0.0"
+    },
+    {
+      "matchPackageNames": ["callsites"],
+      "allowedVersions": "<4.0.0"
+    },
+    {
+      "matchPackageNames": ["escape-string-regexp"],
+      "allowedVersions": "<5.0.0"
+    },
+    {
+      "matchPackageNames": ["p-limit"],
+      "allowedVersions": "<4.0.0"
+    },
+    {
+      "matchPackageNames": ["cimg/node"],
+      "allowedVersions": "<19"
+    },
+    {
+      "matchPackageNames": ["@aws-sdk/client-s3"],
+      "allowedVersions": "!/3\\.29\\.0/"
+    },
+    {
+      "matchPackageNames": ["@adobe/helix-cli"],
+      "allowedVersions": "<14"
+    },
+    {
+      "groupName": "adobe fixes",
+      "matchUpdateTypes": ["patch", "pin", "digest", "minor"],
+      "automerge": true,
+      "matchPackagePatterns": ["^@adobe/"],
+      "schedule": ["at any time"]
+    },
+    {
+      "groupName": "adobe major",
+      "matchUpdateTypes": ["major"],
+      "matchPackagePatterns": ["^@adobe/"],
+      "automerge": false,
+      "schedule": ["at any time"]
+    },
+    {
+      "groupName": "external fixes",
+      "matchUpdateTypes": ["patch", "pin", "digest", "minor"],
+      "automerge": true,
+      "schedule": [
+        "after 2pm on Monday"
+      ],
+      "matchPackagePatterns": ["^.+"],
+      "excludePackagePatterns": ["^@adobe/"],
+      "minimumReleaseAge": "14 days"
+    },
+    {
+      "groupName": "external major",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "matchPackagePatterns": ["^.+"],
+      "excludePackagePatterns": ["^@adobe/"],
+      "schedule": ["after 2pm on Monday"],
+      "minimumReleaseAge": "14 days"
+    },
+    {
+      "matchDatasources": ["orb"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true
+    }
+  ]
+}

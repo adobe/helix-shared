@@ -1,0 +1,9 @@
+version: 1
+
+sitemaps:
+  broken:
+    origin: https://www.example.com
+    languages:
+      en:
+        source: /query-index.json
+        hreflang: en

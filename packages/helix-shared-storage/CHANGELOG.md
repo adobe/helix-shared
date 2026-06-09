@@ -1,0 +1,272 @@
+# [@adobe/helix-shared-storage-v2.1.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.1.2...@adobe/helix-shared-storage-v2.1.3) (2026-05-25)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1227](https://github.com/adobe/helix-shared/issues/1227)) ([6039a26](https://github.com/adobe/helix-shared/commit/6039a26864482edfd5455aa64d43e4bbde548e57))
+
+# [@adobe/helix-shared-storage-v2.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.1.1...@adobe/helix-shared-storage-v2.1.2) (2026-05-19)
+
+
+### Bug Fixes
+
+* **storage:** correctly set isFolder for folder placeholders in deep list ([#1224](https://github.com/adobe/helix-shared/issues/1224)) ([97dab52](https://github.com/adobe/helix-shared/commit/97dab524a8091aabc6d549641a30e453b5dae840))
+
+# [@adobe/helix-shared-storage-v2.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.1.0...@adobe/helix-shared-storage-v2.1.1) (2026-05-19)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1223](https://github.com/adobe/helix-shared/issues/1223)) ([d0c8d9a](https://github.com/adobe/helix-shared/commit/d0c8d9ac2ba1684232224f7382b9a7a759049c1e))
+
+# [@adobe/helix-shared-storage-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.0.1...@adobe/helix-shared-storage-v2.1.0) (2026-05-12)
+
+
+### Features
+
+* add a 'relPath' to the object info passed to the copy filter ([#1222](https://github.com/adobe/helix-shared/issues/1222)) ([f6d2ff9](https://github.com/adobe/helix-shared/commit/f6d2ff970f119330cae5afbd1bac3e8585f83d86))
+
+# [@adobe/helix-shared-storage-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.0.0...@adobe/helix-shared-storage-v2.0.1) (2026-05-11)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1221](https://github.com/adobe/helix-shared/issues/1221)) ([af7b828](https://github.com/adobe/helix-shared/commit/af7b82885dc2201dc588266aaf72893aa802c242))
+
+# [@adobe/helix-shared-storage-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.12.1...@adobe/helix-shared-storage-v2.0.0) (2026-05-06)
+
+
+* feat(storage)!: overhaul Bucket listing API ([503567b](https://github.com/adobe/helix-shared/commit/503567b0cdf3aac8508e9d9eb0dad5f47ba68ab0))
+
+
+### BREAKING CHANGES
+
+* list() return type changed from ObjectInfo[] to ListResult;
+  ObjectInfo.path removed; ObjectInfo.lastModified type changed from string to
+  Date; ListOptions.includePrefixes removed; listFolders() returns basenames
+
+# [@adobe/helix-shared-storage-v1.12.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.12.0...@adobe/helix-shared-storage-v1.12.1) (2026-04-30)
+
+
+### Bug Fixes
+
+* trigger release ([60b0b8b](https://github.com/adobe/helix-shared/commit/60b0b8bd044e66938323f2577c2103b365e4d537))
+
+# [@adobe/helix-shared-storage-v1.12.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.11.0...@adobe/helix-shared-storage-v1.12.0) (2026-03-05)
+
+
+### Features
+
+* support copy options ([#1199](https://github.com/adobe/helix-shared/issues/1199)) ([a1eb197](https://github.com/adobe/helix-shared/commit/a1eb197dcb8a437e45380a9a5aa67af7101ddf00))
+
+# [@adobe/helix-shared-storage-v1.11.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.2...@adobe/helix-shared-storage-v1.11.0) (2026-03-05)
+
+
+### Features
+
+* **storage:** allow querying for CRC checksum ([#1201](https://github.com/adobe/helix-shared/issues/1201)) ([5cdcd88](https://github.com/adobe/helix-shared/commit/5cdcd8882e88757d6a2f010eee94da2301195453))
+
+# [@adobe/helix-shared-storage-v1.10.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.1...@adobe/helix-shared-storage-v1.10.2) (2025-12-08)
+
+
+### Reverts
+
+* Revert "feat: bucket.put() stores uncompressed length as metadata ([#1172](https://github.com/adobe/helix-shared/issues/1172))" ([#1176](https://github.com/adobe/helix-shared/issues/1176)) ([2aa7ee4](https://github.com/adobe/helix-shared/commit/2aa7ee41d68d7d2671ad5a2d973fb35eb2ba2a58))
+
+# [@adobe/helix-shared-storage-v1.10.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.10.0...@adobe/helix-shared-storage-v1.10.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* disable R2 for source bus ([#1175](https://github.com/adobe/helix-shared/issues/1175)) ([d17b6dd](https://github.com/adobe/helix-shared/commit/d17b6dd8b62562b947bcf74fcdb7cf7f20b04752))
+
+# [@adobe/helix-shared-storage-v1.10.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.9.1...@adobe/helix-shared-storage-v1.10.0) (2025-11-28)
+
+
+### Features
+
+* bucket.put() stores uncompressed length as metadata ([#1172](https://github.com/adobe/helix-shared/issues/1172)) ([f74105e](https://github.com/adobe/helix-shared/commit/f74105ec1f5f4ae02d61919483cee60b2b64cc10))
+
+# [@adobe/helix-shared-storage-v1.9.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.9.0...@adobe/helix-shared-storage-v1.9.1) (2025-11-25)
+
+
+### Bug Fixes
+
+* change bucket.list() prefixes option to be includePrefixes ([#1169](https://github.com/adobe/helix-shared/issues/1169)) ([d27f5bf](https://github.com/adobe/helix-shared/commit/d27f5bf536e6d765a02c092b6f04541692579d9e))
+
+# [@adobe/helix-shared-storage-v1.9.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.8.0...@adobe/helix-shared-storage-v1.9.0) (2025-11-25)
+
+
+### Features
+
+* option to include subfolder prefixes in bucket.list() ([#1168](https://github.com/adobe/helix-shared/issues/1168)) ([fa6758f](https://github.com/adobe/helix-shared/commit/fa6758fb2cee9a11e366c645e3c25463239e3c15))
+
+# [@adobe/helix-shared-storage-v1.8.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.7.1...@adobe/helix-shared-storage-v1.8.0) (2025-11-03)
+
+
+### Features
+
+* add sourceBus() ([186bc43](https://github.com/adobe/helix-shared/commit/186bc4336d42a3113e8ad2d712fb024571892537))
+
+# [@adobe/helix-shared-storage-v1.7.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.7.0...@adobe/helix-shared-storage-v1.7.1) (2025-11-03)
+
+
+### Bug Fixes
+
+* add ETag and LastModified to `meta` in `storage.get` ([#1154](https://github.com/adobe/helix-shared/issues/1154)) ([a2da95f](https://github.com/adobe/helix-shared/commit/a2da95f5972cbc1aaa61783d1a062fabfc057e3d))
+
+# [@adobe/helix-shared-storage-v1.7.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.6.0...@adobe/helix-shared-storage-v1.7.0) (2025-10-30)
+
+
+### Features
+
+* **storage:** add `HELIX_STORAGE_MAX_ATTEMPTS` ([#1152](https://github.com/adobe/helix-shared/issues/1152)) ([39fb6fe](https://github.com/adobe/helix-shared/commit/39fb6fec47909786c8ce3a0574a7fa9f35559b58))
+
+# [@adobe/helix-shared-storage-v1.6.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.5.0...@adobe/helix-shared-storage-v1.6.0) (2025-10-21)
+
+
+### Features
+
+* **storage:** add `maxItems` option to `list()` ([#1149](https://github.com/adobe/helix-shared/issues/1149)) ([b2f017e](https://github.com/adobe/helix-shared/commit/b2f017e77efc4ed4f91f2532d82a165959e1c21d))
+
+# [@adobe/helix-shared-storage-v1.5.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.2...@adobe/helix-shared-storage-v1.5.0) (2025-10-13)
+
+
+### Features
+
+* **storage:** support mapping for bucket names ([#1141](https://github.com/adobe/helix-shared/issues/1141)) ([e9e3ef9](https://github.com/adobe/helix-shared/commit/e9e3ef937401e00a0125a126a4c4da298ff3917e))
+
+# [@adobe/helix-shared-storage-v1.4.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.1...@adobe/helix-shared-storage-v1.4.2) (2025-08-22)
+
+
+### Bug Fixes
+
+* measure time for put and copy ([#1131](https://github.com/adobe/helix-shared/issues/1131)) ([85d33e7](https://github.com/adobe/helix-shared/commit/85d33e745623e39cd2f631542be811cc7daf2c7d))
+
+# [@adobe/helix-shared-storage-v1.4.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.4.0...@adobe/helix-shared-storage-v1.4.1) (2025-08-13)
+
+
+### Bug Fixes
+
+* add shallow flag to types ([#1129](https://github.com/adobe/helix-shared/issues/1129)) ([69ad1a2](https://github.com/adobe/helix-shared/commit/69ad1a27e0a4e0ac394339563f7d20a75a370607))
+
+# [@adobe/helix-shared-storage-v1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.3.1...@adobe/helix-shared-storage-v1.4.0) (2025-08-13)
+
+
+### Features
+
+* add shallow flag to storage.list ([#1128](https://github.com/adobe/helix-shared/issues/1128)) ([07edb86](https://github.com/adobe/helix-shared/commit/07edb8656117f64225be42a6cf69c97c251c58c1))
+
+# [@adobe/helix-shared-storage-v1.3.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.3.0...@adobe/helix-shared-storage-v1.3.1) (2025-07-23)
+
+
+### Bug Fixes
+
+* remove base64 decoding, just handled gzipped ([d211fa6](https://github.com/adobe/helix-shared/commit/d211fa6a7b0ec27c5bd103706a0329b249342aeb))
+* spacing ([9160673](https://github.com/adobe/helix-shared/commit/91606732d6a7b1758fea95d8d1e238d5ba45fc0c))
+* support gzipped responses in store ([f900cc3](https://github.com/adobe/helix-shared/commit/f900cc3bab2d63adf4a486ad5f87b4c108d59b23))
+
+# [@adobe/helix-shared-storage-v1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.2.0...@adobe/helix-shared-storage-v1.3.0) (2025-03-31)
+
+
+### Features
+
+* support disable R2 on bucket itself ([#1077](https://github.com/adobe/helix-shared/issues/1077)) ([c432cb8](https://github.com/adobe/helix-shared/commit/c432cb8093ab6b6df676d2ea285b8b102f5b5bd1))
+
+# [@adobe/helix-shared-storage-v1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.1.2...@adobe/helix-shared-storage-v1.2.0) (2025-02-06)
+
+
+### Features
+
+* disable R2 from environment ([#1057](https://github.com/adobe/helix-shared/issues/1057)) ([622e16b](https://github.com/adobe/helix-shared/commit/622e16b6c158e0699c40db30f2727bec88b87d0f))
+
+# [@adobe/helix-shared-storage-v1.1.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.1.1...@adobe/helix-shared-storage-v1.1.2) (2025-01-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @smithy/node-http-handler to v4 ([#1043](https://github.com/adobe/helix-shared/issues/1043)) ([81432e9](https://github.com/adobe/helix-shared/commit/81432e96c81c1a413cdcb7734a2da28906e07dcd))
+
+# [@adobe/helix-shared-storage-v1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.1.0...@adobe/helix-shared-storage-v1.1.1) (2024-11-09)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1023](https://github.com/adobe/helix-shared/issues/1023)) ([09c1b5a](https://github.com/adobe/helix-shared/commit/09c1b5a7d2d82e35baa31dfdce23465dea2b72a4))
+
+# [@adobe/helix-shared-storage-v1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.9...@adobe/helix-shared-storage-v1.1.0) (2024-10-11)
+
+
+### Features
+
+* use remove() for rmdir() ([#1014](https://github.com/adobe/helix-shared/issues/1014)) ([0d4ce8b](https://github.com/adobe/helix-shared/commit/0d4ce8bc5680437b77829ccb33be02fb92d18a8a))
+
+# [@adobe/helix-shared-storage-v1.0.9](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.8...@adobe/helix-shared-storage-v1.0.9) (2024-10-08)
+
+
+### Bug Fixes
+
+* use smaller queue size for multiple deletes ([#1012](https://github.com/adobe/helix-shared/issues/1012)) ([4eb1401](https://github.com/adobe/helix-shared/commit/4eb140196ae9151f6ddf7ff765bc20cf97cf77e8))
+
+# [@adobe/helix-shared-storage-v1.0.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.7...@adobe/helix-shared-storage-v1.0.8) (2024-10-03)
+
+
+### Bug Fixes
+
+* Bucket.rmdir should delete files in batches ([#1009](https://github.com/adobe/helix-shared/issues/1009)) ([bb4a33f](https://github.com/adobe/helix-shared/commit/bb4a33f45a736b237ba3c7518ded826a23ab6cee))
+
+# [@adobe/helix-shared-storage-v1.0.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.6...@adobe/helix-shared-storage-v1.0.7) (2024-09-24)
+
+
+### Bug Fixes
+
+* hardcode s3 region ([#1000](https://github.com/adobe/helix-shared/issues/1000)) ([9e04361](https://github.com/adobe/helix-shared/commit/9e04361e6a12c8825eddd7c420c08321e980c678))
+
+# [@adobe/helix-shared-storage-v1.0.6](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.5...@adobe/helix-shared-storage-v1.0.6) (2024-08-24)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([ddac9e4](https://github.com/adobe/helix-shared/commit/ddac9e44dbf93aae0c5cb3825a7b23dd621f8a9f))
+
+# [@adobe/helix-shared-storage-v1.0.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.4...@adobe/helix-shared-storage-v1.0.5) (2024-08-14)
+
+
+### Bug Fixes
+
+* **storage:** add renameMetadata copy option ([#986](https://github.com/adobe/helix-shared/issues/986)) ([18905cb](https://github.com/adobe/helix-shared/commit/18905cb7f07a9ccdff54544351d8911cb0b828e3))
+
+# [@adobe/helix-shared-storage-v1.0.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.3...@adobe/helix-shared-storage-v1.0.4) (2024-07-18)
+
+
+### Bug Fixes
+
+* copy more than just metadata ([#976](https://github.com/adobe/helix-shared/issues/976)) ([70279a2](https://github.com/adobe/helix-shared/commit/70279a249d9484ec03569bee442dfa030d6859c6))
+
+# [@adobe/helix-shared-storage-v1.0.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.2...@adobe/helix-shared-storage-v1.0.3) (2024-07-16)
+
+
+### Bug Fixes
+
+* **storage:** add copy options for addMetadata ([#975](https://github.com/adobe/helix-shared/issues/975)) ([58e4db1](https://github.com/adobe/helix-shared/commit/58e4db14210238f10815da7a1dfe9788b8b9dc66))
+
+# [@adobe/helix-shared-storage-v1.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.1...@adobe/helix-shared-storage-v1.0.2) (2024-05-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @aws-sdk/client-s3 to v3.577.0 ([#936](https://github.com/adobe/helix-shared/issues/936)) ([2968b02](https://github.com/adobe/helix-shared/commit/2968b02a15332dce849a2b997ca0c0d34210ede9))
+
+# [@adobe/helix-shared-storage-v1.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v1.0.0...@adobe/helix-shared-storage-v1.0.1) (2024-05-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @smithy/node-http-handler to v3 ([#935](https://github.com/adobe/helix-shared/issues/935)) ([0b2d0af](https://github.com/adobe/helix-shared/commit/0b2d0af069bfc4d7b3a1e69ca24324b35115a8be))
+
+# @adobe/helix-shared-storage-v1.0.0 (2024-04-29)
+
+
+### Features
+
+* add helix-shared-storage ([#932](https://github.com/adobe/helix-shared/issues/932)) ([6cb305b](https://github.com/adobe/helix-shared/commit/6cb305bee89225648b88d25278577ddcaa207f95))

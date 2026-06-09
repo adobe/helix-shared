@@ -1,0 +1,7 @@
+dist/
+*.bu.*
+**/node_modules/**
+**/build/**
+.*
+*.json
+!tools/sidekick/config.json

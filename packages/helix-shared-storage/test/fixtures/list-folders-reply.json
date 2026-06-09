@@ -1,0 +1,29 @@
+[
+  {
+    "ListBucketResult": {
+      "Name": "helix-code-bus",
+      "Prefix": "foo/",
+      "NextContinuationToken": "next",
+      "KeyCount": 1,
+      "MaxKeys": 1,
+      "Delimiter": "/",
+      "IsTruncated": true,
+      "CommonPrefixes": [{
+        "Prefix": "foo/owner/"
+      }]
+    }
+  },
+  {
+    "ListBucketResult": {
+      "Name": "helix-code-bus",
+      "Prefix": "foo/",
+      "KeyCount": 1,
+      "MaxKeys": 1,
+      "Delimiter": "/",
+      "IsTruncated": false,
+      "CommonPrefixes": [{
+        "Prefix": "foo/other/"
+      }]
+    }
+  }
+]
