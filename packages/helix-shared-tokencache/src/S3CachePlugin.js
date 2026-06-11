@@ -41,6 +41,8 @@ export class S3CachePlugin {
     this.secret = opts.secret;
     this.readOnly = opts.readOnly || false;
     this.type = opts.type;
+    this.deserializeHook = opts.deserializeHook;
+
     const disableExpectContinueHeader = opts.disableExpectContinueHeader
       ?? (process.env.HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE === 'true');
     this.s3 = new S3Client({
@@ -85,6 +87,8 @@ export class S3CachePlugin {
         raw = raw.toString('utf-8');
       }
       const data = JSON.parse(raw);
+      this.deserializeHook?.(data, log);
+
       if (data.cachePluginMetadata) {
         this.meta = data.cachePluginMetadata;
         delete data.cachePluginMetadata;

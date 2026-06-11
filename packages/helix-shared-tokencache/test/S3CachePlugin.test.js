@@ -19,6 +19,7 @@ import { Nock, toAuthContent } from './utils.js';
 describe('S3CachePlugin Test', () => {
   let nock;
   let savedProcessEnv;
+
   beforeEach(() => {
     nock = new Nock();
     savedProcessEnv = process.env;
@@ -398,6 +399,35 @@ describe('S3CachePlugin Test', () => {
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, false);
     assert.strictEqual(ctx.token, '');
+  });
+
+  it('invokes deserializeHook with parsed data and log on load', async () => {
+    let hookedData = null;
+    let hookedLog = null;
+
+    const p = new S3CachePlugin({
+      bucket: 'test-bucket',
+      key: 'myproject/auth-default/json',
+      secret: '',
+      deserializeHook: (data, log) => {
+        hookedData = data;
+        hookedLog = log;
+        // eslint-disable-next-line no-param-reassign
+        delete data.AccessToken;
+      },
+    });
+
+    nock('https://test-bucket.s3.us-east-1.amazonaws.com')
+      .get('/myproject/auth-default/json?x-id=GetObject')
+      .reply(200, JSON.stringify(toAuthContent('1234')));
+
+    const ctx = new MockTokenCacheContext({});
+    await p.beforeCacheAccess(ctx);
+
+    assert.ok(hookedData, 'deserializeHook was called');
+    assert.strictEqual(hookedLog, p.log);
+    assert.strictEqual(ctx.token, '1234');
+    assert.strictEqual(hookedData.AccessToken, undefined);
   });
 
   it('deletes the cache from s3', async () => {

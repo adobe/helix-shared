@@ -17,6 +17,7 @@ export declare interface S3CacheManagerOptions {
   bucket: string;
   prefix: string;
   secret: string;
+  deserializeHook?: (data: object, log: Console) => void;
 }
 
 export declare class S3CacheManager {
