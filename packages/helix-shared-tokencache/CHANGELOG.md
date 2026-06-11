@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-tokencache-v1.6.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.5.4...@adobe/helix-shared-tokencache-v1.6.0) (2026-06-11)
+
+
+### Features
+
+* **tokencache:** add deserializeHook option to S3CachePlugin ([#1233](https://github.com/adobe/helix-shared/issues/1233)) ([9de1ae0](https://github.com/adobe/helix-shared/commit/9de1ae03131a9aee249693544c3ff464e9cebbe2))
+
 # [@adobe/helix-shared-tokencache-v1.5.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-tokencache-v1.5.3...@adobe/helix-shared-tokencache-v1.5.4) (2026-05-25)
 
 
