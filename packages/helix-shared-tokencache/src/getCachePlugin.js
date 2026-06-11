@@ -50,6 +50,7 @@ export async function getCachePlugin(opts, type) {
     readOnly = false,
     contentBucket = BUCKET_CONTENT_BUS,
     codeBucket = BUCKET_CODE_BUS,
+    deserializeHook,
   } = opts;
 
   const derivedOpts = [];
@@ -74,6 +75,7 @@ export async function getCachePlugin(opts, type) {
     bucket: contentBucket,
     type,
     readOnly,
+    deserializeHook,
   }, ...derivedOpts);
 
   log.info(`using connected user from ${basePlugin.location}`);

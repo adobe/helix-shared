@@ -17,6 +17,7 @@ export declare interface S3CachePluginOptions {
   key: string;
   secret: string;
   readOnly?: boolean;
+  deserializeHook?: (data: object, log: Console) => void;
 }
 
 export declare class S3CachePlugin implements CachePlugin {

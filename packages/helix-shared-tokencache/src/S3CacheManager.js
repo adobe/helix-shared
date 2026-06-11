@@ -49,6 +49,8 @@ export class S3CacheManager {
     this.secret = opts.secret;
     this.readOnly = opts.readOnly;
     this.type = opts.type;
+    this.deserializeHook = opts.deserializeHook;
+
     const disableExpectContinueHeader = opts.disableExpectContinueHeader
       ?? (process.env.HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE === 'true');
     this.s3 = new S3Client({
@@ -109,6 +111,7 @@ export class S3CacheManager {
       secret: this.secret,
       bucket: this.bucket,
       readOnly: this.readOnly,
+      deserializeHook: this.deserializeHook,
     });
   }
 }
