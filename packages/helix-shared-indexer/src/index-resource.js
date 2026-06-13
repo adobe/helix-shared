@@ -86,7 +86,7 @@ const helpers = {
   textContent: (elements) => elements.map((el) => toText(el)),
   innerHTML: (elements) => elements.map((el) => el.children.map((child) => toHtml(child)).join('')),
   match: (elements, re) => {
-    // todo: maybe base on function ?
+    // todo: maybe base on a function?
     const results = [];
     const regex = new RegExp(re, 'g');
 

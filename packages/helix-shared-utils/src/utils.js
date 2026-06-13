@@ -54,7 +54,7 @@ function lookupBackendResponses(status) {
 export async function computeSurrogateKey(url) {
   /* c8 ignore next 2 */
   const subtle = cryptoImpl?.webcrypto?.subtle // WebCrypto (node >= v15)
-     || cryptoImpl?.subtle; // WebcCypto (browser, service worker)
+     || cryptoImpl?.subtle; // WebCrypto (browser, service worker)
 
   /* c8 ignore start */
   if (subtle) {
@@ -64,7 +64,7 @@ export async function computeSurrogateKey(url) {
     if (typeof Buffer === 'undefined') {
       // non-node runtime
       return btoa(String.fromCharCode(...new Uint8Array(signature)))
-        // make it url save
+        // make it URL-safe
         .replace(/=/g, '')
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
@@ -131,7 +131,7 @@ export function cleanupHeaderValue(value) {
 export async function hashContentBusId(value) {
   /* c8 ignore next 2 */
   const subtle = cryptoImpl?.webcrypto?.subtle // WebCrypto (node >= v15)
-     || cryptoImpl?.subtle; // WebcCypto (browser, service worker)
+     || cryptoImpl?.subtle; // WebCrypto (browser, service worker)
   let s;
 
   /* c8 ignore start */

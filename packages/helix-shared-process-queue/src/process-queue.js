@@ -13,7 +13,7 @@
 import { sleep } from '@adobe/helix-shared-async';
 
 /**
- * Simple dequeing iterator.
+ * Simple dequeuing iterator.
  * @param queue
  * @returns {Generator<*, void, *>}
  */

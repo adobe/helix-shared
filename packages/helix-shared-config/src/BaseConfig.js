@@ -71,7 +71,7 @@ export class BaseConfig {
 
   /**
    * Empty method to allow subclasses to intercept setting the
-   * GitHub token, if authentication option are provided in the
+   * GitHub token, if authentication options are provided in the
    * repo options.
    */
   withGithubToken() {
