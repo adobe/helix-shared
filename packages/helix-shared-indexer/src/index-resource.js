@@ -125,8 +125,22 @@ const helpers = {
     return [text.split(/\s+/g).slice(start, end).join(' ')];
   },
   characters,
-  replace: (s, searchValue, replaceValue) => [s.replace(searchValue, replaceValue)],
-  replaceAll: (s, searchValue, replaceValue) => [s.replaceAll(searchValue, replaceValue)],
+  replace: (s, searchValue, replaceValue) => {
+    if (Array.isArray(s)) {
+      return s.map((item) => (
+        item != null ? String(item).replace(searchValue, replaceValue) : item
+      ));
+    }
+    return [s.replace(searchValue, replaceValue)];
+  },
+  replaceAll: (s, searchValue, replaceValue) => {
+    if (Array.isArray(s)) {
+      return s.map((item) => (
+        item != null ? String(item).replaceAll(searchValue, replaceValue) : item
+      ));
+    }
+    return [s.replaceAll(searchValue, replaceValue)];
+  },
 };
 
 function evaluate(expression, context) {
