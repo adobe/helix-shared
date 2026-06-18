@@ -56,6 +56,22 @@ indices:
         select: none
         value: |
           replaceAll(path, 'ab', 'z')
+      replace-attribute:
+        select: head > meta[name="x-source-hash"]
+        value: |
+          replace(attribute(el, 'content'), 'JJYxCM1NDG4', 'PREFIX')
+      replaceAll-attribute:
+        select: head > meta[name="x-source-hash"]
+        value: |
+          replaceAll(attribute(el, 'content'), 'J', 'j')
+      replace-attribute-missing:
+        select: head > meta[name="x-source-hash"]
+        value: |
+          replace(attribute(el, 'data-missing'), 'x', 'y')
+      replaceAll-attribute-missing:
+        select: head > meta[name="x-source-hash"]
+        value: |
+          replaceAll(attribute(el, 'data-missing'), 'x', 'y')
       paragraph:
         select: main > div:nth-of-type(5)
         value: |
@@ -232,6 +248,10 @@ describe('Index Resource Tests', () => {
       'parse-timestamp': 1614007680,
       'replace-path': '/zc/de/ab/fg/abcd',
       'replaceAll-path': '/zc/de/z/fg/zcd',
+      'replace-attribute': 'PREFIXahJm9f',
+      'replaceAll-attribute': 'jjYxCM1NDG4ahjm9f',
+      'replace-attribute-missing': undefined,
+      'replaceAll-attribute-missing': undefined,
       'second-alternate': 'before<br>after',
       sourceHash: 'JJYxCM1NDG4ahJm9f',
       title: 'I feel good',
