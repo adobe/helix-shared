@@ -127,17 +127,17 @@ const helpers = {
   characters,
   replace: (s, searchValue, replaceValue) => {
     if (Array.isArray(s)) {
-      return s.map((item) => (
-        item != null ? String(item).replace(searchValue, replaceValue) : item
-      ));
+      return s
+        .filter((item) => item != null)
+        .map((item) => String(item).replace(searchValue, replaceValue));
     }
     return [s.replace(searchValue, replaceValue)];
   },
   replaceAll: (s, searchValue, replaceValue) => {
     if (Array.isArray(s)) {
-      return s.map((item) => (
-        item != null ? String(item).replaceAll(searchValue, replaceValue) : item
-      ));
+      return s
+        .filter((item) => item != null)
+        .map((item) => String(item).replaceAll(searchValue, replaceValue));
     }
     return [s.replaceAll(searchValue, replaceValue)];
   },
