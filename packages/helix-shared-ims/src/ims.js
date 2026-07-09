@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 import { context as h2, h1, Response } from '@adobe/fetch';
-import { parse, serialize } from 'cookie';
+// eslint-disable-next-line import/no-unresolved
+import { parseCookie, stringifySetCookie } from 'cookie';
 
 /* c8 ignore next 5 */
 const { fetch } = process.env.HELIX_FETCH_FORCE_HTTP1
@@ -149,8 +150,13 @@ async function logout(ctx) {
     status: 200,
     headers: {
       'cache-control': 'no-store, private, must-revalidate',
-      'set-cookie': serialize('ims_access_token', '', {
-        path: ims.config.rootPath || '/', httpOnly: true, secure: true, expires: new Date(0),
+      'set-cookie': stringifySetCookie({
+        name: 'ims_access_token',
+        value: '',
+        path: ims.config.rootPath || '/',
+        httpOnly: true,
+        secure: true,
+        expires: new Date(0),
       }),
     },
   });
@@ -233,7 +239,7 @@ export default function imsWrapper(func, options = {}) {
     // add cookies if not already present
     if (!ctx.cookies) {
       const hdr = req.headers.get('cookie');
-      ctx.cookies = hdr ? parse(hdr) : {};
+      ctx.cookies = hdr ? parseCookie(hdr) : {};
     }
 
     ctx.ims = {
@@ -276,7 +282,13 @@ export default function imsWrapper(func, options = {}) {
         status: 302,
         headers: {
           'cache-control': 'no-store, private, must-revalidate',
-          'set-cookie': serialize('ims_access_token', newToken, { path: config.rootPath || '/', httpOnly: true, secure: true }),
+          'set-cookie': stringifySetCookie({
+            name: 'ims_access_token',
+            value: newToken,
+            path: config.rootPath || '/',
+            httpOnly: true,
+            secure: true,
+          }),
           location: `${config.rootPath}${config.routeLoginSuccess}`,
         },
       });
