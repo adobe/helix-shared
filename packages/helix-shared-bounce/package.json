@@ -39,6 +39,6 @@
   },
   "devDependencies": {
     "esmock": "2.7.6",
-    "nock": "14.0.15"
+    "nock": "14.0.16"
   }
 }
