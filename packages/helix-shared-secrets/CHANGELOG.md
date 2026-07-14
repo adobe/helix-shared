@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-secrets-v2.3.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.3.4...@adobe/helix-shared-secrets-v2.3.5) (2026-07-14)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#1243](https://github.com/adobe/helix-shared/issues/1243)) ([05d31a8](https://github.com/adobe/helix-shared/commit/05d31a89b846ce76d2bab0525376798b63b03600))
+
 # [@adobe/helix-shared-secrets-v2.3.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-secrets-v2.3.3...@adobe/helix-shared-secrets-v2.3.4) (2026-05-25)
 
 
