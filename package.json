@@ -43,7 +43,7 @@
     "mocha": "11.7.6",
     "mocha-multi-reporters": "1.5.1",
     "mocha-suppress-logs": "0.6.0",
-    "nock": "14.0.15",
+    "nock": "14.0.16",
     "nx": "23.0.1",
     "semantic-release": "25.0.5",
     "semantic-release-monorepo": "8.0.2"
