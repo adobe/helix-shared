@@ -635,7 +635,11 @@ class Bucket {
     } catch (e) {
       const msg = `removing ${bucket}/${input.Key} from storage failed: ${e.message}`;
       log.error(msg);
-      const e2 = new Error(msg);
+
+      const e2 = /Deserialization error: to see the raw response, inspect the hidden field {error}\.\$response/.test(e.message)
+        ? new Error(e.$response.body)
+        : new Error(msg);
+
       e2.status = e.$metadata.httpStatusCode;
       throw e2;
     }
