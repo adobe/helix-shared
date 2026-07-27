@@ -923,11 +923,11 @@ export class HelixStorage {
     if (region && accessKeyId && secretAccessKey) {
       log.debug('Creating S3Client with credentials');
       this._s3 = new S3Client({
+        ...baseOpts,
         credentials: {
           accessKeyId,
           secretAccessKey,
         },
-        ...baseOpts,
       });
     } else {
       log.debug('Creating S3Client without credentials');
@@ -940,20 +940,13 @@ export class HelixStorage {
     } else {
       log.debug('Creating R2 S3Client');
       this._r2 = new S3Client({
+        ...baseOpts,
         endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
         region: 'us-east-1', // https://github.com/aws/aws-sdk-js-v3/issues/1845#issuecomment-754832210
         credentials: {
           accessKeyId: r2AccessKeyId,
           secretAccessKey: r2SecretAccessKey,
         },
-        requestHandler: new NodeHttpHandler({
-          httpsAgent: new Agent({
-            keepAlive,
-          }),
-          connectionTimeout,
-          socketTimeout,
-        }),
-        ...(disableExpectContinueHeader && { expectContinueHeader: false }),
       });
     }
     this._bucketMap = parseBucketNames(bucketNames);

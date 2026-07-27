@@ -52,6 +52,7 @@ describe('Storage test', () => {
       r2SecretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY,
       bucketMap: parseBucketNames(),
       disableExpectContinueHeader: true,
+      maxAttempts: 1,
     });
   });
 
@@ -572,7 +573,6 @@ describe('Storage test', () => {
 
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
       .delete('/foo?x-id=DeleteObject')
-      .times(3)
       .reply(expected.status, expected.message);
 
     const bus = storage.codeBus();
