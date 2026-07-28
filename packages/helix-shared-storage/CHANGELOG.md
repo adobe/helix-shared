@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v2.1.5](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.1.4...@adobe/helix-shared-storage-v2.1.5) (2026-07-28)
+
+
+### Bug Fixes
+
+* **storage:** use plain response body in case of XML deserialization error ([#1245](https://github.com/adobe/helix-shared/issues/1245)) ([d7e90b7](https://github.com/adobe/helix-shared/commit/d7e90b7c8d06cfde77477424bee4bfa3910edd2a))
+
 # [@adobe/helix-shared-storage-v2.1.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v2.1.3...@adobe/helix-shared-storage-v2.1.4) (2026-07-14)
 
 
