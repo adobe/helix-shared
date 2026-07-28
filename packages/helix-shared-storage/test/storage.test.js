@@ -52,6 +52,7 @@ describe('Storage test', () => {
       r2SecretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY,
       bucketMap: parseBucketNames(),
       disableExpectContinueHeader: true,
+      maxAttempts: 1,
     });
   });
 
@@ -557,6 +558,25 @@ describe('Storage test', () => {
 
     const bus = storage.codeBus();
     await assert.rejects(async () => bus.remove(['/foo', '/bar'], '', true));
+  });
+
+  it('remove can report a non XML error from R2', async () => {
+    const expected = new Error('this is not an XML error');
+    expected.status = 500;
+
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .delete('/foo?x-id=DeleteObject')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?>'
+        + '<DeleteResult>'
+        + '<Deleted><Key>/foo</Key></Deleted>'
+        + '</DeleteResult>');
+
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .delete('/foo?x-id=DeleteObject')
+      .reply(expected.status, expected.message);
+
+    const bus = storage.codeBus();
+    await assert.rejects(async () => bus.remove('/foo'), expected);
   });
 
   it('can remove objects', async () => {
