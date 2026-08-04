@@ -199,6 +199,22 @@ async function logout(ctx) {
  * @param {IMSConfig} [options] Options
  * @returns {UniversalFunction} an universal function with the added middleware.
  */
+/**
+ * Checks if an OAuth access token (JWT) is expired by inspecting the 'exp' claim.
+ * Returns false for non-JWT opaque tokens so they are still accepted.
+ * @param {string} token the access token
+ * @returns {boolean} true if the token is expired
+ */
+function isTokenExpired(token) {
+  try {
+    const [, payload] = token.split('.');
+    const { exp } = JSON.parse(Buffer.from(payload, 'base64').toString());
+    return typeof exp === 'number' && exp * 1000 < Date.now();
+  } catch {
+    return false;
+  }
+}
+
 export default function imsWrapper(func, options = {}) {
   return async (req, ctx) => {
     const { data = {} } = ctx;
@@ -242,10 +258,12 @@ export default function imsWrapper(func, options = {}) {
       ctx.cookies = hdr ? parseCookie(hdr) : {};
     }
 
+    const rawToken = ctx.cookies.ims_access_token || data.ims_access_token;
     ctx.ims = {
       config,
       // get the access token either from the cookie or from the request data
-      accessToken: ctx.cookies.ims_access_token || data.ims_access_token,
+      // reject tokens whose JWT 'exp' claim is in the past
+      accessToken: rawToken && !isTokenExpired(rawToken) ? rawToken : undefined,
     };
 
     let newToken = '';
