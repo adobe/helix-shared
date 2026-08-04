@@ -39,13 +39,13 @@
     "c8": "11.0.0",
     "eslint": "9.4.0",
     "husky": "9.1.7",
-    "lint-staged": "17.0.8",
+    "lint-staged": "17.1.0",
     "mocha": "11.7.6",
     "mocha-multi-reporters": "1.5.1",
     "mocha-suppress-logs": "0.6.0",
     "nock": "14.0.16",
-    "nx": "23.0.2",
-    "semantic-release": "25.0.7",
+    "nx": "23.1.0",
+    "semantic-release": "25.0.8",
     "semantic-release-monorepo": "8.0.2"
   },
   "lint-staged": {
