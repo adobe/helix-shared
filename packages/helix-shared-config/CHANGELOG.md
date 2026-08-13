@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.30...@adobe/helix-shared-config-v11.2.0) (2026-08-13)
+
+
+### Features
+
+* **sitemap:** add index property containing sitemaps to add to the index ([#1254](https://github.com/adobe/helix-shared/issues/1254)) ([5a3055a](https://github.com/adobe/helix-shared/commit/5a3055ac7b99a8c66a65793e4702c3e737b462e0))
+
 # [@adobe/helix-shared-config-v11.1.30](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.1.29...@adobe/helix-shared-config-v11.1.30) (2026-07-27)
 
 
