@@ -21,6 +21,19 @@
       "additionalProperties": {
         "$ref": "https://ns.adobe.com/helix/shared/sitemap"
       }
+    },
+    "index": {
+      "type": "array",
+      "description": "Sitemaps to include in sitemap index.",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        "/sitemap-en.xml",
+        "/sitemap-fr.xml",
+        "/sitemap-la.xml",
+        "https://www.example.com/sitemap-other.xml"
+      ]
     }
   }
 }

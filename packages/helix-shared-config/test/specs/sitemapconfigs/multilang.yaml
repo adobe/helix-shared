@@ -21,3 +21,9 @@ sitemaps:
           - es-SV
           - es-PA
         alternate: /la/{path}
+
+index:
+  - /sitemap-en.xml
+  - /sitemap-fr.xml
+  - /sitemap-la.xml
+  - https://www.example.com/sitemap-other.xml
