@@ -10,3 +10,6 @@
  * governing permissions and limitations under the License.
  */
 export * from './storage';
+export * from './MirroringBackend';
+export * from './AbstractStorageBackend';
+export * from './StorageBackend';

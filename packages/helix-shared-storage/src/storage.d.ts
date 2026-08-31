@@ -10,18 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  CopyObjectCommandInput,
-  CopyObjectCommandOutput,
-  CopyObjectResult,
-  DeleteObjectCommandOutput,
-  DeleteObjectsCommandOutput,
-  HeadObjectCommandInput,
-  HeadObjectCommandOutput,
-  PutObjectCommandOutput,
-  S3Client,
-} from "@aws-sdk/client-s3";
-import { Response } from "@adobe/fetch";
+import { StorageBackend } from "./StorageBackend.d";
+import { Bucket } from "./Bucket.d";
 
 /**
  * Information about a single entry — file or folder — returned by
@@ -31,7 +21,7 @@ import { Response } from "@adobe/fetch";
  * and `lastModified`/`contentLength`/`contentType` are absent.
  */
 export interface ObjectInfo {
-  /** absolute object key. For folders, S3's `CommonPrefix` value (ends with `/`). */
+  /** absolute object key. For folders, ends with `/`. */
   key: string;
   /**
    * Basename of the entry — the last path segment, with any trailing `/`
@@ -39,9 +29,9 @@ export interface ObjectInfo {
    * object key `/blog/post.md`.
    */
   name: string;
-  /** `true` for common prefixes (folders); `false` for object keys (files). */
+  /** `true` for folders; `false` for object keys (files). */
   isFolder: boolean;
-  /** last-modified timestamp as returned by S3. Files only. */
+  /** last-modified timestamp. Files only. */
   lastModified?: Date;
   /** object size in bytes. Files only. */
   contentLength?: number;
@@ -69,10 +59,10 @@ export interface CopyOptions {
    */
   addMetadata?: Record<string, string>;
   /**
-   * Additional fields to merge into the underlying `CopyObjectCommand` input
-   * (e.g. `CacheControl`, `ContentType`, `Tagging`, ...).
+   * Additional, backend-native fields to merge into the underlying copy call
+   * (e.g. AWS's `CacheControl`, `ContentType`, `Tagging`, ...).
    */
-  copyOpts?: Partial<CopyObjectCommandInput>;
+  copyOpts?: Record<string, unknown>;
 }
 
 export interface BrowseOptions {
@@ -83,8 +73,8 @@ export interface BrowseOptions {
    */
   continuationToken?: string;
   /**
-   * Maximum number of entries to return in this page (S3 `MaxKeys`). Capped
-   * at 1000 by S3; defaults to the S3 default when omitted.
+   * Maximum number of entries to return in this page. Defaults to the
+   * backend's own default when omitted.
    */
   maxItems?: number;
 }
@@ -101,11 +91,11 @@ export interface ListOptions {
  *
  * `continuationToken` is `undefined` for {@link Bucket.list} (which always
  * auto-paginates) and for an exhausted {@link Bucket.browse} call; it is set
- * when {@link Bucket.browse} hits a truncated S3 response.
+ * when {@link Bucket.browse} hits a truncated page.
  */
 export interface ListResult {
   /**
-   * The sanitized S3 prefix that was actually queried (always ends with `/`,
+   * The sanitized prefix that was actually queried (always ends with `/`,
    * or is `''` when the whole bucket was listed).
    */
   prefix: string;
@@ -119,43 +109,30 @@ export interface ListResult {
  * Aggregated result returned by {@link Bucket.remove} when invoked with an array of keys.
  */
 export interface BulkDeleteResult {
-  Deleted: NonNullable<DeleteObjectsCommandOutput["Deleted"]>;
-  Errors: NonNullable<DeleteObjectsCommandOutput["Errors"]>;
+  Deleted: unknown[];
+  Errors: unknown[];
 }
 
 /**
  * Options for {@link HelixStorage}.
  */
 export interface HelixStorageOptions {
-  /** AWS region. Defaults to `us-east-1`. */
-  region?: string;
-  /** AWS access key. If omitted, the SDK default credential chain is used. */
-  accessKeyId?: string;
-  /** AWS secret access key. */
-  secretAccessKey?: string;
-  /** Cloudflare account id used to derive the R2 endpoint. */
-  r2AccountId?: string;
-  /** R2 access key id. */
-  r2AccessKeyId?: string;
-  /** R2 secret access key. */
-  r2SecretAccessKey?: string;
-  /** When `true`, disables the R2 mirror entirely. */
-  disableR2?: boolean;
   /**
    * JSON string mapping bus keys (`config`, `code`, `content`, `media`, `source`)
    * to their actual bucket names. If omitted, defaults to `helix-<key>-bus`.
    */
   bucketNames?: string;
-  /** Whether to enable HTTP keep-alive on the underlying agent. Default `true`. */
-  keepAlive?: boolean;
-  /** Connection timeout in milliseconds passed to the HTTP handler. */
-  connectionTimeout?: number;
-  /** Socket timeout in milliseconds passed to the HTTP handler. */
-  socketTimeout?: number;
   /** Logger; defaults to `console`. */
   log?: Console;
-  /** Max retry attempts for the underlying S3 clients. */
-  maxAttempts?: number;
+  /**
+   * Factory used to resolve a {@link StorageBackend} for a given bucket id. Backend packages
+   * (e.g. `@adobe/helix-shared-storage-s3`) provide this, typically via a convenience
+   * `HelixStorage` subclass overriding `fromContext`. The second argument is an opaque bag
+   * forwarded verbatim from {@link HelixStorage.bucket} — core does not interpret it;
+   * individual backend packages define whichever options they support (e.g.
+   * `@adobe/helix-shared-storage-s3`'s `{ disableR2 }`).
+   */
+  backendFactory?: (bucketId: string, opts: Record<string, unknown>) => StorageBackend;
 }
 
 /**
@@ -189,252 +166,55 @@ export interface BucketMap {
  */
 export declare function parseBucketNames(bucketNames?: string): BucketMap;
 
-/**
- * Resolves the metadata that should be written by a copy operation, given the
- * source object's response headers and the rename/add directives from {@link CopyOptions}.
- */
-export declare function resolveMetadataForCopy(
-  s3Headers?: Record<string, unknown>,
-  renameMeta?: Record<string, string>,
-  addMeta?: Record<string, string>,
-): Record<string, string>;
+export { resolveMetadataForCopy } from "./Bucket.d";
+export { Bucket } from "./Bucket.d";
 
 /**
- * Wraps a single S3 (and optional R2 mirror) bucket. All write operations are issued in
- * parallel against both clients; reads use the primary S3 client only.
- */
-export declare interface Bucket {
-  /** the primary S3 client used for reads and the first leg of writes */
-  get client(): S3Client;
-
-  /** the bucket name */
-  get bucket(): string;
-
-  /** the logger */
-  get log(): Console;
-
-  /**
-   * Fetch an object's body. Transparently un-gzips objects whose `ContentEncoding` is `gzip`.
-   *
-   * @param key object key
-   * @param meta optional output object that receives the object's metadata and selected
-   *  system headers (`CacheControl`, `ContentType`, `ContentEncoding`, `ETag`, `Expires`,
-   *  `LastModified`)
-   * @returns object contents as a Buffer, or `null` when the key does not exist
-   * @throws when the object cannot be loaded for a non-404 reason
-   */
-  get(key: string, meta?: Record<string, unknown>): Promise<Buffer | null>;
-
-  /**
-   * Issue a HEAD on the object and return the raw S3 response.
-   *
-   * @param path object key
-   * @param headOpts extra fields merged into the `HeadObjectCommand` input
-   * @returns the HEAD response, or `null` when the key does not exist
-   */
-  head(path: string, headOpts?: Partial<HeadObjectCommandInput>): Promise<HeadObjectCommandOutput | null>;
-
-  /**
-   * Return an object's user metadata.
-   *
-   * @param key object key
-   * @returns the object's metadata map, or `undefined` when the key does not exist
-   * @throws when the object cannot be loaded for a non-404 reason
-   */
-  metadata(key: string): Promise<Record<string, string> | undefined>;
-
-  /**
-   * Store an object body and headers from a fetch `Response`. The body is gzipped (or passed
-   * through if the response is already `content-encoding: gzip`); response headers are mapped
-   * to the corresponding S3 system headers / user metadata. Mirrored to R2 when enabled.
-   *
-   * Returns no value; failures throw.
-   */
-  store(key: string, res: Response): Promise<void>;
-
-  /**
-   * Store an object's contents along with metadata. Mirrored to R2 when enabled.
-   *
-   * @param path object key
-   * @param body data to store
-   * @param contentType content type. Defaults to `application/octet-stream`.
-   * @param meta metadata to store with the object. Defaults to `{}`.
-   * @param compress whether to gzip the body and set `ContentEncoding: gzip`. Defaults to `true`.
-   * @returns the result from the primary S3 PutObject call
-   */
-  put(
-    path: string,
-    body: Buffer | string,
-    contentType?: string,
-    meta?: Record<string, string>,
-    compress?: boolean,
-  ): Promise<PutObjectCommandOutput>;
-
-  /**
-   * Replace an object's user metadata via a self-copy with `MetadataDirective: REPLACE`.
-   *
-   * @param path object key
-   * @param meta new metadata (fully replaces existing metadata)
-   * @param opts extra fields merged into the `CopyObjectCommand` input
-   */
-  putMeta(
-    path: string,
-    meta: Record<string, string>,
-    opts?: Partial<CopyObjectCommandInput>,
-  ): Promise<CopyObjectCommandOutput>;
-
-  /**
-   * Copy an object within the same bucket. When `addMetadata` or `renameMetadata` are
-   * provided, the source's HEAD is consulted so that selected system headers are preserved
-   * and metadata can be rewritten with `MetadataDirective: REPLACE`.
-   *
-   * @throws an error with `status: 404` when the source key does not exist
-   */
-  copy(src: string, dst: string, opts?: CopyOptions): Promise<CopyObjectResult | undefined>;
-
-  /**
-   * Remove a single object.
-   *
-   * @returns the raw `DeleteObject` response
-   * @throws an error with `status` set to the HTTP status code on failure
-   */
-  remove(path: string): Promise<DeleteObjectCommandOutput>;
-
-  /**
-   * Remove multiple objects. Slices the input into chunks of up to 1000 keys (the S3 limit)
-   * and issues them in parallel (concurrency 2).
-   *
-   * @param paths source keys
-   * @param sourceInfo informational message used in log output
-   * @param stopOnError when `true`, throws on the first chunk that fails; otherwise errors
-   *  are accumulated into the returned `Errors` array
-   */
-  remove(
-    paths: string[],
-    sourceInfo?: string,
-    stopOnError?: boolean,
-  ): Promise<BulkDeleteResult>;
-
-  /**
-   * Auto-paginated listing of entries below `prefix`.
-   *
-   * `prefix` is the key prefix of the subtree to list; it is normalized to
-   * canonical S3 form (no leading `/`, always a trailing `/` for non-empty
-   * values). When `shallow: true`, common prefixes (folders directly below the
-   * prefix) are returned alongside files; callers filter by `isFolder` if they
-   * want only one kind. The sanitized prefix used for the S3 query is included
-   * in the returned {@link ListResult} as `prefix`.
-   *
-   * @param prefix key prefix to list under (leading/trailing `/` are normalised)
-   */
-  list(prefix: string, opts?: ListOptions): Promise<ListResult>;
-
-  /**
-   * Convenience wrapper around {@link Bucket.list} that returns only the
-   * basenames of folders directly below `prefix`. Equivalent to
-   * `(await list(prefix, { shallow: true })).objects.filter(o => o.isFolder).map(o => o.name)`.
-   *
-   * @param prefix key prefix to list under (leading/trailing `/` are normalised)
-   * @returns folder basenames (e.g. `['2024', 'drafts']`)
-   */
-  listFolders(prefix: string): Promise<string[]>;
-
-  /**
-   * Single-page, always-shallow listing intended for paginated UI browsing.
-   *
-   * `prefix` is normalised the same way as for {@link Bucket.list}. Unlike
-   * `list`, `browse` does not auto-page: it issues one `ListObjectsV2` call,
-   * returns the entries it received, and exposes the `NextContinuationToken`
-   * (if any) so the caller can request the next page on demand. `maxItems`
-   * controls the page size only.
-   *
-   * The sanitized prefix is included in the returned {@link ListResult} as
-   * `prefix`. To drill into a folder, append the folder's `name` to the
-   * current `prefix` and call `browse` again.
-   *
-   * @param prefix key prefix to browse (leading/trailing `/` are normalised)
-   */
-  browse(prefix: string, opts?: BrowseOptions): Promise<ListResult>;
-
-  /**
-   * Copies the tree below `src` to `dst`. Concurrency is fixed at 64; per-object errors are
-   * logged but do not abort the operation.
-   *
-   * @param filter optional filter; only objects for which it returns truthy are copied
-   * @returns the list of tasks that were copied successfully
-   */
-  copyDeep(
-    src: string,
-    dst: string,
-    filter?: ObjectFilter,
-    opts?: CopyOptions,
-  ): Promise<Array<{
-    src: string;
-    dst: string;
-    contentLength?: number;
-    contentType?: string | null;
-  }>>;
-
-  /**
-   * Recursively delete every object below `src`.
-   */
-  rmdir(src: string): Promise<BulkDeleteResult>;
-}
-
-/**
- * The Helix Storage provides a factory for simplified bucket operations to S3 and R2.
- *
- * Writes are mirrored: every mutating call (`put`, `store`, `copy`, `putMeta`, `remove`)
- * is dispatched in parallel to the primary S3 client and to the R2 client when enabled.
+ * The Helix Storage provides a factory for simplified bucket operations against a pluggable
+ * storage backend family. A single instance is configured with one `backendFactory`, used to
+ * resolve every bucket it hands out.
  */
 export declare class HelixStorage {
-  /**
-   * Mapping from lowercase HTTP header name to the corresponding `*Command` input property.
-   * Used internally to translate response headers into S3 system fields.
-   */
-  static AWS_S3_SYSTEM_HEADERS: Record<string, string>;
-
   /**
    * Get (and lazily construct + cache) a {@link HelixStorage} instance for a Helix
    * function `context`. The instance is stored on `context.attributes.storage`.
    */
-  static fromContext(context: HelixStorageContext): HelixStorage;
+  static fromContext(context: HelixStorageContext, opts?: Partial<HelixStorageOptions>): HelixStorage;
 
   constructor(opts?: HelixStorageOptions);
 
-  /** the underlying primary S3 client */
-  s3(): S3Client;
-
   /**
-   * Create a {@link Bucket} for the given bucket id.
+   * Create a {@link Bucket} for the given bucket id. `opts` is an opaque bag forwarded
+   * verbatim to the `backendFactory` — core does not interpret it; individual backend
+   * packages define whichever options they support (e.g.
+   * `@adobe/helix-shared-storage-s3`'s `{ disableR2 }`).
    *
    * @param bucketId bucket name
-   * @param disableR2 when `true`, this bucket will not mirror writes to R2
-   *  (even if R2 is otherwise configured)
+   * @param opts backend-specific options, passed through as-is
    */
-  bucket(bucketId: string, disableR2?: boolean): Bucket;
+  bucket(bucketId: string, opts?: Record<string, unknown>): Bucket;
 
   /** Bucket for the configured `content` bus. */
-  contentBus(disableR2?: boolean): Bucket;
+  contentBus(opts?: Record<string, unknown>): Bucket;
 
   /** Bucket for the configured `code` bus. */
-  codeBus(disableR2?: boolean): Bucket;
+  codeBus(opts?: Record<string, unknown>): Bucket;
 
   /**
-   * Bucket for the configured `source` bus. R2 mirroring defaults to disabled here,
-   * since the source bus is typically not mirrored.
+   * Bucket for the configured `source` bus. Mirroring defaults to disabled here,
+   * since the source bus is typically not mirrored; pass `{ disableR2: false }` to override
+   * with the default S3/R2 backend.
    */
-  sourceBus(disableR2?: boolean): Bucket;
+  sourceBus(opts?: Record<string, unknown>): Bucket;
 
-  /** Bucket for the configured `media` bus. R2 mirroring is always disabled. */
-  mediaBus(): Bucket;
+  /** Bucket for the configured `media` bus. */
+  mediaBus(opts?: Record<string, unknown>): Bucket;
 
-  /** Bucket for the configured `config` bus. R2 mirroring is always disabled. */
-  configBus(): Bucket;
+  /** Bucket for the configured `config` bus. */
+  configBus(opts?: Record<string, unknown>): Bucket;
 
   /**
-   * Close this storage. Destroys the underlying S3 (and R2) clients and renders this
-   * instance unusable.
+   * Close this storage, rendering this instance unusable.
    */
   close(): void;
 }
