@@ -1,57 +1,47 @@
 # Helix Shared - storage
 
-The storage module provides a unified interface for managing objects in AWS S3 and Cloudflare R2 storage. It offers simplified bucket operations with automatic mirroring to R2, compression support, and comprehensive file management capabilities.
+The storage module provides a unified, backend-agnostic interface for managing objects in cloud storage. `Storage` and `Bucket` are configured with a pluggable `StorageBackend` — this package ships no cloud SDK itself; it defines the interface and generic bucket operations (compression, metadata copy/rename algebra, deep copy/delete) on top of it.
+
+The default AWS S3 (+ Cloudflare R2 mirroring) backend lives in a separate package, [`@adobe/helix-shared-storage-s3`](../helix-shared-storage-s3), which most consumers will want to install alongside this one.
 
 ## Installation
 
 ```bash
-npm install @adobe/helix-shared-storage
+npm install @adobe/helix-shared-storage @adobe/helix-shared-storage-s3
 ```
 
 ## Basic Usage
 
-```js
-import { HelixStorage } from '@adobe/helix-shared-storage';
-
-const storage = new HelixStorage({
-  region: 'us-east-1',
-  accessKeyId: 'YOUR_AWS_ACCESS_KEY',
-  secretAccessKey: 'YOUR_AWS_SECRET_KEY',
-  r2AccountId: 'YOUR_R2_ACCOUNT_ID',
-  r2AccessKeyId: 'YOUR_R2_ACCESS_KEY',
-  r2SecretAccessKey: 'YOUR_R2_SECRET_KEY',
-  log: console,
-});
-
-// Get a bucket instance
-const bucket = storage.bucket('my-bucket-name');
-
-// Store data
-await bucket.put('/path/to/file.txt', 'Hello World', 'text/plain');
-
-// Retrieve data
-const data = await bucket.get('/path/to/file.txt');
-
-// Clean up
-storage.close();
-```
-
-## Creating Storage from Context
-
-When working within the Helix ecosystem, you can create a storage instance from the context object:
+Existing S3/R2 consumers use `StorageS3`, the `Storage` subclass pre-wired with the default S3(+R2) backend, exported from `@adobe/helix-shared-storage-s3`:
 
 ```js
-import { HelixStorage } from '@adobe/helix-shared-storage';
+import { StorageS3 as Storage } from '@adobe/helix-shared-storage-s3';
 
 export async function main(req, context) {
-  const storage = HelixStorage.fromContext(context);
+  const storage = Storage.fromContext(context);
   const bucket = storage.contentBus();
 
-  // Use the bucket...
   const data = await bucket.get('/my/content.json');
 
   return new Response(data);
 }
+```
+
+Consumers who want a different backend (or no cloud SDK dependency at all) construct core's generic `Storage` directly with an explicit `backendFactory` — a function `(bucketId, opts) => StorageBackend`:
+
+```js
+import { Storage } from '@adobe/helix-shared-storage';
+import { createDefaultBackendFactory } from '@adobe/helix-shared-storage-s3';
+
+const storage = new Storage({
+  backendFactory: createDefaultBackendFactory(process.env),
+  log: console,
+});
+
+const bucket = storage.bucket('my-bucket-name');
+await bucket.put('/path/to/file.txt', 'Hello World', 'text/plain');
+const data = await bucket.get('/path/to/file.txt');
+storage.close();
 ```
 
 ## Working with Predefined Buckets
@@ -59,14 +49,13 @@ export async function main(req, context) {
 The storage module provides convenient methods for accessing common Helix buckets:
 
 ```js
-const storage = HelixStorage.fromContext(context);
+const storage = Storage.fromContext(context);
 
-// Access different bucket types
 const contentBucket = storage.contentBus();
 const codeBucket = storage.codeBus();
 const mediaBucket = storage.mediaBus();
 const configBucket = storage.configBus();
-const sourceBucket = storage.sourceBus(); // R2 mirroring disabled by default
+const sourceBucket = storage.sourceBus(); // mirroring to a secondary backend disabled by default
 ```
 
 ## Bucket Operations
@@ -134,8 +123,8 @@ Get object headers:
 ```js
 const headers = await bucket.head('/path/to/file.txt');
 if (headers) {
-  console.log('Content-Type:', headers.ContentType);
-  console.log('Last-Modified:', headers.LastModified);
+  console.log('Content-Type:', headers.contentType);
+  console.log('Last-Modified:', headers.lastModified);
 }
 ```
 
@@ -165,10 +154,9 @@ await bucket.copy('/source/file.txt', '/destination/file.txt', {
 List all objects under a prefix:
 
 ```js
-const objects = await bucket.list('path/to/folder/');
+const { objects } = await bucket.list('path/to/folder/');
 objects.forEach((obj) => {
   console.log('Key:', obj.key);
-  console.log('Path:', obj.path);
   console.log('Size:', obj.contentLength);
   console.log('Type:', obj.contentType);
   console.log('Modified:', obj.lastModified);
@@ -178,14 +166,9 @@ objects.forEach((obj) => {
 List objects in a shallow manner (only direct children):
 
 ```js
-// Boolean shorthand for shallow
-const objects = await bucket.list('path/to/folder/', true);
-
-// Or use the options object for more control
-const objects = await bucket.list('path/to/folder/', {
+const { objects } = await bucket.list('path/to/folder/', {
   shallow: true,
-  includePrefixes: true, // include folder prefix entries in results
-  maxItems: 100,         // limit result count
+  maxItems: 100, // limit result count
 });
 ```
 
@@ -210,7 +193,7 @@ await bucket.copyDeep('/source/folder/', '/destination/folder/');
 await bucket.copyDeep(
   '/source/folder/',
   '/destination/folder/',
-  (obj) => obj.contentType === 'text/plain'
+  (obj) => obj.contentType === 'text/plain',
 );
 
 // Copy with metadata options
@@ -222,7 +205,7 @@ await bucket.copyDeep(
     addMetadata: {
       'copied-at': new Date().toISOString(),
     },
-  }
+  },
 );
 ```
 
@@ -252,13 +235,27 @@ await bucket.rmdir('/path/to/folder/');
 
 ### Updating Metadata
 
-Update metadata for an existing object:
+Update metadata for an existing object. `meta` may mix custom, user-defined keys with common
+system-property field names (e.g. `contentType`) — each backend recognizes and applies its own
+subset appropriately (the default S3 backend maps `contentType` onto the object's `Content-Type`
+system property instead of writing it as custom metadata):
 
 ```js
 await bucket.putMeta('/path/to/file.txt', {
+  contentType: 'text/html',
   'new-meta-key': 'new-value',
   'updated-at': new Date().toISOString(),
 });
+```
+
+`putMeta()` fully replaces the metadata set — any system-property field or custom key not
+included is not preserved. To update metadata without accidentally losing existing fields, use
+`getMeta()` (the `putMeta()`-compatible counterpart of `metadata()`) to round-trip safely:
+
+```js
+const meta = await bucket.getMeta('/path/to/file.txt');
+meta['updated-at'] = new Date().toISOString();
+await bucket.putMeta('/path/to/file.txt', meta);
 ```
 
 ## Configuration Options
@@ -268,7 +265,8 @@ await bucket.putMeta('/path/to/file.txt', {
 You can customize bucket names using the `HELIX_BUCKET_NAMES` environment variable or the `bucketNames` option:
 
 ```js
-const storage = new HelixStorage({
+const storage = new Storage({
+  backendFactory,
   bucketNames: JSON.stringify({
     config: 'my-custom-config-bucket',
     code: 'my-custom-code-bucket',
@@ -287,47 +285,16 @@ const bucketMap = parseBucketNames(process.env.HELIX_BUCKET_NAMES);
 console.log(bucketMap.content); // 'helix-content-bus' (default) or custom name
 ```
 
-### Disabling R2 Mirroring
+### Backend Options (e.g. Disabling R2 Mirroring)
 
-By default, all write operations are mirrored to both S3 and R2. You can disable R2 for specific operations:
-
-```js
-// Disable R2 globally
-const storage = new HelixStorage({
-  disableR2: true,
-  // ... other options
-});
-
-// Disable R2 for specific buckets
-const bucket = storage.contentBus(true); // disableR2 = true
-```
-
-You can also disable R2 using the `HELIX_STORAGE_DISABLE_R2` environment variable:
-
-```bash
-export HELIX_STORAGE_DISABLE_R2=true
-```
-
-### HTTP Configuration
-
-Configure connection timeouts, keep-alive, and retry behavior:
+`bucket()` and the named bus accessors take an opaque options bag forwarded verbatim to the configured `backendFactory` — core doesn't interpret it. The default S3/R2 backend (`@adobe/helix-shared-storage-s3`) recognizes `{ disableR2: true }`:
 
 ```js
-const storage = new HelixStorage({
-  connectionTimeout: 5000,           // milliseconds
-  socketTimeout: 15000,              // milliseconds
-  keepAlive: true,
-  disableExpectContinueHeader: false, // set true to omit Expect: 100-continue
-  maxAttempts: 3,                    // max S3 retry attempts
-});
+// Disable R2 for a specific bucket
+const bucket = storage.contentBus({ disableR2: true });
 ```
 
-These can also be set via environment variables:
-- `HELIX_HTTP_CONNECTION_TIMEOUT` - Connection timeout in milliseconds
-- `HELIX_HTTP_SOCKET_TIMEOUT` - Socket timeout in milliseconds
-- `HELIX_HTTP_S3_KEEP_ALIVE` - Enable HTTP keep-alive (true/false)
-- `HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE` - Disable Expect: 100-continue header (true/false)
-- `HELIX_STORAGE_MAX_ATTEMPTS` - Max S3 retry attempts
+Whether R2 mirroring is configured *at all*, and any HTTP/timeout/retry tuning, is a backend-package concern — see `@adobe/helix-shared-storage-s3`'s `createDefaultBackendFactory` for the S3/R2-specific environment variables it reads (`CLOUDFLARE_ACCOUNT_ID`, `HELIX_STORAGE_DISABLE_R2`, `HELIX_HTTP_CONNECTION_TIMEOUT`, etc.).
 
 ## Important Behaviors
 
@@ -341,20 +308,12 @@ Leading slashes in object keys are automatically removed. Both `/path/to/file.tx
 
 ### Metadata Headers
 
-Certain HTTP headers are stored as S3 system properties rather than custom metadata:
-- `cache-control` → `CacheControl`
-- `content-type` → `ContentType`
-- `expires` → `Expires`
-- `content-disposition` → `ContentDisposition`
-- `content-encoding` → `ContentEncoding`
-- `content-language` → `ContentLanguage`
-
-The `last-modified` header is stored as custom metadata with the key `x-source-last-modified`.
+Certain HTTP headers are stored as backend system properties rather than custom metadata: `cache-control`, `content-type`, and `expires`. The `last-modified` header is stored as custom metadata with the key `x-source-last-modified`.
 
 ### Parallel Operations
 
-Write operations (put, store, copy, remove) are automatically executed in parallel on both S3 and R2 when R2 mirroring is enabled. Read operations only query S3.
+Write operations (put, store, copy, remove, putMeta) are dispatched to every backend a `MirroringBackend` composes in parallel (e.g. S3 + R2 with the default backend); read operations only query the primary.
 
 ### Batch Deletions
 
-When removing multiple objects, they are automatically batched into chunks of 1000 objects per request to comply with AWS S3 limits.
+Each backend owns its own batching limits when removing multiple objects (e.g. the default S3/R2 backend chunks into groups of 1000 to comply with AWS S3 limits).

@@ -1,7 +1,7 @@
 {
-  "name": "@adobe/helix-shared-storage",
-  "version": "2.1.6",
-  "description": "Shared modules of the Helix Project - storage",
+  "name": "@adobe/helix-shared-storage-s3",
+  "version": "1.0.0",
+  "description": "Shared modules of the Helix Project - S3/R2 storage backend for @adobe/helix-shared-storage",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -13,6 +13,7 @@
     "reporter": "mocha-multi-reporters",
     "reporter-options": "configFile=.mocha-multi.json",
     "require": [
+      "test/setup-env.js",
       "mocha-suppress-logs"
     ]
   },
@@ -30,11 +31,15 @@
     "access": "public"
   },
   "devDependencies": {
-    "nock": "14.0.17",
+    "nock": "14.0.16",
     "xml2js": "^0.6.2"
   },
   "dependencies": {
     "@adobe/fetch": "^4.1.2",
-    "@adobe/helix-shared-process-queue": "^3.0.4"
+    "@adobe/helix-shared-process-queue": "^3.0.4",
+    "@adobe/helix-shared-storage": "^2.1.5",
+    "@aws-sdk/client-s3": "^3.1030.0",
+    "@smithy/node-http-handler": "^4.0.0",
+    "mime": "^4.0.3"
   }
 }
