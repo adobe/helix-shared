@@ -16,15 +16,6 @@ import { Storage } from '@adobe/helix-shared-storage';
 import { StorageS3 } from '../src/StorageS3.js';
 
 describe('StorageS3', () => {
-  it('exposes AWS_S3_SYSTEM_HEADERS, carried over unchanged from core\'s pre-refactor static', () => {
-    assert.deepStrictEqual(StorageS3.AWS_S3_SYSTEM_HEADERS, {
-      'content-type': 'ContentType',
-      'content-disposition': 'ContentDisposition',
-      'content-encoding': 'ContentEncoding',
-      'content-language': 'ContentLanguage',
-    });
-  });
-
   it('fromContext() caches an instance that is both StorageS3 and Storage', () => {
     const context = { env: { HELIX_STORAGE_DISABLE_R2: 'true' }, log: console, attributes: {} };
     const stor = StorageS3.fromContext(context);

@@ -26,18 +26,6 @@ import { createDefaultBackendFactory } from './createDefaultBackendFactory.js';
  */
 export class StorageS3 extends Storage {
   /**
-   * Mapping from lowercase HTTP header name to the corresponding `*Command` input property.
-   * Carried over unchanged from core's pre-refactor `HelixStorage.AWS_S3_SYSTEM_HEADERS`
-   * static.
-   */
-  static AWS_S3_SYSTEM_HEADERS = {
-    'content-type': 'ContentType',
-    'content-disposition': 'ContentDisposition',
-    'content-encoding': 'ContentEncoding',
-    'content-language': 'ContentLanguage',
-  };
-
-  /**
    * @param {import('@adobe/helix-shared-storage').StorageContext} context
    * @param {Partial<import('@adobe/helix-shared-storage').StorageOptions>} [opts]
    * @returns {StorageS3}
