@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-s3-v1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-s3-v1.0.0...@adobe/helix-shared-storage-s3-v1.1.0) (2026-09-01)
+
+
+### Features
+
+* use correct deps ([1441ffe](https://github.com/adobe/helix-shared/commit/1441ffe57804a0c2e354155aacbee264284dfcc8))
+
 # @adobe/helix-shared-storage-s3-v1.0.0 (2026-09-01)
 
 
