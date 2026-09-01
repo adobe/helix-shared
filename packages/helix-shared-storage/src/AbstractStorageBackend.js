@@ -96,7 +96,9 @@
  * `backendFactory` that produces one `StorageBackend` per bucket id; {@link Bucket} is a thin,
  * backend-agnostic facade over it.
  *
- * Implementors only need to provide the 6 mandatory primitives below; `metadata`, `putMeta`,
+ * Implementors need to provide the 7 mandatory primitives below (`putMeta` is mandatory
+ * rather than a generic default because a correct, efficient implementation is inherently
+ * backend-specific — e.g. S3's self-copy trick vs. Azure's native `setMetadata`); `metadata`,
  * `listFolders`, and `browse` have generic default implementations in
  * {@link AbstractStorageBackend}, overridable for efficiency (e.g. Azure can implement
  * `listFolders` via `listBlobsByHierarchy` instead of the generic list+filter fallback).
@@ -116,10 +118,9 @@
  * @property {function(string, (Buffer|string), PutOptions=): Promise<CommonObjectMeta>} put
  *  store an object's contents along with metadata/system headers
  * @property {function(string, Object.<string, string>, Object.<string, *>=): Promise<*>} putMeta
- *  replace an object's user metadata; generic default: a self-copy with
- *  `metadataDirective: 'REPLACE'`. `opts` is raw, backend-native fields merged into the
- *  underlying call (NOT nested under `copyOpts` — this mirrors `Bucket#putMeta`'s own raw
- *  passthrough)
+ *  replace an object's user metadata. `opts` is raw, backend-native fields merged into the
+ *  underlying call (matching `Bucket#putMeta`'s own raw passthrough) — mandatory, since a
+ *  correct, efficient implementation is inherently backend-specific
  * @property {function(string, string, CopyOptions=): Promise<CommonObjectMeta>} copy copy an
  *  object within the same bucket; already-resolved `opts` (system headers + metadata) are
  *  provided by {@link Bucket} when the copy needs to preserve/rewrite metadata; backends
@@ -142,9 +143,10 @@
 /* eslint-disable class-methods-use-this -- mandatory-primitive stubs intentionally ignore `this` */
 /**
  * Convenience base class for {@link StorageBackend} implementations. Subclasses only need to
- * implement the 6 mandatory primitives (`get`, `head`, `put`, `copy`, `remove`, `list`) to get
- * all 10 interface methods for free; `metadata`/`putMeta`/`listFolders`/`browse` have generic
- * default bodies here, in terms of the mandatory primitives, overridable for efficiency.
+ * implement the 7 mandatory primitives (`get`, `head`, `put`, `copy`, `remove`, `list`,
+ * `putMeta`) to get all 10 interface methods for free; `metadata`/`listFolders`/`browse` have
+ * generic default bodies here, in terms of the mandatory primitives, overridable for
+ * efficiency.
  *
  * @implements {StorageBackend}
  */
@@ -159,6 +161,10 @@ export class AbstractStorageBackend {
 
   async put() {
     throw new Error('put() not implemented');
+  }
+
+  async putMeta() {
+    throw new Error('putMeta() not implemented');
   }
 
   async copy() {
@@ -182,23 +188,6 @@ export class AbstractStorageBackend {
   async metadata(key) {
     const head = await this.head(key);
     return head?.metadata;
-  }
-
-  /**
-   * Generic default: replaces metadata via a self-copy with `metadataDirective: 'REPLACE'`.
-   * `opts` is merged verbatim (not nested) into the underlying copy call.
-   *
-   * @param {string} path
-   * @param {Object.<string, string>} meta
-   * @param {Object.<string, *>} [opts]
-   * @returns {Promise<*>}
-   */
-  async putMeta(path, meta, opts = {}) {
-    return this.copy(path, path, {
-      metadata: meta,
-      metadataDirective: 'REPLACE',
-      copyOpts: opts,
-    });
   }
 
   /**

@@ -19,16 +19,10 @@ class MinimalBackend extends AbstractStorageBackend {
     super();
     this._heads = heads;
     this._listResult = listResult;
-    this.copyCalls = [];
   }
 
   async head(key) {
     return this._heads[key] ?? null;
-  }
-
-  async copy(src, dst, opts) {
-    this.copyCalls.push({ src, dst, opts });
-    return { ok: true };
   }
 
   async list() {
@@ -46,17 +40,6 @@ describe('AbstractStorageBackend', () => {
     it('metadata() returns undefined when head() is null', async () => {
       const backend = new MinimalBackend({});
       assert.strictEqual(await backend.metadata('missing'), undefined);
-    });
-
-    it('putMeta() delegates to copy() with metadataDirective REPLACE and raw opts wrapped as copyOpts', async () => {
-      const backend = new MinimalBackend();
-      const result = await backend.putMeta('foo', { a: '1' }, { Extra: true });
-      assert.deepStrictEqual(result, { ok: true });
-      assert.deepStrictEqual(backend.copyCalls, [{
-        src: 'foo',
-        dst: 'foo',
-        opts: { metadata: { a: '1' }, metadataDirective: 'REPLACE', copyOpts: { Extra: true } },
-      }]);
     });
 
     it('listFolders() filters list() results to folders', async () => {
@@ -88,7 +71,7 @@ describe('AbstractStorageBackend', () => {
   describe('mandatory primitives', () => {
     const backend = new AbstractStorageBackend();
 
-    ['get', 'head', 'put', 'copy', 'remove', 'list'].forEach((method) => {
+    ['get', 'head', 'put', 'putMeta', 'copy', 'remove', 'list'].forEach((method) => {
       it(`${method}() throws when not implemented`, async () => {
         await assert.rejects(backend[method](), new Error(`${method}() not implemented`));
       });

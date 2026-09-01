@@ -54,6 +54,14 @@ class FakeBackend extends AbstractStorageBackend {
     return { etag: `"etag-${key}"`, key, ...opts };
   }
 
+  async putMeta(key, meta) {
+    const obj = this.objects.get(key);
+    if (obj) {
+      obj.metadata = meta;
+    }
+    return { key };
+  }
+
   async copy(src, dst, opts = {}) {
     const obj = this.objects.get(src);
     if (!obj) {

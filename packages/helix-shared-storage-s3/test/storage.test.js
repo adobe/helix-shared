@@ -491,7 +491,7 @@ describe('Storage test', () => {
     assert.strictEqual(res.$metadata.httpStatusCode, 200);
   });
 
-  it('putMeta() forwards raw, backend-native opts (nested copyOpts shape) to the underlying copy', async () => {
+  it('putMeta() forwards raw, backend-native opts to the underlying CopyObjectCommand', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .put('/owner/repo/ref?x-id=CopyObject')
       .matchHeader('x-amz-tagging', 'env=prod')

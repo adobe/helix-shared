@@ -226,6 +226,29 @@ export class S3Backend extends AbstractStorageBackend {
   }
 
   /**
+   * Replace an object's user metadata via a self-copy with `MetadataDirective: 'REPLACE'`.
+   *
+   * @param {string} path already-sanitized object key
+   * @param {Object.<string, string>} meta new metadata (fully replaces existing metadata)
+   * @param {Record<string, unknown>} [opts] raw fields merged into the underlying
+   *  `CopyObjectCommand` input, verbatim
+   * @returns {Promise<unknown>} the raw `CopyObjectCommand` output, unnarrowed
+   */
+  async putMeta(path, meta, opts = {}) {
+    const input = {
+      Bucket: this._bucketName,
+      Key: path,
+      CopySource: `${this._bucketName}/${path}`,
+      Metadata: meta,
+      MetadataDirective: 'REPLACE',
+      ...opts,
+    };
+    const raw = await this._client.send(new CopyObjectCommand(input));
+    this._log.info(`Metadata updated for: ${input.CopySource}`);
+    return raw;
+  }
+
+  /**
    * @param {string} src already-sanitized source key
    * @param {string} dst already-sanitized destination key
    * @param {import('@adobe/helix-shared-storage').CopyOptions} [opts]
@@ -233,15 +256,12 @@ export class S3Backend extends AbstractStorageBackend {
    * @throws an error with `status: 404` if the source object does not exist
    */
   async copy(src, dst, opts = {}) {
-    // `opts` may carry raw, backend-native passthrough fields either flattened at the top
-    // level (from Bucket._buildCopyOptions()) or nested under `copyOpts` (from
-    // AbstractStorageBackend#putMeta()'s generic default) — support both. The named
-    // PascalCase fields below are only applied when the corresponding common field is
-    // actually set, so an explicit raw passthrough value (e.g. `copyOpts.ContentType`) isn't
+    // `opts` carries raw, backend-native passthrough fields flattened at the top level by
+    // Bucket._buildCopyOptions(). The named PascalCase fields below are only applied when the
+    // corresponding common field is actually set, so an explicit raw passthrough value isn't
     // clobbered by an absent common-field override.
     const input = {
       ...opts,
-      ...opts.copyOpts,
       Bucket: this._bucketName,
       CopySource: `${this._bucketName}/${src}`,
       Key: dst,
