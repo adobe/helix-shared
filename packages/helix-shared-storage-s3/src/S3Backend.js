@@ -189,7 +189,7 @@ export class S3Backend extends AbstractStorageBackend {
         expires: raw.Expires,
         lastModified: raw.LastModified,
         metadata: raw.Metadata,
-        ...raw,
+        raw,
       };
     } catch (e) {
       /* c8 ignore next 3 */
@@ -221,7 +221,7 @@ export class S3Backend extends AbstractStorageBackend {
     const raw = await this._client.send(new PutObjectCommand(input));
     this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
     return {
-      etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, ...raw,
+      etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
     };
   }
 
@@ -232,7 +232,7 @@ export class S3Backend extends AbstractStorageBackend {
    * @param {Object.<string, string>} meta new metadata (fully replaces existing metadata)
    * @param {Record<string, unknown>} [opts] raw fields merged into the underlying
    *  `CopyObjectCommand` input, verbatim
-   * @returns {Promise<unknown>} the raw `CopyObjectCommand` output, unnarrowed
+   * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
    */
   async putMeta(path, meta, opts = {}) {
     const input = {
@@ -245,7 +245,7 @@ export class S3Backend extends AbstractStorageBackend {
     };
     const raw = await this._client.send(new CopyObjectCommand(input));
     this._log.info(`Metadata updated for: ${input.CopySource}`);
-    return raw;
+    return { raw };
   }
 
   /**
@@ -285,7 +285,7 @@ export class S3Backend extends AbstractStorageBackend {
     try {
       const raw = await this._client.send(new CopyObjectCommand(input));
       this._log.info(`object copied from ${input.CopySource} to: ${input.Bucket}/${input.Key}`);
-      return { etag: raw.CopyObjectResult?.ETag, ...raw };
+      return { etag: raw.CopyObjectResult?.ETag, raw };
     } catch (e) {
       /* c8 ignore next 3 */
       if (e.Code !== 'NoSuchKey') {

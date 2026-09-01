@@ -23,10 +23,7 @@ const gzip = promisify(zlib.gzip);
  */
 
 /**
- * A backend's `CommonObjectMeta`, plus a spread of its raw, backend-native response fields.
- *
- * @typedef {import('./AbstractStorageBackend.js').CommonObjectMeta &
- *   Record<string, unknown>} RawObjectMeta
+ * @typedef {import('./AbstractStorageBackend.js').CommonObjectMeta} CommonObjectMeta
  */
 
 /**
@@ -81,8 +78,7 @@ export function sanitizePrefix(prefix) {
 /**
  * Resolve metadata object for copy operations.
  *
- * @param {import('./AbstractStorageBackend.js').CommonObjectMeta} commonMeta metadata as
- *  returned by a `StorageBackend`'s `head()`
+ * @param {CommonObjectMeta} commonMeta metadata as returned by a `StorageBackend`'s `head()`
  * @param {Record<string, string>} renameMeta { srcKey -> dstKey }
  * @param {Record<string, string>} addMeta { key -> value }
  * @returns {Record<string, string>}
@@ -173,7 +169,7 @@ export class Bucket {
   /**
    * @param {string} path object key
    * @param {Record<string, unknown>} [headOpts] extra fields merged into the underlying HEAD call
-   * @returns {Promise<RawObjectMeta|null>}
+   * @returns {Promise<CommonObjectMeta|null>}
    */
   async head(path, headOpts = {}) {
     return this._backend.head(sanitizeKey(path), headOpts);
@@ -227,7 +223,7 @@ export class Bucket {
    * @param {Record<string, string>} [meta] metadata to store with the object. Defaults to `{}`.
    * @param {boolean} [compress] whether to gzip the body and set `contentEncoding: 'gzip'`.
    *  Defaults to `true`.
-   * @returns {Promise<RawObjectMeta>}
+   * @returns {Promise<CommonObjectMeta>}
    */
   async put(path, body, contentType = 'application/octet-stream', meta = {}, compress = true) {
     const putOpts = { contentType, metadata: meta };
@@ -248,7 +244,7 @@ export class Bucket {
    * @param {string} path object key
    * @param {Record<string, string>} meta new metadata (fully replaces existing metadata)
    * @param {Record<string, unknown>} [opts] extra fields merged into the underlying copy call
-   * @returns {Promise<unknown>}
+   * @returns {Promise<CommonObjectMeta>}
    */
   async putMeta(path, meta, opts = {}) {
     return this._backend.putMeta(sanitizeKey(path), meta, opts);
@@ -290,7 +286,7 @@ export class Bucket {
    * @param {string} src source key
    * @param {string} dst destination key
    * @param {import('./storage.js').CopyOptions} [opts]
-   * @returns {Promise<RawObjectMeta|undefined>}
+   * @returns {Promise<CommonObjectMeta|undefined>}
    * @throws an error with `status: 404` if the source object does not exist
    */
   async copy(src, dst, opts = {}) {
@@ -304,7 +300,10 @@ export class Bucket {
     }
     const result = await this._backend.copy(srcKey, dstKey, copyOptions);
     this._log.info(`object copied from ${this.bucket}/${srcKey} to: ${this.bucket}/${dstKey}`);
-    return result.CopyObjectResult ?? result;
+    // Preserves today's pre-refactor return shape for the default S3 backend (the bare
+    // `CopyObjectResult`, not the common-fields-plus-raw envelope) by reaching into `raw`;
+    // backends without an analogous nested result just get their raw response back as-is.
+    return result.raw?.CopyObjectResult ?? result.raw ?? result;
   }
 
   /**

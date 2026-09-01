@@ -12,10 +12,10 @@
 
 /**
  * Common, backend-agnostic object metadata fields (lowerCamelCase). Every {@link StorageBackend}
- * method that returns object metadata returns (at least) these fields, plus a spread of
- * whatever native/raw fields the backend's underlying SDK response carries (e.g. AWS's
- * PascalCase `ETag`/`VersionId`/...). Since the common fields are lowerCamelCase and AWS's
- * are PascalCase, neither clobbers the other.
+ * method that returns object metadata returns (at least) these fields, plus the backend's raw,
+ * native SDK response nested under `raw` (e.g. AWS's PascalCase `ETag`/`VersionId`/`$metadata`/
+ * ...) — callers who need backend-specific fields reach for `result.raw.X` rather than relying
+ * on ad hoc top-level fields that would differ (and could collide) between backends.
  *
  * @typedef {Object} CommonObjectMeta
  * @property {string} [etag]
@@ -28,8 +28,7 @@
  * @property {string|Date} [expires]
  * @property {string|Date} [lastModified]
  * @property {Object.<string, string>} [metadata]
- *
- * Plus any other raw, backend-native fields the underlying SDK response carries.
+ * @property {*} [raw] the backend's raw, native SDK response, verbatim
  */
 
 /**
@@ -117,10 +116,11 @@
  *  object's user metadata; generic default: `(await head(key))?.metadata`
  * @property {function(string, (Buffer|string), PutOptions=): Promise<CommonObjectMeta>} put
  *  store an object's contents along with metadata/system headers
- * @property {function(string, Object.<string, string>, Object.<string, *>=): Promise<*>} putMeta
- *  replace an object's user metadata. `opts` is raw, backend-native fields merged into the
- *  underlying call (matching `Bucket#putMeta`'s own raw passthrough) — mandatory, since a
- *  correct, efficient implementation is inherently backend-specific
+ * @property {function(string, Object.<string, string>, Object.<string, *>=):
+ *   Promise<CommonObjectMeta>} putMeta replace an object's user metadata. The `opts` parameter
+ *  is raw, backend-native fields merged into the underlying call (matching `Bucket#putMeta`'s
+ *  own raw passthrough) — mandatory, since a correct, efficient implementation is inherently
+ *  backend-specific
  * @property {function(string, string, CopyOptions=): Promise<CommonObjectMeta>} copy copy an
  *  object within the same bucket; already-resolved `opts` (system headers + metadata) are
  *  provided by {@link Bucket} when the copy needs to preserve/rewrite metadata; backends

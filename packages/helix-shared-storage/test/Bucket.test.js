@@ -248,6 +248,18 @@ describe('Bucket', () => {
       await bucket.copy('/foo', '/bar', { copyOpts: { Tagging: 'x=1' } });
       assert.strictEqual(backend.objects.get('bar').Tagging, 'x=1');
     });
+
+    it('unwraps result.raw.CopyObjectResult when the backend nests one under raw', async () => {
+      backend.copy = async () => ({ etag: 'x', raw: { CopyObjectResult: { ETag: 'x' } } });
+      const result = await bucket.copy('/foo', '/bar');
+      assert.deepStrictEqual(result, { ETag: 'x' });
+    });
+
+    it('falls back to result.raw when the backend has no nested CopyObjectResult', async () => {
+      backend.copy = async () => ({ etag: 'x', raw: { SomeOtherField: 'y' } });
+      const result = await bucket.copy('/foo', '/bar');
+      assert.deepStrictEqual(result, { SomeOtherField: 'y' });
+    });
   });
 
   describe('remove()', () => {

@@ -243,7 +243,7 @@ describe('Storage test', () => {
       });
     const bus = storage.codeBus();
     const ret = await bus.head('foo', { ChecksumMode: 'ENABLED' });
-    assert.strictEqual(ret.ChecksumCRC64NVME, 'Y3y1rAE2GOM=');
+    assert.strictEqual(ret.raw.ChecksumCRC64NVME, 'Y3y1rAE2GOM=');
   });
 
   it('can get metadata of an object (404)', async () => {
@@ -488,7 +488,7 @@ describe('Storage test', () => {
     const res = await bus.putMeta('/owner/repo/ref', {
       'source-location': 'new-location',
     });
-    assert.strictEqual(res.$metadata.httpStatusCode, 200);
+    assert.strictEqual(res.raw.$metadata.httpStatusCode, 200);
   });
 
   it('putMeta() forwards raw, backend-native opts to the underlying CopyObjectCommand', async () => {
