@@ -189,12 +189,12 @@ describe('Storage test', () => {
     assert.strictEqual(ret.toString(), 'hello, world.');
     assert.deepStrictEqual(meta, {
       'x-source-location': 'github',
-      CacheControl: 'no-store',
-      ContentEncoding: 'gzip',
-      ContentType: 'text/plain',
-      ETag: '"499455814df5a2001612b12b575bfaaa"',
-      Expires: new Date('Thu, 23 Nov 2023 10:35:10 GMT'),
-      LastModified: new Date('Mon, 03 Nov 2025 07:08:10 GMT'),
+      cacheControl: 'no-store',
+      contentEncoding: 'gzip',
+      contentType: 'text/plain',
+      etag: '"499455814df5a2001612b12b575bfaaa"',
+      expires: new Date('Thu, 23 Nov 2023 10:35:10 GMT'),
+      lastModified: new Date('Mon, 03 Nov 2025 07:08:10 GMT'),
     });
   });
 

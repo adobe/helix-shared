@@ -35,19 +35,6 @@ const gunzip = promisify(zlib.gunzip);
 const MAX_DELETE_OBJECTS = 1000;
 
 /**
- * Fields on a `GetObject` response that are surfaced as metadata when the caller of
- * {@link S3Backend#get} provides a `meta` output object.
- */
-const AWS_META_HEADERS = [
-  'CacheControl',
-  'ContentType',
-  'ContentEncoding',
-  'ETag',
-  'Expires',
-  'LastModified',
-];
-
-/**
  * `SYSTEM_META_FIELD_NAMES` (the common, lowerCamelCase system-property names shared across
  * the `StorageBackend` API), mapped to the corresponding S3 `*Command` PascalCase input
  * property. Drives `head()`'s/`put()`'s/`copy()`'s system-field mapping, and is what lets
@@ -58,6 +45,20 @@ const AWS_META_HEADERS = [
 const SYSTEM_META_FIELDS = Object.fromEntries(
   SYSTEM_META_FIELD_NAMES.map((field) => [field, `${field.charAt(0).toUpperCase()}${field.slice(1)}`]),
 );
+
+/**
+ * Fields on a `GetObject` response that are surfaced — using the same common, lowerCamelCase
+ * names as `head()`/`CommonObjectMeta` — when the caller of {@link S3Backend#get} provides a
+ * `meta` output object. The reverse of `SYSTEM_META_FIELDS`, plus the two read-only object
+ * attributes `get()` has historically also surfaced (`etag`, `lastModified`).
+ */
+const GET_META_FIELDS = {
+  ...Object.fromEntries(
+    Object.entries(SYSTEM_META_FIELDS).map(([common, pascal]) => [pascal, common]),
+  ),
+  ETag: 'etag',
+  LastModified: 'lastModified',
+};
 
 /**
  * Returns the last segment of a key, treating an optional trailing `/` as a folder separator.
@@ -148,8 +149,9 @@ export class S3Backend extends AbstractStorageBackend {
 
   /**
    * @param {string} key already-sanitized object key
-   * @param {Record<string, unknown>} [meta] output object that receives the object's
-   *  metadata/system headers
+   * @param {Record<string, unknown>} [meta] output object that receives the object's custom
+   *  metadata plus its recognized system fields (using the same common, lowerCamelCase names
+   *  as `head()`, e.g. `contentType`), and `etag`/`lastModified`
    * @returns {Promise<Buffer|null>}
    */
   async get(key, meta = null) {
@@ -161,11 +163,11 @@ export class S3Backend extends AbstractStorageBackend {
       const buf = await new Response(result.Body, {}).buffer();
       if (meta) {
         Object.assign(meta, result.Metadata);
-        for (const name of AWS_META_HEADERS) {
-          if (name in result) {
-            meta[name] = result[name];
+        Object.entries(GET_META_FIELDS).forEach(([pascal, common]) => {
+          if (pascal in result) {
+            meta[common] = result[pascal];
           }
-        }
+        });
       }
       if (result.ContentEncoding === 'gzip') {
         return await gunzip(buf);
