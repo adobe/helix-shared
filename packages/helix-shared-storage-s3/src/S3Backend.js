@@ -61,6 +61,13 @@ const GET_META_FIELDS = {
 };
 
 /**
+ * The common, lowerCamelCase field names `copy()` recognizes and maps onto their PascalCase
+ * `CopyObjectCommand` equivalent. Excluded from the raw `copyOpts` passthrough so that only the
+ * mapped PascalCase field ends up in the command input, never both spellings.
+ */
+const COMMON_COPY_FIELD_NAMES = new Set([...SYSTEM_META_FIELD_NAMES, 'metadata', 'metadataDirective']);
+
+/**
  * Returns the last segment of a key, treating an optional trailing `/` as a folder separator.
  *
  * @param {string} key
@@ -277,14 +284,20 @@ export class S3Backend extends AbstractStorageBackend {
    */
   async copy(src, dst, opts = {}) {
     // `opts` carries raw, backend-native passthrough fields flattened at the top level by
-    // Bucket._buildCopyOptions(). The named PascalCase fields below are only applied when the
-    // corresponding common field is actually set *and* the raw passthrough didn't already
-    // explicitly set that same field — an absent (or head-derived, "preserve on REPLACE")
-    // common-field value must never clobber an explicit `copyOpts` override, in either
-    // direction: neither by being missing (already handled by the `undefined` check) nor by
-    // being present (the caller's explicit raw value wins).
+    // Bucket._buildCopyOptions(), alongside the common lowerCamelCase fields. Only the raw
+    // fields are spread into `input` (the common ones are excluded here and mapped onto their
+    // PascalCase equivalent below) so the command input never ends up with both spellings.
+    // The named PascalCase fields below are only applied when the corresponding common field is
+    // actually set *and* the raw passthrough didn't already explicitly set that same field — an
+    // absent (or head-derived, "preserve on REPLACE") common-field value must never clobber an
+    // explicit `copyOpts` override, in either direction: neither by being missing (already
+    // handled by the `undefined` check) nor by being present (the caller's explicit raw value
+    // wins).
+    const rawOpts = Object.fromEntries(
+      Object.entries(opts).filter(([key]) => !COMMON_COPY_FIELD_NAMES.has(key)),
+    );
     const input = {
-      ...opts,
+      ...rawOpts,
       Bucket: this._bucketName,
       CopySource: `${this._bucketName}/${src}`,
       Key: dst,

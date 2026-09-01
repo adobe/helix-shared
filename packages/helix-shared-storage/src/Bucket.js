@@ -292,7 +292,9 @@ export class Bucket {
     }
     const copyOptions = { ...opts.copyOpts };
     SYSTEM_META_FIELD_NAMES.forEach((field) => {
-      copyOptions[field] = head[field];
+      if (head[field] !== undefined) {
+        copyOptions[field] = head[field];
+      }
     });
     copyOptions.metadata = resolveMetadataForCopy(head, opts.renameMetadata, opts.addMetadata);
     copyOptions.metadataDirective = 'REPLACE';
