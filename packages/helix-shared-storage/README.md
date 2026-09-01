@@ -235,10 +235,14 @@ await bucket.rmdir('/path/to/folder/');
 
 ### Updating Metadata
 
-Update metadata for an existing object:
+Update metadata for an existing object. `meta` may mix custom, user-defined keys with common
+system-property field names (e.g. `contentType`) — each backend recognizes and applies its own
+subset appropriately (the default S3 backend maps `contentType` onto the object's `Content-Type`
+system property instead of writing it as custom metadata):
 
 ```js
 await bucket.putMeta('/path/to/file.txt', {
+  contentType: 'text/html',
   'new-meta-key': 'new-value',
   'updated-at': new Date().toISOString(),
 });

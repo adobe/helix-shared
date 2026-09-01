@@ -116,11 +116,15 @@
  *  object's user metadata; generic default: `(await head(key))?.metadata`
  * @property {function(string, (Buffer|string), PutOptions=): Promise<CommonObjectMeta>} put
  *  store an object's contents along with metadata/system headers
- * @property {function(string, Object.<string, string>, Object.<string, *>=):
- *   Promise<CommonObjectMeta>} putMeta replace an object's user metadata. The `opts` parameter
- *  is raw, backend-native fields merged into the underlying call (matching `Bucket#putMeta`'s
- *  own raw passthrough) — mandatory, since a correct, efficient implementation is inherently
- *  backend-specific
+ * @property {function(string, Object.<string, string>): Promise<CommonObjectMeta>} putMeta
+ *  replace an object's metadata. `meta` may mix custom keys with common system-property field
+ *  names (e.g. `contentType`); it's up to the backend to recognize and apply those
+ *  appropriately (S3 maps them onto its own system fields instead of writing them as custom
+ *  metadata; Azure would use its separate `setHTTPHeaders()` call). No raw-passthrough `opts`
+ *  parameter — every backend has an incompatible notion of what else could be merged into a
+ *  metadata update (e.g. S3's self-copy vs. Azure's dedicated `setMetadata()`), so this stays
+ *  a plain `(key, meta)` call — mandatory, since a correct, efficient implementation is
+ *  inherently backend-specific
  * @property {function(string, string, CopyOptions=): Promise<CommonObjectMeta>} copy copy an
  *  object within the same bucket; already-resolved `opts` (system headers + metadata) are
  *  provided by {@link Bucket} when the copy needs to preserve/rewrite metadata; backends

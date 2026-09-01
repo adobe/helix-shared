@@ -491,18 +491,26 @@ describe('Storage test', () => {
     assert.strictEqual(res.raw.$metadata.httpStatusCode, 200);
   });
 
-  it('putMeta() forwards raw, backend-native opts to the underlying CopyObjectCommand', async () => {
+  it('putMeta() maps recognized system-property keys onto CopyObjectCommand system fields, not custom metadata', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .put('/owner/repo/ref?x-id=CopyObject')
-      .matchHeader('x-amz-tagging', 'env=prod')
-      .reply(200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>');
+      .reply(function test() {
+        assert.strictEqual(this.req.headers['content-type'], 'text/html');
+        assert.strictEqual(this.req.headers['content-language'], 'en');
+        assert.strictEqual(this.req.headers['x-amz-meta-content-type'], undefined);
+        assert.strictEqual(this.req.headers['x-amz-meta-source-location'], 'new-location');
+        return [200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>'];
+      });
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
       .put('/owner/repo/ref?x-id=CopyObject')
-      .matchHeader('x-amz-tagging', 'env=prod')
       .reply(200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>');
 
     const bus = storage.codeBus();
-    await bus.putMeta('/owner/repo/ref', { 'source-location': 'new-location' }, { Tagging: 'env=prod' });
+    await bus.putMeta('/owner/repo/ref', {
+      contentType: 'text/html',
+      contentLanguage: 'en',
+      'source-location': 'new-location',
+    });
   });
 
   it('remove non-existing object fails', async () => {

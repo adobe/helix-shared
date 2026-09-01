@@ -239,15 +239,20 @@ export class Bucket {
   }
 
   /**
-   * Replace an object's user metadata via a self-copy with `metadataDirective: 'REPLACE'`.
+   * Replace an object's metadata. `meta` may mix custom, user-defined keys with any of the
+   * common system-property field names (e.g. `contentType`); it's up to the backend to
+   * recognize and apply those appropriately (e.g. S3 maps `contentType` onto its own
+   * `ContentType` system field instead of writing it as custom metadata; Azure would call its
+   * separate `setHTTPHeaders()` API for it). There's deliberately no generic, raw-passthrough
+   * `opts` parameter here — every backend has its own, incompatible notion of what else could
+   * be merged into a metadata update, so this stays a plain `(key, meta)` call.
    *
    * @param {string} path object key
    * @param {Record<string, string>} meta new metadata (fully replaces existing metadata)
-   * @param {Record<string, unknown>} [opts] extra fields merged into the underlying copy call
    * @returns {Promise<CommonObjectMeta>}
    */
-  async putMeta(path, meta, opts = {}) {
-    return this._backend.putMeta(sanitizeKey(path), meta, opts);
+  async putMeta(path, meta) {
+    return this._backend.putMeta(sanitizeKey(path), meta);
   }
 
   /**

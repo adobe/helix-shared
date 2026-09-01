@@ -48,6 +48,24 @@ const AWS_META_HEADERS = [
 ];
 
 /**
+ * Common (lowerCamelCase) field names recognized as S3 "system" properties by
+ * {@link S3Backend#putMeta}, mapped to the corresponding `CopyObjectCommand` input property.
+ * S3 has no dedicated "update metadata" API — `putMeta` fakes one via a self-copy, and a
+ * single `CopyObjectCommand` input happens to carry both system properties and custom
+ * metadata together. Azure Blob Storage, by contrast, has two separate calls for this
+ * (`setHTTPHeaders()` for properties, `setMetadata()` for custom metadata) — this map is what
+ * lets `S3Backend` fake that same split within its one underlying call, instead of leaking
+ * "everything not recognized here is a raw field merged into the S3 call" onto the common
+ * `StorageBackend#putMeta` interface.
+ */
+const SYSTEM_META_FIELDS = {
+  contentType: 'ContentType',
+  contentDisposition: 'ContentDisposition',
+  contentEncoding: 'ContentEncoding',
+  contentLanguage: 'ContentLanguage',
+};
+
+/**
  * Returns the last segment of a key, treating an optional trailing `/` as a folder separator.
  *
  * @param {string} key
@@ -226,23 +244,32 @@ export class S3Backend extends AbstractStorageBackend {
   }
 
   /**
-   * Replace an object's user metadata via a self-copy with `MetadataDirective: 'REPLACE'`.
+   * Replace an object's user metadata (and any recognized system properties within `meta`)
+   * via a self-copy with `MetadataDirective: 'REPLACE'`. Keys matching `SYSTEM_META_FIELDS`
+   * are mapped onto the corresponding `CopyObjectCommand` system field instead of becoming
+   * custom metadata — this is what keeps `meta.contentType` from ending up as a literal
+   * `x-amz-meta-contenttype` header.
    *
    * @param {string} path already-sanitized object key
    * @param {Object.<string, string>} meta new metadata (fully replaces existing metadata)
-   * @param {Record<string, unknown>} [opts] raw fields merged into the underlying
-   *  `CopyObjectCommand` input, verbatim
    * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
    */
-  async putMeta(path, meta, opts = {}) {
+  async putMeta(path, meta = {}) {
     const input = {
       Bucket: this._bucketName,
       Key: path,
       CopySource: `${this._bucketName}/${path}`,
-      Metadata: meta,
       MetadataDirective: 'REPLACE',
-      ...opts,
+      Metadata: {},
     };
+    Object.entries(meta).forEach(([key, value]) => {
+      const systemField = SYSTEM_META_FIELDS[key];
+      if (systemField) {
+        input[systemField] = value;
+      } else {
+        input.Metadata[key] = value;
+      }
+    });
     const raw = await this._client.send(new CopyObjectCommand(input));
     this._log.info(`Metadata updated for: ${input.CopySource}`);
     return { raw };
