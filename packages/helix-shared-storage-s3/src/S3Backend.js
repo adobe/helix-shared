@@ -25,7 +25,7 @@ import {
 import { Response } from '@adobe/fetch';
 import mime from 'mime';
 import processQueue from '@adobe/helix-shared-process-queue';
-import { AbstractStorageBackend } from '@adobe/helix-shared-storage';
+import { AbstractStorageBackend, SYSTEM_META_FIELD_NAMES } from '@adobe/helix-shared-storage';
 
 const gunzip = promisify(zlib.gunzip);
 
@@ -48,22 +48,16 @@ const AWS_META_HEADERS = [
 ];
 
 /**
- * Common (lowerCamelCase) field names recognized as S3 "system" properties by
- * {@link S3Backend#putMeta}, mapped to the corresponding `CopyObjectCommand` input property.
- * S3 has no dedicated "update metadata" API — `putMeta` fakes one via a self-copy, and a
- * single `CopyObjectCommand` input happens to carry both system properties and custom
- * metadata together. Azure Blob Storage, by contrast, has two separate calls for this
- * (`setHTTPHeaders()` for properties, `setMetadata()` for custom metadata) — this map is what
- * lets `S3Backend` fake that same split within its one underlying call, instead of leaking
- * "everything not recognized here is a raw field merged into the S3 call" onto the common
- * `StorageBackend#putMeta` interface.
+ * `SYSTEM_META_FIELD_NAMES` (the common, lowerCamelCase system-property names shared across
+ * the `StorageBackend` API), mapped to the corresponding S3 `*Command` PascalCase input
+ * property. Drives `head()`'s/`put()`'s/`copy()`'s system-field mapping, and is what lets
+ * `putMeta()` fake Azure's separate `setHTTPHeaders()`/`setMetadata()` split within S3's one
+ * self-copy call: keys recognized here become system properties, everything else becomes
+ * custom metadata.
  */
-const SYSTEM_META_FIELDS = {
-  contentType: 'ContentType',
-  contentDisposition: 'ContentDisposition',
-  contentEncoding: 'ContentEncoding',
-  contentLanguage: 'ContentLanguage',
-};
+const SYSTEM_META_FIELDS = Object.fromEntries(
+  SYSTEM_META_FIELD_NAMES.map((field) => [field, `${field.charAt(0).toUpperCase()}${field.slice(1)}`]),
+);
 
 /**
  * Returns the last segment of a key, treating an optional trailing `/` as a folder separator.
@@ -196,19 +190,18 @@ export class S3Backend extends AbstractStorageBackend {
     try {
       const raw = await this._client.send(new HeadObjectCommand(input));
       this._log.info(`Object metadata downloaded from: ${input.Bucket}/${input.Key}`);
-      return {
+      const result = {
         etag: raw.ETag,
         versionId: raw.VersionId,
         contentLength: raw.ContentLength,
-        contentType: raw.ContentType,
-        contentEncoding: raw.ContentEncoding,
-        cacheControl: raw.CacheControl,
-        contentDisposition: raw.ContentDisposition,
-        expires: raw.Expires,
         lastModified: raw.LastModified,
         metadata: raw.Metadata,
         raw,
       };
+      Object.entries(SYSTEM_META_FIELDS).forEach(([common, pascal]) => {
+        result[common] = raw[pascal];
+      });
+      return result;
     } catch (e) {
       /* c8 ignore next 3 */
       if (e.$metadata.httpStatusCode !== 404) {
@@ -229,13 +222,11 @@ export class S3Backend extends AbstractStorageBackend {
       Body: body,
       Bucket: this._bucketName,
       Key: key,
-      ContentType: opts.contentType,
-      ContentEncoding: opts.contentEncoding,
-      CacheControl: opts.cacheControl,
-      ContentDisposition: opts.contentDisposition,
-      Expires: opts.expires,
       Metadata: opts.metadata,
     };
+    Object.entries(SYSTEM_META_FIELDS).forEach(([common, pascal]) => {
+      input[pascal] = opts[common];
+    });
     const raw = await this._client.send(new PutObjectCommand(input));
     this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
     return {
@@ -295,15 +286,10 @@ export class S3Backend extends AbstractStorageBackend {
     };
     // only override a raw passthrough field when the corresponding common field is actually
     // set — an absent common field must not clobber an explicit `copyOpts` value
-    const systemFields = {
-      ContentType: opts.contentType,
-      ContentEncoding: opts.contentEncoding,
-      CacheControl: opts.cacheControl,
-      ContentDisposition: opts.contentDisposition,
-      Expires: opts.expires,
-      Metadata: opts.metadata,
-      MetadataDirective: opts.metadataDirective,
-    };
+    const systemFields = { Metadata: opts.metadata, MetadataDirective: opts.metadataDirective };
+    Object.entries(SYSTEM_META_FIELDS).forEach(([common, pascal]) => {
+      systemFields[pascal] = opts[common];
+    });
     Object.entries(systemFields).forEach(([key, value]) => {
       if (value !== undefined) {
         input[key] = value;

@@ -248,6 +248,16 @@ await bucket.putMeta('/path/to/file.txt', {
 });
 ```
 
+`putMeta()` fully replaces the metadata set — any system-property field or custom key not
+included is not preserved. To update metadata without accidentally losing existing fields, use
+`getMeta()` (the `putMeta()`-compatible counterpart of `metadata()`) to round-trip safely:
+
+```js
+const meta = await bucket.getMeta('/path/to/file.txt');
+meta['updated-at'] = new Date().toISOString();
+await bucket.putMeta('/path/to/file.txt', meta);
+```
+
 ## Configuration Options
 
 ### Bucket Name Mapping

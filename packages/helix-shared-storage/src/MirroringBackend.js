@@ -64,6 +64,10 @@ export class MirroringBackend {
     return this._primary.metadata(...args);
   }
 
+  getMeta(...args) {
+    return this._primary.getMeta(...args);
+  }
+
   list(...args) {
     return this._primary.list(...args);
   }

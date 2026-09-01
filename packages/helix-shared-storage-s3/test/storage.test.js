@@ -513,6 +513,24 @@ describe('Storage test', () => {
     });
   });
 
+  it('getMeta() merges head()\'s recognized system fields with custom metadata into a putMeta()-compatible bag', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .head('/owner/repo/ref')
+      .reply(200, [], {
+        'content-type': 'text/html',
+        'cache-control': 'no-store',
+        'x-amz-meta-source-location': 'github',
+      });
+
+    const bus = storage.codeBus();
+    const meta = await bus.getMeta('/owner/repo/ref');
+    assert.deepStrictEqual(meta, {
+      contentType: 'text/html',
+      cacheControl: 'no-store',
+      'source-location': 'github',
+    });
+  });
+
   it('remove non-existing object fails', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .delete('/does-not-exist?x-id=DeleteObject')

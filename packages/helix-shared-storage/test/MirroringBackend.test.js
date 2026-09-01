@@ -42,6 +42,8 @@ class FakeBackend {
 
   metadata(...args) { return this._invoke('metadata', args); }
 
+  getMeta(...args) { return this._invoke('getMeta', args); }
+
   list(...args) { return this._invoke('list', args); }
 
   listFolders(...args) { return this._invoke('listFolders', args); }
@@ -67,7 +69,7 @@ describe('MirroringBackend', () => {
     assert.strictEqual(mirror.client, 'S3-client');
   });
 
-  ['get', 'head', 'metadata', 'list', 'listFolders', 'browse'].forEach((method) => {
+  ['get', 'head', 'metadata', 'getMeta', 'list', 'listFolders', 'browse'].forEach((method) => {
     it(`${method}() reads only from primary`, async () => {
       const primary = new FakeBackend('S3');
       const secondary = new FakeBackend('R2');

@@ -26,10 +26,24 @@
  * @property {string} [cacheControl]
  * @property {string} [contentDisposition]
  * @property {string|Date} [expires]
+ * @property {string} [contentLanguage]
  * @property {string|Date} [lastModified]
  * @property {Object.<string, string>} [metadata]
  * @property {*} [raw] the backend's raw, native SDK response, verbatim
  */
+
+/**
+ * The common (lowerCamelCase) system-property field names recognized throughout the
+ * `StorageBackend` API (on {@link CommonObjectMeta}/{@link PutOptions}/{@link CopyOptions}, and
+ * by {@link StorageBackend#putMeta} to distinguish system properties from custom metadata).
+ * Kept as one list so `head()`'s output and `putMeta()`'s input stay round-trip-compatible —
+ * see {@link AbstractStorageBackend#getMeta}.
+ *
+ * @type {string[]}
+ */
+export const SYSTEM_META_FIELD_NAMES = [
+  'contentType', 'contentEncoding', 'cacheControl', 'contentDisposition', 'expires', 'contentLanguage',
+];
 
 /**
  * @typedef {Object} PutOptions
@@ -38,6 +52,7 @@
  * @property {string} [cacheControl]
  * @property {string} [contentDisposition]
  * @property {string} [expires]
+ * @property {string} [contentLanguage]
  * @property {Object.<string, string>} [metadata]
  */
 
@@ -53,6 +68,7 @@
  * @property {string} [cacheControl]
  * @property {string} [contentDisposition]
  * @property {string|Date} [expires]
+ * @property {string} [contentLanguage]
  * @property {Object.<string, string>} [metadata]
  * @property {'COPY'|'REPLACE'} [metadataDirective]
  * @property {Object.<string, *>} [copyOpts] additional backend-native fields to merge into
@@ -98,7 +114,7 @@
  * Implementors need to provide the 7 mandatory primitives below (`putMeta` is mandatory
  * rather than a generic default because a correct, efficient implementation is inherently
  * backend-specific — e.g. S3's self-copy trick vs. Azure's native `setMetadata`); `metadata`,
- * `listFolders`, and `browse` have generic default implementations in
+ * `getMeta`, `listFolders`, and `browse` have generic default implementations in
  * {@link AbstractStorageBackend}, overridable for efficiency (e.g. Azure can implement
  * `listFolders` via `listBlobsByHierarchy` instead of the generic list+filter fallback).
  *
@@ -114,6 +130,12 @@
  *  HEAD on the object; returns `null` if not found
  * @property {function(string): Promise<Object.<string, string>|undefined>} metadata return an
  *  object's user metadata; generic default: `(await head(key))?.metadata`
+ * @property {function(string): Promise<Object.<string, *>|undefined>} getMeta the
+ *  `putMeta`-compatible counterpart of `metadata`: returns `head(key)`'s recognized system
+ *  fields (see `SYSTEM_META_FIELD_NAMES`) merged with its custom metadata into one flat bag,
+ *  so callers can safely round-trip `const meta = await getMeta(key); meta.x = 'y'; await
+ *  putMeta(key, meta);` without knowing which of their keys are "system" vs. custom; generic
+ *  default, since `head()` already normalizes system fields into these common names
  * @property {function(string, (Buffer|string), PutOptions=): Promise<CommonObjectMeta>} put
  *  store an object's contents along with metadata/system headers
  * @property {function(string, Object.<string, string>): Promise<CommonObjectMeta>} putMeta
@@ -148,9 +170,9 @@
 /**
  * Convenience base class for {@link StorageBackend} implementations. Subclasses only need to
  * implement the 7 mandatory primitives (`get`, `head`, `put`, `copy`, `remove`, `list`,
- * `putMeta`) to get all 10 interface methods for free; `metadata`/`listFolders`/`browse` have
- * generic default bodies here, in terms of the mandatory primitives, overridable for
- * efficiency.
+ * `putMeta`) to get all 11 interface methods for free; `metadata`/`getMeta`/`listFolders`/
+ * `browse` have generic default bodies here, in terms of the mandatory primitives, overridable
+ * for efficiency.
  *
  * @implements {StorageBackend}
  */
@@ -192,6 +214,34 @@ export class AbstractStorageBackend {
   async metadata(key) {
     const head = await this.head(key);
     return head?.metadata;
+  }
+
+  /**
+   * Generic default: the `putMeta`-compatible counterpart of `metadata` — merges `head(key)`'s
+   * recognized system fields (`SYSTEM_META_FIELD_NAMES`) with its custom metadata into one
+   * flat bag, so callers can safely round-trip metadata updates without knowing which of their
+   * keys are "system" vs. custom:
+   * ```js
+   * const meta = await backend.getMeta(key);
+   * meta.foo = 'updated';
+   * await backend.putMeta(key, meta);
+   * ```
+   *
+   * @param {string} key
+   * @returns {Promise<Object.<string, *>|undefined>}
+   */
+  async getMeta(key) {
+    const head = await this.head(key);
+    if (!head) {
+      return undefined;
+    }
+    const meta = { ...head.metadata };
+    SYSTEM_META_FIELD_NAMES.forEach((field) => {
+      if (head[field] !== undefined) {
+        meta[field] = head[field];
+      }
+    });
+    return meta;
   }
 
   /**

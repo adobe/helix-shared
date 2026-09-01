@@ -217,6 +217,21 @@ describe('Bucket', () => {
     });
   });
 
+  describe('getMeta()', () => {
+    it('round-trips with putMeta() without the caller needing to know system vs. custom fields', async () => {
+      await bucket.put('/foo', 'hello', 'text/plain', { a: '1' }, false);
+      const meta = await bucket.getMeta('/foo');
+      assert.deepStrictEqual(meta, { contentType: 'text/plain', a: '1' });
+      meta.a = '2';
+      await bucket.putMeta('/foo', meta);
+      assert.deepStrictEqual(await bucket.getMeta('/foo'), meta);
+    });
+
+    it('returns undefined for a missing key', async () => {
+      assert.strictEqual(await bucket.getMeta('/missing'), undefined);
+    });
+  });
+
   describe('copy()', () => {
     it('copies without touching metadata when no addMetadata/renameMetadata given', async () => {
       await bucket.put('/foo', 'hello', 'text/plain', { a: '1' }, false);

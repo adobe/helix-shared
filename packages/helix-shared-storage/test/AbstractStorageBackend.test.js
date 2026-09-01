@@ -42,6 +42,22 @@ describe('AbstractStorageBackend', () => {
       assert.strictEqual(await backend.metadata('missing'), undefined);
     });
 
+    it('getMeta() merges head()\'s recognized system fields with its custom metadata', async () => {
+      const backend = new MinimalBackend({
+        foo: {
+          contentType: 'text/plain',
+          cacheControl: undefined,
+          metadata: { a: '1' },
+        },
+      });
+      assert.deepStrictEqual(await backend.getMeta('foo'), { contentType: 'text/plain', a: '1' });
+    });
+
+    it('getMeta() returns undefined when head() is null', async () => {
+      const backend = new MinimalBackend({});
+      assert.strictEqual(await backend.getMeta('missing'), undefined);
+    });
+
     it('listFolders() filters list() results to folders', async () => {
       const backend = new MinimalBackend({}, {
         prefix: 'foo/',

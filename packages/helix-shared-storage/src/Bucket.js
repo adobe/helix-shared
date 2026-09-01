@@ -13,6 +13,7 @@
 import { promisify } from 'util';
 import zlib from 'zlib';
 import processQueue from '@adobe/helix-shared-process-queue';
+import { SYSTEM_META_FIELD_NAMES } from './AbstractStorageBackend.js';
 
 const gzip = promisify(zlib.gzip);
 
@@ -184,6 +185,24 @@ export class Bucket {
   }
 
   /**
+   * The `putMeta()`-compatible counterpart of `metadata()`: returns the object's recognized
+   * system fields (e.g. `contentType`) merged with its custom metadata into one flat bag, so
+   * callers can safely round-trip metadata updates without knowing which of their keys are
+   * "system" vs. custom:
+   * ```js
+   * const meta = await bucket.getMeta(key);
+   * meta.foo = 'updated';
+   * await bucket.putMeta(key, meta);
+   * ```
+   *
+   * @param {string} key object key
+   * @returns {Promise<Record<string, unknown>|undefined>}
+   */
+  async getMeta(key) {
+    return this._backend.getMeta(sanitizeKey(key));
+  }
+
+  /**
    * Store an object body and headers from a fetch `Response`. The body is gzipped (or passed
    * through if the response already has `content-encoding: gzip`); response headers are
    * translated into common system fields (`cache-control`, `content-type`, `expires`) or
@@ -271,16 +290,13 @@ export class Bucket {
     if (!head) {
       return null;
     }
-    return {
-      ...opts.copyOpts,
-      contentType: head.contentType,
-      contentEncoding: head.contentEncoding,
-      cacheControl: head.cacheControl,
-      contentDisposition: head.contentDisposition,
-      expires: head.expires,
-      metadata: resolveMetadataForCopy(head, opts.renameMetadata, opts.addMetadata),
-      metadataDirective: 'REPLACE',
-    };
+    const copyOptions = { ...opts.copyOpts };
+    SYSTEM_META_FIELD_NAMES.forEach((field) => {
+      copyOptions[field] = head[field];
+    });
+    copyOptions.metadata = resolveMetadataForCopy(head, opts.renameMetadata, opts.addMetadata);
+    copyOptions.metadataDirective = 'REPLACE';
+    return copyOptions;
   }
 
   /**

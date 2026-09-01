@@ -12,4 +12,4 @@
 export { parseBucketNames, resolveMetadataForCopy, Storage } from './storage.js';
 export { Bucket } from './Bucket.js';
 export { MirroringBackend } from './MirroringBackend.js';
-export { AbstractStorageBackend } from './AbstractStorageBackend.js';
+export { AbstractStorageBackend, SYSTEM_META_FIELD_NAMES } from './AbstractStorageBackend.js';
