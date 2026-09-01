@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-indexer",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "description": "Shared modules of the Helix Project - Indexer",
   "main": "src/index.js",
   "type": "module",
@@ -31,7 +31,7 @@
     ]
   },
   "dependencies": {
-    "dayjs": "1.11.21",
+    "dayjs": "1.11.23",
     "hast-util-select": "6.0.4",
     "hast-util-to-html": "9.0.5",
     "hast-util-to-text": "4.0.2",

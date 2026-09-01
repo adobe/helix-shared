@@ -5,6 +5,7 @@
   ],
   "timezone": "Europe/Zurich",
   "branchPrefix": "renovate-",
+  "osvVulnerabilityAlerts": true,
   "hostRules": [
     {
       "matchHost": "registry.npmjs.org",
@@ -86,6 +87,40 @@
       "excludePackagePatterns": ["^@adobe/"],
       "schedule": ["after 2pm on Monday"],
       "minimumReleaseAge": "14 days"
+    },
+    {
+      "description": "Split dev dependencies out of the two external groups above, so each group is smaller. The `renovate/stability-days` check is computed per branch, so any single member still inside its minimum release age holds the whole group back; smaller groups reach a fully-aged state more often. Split by depType rather than by package name so it needs no maintenance as dependencies change. These rules come after the two catch-all rules above and therefore override their `groupName`; the catch-alls deliberately keep no `matchDepTypes`, so anything that is not a devDependency -- runtime, optional and peer deps, npm `engines`, and every non-npm manager such as github-actions or dockerfile -- keeps its grouping and its 14-day minimum release age.",
+      "groupName": "external dev fixes",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch", "pin", "digest", "minor"],
+      "matchPackagePatterns": ["^.+"],
+      "excludePackagePatterns": ["^@adobe/"]
+    },
+    {
+      "description": "Same dev/runtime split as above, for major updates.",
+      "groupName": "external dev major",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["major"],
+      "matchPackagePatterns": ["^.+"],
+      "excludePackagePatterns": ["^@adobe/"]
+    },
+    {
+      "description": "Renovate cannot enforce a minimum release age on these update types, because they carry no usable release timestamp. Leaving them subject to `minimumReleaseAge` makes the branch-level `renovate/stability-days` check go permanently yellow, which silently blocks automerge forever. Mirrors the carve-outs in Renovate's own `security:minimumReleaseAge*` presets.",
+      "matchUpdateTypes": [
+        "pin",
+        "pinDigest",
+        "bump",
+        "lockfileUpdate",
+        "lockFileMaintenance",
+        "rollback",
+        "replacement"
+      ],
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Digest updates do have a release timestamp at lookup time, but the branch stage does not always carry it forward (renovatebot/renovate#45236), which strands the stability check in a permanently pending state. Accept a timestamp when one is available instead of requiring it.",
+      "matchUpdateTypes": ["digest"],
+      "minimumReleaseAgeBehaviour": "timestamp-optional"
     },
     {
       "matchDatasources": ["orb"],

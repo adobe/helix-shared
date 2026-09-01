@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-config",
-  "version": "11.2.0",
+  "version": "11.2.1",
   "description": "Shared modules of the Helix Project - config",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -53,6 +53,6 @@
     "@pollyjs/adapter-node-http": "6.0.6",
     "@pollyjs/core": "6.0.6",
     "@pollyjs/persister-fs": "6.0.6",
-    "nock": "14.0.16"
+    "nock": "14.0.17"
   }
 }

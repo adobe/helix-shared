@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-secrets",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "Shared modules of the Helix Project - secrets",
   "type": "module",
   "main": "src/secrets-wrapper.js",
@@ -39,6 +39,6 @@
     "@adobe/helix-universal": "^5.0.0"
   },
   "devDependencies": {
-    "nock": "14.0.16"
+    "nock": "14.0.17"
   }
 }

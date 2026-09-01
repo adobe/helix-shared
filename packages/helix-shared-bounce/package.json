@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-bounce",
-  "version": "2.0.34",
+  "version": "2.0.35",
   "description": "Shared modules of the Helix Project - bounce",
   "main": "src/bounce.js",
   "types": "src/bounce.d.ts",
@@ -39,6 +39,6 @@
   },
   "devDependencies": {
     "esmock": "2.7.6",
-    "nock": "14.0.16"
+    "nock": "14.0.17"
   }
 }
