@@ -17,6 +17,11 @@ import { MirroringBackend } from '@adobe/helix-shared-storage';
 import { S3Backend } from './S3Backend.js';
 
 /**
+ * @typedef {Object} CreateDefaultBackendFactoryOptions
+ * @property {Console} [log]
+ */
+
+/**
  * Builds the default `backendFactory` for `Storage`: S3 as the primary backend, with an
  * optional R2 mirror. Reads the same env vars that `Storage.fromContext()` used to read
  * directly before the storage-backend refactor.
@@ -27,8 +32,9 @@ import { S3Backend } from './S3Backend.js';
  * called `S3Client#destroy()` on close.
  *
  * @param {Record<string, string|undefined>} [env] environment variables (e.g. `context.env`)
- * @param {{log?: Console}} [opts]
- * @returns {Function} `(bucketId, opts?) => StorageBackend`
+ * @param {CreateDefaultBackendFactoryOptions} [opts]
+ * @returns {function(string, {disableR2?: boolean}=):
+ *   import('@adobe/helix-shared-storage').StorageBackend}
  */
 export function createDefaultBackendFactory(env = {}, { log = console } = {}) {
   const {

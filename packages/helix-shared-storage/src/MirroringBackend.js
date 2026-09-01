@@ -11,7 +11,14 @@
  */
 
 /**
- * A `StorageBackend` that mirrors writes to N backends of the same family (e.g. S3 +
+ * @typedef {Object} MirroringBackendOptions
+ * @property {import('./AbstractStorageBackend.js').StorageBackend} primary
+ * @property {import('./AbstractStorageBackend.js').StorageBackend[]} [secondaries]
+ * @property {Console} [log]
+ */
+
+/**
+ * A {@link StorageBackend} that mirrors writes to N backends of the same family (e.g. S3 +
  * R2), reading only from the `primary`. This generalizes the previous S3-only, exactly-2-client
  * mirroring: any number of `secondaries` may be configured, and failures are tagged by the
  * failing backend's identity (`name`), not by its position in the result array.
@@ -20,8 +27,13 @@
  * the primary's result is returned. If any backend fails (primary or a secondary), the whole
  * call rejects with that backend's error, its `message` prefixed with `[<name>]` — matching the
  * first-failing-backend-in-array precedence of the original implementation when multiple fail.
+ *
+ * @implements {import('./AbstractStorageBackend.js').StorageBackend}
  */
 export class MirroringBackend {
+  /**
+   * @param {MirroringBackendOptions} opts
+   */
   constructor({ primary, secondaries = [], log = console }) {
     this._primary = primary;
     this._backends = [primary, ...secondaries];

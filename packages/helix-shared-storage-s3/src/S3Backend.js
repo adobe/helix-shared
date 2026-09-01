@@ -88,12 +88,27 @@ function listResultToObjectInfos(result) {
 }
 
 /**
- * S3 (and Cloudflare R2, which is S3-compatible) {@link StorageBackend} implementation — the
- * default backend for `@adobe/helix-shared-storage`. A single instance wraps one `S3Client`
- * bound to one bucket; R2 mirroring is achieved by composing two `S3Backend` instances (one
- * per client) via `MirroringBackend`, not by this class itself.
+ * @typedef {Object} S3BackendOptions
+ * @property {import('@aws-sdk/client-s3').S3Client} client
+ * @property {string} name backend family tag used for error tagging when mirrored, e.g.
+ *  `'S3'` or `'R2'`
+ * @property {string} bucketName
+ * @property {Console} [log]
+ */
+
+/**
+ * S3 (and Cloudflare R2, which is S3-compatible)
+ * {@link import('@adobe/helix-shared-storage').StorageBackend} implementation — the default
+ * backend for `@adobe/helix-shared-storage`. A single instance wraps one `S3Client` bound to
+ * one bucket; R2 mirroring is achieved by composing two `S3Backend` instances (one per
+ * client) via `MirroringBackend`, not by this class itself.
+ *
+ * @implements {import('@adobe/helix-shared-storage').StorageBackend}
  */
 export class S3Backend extends AbstractStorageBackend {
+  /**
+   * @param {S3BackendOptions} opts
+   */
   constructor({
     client, name, bucketName, log = console,
   }) {
@@ -104,18 +119,27 @@ export class S3Backend extends AbstractStorageBackend {
     this._log = log;
   }
 
+  /** @type {string} */
   get name() {
     return this._name;
   }
 
+  /** @type {string} */
   get bucketName() {
     return this._bucketName;
   }
 
+  /** @type {import('@aws-sdk/client-s3').S3Client} */
   get client() {
     return this._client;
   }
 
+  /**
+   * @param {string} key already-sanitized object key
+   * @param {Record<string, unknown>} [meta] output object that receives the object's
+   *  metadata/system headers
+   * @returns {Promise<Buffer|null>}
+   */
   async get(key, meta = null) {
     const input = { Bucket: this._bucketName, Key: key };
     try {
@@ -144,6 +168,11 @@ export class S3Backend extends AbstractStorageBackend {
     }
   }
 
+  /**
+   * @param {string} key already-sanitized object key
+   * @param {Record<string, unknown>} [headOpts] extra fields merged into the underlying HEAD call
+   * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta|null>}
+   */
   async head(key, headOpts = {}) {
     const input = { ...headOpts, Bucket: this._bucketName, Key: key };
     try {
@@ -171,6 +200,12 @@ export class S3Backend extends AbstractStorageBackend {
     }
   }
 
+  /**
+   * @param {string} key already-sanitized object key
+   * @param {Buffer|string} body data to store
+   * @param {import('@adobe/helix-shared-storage').PutOptions} [opts]
+   * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
+   */
   async put(key, body, opts = {}) {
     const input = {
       Body: body,
@@ -190,6 +225,13 @@ export class S3Backend extends AbstractStorageBackend {
     };
   }
 
+  /**
+   * @param {string} src already-sanitized source key
+   * @param {string} dst already-sanitized destination key
+   * @param {import('@adobe/helix-shared-storage').CopyOptions} [opts]
+   * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
+   * @throws an error with `status: 404` if the source object does not exist
+   */
   async copy(src, dst, opts = {}) {
     // `opts` may carry raw, backend-native passthrough fields either flattened at the top
     // level (from Bucket._buildCopyOptions()) or nested under `copyOpts` (from
@@ -235,6 +277,12 @@ export class S3Backend extends AbstractStorageBackend {
     }
   }
 
+  /**
+   * @param {string|string[]} pathOrPaths single already-sanitized key, or array of them
+   * @param {import('@adobe/helix-shared-storage').RemoveOptions} [opts]
+   * @returns {Promise<Record<string, unknown>|
+   *   import('@adobe/helix-shared-storage').BulkRemoveResult>}
+   */
   async remove(pathOrPaths, opts = {}) {
     const { sourceInfo = '', stopOnError = false } = opts;
     const bucket = this._bucketName;
@@ -311,6 +359,11 @@ export class S3Backend extends AbstractStorageBackend {
     }
   }
 
+  /**
+   * @param {string} prefix already-sanitized key prefix to list under
+   * @param {import('@adobe/helix-shared-storage').BackendListOptions} [opts]
+   * @returns {Promise<import('@adobe/helix-shared-storage').ListResult>}
+   */
   async list(prefix, opts = {}) {
     const { shallow = false, maxItems = Number.POSITIVE_INFINITY } = opts;
 
@@ -334,6 +387,11 @@ export class S3Backend extends AbstractStorageBackend {
     return { prefix, objects, continuationToken: undefined };
   }
 
+  /**
+   * @param {string} prefix already-sanitized key prefix to browse
+   * @param {import('@adobe/helix-shared-storage').BrowseOptions} [opts]
+   * @returns {Promise<import('@adobe/helix-shared-storage').ListResult>}
+   */
   async browse(prefix, opts = {}) {
     const { continuationToken, maxItems } = opts;
 

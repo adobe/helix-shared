@@ -17,6 +17,19 @@ import processQueue from '@adobe/helix-shared-process-queue';
 const gzip = promisify(zlib.gzip);
 
 /**
+ * @typedef {Object} BucketOptions
+ * @property {import('./AbstractStorageBackend.js').StorageBackend} backend
+ * @property {Console} [log]
+ */
+
+/**
+ * A backend's `CommonObjectMeta`, plus a spread of its raw, backend-native response fields.
+ *
+ * @typedef {import('./AbstractStorageBackend.js').CommonObjectMeta &
+ *   Record<string, unknown>} RawObjectMeta
+ */
+
+/**
  * Response header names mapped to the corresponding common (lowerCamelCase) field on a
  * `StorageBackend`'s `put()` `opts`. When {@link Bucket#store} encounters one of these
  * headers, it forwards the value as a system field rather than writing it as user metadata.
@@ -68,7 +81,8 @@ export function sanitizePrefix(prefix) {
 /**
  * Resolve metadata object for copy operations.
  *
- * @param {object} commonMeta metadata as returned by a `StorageBackend`'s `head()`
+ * @param {import('./AbstractStorageBackend.js').CommonObjectMeta} commonMeta metadata as
+ *  returned by a `StorageBackend`'s `head()`
  * @param {Record<string, string>} renameMeta { srcKey -> dstKey }
  * @param {Record<string, string>} addMeta { key -> value }
  * @returns {Record<string, string>}
@@ -110,17 +124,25 @@ export function resolveMetadataForCopy(commonMeta = {}, renameMeta = {}, addMeta
 }
 
 /**
- * Thin, backend-agnostic facade wrapping a single `StorageBackend`. Hosts the generic
- * compositions (`store`, `copyDeep`, `rmdir`) and the hoisted copy/metadata algebra that are
- * reused by every backend, on top of the backend's mandatory primitives.
+ * Thin, backend-agnostic facade wrapping a single `StorageBackend` (see
+ * {@link AbstractStorageBackend}). Hosts the generic compositions (`store`, `copyDeep`,
+ * `rmdir`) and the hoisted copy/metadata algebra that are reused by every backend, on top of
+ * the backend's mandatory primitives.
  */
 export class Bucket {
+  /**
+   * @param {BucketOptions} opts
+   */
   constructor({ backend, log = console }) {
     this._backend = backend;
     this._log = log;
   }
 
-  /** @returns {unknown} the backend's native client */
+  /**
+   * The backend's native client (e.g. an `S3Client`); throws if the backend has none.
+   *
+   * @returns {*}
+   */
   get client() {
     const c = this._backend.client;
     if (!c) {
@@ -129,23 +151,38 @@ export class Bucket {
     return c;
   }
 
-  /** @type {string} */
+  /** @type {string} the bucket name */
   get bucket() {
     return this._backend.bucketName;
   }
 
+  /** @type {Console} */
   get log() {
     return this._log;
   }
 
+  /**
+   * @param {string} key object key
+   * @param {Record<string, unknown>} [meta] output object that receives the object's metadata
+   * @returns {Promise<Buffer|null>}
+   */
   async get(key, meta = null) {
     return this._backend.get(sanitizeKey(key), meta);
   }
 
+  /**
+   * @param {string} path object key
+   * @param {Record<string, unknown>} [headOpts] extra fields merged into the underlying HEAD call
+   * @returns {Promise<RawObjectMeta|null>}
+   */
   async head(path, headOpts = {}) {
     return this._backend.head(sanitizeKey(path), headOpts);
   }
 
+  /**
+   * @param {string} key object key
+   * @returns {Promise<Record<string, string>|undefined>}
+   */
   async metadata(key) {
     return this._backend.metadata(sanitizeKey(key));
   }
@@ -157,7 +194,7 @@ export class Bucket {
    * written as user metadata.
    *
    * @param {string} key object key
-   * @param {Response} res response whose body and headers should be stored
+   * @param {import('@adobe/fetch').Response} res response whose body and headers should be stored
    * @returns {Promise<void>}
    */
   async store(key, res) {
@@ -180,6 +217,18 @@ export class Bucket {
     this._log.info(`object uploaded to: ${this.bucket}/${dstKey}`);
   }
 
+  /**
+   * Store an object's contents along with metadata. Mirrored to any secondary backends
+   * configured on the resolved `StorageBackend`.
+   *
+   * @param {string} path object key
+   * @param {Buffer|string} body data to store
+   * @param {string} [contentType] content type. Defaults to `application/octet-stream`.
+   * @param {Record<string, string>} [meta] metadata to store with the object. Defaults to `{}`.
+   * @param {boolean} [compress] whether to gzip the body and set `contentEncoding: 'gzip'`.
+   *  Defaults to `true`.
+   * @returns {Promise<RawObjectMeta>}
+   */
   async put(path, body, contentType = 'application/octet-stream', meta = {}, compress = true) {
     const putOpts = { contentType, metadata: meta };
     let payload = body;
@@ -193,6 +242,14 @@ export class Bucket {
     return res;
   }
 
+  /**
+   * Replace an object's user metadata via a self-copy with `metadataDirective: 'REPLACE'`.
+   *
+   * @param {string} path object key
+   * @param {Record<string, string>} meta new metadata (fully replaces existing metadata)
+   * @param {Record<string, unknown>} [opts] extra fields merged into the underlying copy call
+   * @returns {Promise<unknown>}
+   */
   async putMeta(path, meta, opts = {}) {
     return this._backend.putMeta(sanitizeKey(path), meta, opts);
   }
@@ -202,8 +259,8 @@ export class Bucket {
    * "source does not exist") when metadata mutation was requested but the source HEAD failed.
    *
    * @param {string} srcKey already-sanitized source key
-   * @param {object} opts
-   * @returns {Promise<object|null>}
+   * @param {import('./storage.js').CopyOptions} opts
+   * @returns {Promise<import('./AbstractStorageBackend.js').CopyOptions|null>}
    */
   async _buildCopyOptions(srcKey, opts) {
     if (!opts.addMetadata && !opts.renameMetadata) {
@@ -232,7 +289,8 @@ export class Bucket {
    *
    * @param {string} src source key
    * @param {string} dst destination key
-   * @param {object} [opts]
+   * @param {import('./storage.js').CopyOptions} [opts]
+   * @returns {Promise<RawObjectMeta|undefined>}
    * @throws an error with `status: 404` if the source object does not exist
    */
   async copy(src, dst, opts = {}) {
@@ -249,6 +307,16 @@ export class Bucket {
     return result.CopyObjectResult ?? result;
   }
 
+  /**
+   * Remove a single object, or (when `path` is an array) multiple objects — each backend owns
+   * its own batching/chunking for the array form.
+   *
+   * @param {string|string[]} path single key, or array of keys
+   * @param {string} [sourceInfo] informational message used in log output (array form only)
+   * @param {boolean} [stopOnError] when `true` and `path` is an array, backends may throw on
+   *  the first failure instead of collecting errors
+   * @returns {Promise<Record<string, unknown>|import('./storage.js').BulkDeleteResult>}
+   */
   async remove(path, sourceInfo = '', stopOnError = false) {
     if (Array.isArray(path)) {
       return this._backend.remove(path.map(sanitizeKey), { sourceInfo, stopOnError });
@@ -256,14 +324,34 @@ export class Bucket {
     return this._backend.remove(sanitizeKey(path));
   }
 
+  /**
+   * Auto-paginated listing of entries below `prefix`.
+   *
+   * @param {string} prefix key prefix to list under (leading/trailing `/` are normalised)
+   * @param {import('./storage.js').ListOptions} [opts]
+   * @returns {Promise<import('./storage.js').ListResult>}
+   */
   async list(prefix, opts = {}) {
     return this._backend.list(sanitizePrefix(prefix), opts);
   }
 
+  /**
+   * Single-page, always-shallow listing intended for paginated UI browsing.
+   *
+   * @param {string} prefix key prefix to browse (leading/trailing `/` are normalised)
+   * @param {import('./storage.js').BrowseOptions} [opts]
+   * @returns {Promise<import('./storage.js').ListResult>}
+   */
   async browse(prefix, opts = {}) {
     return this._backend.browse(sanitizePrefix(prefix), opts);
   }
 
+  /**
+   * Convenience wrapper returning only folder basenames directly below `prefix`.
+   *
+   * @param {string} prefix key prefix to list under (leading/trailing `/` are normalised)
+   * @returns {Promise<string[]>}
+   */
   async listFolders(prefix) {
     return this._backend.listFolders(sanitizePrefix(prefix));
   }
@@ -275,8 +363,11 @@ export class Bucket {
    *
    * @param {string} src source prefix
    * @param {string} dst destination prefix
-   * @param {Function} [filter]
-   * @param {object} [opts]
+   * @param {import('./storage.js').ObjectFilter} [filter] only objects for which it returns
+   *  truthy are copied
+   * @param {import('./storage.js').CopyOptions} [opts]
+   * @returns {Promise<Array<{src: string, dst: string, contentLength?: number,
+   *  contentType?: (string|null)}>>} the list of tasks that were copied successfully
    */
   async copyDeep(src, dst, filter = () => true, opts = {}) {
     const tasks = [];
@@ -322,6 +413,7 @@ export class Bucket {
    * Recursively delete every object below `src`.
    *
    * @param {string} src key prefix
+   * @returns {Promise<import('./storage.js').BulkDeleteResult>}
    */
   async rmdir(src) {
     const key = sanitizeKey(src);

@@ -37,6 +37,11 @@ export class StorageS3 extends Storage {
     'content-language': 'ContentLanguage',
   };
 
+  /**
+   * @param {import('@adobe/helix-shared-storage').StorageContext} context
+   * @param {Partial<import('@adobe/helix-shared-storage').StorageOptions>} [opts]
+   * @returns {StorageS3}
+   */
   static fromContext(context, opts = {}) {
     return super.fromContext(context, {
       backendFactory: createDefaultBackendFactory(context.env, { log: context.log }),
