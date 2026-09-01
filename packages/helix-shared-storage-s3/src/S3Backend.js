@@ -278,22 +278,23 @@ export class S3Backend extends AbstractStorageBackend {
   async copy(src, dst, opts = {}) {
     // `opts` carries raw, backend-native passthrough fields flattened at the top level by
     // Bucket._buildCopyOptions(). The named PascalCase fields below are only applied when the
-    // corresponding common field is actually set, so an explicit raw passthrough value isn't
-    // clobbered by an absent common-field override.
+    // corresponding common field is actually set *and* the raw passthrough didn't already
+    // explicitly set that same field — an absent (or head-derived, "preserve on REPLACE")
+    // common-field value must never clobber an explicit `copyOpts` override, in either
+    // direction: neither by being missing (already handled by the `undefined` check) nor by
+    // being present (the caller's explicit raw value wins).
     const input = {
       ...opts,
       Bucket: this._bucketName,
       CopySource: `${this._bucketName}/${src}`,
       Key: dst,
     };
-    // only override a raw passthrough field when the corresponding common field is actually
-    // set — an absent common field must not clobber an explicit `copyOpts` value
     const systemFields = { Metadata: opts.metadata, MetadataDirective: opts.metadataDirective };
     Object.entries(SYSTEM_META_FIELDS).forEach(([common, pascal]) => {
       systemFields[pascal] = opts[common];
     });
     Object.entries(systemFields).forEach(([key, value]) => {
-      if (value !== undefined) {
+      if (value !== undefined && input[key] === undefined) {
         input[key] = value;
       }
     });

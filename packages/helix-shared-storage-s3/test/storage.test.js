@@ -1250,6 +1250,27 @@ describe('Storage test', () => {
     );
   });
 
+  it('an explicit copyOpts.ContentType is not clobbered by the source\'s HEAD-derived content type when addMetadata is also used', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .head('/owner/repo/ref/foo.md')
+      .reply(200, [], { 'content-type': 'text/plain' })
+      .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
+      .matchHeader('content-type', 'text/custom')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>');
+
+    const bus = storage.codeBus({ disableR2: true });
+    await bus.copy(
+      '/owner/repo/ref/foo.md',
+      '/owner/repo/ref/foo/bar.md',
+      {
+        addMetadata: { a: '1' },
+        copyOpts: {
+          ContentType: 'text/custom',
+        },
+      },
+    );
+  });
+
   it('can delete objects', async () => {
     const keys = Array.from({ length: 1500 }, (v, k) => `key_${k + 1}`).sort();
     const listReply = new xml2js.Builder().buildObject({
