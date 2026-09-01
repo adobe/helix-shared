@@ -14,18 +14,11 @@ import { promisify } from 'util';
 import zlib from 'zlib';
 import processQueue from '@adobe/helix-shared-process-queue';
 
-/**
- * @typedef {import('./StorageBackend.d').StorageBackend} StorageBackend
- * @typedef {import('./storage.d').Bucket} BucketType
- * @typedef {import('./storage.d').CopyOptions} CopyOptions
- * @typedef {import('./storage.d').ObjectFilter} ObjectFilter
- */
-
 const gzip = promisify(zlib.gzip);
 
 /**
- * Response header names mapped to the corresponding common (lowerCamelCase) field on
- * {@link StorageBackend#put}'s `opts`. When {@link Bucket#store} encounters one of these
+ * Response header names mapped to the corresponding common (lowerCamelCase) field on a
+ * `StorageBackend`'s `put()` `opts`. When {@link Bucket#store} encounters one of these
  * headers, it forwards the value as a system field rather than writing it as user metadata.
  */
 const SYSTEM_HEADER_TO_COMMON = {
@@ -75,8 +68,7 @@ export function sanitizePrefix(prefix) {
 /**
  * Resolve metadata object for copy operations.
  *
- * @param {import('./StorageBackend.d').CommonObjectMeta} commonMeta metadata as returned by
- *  {@link StorageBackend#head}
+ * @param {object} commonMeta metadata as returned by a `StorageBackend`'s `head()`
  * @param {Record<string, string>} renameMeta { srcKey -> dstKey }
  * @param {Record<string, string>} addMeta { key -> value }
  * @returns {Record<string, string>}
@@ -118,11 +110,9 @@ export function resolveMetadataForCopy(commonMeta = {}, renameMeta = {}, addMeta
 }
 
 /**
- * Thin, backend-agnostic facade wrapping a single {@link StorageBackend}. Hosts the generic
+ * Thin, backend-agnostic facade wrapping a single `StorageBackend`. Hosts the generic
  * compositions (`store`, `copyDeep`, `rmdir`) and the hoisted copy/metadata algebra that are
  * reused by every backend, on top of the backend's mandatory primitives.
- *
- * @implements {BucketType}
  */
 export class Bucket {
   constructor({ backend, log = console }) {
@@ -212,8 +202,8 @@ export class Bucket {
    * "source does not exist") when metadata mutation was requested but the source HEAD failed.
    *
    * @param {string} srcKey already-sanitized source key
-   * @param {CopyOptions} opts
-   * @returns {Promise<import('./StorageBackend.d').CopyOptions|null>}
+   * @param {object} opts
+   * @returns {Promise<object|null>}
    */
   async _buildCopyOptions(srcKey, opts) {
     if (!opts.addMetadata && !opts.renameMetadata) {
@@ -242,7 +232,7 @@ export class Bucket {
    *
    * @param {string} src source key
    * @param {string} dst destination key
-   * @param {CopyOptions} [opts]
+   * @param {object} [opts]
    * @throws an error with `status: 404` if the source object does not exist
    */
   async copy(src, dst, opts = {}) {
@@ -285,8 +275,8 @@ export class Bucket {
    *
    * @param {string} src source prefix
    * @param {string} dst destination prefix
-   * @param {ObjectFilter} [filter]
-   * @param {CopyOptions} [opts]
+   * @param {Function} [filter]
+   * @param {object} [opts]
    */
   async copyDeep(src, dst, filter = () => true, opts = {}) {
     const tasks = [];

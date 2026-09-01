@@ -12,7 +12,7 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
-import { HelixStorage, parseBucketNames, resolveMetadataForCopy } from '../src/storage.js';
+import { Storage, parseBucketNames, resolveMetadataForCopy } from '../src/storage.js';
 
 describe('resolveMetadataForCopy()', () => {
   it('resolves metadata', () => {
@@ -97,7 +97,7 @@ describe('parseBucketNames()', () => {
   });
 });
 
-describe('HelixStorage', () => {
+describe('Storage', () => {
   let calls;
   let storage;
 
@@ -108,7 +108,7 @@ describe('HelixStorage', () => {
 
   beforeEach(() => {
     calls = [];
-    storage = new HelixStorage({ backendFactory });
+    storage = new Storage({ backendFactory });
   });
 
   afterEach(() => {
@@ -116,7 +116,7 @@ describe('HelixStorage', () => {
   });
 
   it('bucket() throws when no backendFactory is configured', () => {
-    const s = new HelixStorage();
+    const s = new Storage();
     assert.throws(
       () => s.bucket('foo'),
       /No backendFactory configured/,
@@ -179,7 +179,7 @@ describe('HelixStorage', () => {
       media: 'bucket-04',
       source: 'bucket-05',
     };
-    storage = new HelixStorage({ backendFactory, bucketNames: JSON.stringify(map) });
+    storage = new Storage({ backendFactory, bucketNames: JSON.stringify(map) });
     assert.strictEqual(storage.codeBus().bucket, 'bucket-01');
   });
 
@@ -188,9 +188,9 @@ describe('HelixStorage', () => {
       env: { backendFactory },
       attributes: {},
     };
-    const stor = HelixStorage.fromContext(ctx);
-    assert.ok(stor instanceof HelixStorage);
-    assert.strictEqual(HelixStorage.fromContext(ctx), stor);
+    const stor = Storage.fromContext(ctx);
+    assert.ok(stor instanceof Storage);
+    assert.strictEqual(Storage.fromContext(ctx), stor);
   });
 
   it('fromContext() forwards opts to the constructor', () => {
@@ -198,7 +198,7 @@ describe('HelixStorage', () => {
       env: {},
       attributes: {},
     };
-    const stor = HelixStorage.fromContext(ctx, { backendFactory });
+    const stor = Storage.fromContext(ctx, { backendFactory });
     assert.strictEqual(stor.contentBus().bucket, 'helix-content-bus');
   });
 });

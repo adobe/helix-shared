@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export { parseBucketNames, resolveMetadataForCopy, HelixStorage } from './storage.js';
+export { parseBucketNames, resolveMetadataForCopy, Storage } from './storage.js';
 export { Bucket } from './Bucket.js';
 export { MirroringBackend } from './MirroringBackend.js';
 export { AbstractStorageBackend } from './AbstractStorageBackend.js';

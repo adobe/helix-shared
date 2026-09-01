@@ -4,7 +4,6 @@
   "description": "Shared modules of the Helix Project - S3/R2 storage backend for @adobe/helix-shared-storage",
   "main": "src/index.js",
   "type": "module",
-  "types": "src/index.d.ts",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",

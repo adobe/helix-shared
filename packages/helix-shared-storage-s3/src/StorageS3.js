@@ -10,21 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import { HelixStorage } from '@adobe/helix-shared-storage';
+import { Storage } from '@adobe/helix-shared-storage';
 import { createDefaultBackendFactory } from './createDefaultBackendFactory.js';
 
 /**
- * `HelixStorage` subclass pre-wired with the default S3(+R2) `backendFactory`, so existing
- * consumers of `HelixStorage.fromContext()` migrate with a one-line import change:
+ * `Storage` subclass pre-wired with the default S3(+R2) `backendFactory`, so existing
+ * consumers of `Storage.fromContext()` migrate with a one-line import change:
  *
  * ```diff
- * - import { HelixStorage } from '@adobe/helix-shared-storage';
- * + import { HelixStorageS3 as HelixStorage } from '@adobe/helix-shared-storage-s3';
+ * - import { Storage } from '@adobe/helix-shared-storage';
+ * + import { StorageS3 as Storage } from '@adobe/helix-shared-storage-s3';
  * ```
  *
  * No other call site changes are required.
  */
-export class HelixStorageS3 extends HelixStorage {
+export class StorageS3 extends Storage {
   /**
    * Mapping from lowercase HTTP header name to the corresponding `*Command` input property.
    * Carried over unchanged from core's pre-refactor `HelixStorage.AWS_S3_SYSTEM_HEADERS`

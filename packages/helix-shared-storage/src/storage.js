@@ -12,22 +12,15 @@
 
 import { Bucket } from './Bucket.js';
 
-/**
- * @typedef {import('./storage.d').HelixStorage} HelixStorageType
- * @typedef {import('./storage.d').HelixStorageOptions} HelixStorageOptions
- * @typedef {import('./storage.d').HelixStorageContext} HelixStorageContext
- * @typedef {import('./storage.d').BucketMap} BucketMap
- * @typedef {import('./StorageBackend.d').StorageBackend} StorageBackend
- */
-
 const BUCKET_KEYS = ['config', 'code', 'content', 'media', 'source'];
 
 /**
- * Parses the `HELIX_BUCKET_NAMES` env var into a {@link BucketMap}. When `bucketNames`
- * is falsy, returns the default `helix-<key>-bus` mapping for each well-known bus.
+ * Parses the `HELIX_BUCKET_NAMES` env var into a bus-key -> bucket-name map. When
+ * `bucketNames` is falsy, returns the default `helix-<key>-bus` mapping for each well-known
+ * bus.
  *
  * @param {string} [bucketNames] JSON-encoded bus-key -> bucket-name map
- * @returns {BucketMap}
+ * @returns {object}
  */
 export function parseBucketNames(bucketNames) {
   if (!bucketNames) {
@@ -39,23 +32,21 @@ export function parseBucketNames(bucketNames) {
 export { resolveMetadataForCopy } from './Bucket.js';
 
 /**
- * The Helix Storage provides a factory for simplified bucket operations against a pluggable
- * storage backend family (e.g. S3+R2, Azure Blob, ...). A single `HelixStorage` instance is
+ * The Storage provides a factory for simplified bucket operations against a pluggable
+ * storage backend family (e.g. S3+R2, Azure Blob, ...). A single `Storage` instance is
  * configured with one `backendFactory`, used to resolve every bucket it hands out.
- *
- * @implements {HelixStorageType}
  */
-export class HelixStorage {
+export class Storage {
   /**
-   * Get (and lazily construct + cache) a {@link HelixStorage} for a Helix function
+   * Get (and lazily construct + cache) a {@link Storage} for a Helix function
    * `context`. Caches the resulting instance on `context.attributes.storage` so repeat calls
    * within the same invocation share it. Uses `new this(...)` so that a subclass (e.g.
-   * `HelixStorageS3` from `@adobe/helix-shared-storage-s3`) calling `super.fromContext(...)`
-   * gets an instance of itself, not of the base `HelixStorage`.
+   * `StorageS3` from `@adobe/helix-shared-storage-s3`) calling `super.fromContext(...)`
+   * gets an instance of itself, not of the base `Storage`.
    *
-   * @param {HelixStorageContext} context
-   * @param {Partial<HelixStorageOptions>} [opts]
-   * @returns {HelixStorage}
+   * @param {object} context Helix function context; `attributes.storage` is used as the cache
+   * @param {object} [opts]
+   * @returns {Storage}
    */
   static fromContext(context, opts = {}) {
     if (!context.attributes.storage) {
@@ -73,7 +64,10 @@ export class HelixStorage {
   /**
    * Create a storage instance.
    *
-   * @param {HelixStorageOptions} [opts]
+   * @param {object} [opts]
+   * @param {string} [opts.bucketNames] JSON-encoded bus-key -> bucket-name map
+   * @param {Console} [opts.log]
+   * @param {Function} [opts.backendFactory] resolves a `StorageBackend` for a given bucket id
    */
   constructor(opts = {}) {
     const { bucketNames, log = console, backendFactory } = opts;
@@ -106,7 +100,7 @@ export class HelixStorage {
       throw new Error(
         'No backendFactory configured. Install @adobe/helix-shared-storage-s3 (or another '
         + 'backend package) and pass its factory as `backendFactory`, e.g. '
-        + 'new HelixStorage({ backendFactory: createDefaultBackendFactory(env) }).',
+        + 'new Storage({ backendFactory: createDefaultBackendFactory(env) }).',
       );
     }
     return new Bucket({
@@ -169,7 +163,7 @@ export class HelixStorage {
 
   /**
    * Close this storage, rendering this instance unusable; subsequent calls to
-   * {@link HelixStorage#bucket} throw. The configured `backendFactory` owns the lifecycle of
+   * {@link Storage#bucket} throw. The configured `backendFactory` owns the lifecycle of
    * any native clients it created.
    */
   close() {

@@ -12,12 +12,12 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
-import { HelixStorage } from '@adobe/helix-shared-storage';
-import { HelixStorageS3 } from '../src/HelixStorageS3.js';
+import { Storage } from '@adobe/helix-shared-storage';
+import { StorageS3 } from '../src/StorageS3.js';
 
-describe('HelixStorageS3', () => {
+describe('StorageS3', () => {
   it('exposes AWS_S3_SYSTEM_HEADERS, carried over unchanged from core\'s pre-refactor static', () => {
-    assert.deepStrictEqual(HelixStorageS3.AWS_S3_SYSTEM_HEADERS, {
+    assert.deepStrictEqual(StorageS3.AWS_S3_SYSTEM_HEADERS, {
       'content-type': 'ContentType',
       'content-disposition': 'ContentDisposition',
       'content-encoding': 'ContentEncoding',
@@ -25,24 +25,24 @@ describe('HelixStorageS3', () => {
     });
   });
 
-  it('fromContext() caches an instance that is both HelixStorageS3 and HelixStorage', () => {
+  it('fromContext() caches an instance that is both StorageS3 and Storage', () => {
     const context = { env: { HELIX_STORAGE_DISABLE_R2: 'true' }, log: console, attributes: {} };
-    const stor = HelixStorageS3.fromContext(context);
-    assert.ok(stor instanceof HelixStorageS3);
-    assert.ok(stor instanceof HelixStorage);
+    const stor = StorageS3.fromContext(context);
+    assert.ok(stor instanceof StorageS3);
+    assert.ok(stor instanceof Storage);
     assert.strictEqual(context.attributes.storage, stor);
   });
 
   it('fromContext() returns the same cached instance on repeated calls', () => {
     const context = { env: { HELIX_STORAGE_DISABLE_R2: 'true' }, log: console, attributes: {} };
-    const first = HelixStorageS3.fromContext(context);
-    const second = HelixStorageS3.fromContext(context);
+    const first = StorageS3.fromContext(context);
+    const second = StorageS3.fromContext(context);
     assert.strictEqual(first, second);
   });
 
   it('forwards opts without requiring the caller to pass backendFactory directly', () => {
     const context = { env: { HELIX_STORAGE_DISABLE_R2: 'true' }, log: console, attributes: {} };
-    const stor = HelixStorageS3.fromContext(context, { bucketNames: JSON.stringify({ code: 'my-code-bus' }) });
+    const stor = StorageS3.fromContext(context, { bucketNames: JSON.stringify({ code: 'my-code-bus' }) });
     assert.strictEqual(stor.codeBus().bucket, 'my-code-bus');
   });
 });

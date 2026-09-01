@@ -10,18 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-/**
- * @typedef {import('./StorageBackend.d').StorageBackend} StorageBackend
- */
-
 /* eslint-disable class-methods-use-this -- mandatory-primitive stubs intentionally ignore `this` */
 /**
- * Convenience base class for {@link StorageBackend} implementations. Subclasses only need to
- * implement the 6 mandatory primitives (`get`, `head`, `put`, `copy`, `remove`, `list`) to get
- * all 10 interface methods for free; `metadata`/`putMeta`/`listFolders`/`browse` have generic
- * default bodies here, in terms of the mandatory primitives, overridable for efficiency.
- *
- * @implements {StorageBackend}
+ * Convenience base class for `StorageBackend` implementations (a plain, un-typed convention:
+ * `get`, `head`, `put`, `copy`, `remove`, `list`, `metadata`, `putMeta`, `listFolders`,
+ * `browse`). Subclasses only need to implement the 6 mandatory primitives (`get`, `head`,
+ * `put`, `copy`, `remove`, `list`) to get all 10 methods for free; `metadata`/`putMeta`/
+ * `listFolders`/`browse` have generic default bodies here, in terms of the mandatory
+ * primitives, overridable for efficiency.
  */
 export class AbstractStorageBackend {
   async get() {

@@ -4,7 +4,6 @@
   "description": "Shared modules of the Helix Project - storage",
   "main": "src/index.js",
   "type": "module",
-  "types": "src/index.d.ts",
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",

@@ -60,11 +60,12 @@ function basename(key) {
 }
 
 /**
- * Map a `ListObjectsV2` response into {@link ObjectInfo} entries. The `Delimiter` setting on
- * the underlying request determines whether `CommonPrefixes` are present.
+ * Map a `ListObjectsV2` response into `ObjectInfo` entries (`{key, name, isFolder, ...}`).
+ * The `Delimiter` setting on the underlying request determines whether `CommonPrefixes` are
+ * present.
  *
  * @param {object} result the `ListObjectsV2Command` response
- * @returns {import('@adobe/helix-shared-storage').ObjectInfo[]}
+ * @returns {object[]}
  */
 function listResultToObjectInfos(result) {
   const objects = [];

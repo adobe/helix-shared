@@ -12,4 +12,4 @@
 
 export { S3Backend } from './S3Backend.js';
 export { createDefaultBackendFactory } from './createDefaultBackendFactory.js';
-export { HelixStorageS3 } from './HelixStorageS3.js';
+export { StorageS3 } from './StorageS3.js';

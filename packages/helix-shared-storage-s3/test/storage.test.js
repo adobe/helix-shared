@@ -21,9 +21,9 @@ import xml2js from 'xml2js';
 import zlib from 'zlib';
 import { S3Client } from '@aws-sdk/client-s3';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
-import { HelixStorage, MirroringBackend } from '@adobe/helix-shared-storage';
+import { Storage, MirroringBackend } from '@adobe/helix-shared-storage';
 import { Nock } from './utils.js';
-import { HelixStorageS3 } from '../src/HelixStorageS3.js';
+import { StorageS3 } from '../src/StorageS3.js';
 import { S3Backend } from '../src/S3Backend.js';
 
 const gzip = promisify(zlib.gzip);
@@ -43,7 +43,7 @@ const TEST_HEADERS = [
 ];
 
 /**
- * Builds a `HelixStorageS3` wired directly against fake, static test credentials (rather than
+ * Builds a `StorageS3` wired directly against fake, static test credentials (rather than
  * via `createDefaultBackendFactory`'s env-driven, ambient-credential-chain-only behavior).
  */
 function buildTestStorage(opts = {}) {
@@ -76,7 +76,7 @@ function buildTestStorage(opts = {}) {
     });
     return new MirroringBackend({ primary: s3Backend, secondaries: [r2Backend] });
   };
-  return new HelixStorageS3({ backendFactory, ...opts });
+  return new StorageS3({ backendFactory, ...opts });
 }
 
 describe('Storage test', () => {
@@ -132,10 +132,10 @@ describe('Storage test', () => {
       },
       attributes: {},
     };
-    const stor = HelixStorageS3.fromContext(ctx);
+    const stor = StorageS3.fromContext(ctx);
     assert.ok(stor);
-    assert.ok(stor instanceof HelixStorageS3);
-    assert.ok(stor instanceof HelixStorage);
+    assert.ok(stor instanceof StorageS3);
+    assert.ok(stor instanceof Storage);
   });
 
   it('can get the s3 client', () => {
@@ -1780,7 +1780,7 @@ describe('Disabled R2 Storage test', () => {
         HELIX_HTTP_S3_DISABLE_EXPECT_CONTINUE: 'true',
       },
     };
-    storage = HelixStorageS3.fromContext(context);
+    storage = StorageS3.fromContext(context);
   });
 
   afterEach(() => {
