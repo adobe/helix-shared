@@ -22,21 +22,26 @@ import { S3Backend } from './S3Backend.js';
  */
 
 /**
- * Builds the default `backendFactory` for `Storage`: S3 as the primary backend, with an
- * optional R2 mirror. Reads the same env vars that `Storage.fromContext()` used to read
- * directly before the storage-backend refactor.
- *
- * Note: the `S3Client`(s) built here are never explicitly disposed — `Storage#close()`
- * no longer owns backend client lifecycles (the `backendFactory` is a plain closure with no
- * disposal hook). This is a minor, accepted regression versus the pre-refactor behavior, which
- * called `S3Client#destroy()` on close.
+ * @typedef {Object} BackendFactoryOpts
+ * @property {number} connectionTimeout
+ * @property {number} socketTimeout
+ * @property {boolean} keepAlive
+ * @property {boolean} disableExpectContinueHeader
+ * @property {string} [r2AccountId]
+ * @property {string} [r2AccessKeyId]
+ * @property {string} [r2SecretAccessKey]
+ * @property {boolean} disableR2
+ * @property {number} [maxAttempts]
+ */
+
+/**
+ * Parses the env vars consumed by `createBackendFactory()` into a plain opts object, applying
+ * the same defaults and type coercions (booleans/numbers arrive as strings in `env`).
  *
  * @param {Record<string, string|undefined>} [env] environment variables (e.g. `context.env`)
- * @param {CreateDefaultBackendFactoryOptions} [opts]
- * @returns {function(string, {disableR2?: boolean}=):
- *   import('@adobe/helix-shared-storage').StorageBackend}
+ * @returns {BackendFactoryOpts}
  */
-export function createDefaultBackendFactory(env = {}, { log = console } = {}) {
+function parseBackendFactoryEnvOpts(env = {}) {
   const {
     HELIX_HTTP_CONNECTION_TIMEOUT: connectionTimeout = 5000,
     HELIX_HTTP_SOCKET_TIMEOUT: socketTimeout = 15000,
@@ -49,21 +54,59 @@ export function createDefaultBackendFactory(env = {}, { log = console } = {}) {
     HELIX_STORAGE_MAX_ATTEMPTS: maxAttempts,
   } = env;
 
+  const parsedMaxAttempts = Number.parseInt(maxAttempts, 10);
+
+  return {
+    connectionTimeout,
+    socketTimeout,
+    keepAlive: String(keepAlive) === 'true',
+    disableExpectContinueHeader: String(disableExpectContinueHeader) === 'true',
+    r2AccountId,
+    r2AccessKeyId,
+    r2SecretAccessKey,
+    disableR2: String(disableR2) === 'true',
+    maxAttempts: Number.isNaN(parsedMaxAttempts) ? undefined : parsedMaxAttempts,
+  };
+}
+
+/**
+ * Builds the `backendFactory` for `Storage`: S3 as the primary backend, with an optional R2
+ * mirror, from an already-parsed {@link BackendFactoryOpts}. Use this directly when you need to
+ * override individual values; use `createDefaultBackendFactory()` to build straight from `env`.
+ *
+ * Note: the `S3Client`(s) built here are never explicitly disposed — `Storage#close()`
+ * no longer owns backend client lifecycles (the `backendFactory` is a plain closure with no
+ * disposal hook). This is a minor, accepted regression versus the pre-refactor behavior, which
+ * called `S3Client#destroy()` on close.
+ *
+ * @param {BackendFactoryOpts} opts
+ * @param {CreateDefaultBackendFactoryOptions} [factoryOpts]
+ * @returns {function(string, {disableR2?: boolean}=):
+ *   import('@adobe/helix-shared-storage').StorageBackend}
+ */
+export function createBackendFactory({
+  connectionTimeout,
+  socketTimeout,
+  keepAlive,
+  disableExpectContinueHeader,
+  r2AccountId,
+  r2AccessKeyId,
+  r2SecretAccessKey,
+  disableR2,
+  maxAttempts,
+}, { log = console } = {}) {
   const baseOpts = {
     region: 'us-east-1',
     requestHandler: new NodeHttpHandler({
-      httpsAgent: new Agent({
-        keepAlive: String(keepAlive) === 'true',
-      }),
+      httpsAgent: new Agent({ keepAlive }),
       connectionTimeout,
       socketTimeout,
     }),
   };
-  const parsedMaxAttempts = Number.parseInt(maxAttempts, 10);
-  if (!Number.isNaN(parsedMaxAttempts)) {
-    baseOpts.maxAttempts = parsedMaxAttempts;
+  if (maxAttempts !== undefined) {
+    baseOpts.maxAttempts = maxAttempts;
   }
-  if (String(disableExpectContinueHeader) === 'true') {
+  if (disableExpectContinueHeader) {
     baseOpts.expectContinueHeader = false;
   }
 
@@ -71,7 +114,7 @@ export function createDefaultBackendFactory(env = {}, { log = console } = {}) {
   const s3Client = new S3Client(baseOpts);
 
   let r2Client;
-  if (String(disableR2) === 'true') {
+  if (disableR2) {
     log.info('R2 S3Client disabled.');
   } else {
     log.debug('Creating R2 S3Client');
@@ -98,4 +141,18 @@ export function createDefaultBackendFactory(env = {}, { log = console } = {}) {
     });
     return new MirroringBackend({ primary: s3Backend, secondaries: [r2Backend], log });
   };
+}
+
+/**
+ * Builds the default `backendFactory` for `Storage`: S3 as the primary backend, with an
+ * optional R2 mirror. Reads the same env vars that `Storage.fromContext()` used to read
+ * directly before the storage-backend refactor.
+ *
+ * @param {Record<string, string|undefined>} [env] environment variables (e.g. `context.env`)
+ * @param {CreateDefaultBackendFactoryOptions} [opts]
+ * @returns {function(string, {disableR2?: boolean}=):
+ *   import('@adobe/helix-shared-storage').StorageBackend}
+ */
+export function createDefaultBackendFactory(env = {}, opts = {}) {
+  return createBackendFactory(parseBackendFactoryEnvOpts(env), opts);
 }
