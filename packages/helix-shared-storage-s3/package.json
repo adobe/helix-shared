@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-storage-s3",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Shared modules of the Helix Project - S3/R2 storage backend for @adobe/helix-shared-storage",
   "main": "src/index.js",
   "type": "module",

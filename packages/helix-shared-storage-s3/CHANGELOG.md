@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-s3-v1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-s3-v1.1.0...@adobe/helix-shared-storage-s3-v1.1.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **storage:** allow parameters to backend to be passed explicitly ([#1262](https://github.com/adobe/helix-shared/issues/1262)) ([bf0768f](https://github.com/adobe/helix-shared/commit/bf0768f0bfa87d4f413691a0d64eba5f274bc7aa))
+
 # [@adobe/helix-shared-storage-s3-v1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-s3-v1.0.0...@adobe/helix-shared-storage-s3-v1.1.0) (2026-09-01)
 
 
