@@ -1,0 +1,42 @@
+{
+  "name": "@adobe/helix-shared-storage-azure",
+  "version": "1.0.0",
+  "description": "Shared modules of the Helix Project - Azure Blob Storage backend for @adobe/helix-shared-storage",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "test/setup-env.js",
+      "mocha-suppress-logs"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "nock": "14.0.17",
+    "xml2js": "^0.6.2"
+  },
+  "dependencies": {
+    "@adobe/helix-shared-process-queue": "^3.0.4",
+    "@adobe/helix-shared-storage": "^3.0.0",
+    "@azure/storage-blob": "^12.28.0"
+  }
+}
