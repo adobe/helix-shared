@@ -71,6 +71,15 @@ export const SYSTEM_META_FIELD_NAMES = [
  * @property {string} [contentLanguage]
  * @property {Object.<string, string>} [metadata]
  * @property {'COPY'|'REPLACE'} [metadataDirective]
+ * @property {string} [ifMatch] normalized destination precondition — implementors should map
+ *  this onto their native "only if destination etag matches" mechanism (e.g. S3's `IfMatch`
+ *  on `CopyObjectCommand`; Azure's `conditions.ifMatch` on `beginCopyFromURL`)
+ * @property {string} [ifNoneMatch] normalized destination precondition, typically `'*'` —
+ *  implementors should map this onto their native "only if destination doesn't exist"
+ *  mechanism (e.g. S3's `IfNoneMatch`; Azure's `conditions.ifNoneMatch`)
+ * @property {string} [sourceIfMatch] normalized source precondition — implementors should map
+ *  this onto their native "only if source etag still matches" mechanism (e.g. S3's
+ *  `CopySourceIfMatch`; Azure's `sourceConditions.ifMatch`)
  * @property {Object.<string, *>} [copyOpts] additional backend-native fields to merge into
  *  the underlying copy call, verbatim
  */
@@ -150,7 +159,11 @@ export const SYSTEM_META_FIELD_NAMES = [
  * @property {function(string, string, CopyOptions=): Promise<CommonObjectMeta>} copy copy an
  *  object within the same bucket; already-resolved `opts` (system headers + metadata) are
  *  provided by {@link Bucket} when the copy needs to preserve/rewrite metadata; backends
- *  should normalize a missing source into an error with `status: 404`
+ *  should normalize a missing source into an error with `status: 404`, and — like that
+ *  existing 404 convention — should normalize *any* thrown error's native HTTP status onto
+ *  `status` (e.g. a failed `ifMatch`/`ifNoneMatch`/`sourceIfMatch` precondition, typically
+ *  412 or 409), so callers can branch on `e.status` without knowing the backend's native
+ *  error shape
  * @property {function((string|string[]), RemoveOptions=): Promise<RemoveOutcome>} remove
  *  remove one or more objects; when passed an array, the backend owns any batching/chunking
  *  required by its own service limits

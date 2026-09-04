@@ -264,6 +264,34 @@ describe('Bucket', () => {
       assert.strictEqual(backend.objects.get('bar').Tagging, 'x=1');
     });
 
+    it('forwards normalized ifMatch/ifNoneMatch/sourceIfMatch alongside copyOpts (no metadata mutation)', async () => {
+      await bucket.put('/foo', 'hello', 'text/plain', {}, false);
+      await bucket.copy('/foo', '/bar', {
+        ifMatch: '"dest-etag"',
+        ifNoneMatch: '*',
+        sourceIfMatch: '"src-etag"',
+        copyOpts: { Tagging: 'x=1' },
+      });
+      const obj = backend.objects.get('bar');
+      assert.strictEqual(obj.ifMatch, '"dest-etag"');
+      assert.strictEqual(obj.ifNoneMatch, '*');
+      assert.strictEqual(obj.sourceIfMatch, '"src-etag"');
+      assert.strictEqual(obj.Tagging, 'x=1');
+    });
+
+    it('forwards normalized ifMatch/ifNoneMatch/sourceIfMatch when addMetadata also triggers a HEAD', async () => {
+      await bucket.put('/foo', 'hello', 'text/plain', { existing: '1' }, false);
+      await bucket.copy('/foo', '/bar', {
+        addMetadata: { added: '2' },
+        ifNoneMatch: '*',
+        sourceIfMatch: '"src-etag"',
+      });
+      const obj = backend.objects.get('bar');
+      assert.strictEqual(obj.ifNoneMatch, '*');
+      assert.strictEqual(obj.sourceIfMatch, '"src-etag"');
+      assert.deepStrictEqual(obj.metadata, { existing: '1', added: '2' });
+    });
+
     it('unwraps result.raw.CopyObjectResult when the backend nests one under raw', async () => {
       backend.copy = async () => ({ etag: 'x', raw: { CopyObjectResult: { ETag: 'x' } } });
       const result = await bucket.copy('/foo', '/bar');

@@ -283,14 +283,18 @@ export class Bucket {
    * @returns {Promise<import('./AbstractStorageBackend.js').CopyOptions|null>}
    */
   async _buildCopyOptions(srcKey, opts) {
+    const {
+      ifMatch, ifNoneMatch, sourceIfMatch, copyOpts,
+    } = opts;
+    const conditions = { ifMatch, ifNoneMatch, sourceIfMatch };
     if (!opts.addMetadata && !opts.renameMetadata) {
-      return { ...opts.copyOpts };
+      return { ...conditions, ...copyOpts };
     }
     const head = await this._backend.head(srcKey);
     if (!head) {
       return null;
     }
-    const copyOptions = { ...opts.copyOpts };
+    const copyOptions = { ...conditions, ...copyOpts };
     SYSTEM_META_FIELD_NAMES.forEach((field) => {
       if (head[field] !== undefined) {
         copyOptions[field] = head[field];
@@ -304,13 +308,17 @@ export class Bucket {
   /**
    * Copy an object within the same bucket. When `addMetadata` or `renameMetadata` are
    * provided, the source's HEAD is consulted so that selected system headers are preserved
-   * and metadata is rewritten with `metadataDirective: 'REPLACE'`.
+   * and metadata is rewritten with `metadataDirective: 'REPLACE'`. `ifMatch`/`ifNoneMatch`
+   * (destination) and `sourceIfMatch` (source) are normalized, backend-agnostic conditional
+   * preconditions — see {@link import('./storage.js').CopyOptions}.
    *
    * @param {string} src source key
    * @param {string} dst destination key
    * @param {import('./storage.js').CopyOptions} [opts]
    * @returns {Promise<CommonObjectMeta|undefined>}
-   * @throws an error with `status: 404` if the source object does not exist
+   * @throws an error with `status: 404` if the source object does not exist; `status` is
+   *  otherwise normalized from the backend's native error for any other failure (e.g. a
+   *  failed precondition, typically `status: 412` or `409`)
    */
   async copy(src, dst, opts = {}) {
     const srcKey = sanitizeKey(src);

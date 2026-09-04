@@ -65,7 +65,9 @@ const GET_META_FIELDS = {
  * `CopyObjectCommand` equivalent. Excluded from the raw `copyOpts` passthrough so that only the
  * mapped PascalCase field ends up in the command input, never both spellings.
  */
-const COMMON_COPY_FIELD_NAMES = new Set([...SYSTEM_META_FIELD_NAMES, 'metadata', 'metadataDirective']);
+const COMMON_COPY_FIELD_NAMES = new Set([
+  ...SYSTEM_META_FIELD_NAMES, 'metadata', 'metadataDirective', 'ifMatch', 'ifNoneMatch', 'sourceIfMatch',
+]);
 
 /**
  * Returns the last segment of a key, treating an optional trailing `/` as a folder separator.
@@ -278,9 +280,13 @@ export class S3Backend extends AbstractStorageBackend {
   /**
    * @param {string} src already-sanitized source key
    * @param {string} dst already-sanitized destination key
-   * @param {import('@adobe/helix-shared-storage').CopyOptions} [opts]
+   * @param {import('@adobe/helix-shared-storage').CopyOptions} [opts] `ifMatch`/`ifNoneMatch`
+   *  map onto `CopyObjectCommand`'s own `IfMatch`/`IfNoneMatch`; `sourceIfMatch` maps onto
+   *  `CopySourceIfMatch`
    * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
-   * @throws an error with `status: 404` if the source object does not exist
+   * @throws an error with `status: 404` if the source object does not exist; `status` is
+   *  otherwise normalized from `$metadata.httpStatusCode` for any other failure (e.g. a
+   *  failed precondition, typically 412 or 409)
    */
   async copy(src, dst, opts = {}) {
     // `opts` carries raw, backend-native passthrough fields flattened at the top level by
@@ -302,7 +308,13 @@ export class S3Backend extends AbstractStorageBackend {
       CopySource: `${this._bucketName}/${src}`,
       Key: dst,
     };
-    const systemFields = { Metadata: opts.metadata, MetadataDirective: opts.metadataDirective };
+    const systemFields = {
+      Metadata: opts.metadata,
+      MetadataDirective: opts.metadataDirective,
+      IfMatch: opts.ifMatch,
+      IfNoneMatch: opts.ifNoneMatch,
+      CopySourceIfMatch: opts.sourceIfMatch,
+    };
     Object.entries(SYSTEM_META_FIELDS).forEach(([common, pascal]) => {
       systemFields[pascal] = opts[common];
     });
@@ -316,13 +328,18 @@ export class S3Backend extends AbstractStorageBackend {
       this._log.info(`object copied from ${input.CopySource} to: ${input.Bucket}/${input.Key}`);
       return { etag: raw.CopyObjectResult?.ETag, raw };
     } catch (e) {
-      /* c8 ignore next 3 */
-      if (e.Code !== 'NoSuchKey') {
-        throw e;
+      const status = e.$metadata?.httpStatusCode;
+      if (e.Code === 'NoSuchKey' || status === 404) {
+        const e2 = new Error(`source does not exist: ${input.CopySource}`);
+        e2.status = 404;
+        throw e2;
       }
-      const e2 = new Error(`source does not exist: ${input.CopySource}`);
-      e2.status = 404;
-      throw e2;
+      // Normalize the native error's HTTP status onto `.status`, same convention as the 404
+      // case above, so callers (e.g. optimistic-concurrency retry logic keying off a failed
+      // `ifMatch`/`ifNoneMatch`/`sourceIfMatch` precondition) can branch on it without knowing
+      // this is an AWS SDK error shape.
+      e.status = status;
+      throw e;
     }
   }
 
