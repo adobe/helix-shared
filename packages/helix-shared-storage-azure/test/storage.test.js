@@ -339,6 +339,45 @@ describe('AzureBackend storage test', () => {
     );
   });
 
+  it('maps ifMatch/ifNoneMatch onto destination conditions', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/dst')
+      .matchHeader('if-match', '"dest-etag"')
+      .matchHeader('if-none-match', '*')
+      .reply(202, '', {
+        etag: '"abc"',
+        'x-ms-copy-id': 'copy-1',
+        'x-ms-copy-status': 'success',
+      });
+    const raw = await backend.copy('src', 'dst', { ifMatch: '"dest-etag"', ifNoneMatch: '*' });
+    assert.strictEqual(raw.etag, '"abc"');
+  });
+
+  it('maps sourceIfMatch onto source conditions', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/dst')
+      .matchHeader('x-ms-source-if-match', '"src-etag"')
+      .reply(202, '', {
+        etag: '"abc"',
+        'x-ms-copy-id': 'copy-1',
+        'x-ms-copy-status': 'success',
+      });
+    const raw = await backend.copy('src', 'dst', { sourceIfMatch: '"src-etag"' });
+    assert.strictEqual(raw.etag, '"abc"');
+  });
+
+  it('normalizes a non-404 copy error\'s status onto e.status', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/dst')
+      .reply(412, '<?xml version="1.0" encoding="utf-8"?><Error><Code>ConditionNotMet</Code></Error>', {
+        'content-type': 'application/xml',
+      });
+    await assert.rejects(
+      backend.copy('src', 'dst', { ifNoneMatch: '*' }),
+      (e) => e.status === 412,
+    );
+  });
+
   it('can remove a single object', async () => {
     nock(BASE_URL)
       .delete('/helix-code-bus/foo')

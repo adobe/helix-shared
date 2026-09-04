@@ -43,6 +43,16 @@ import { Bucket } from './Bucket.js';
  *  Use `addMetadata` to keep the `from` property as well.
  * @property {Object.<string, string>} [addMetadata] metadata to merge with existing metadata.
  *  Properties are applied after `renameMetadata`.
+ * @property {string} [ifMatch] destination precondition: the copy only succeeds if the
+ *  destination object's current etag equals this value (guards an overwrite against
+ *  concurrent changes). Normalized across backends — see {@link StorageBackend#copy}.
+ * @property {string} [ifNoneMatch] destination precondition: pass `'*'` so the copy only
+ *  succeeds if no object currently exists at the destination (optimistic create). Normalized
+ *  across backends — see {@link StorageBackend#copy}.
+ * @property {string} [sourceIfMatch] source precondition: the copy only succeeds if the
+ *  *source* object's current etag still equals this value (guards against copying a source
+ *  that changed since it was last read). Normalized across backends — see
+ *  {@link StorageBackend#copy}.
  * @property {Object.<string, *>} [copyOpts] additional, backend-native fields to merge into
  *  the underlying copy call (e.g. AWS's `CacheControl`, `ContentType`, `Tagging`, ...).
  */
