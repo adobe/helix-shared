@@ -16,7 +16,7 @@ import { Readable } from 'node:stream';
 import { promisify } from 'util';
 import zlib from 'zlib';
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
-import { Storage } from '@adobe/helix-shared-storage';
+import { Storage, StorageError } from '@adobe/helix-shared-storage';
 import { Nock } from './utils.js';
 import { StorageAzure } from '../src/StorageAzure.js';
 import { AzureBackend } from '../src/AzureBackend.js';
@@ -180,7 +180,14 @@ describe('AzureBackend storage test', () => {
       .reply(500, '<?xml version="1.0" encoding="utf-8"?><Error><Code>InternalError</Code></Error>', {
         'content-type': 'application/xml',
       });
-    await assert.rejects(backend.get('foo'));
+    await assert.rejects(backend.get('foo'), (e) => {
+      assert.ok(e instanceof StorageError);
+      assert.strictEqual(e.status, 500);
+      assert.strictEqual(e.code, 'InternalError');
+      assert.strictEqual(e.backend, 'Azure');
+      assert.ok(e.cause);
+      return true;
+    });
   });
 
   it('can get metadata of an object', async () => {
@@ -515,5 +522,80 @@ describe('AzureBackend storage test', () => {
       }), { 'content-type': 'application/xml' });
     const { continuationToken } = await backend.browse('foo/');
     assert.strictEqual(continuationToken, undefined);
+  });
+
+  describe('error normalization', () => {
+    it('putStream() throws a StorageError on SDK failure', async () => {
+      nock(BASE_URL)
+        .put((uri) => uri.startsWith('/helix-code-bus/foo?comp=block&blockid='))
+        .reply(500);
+      const stream = Readable.from([Buffer.from('hello, world.')]);
+      await assert.rejects(backend.putStream('foo', stream, { contentType: 'text/plain' }), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'Azure');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
+
+    it('put() throws a StorageError on SDK failure', async () => {
+      nock(BASE_URL)
+        .put('/helix-code-bus/foo')
+        .reply(500);
+      await assert.rejects(backend.put('foo', 'hello, world.'), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'Azure');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
+
+    it('putMeta() throws a StorageError on SDK failure', async () => {
+      nock(BASE_URL)
+        .put('/helix-code-bus/foo')
+        .query({ comp: 'metadata' })
+        .reply(500);
+      nock(BASE_URL)
+        .put('/helix-code-bus/foo')
+        .query({ comp: 'properties' })
+        .reply(200, '', { etag: '"abc"' });
+      await assert.rejects(backend.putMeta('foo', { 'source-location': 'new-location' }), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'Azure');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
+
+    it('list() throws a StorageError on SDK failure', async () => {
+      nock(BASE_URL)
+        .get('/helix-code-bus')
+        .query((q) => q.restype === 'container' && q.comp === 'list')
+        .reply(500);
+      await assert.rejects(backend.list('foo/'), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'Azure');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
+
+    it('browse() throws a StorageError on SDK failure', async () => {
+      nock(BASE_URL)
+        .get('/helix-code-bus')
+        .query((q) => q.restype === 'container' && q.comp === 'list' && q.delimiter === '/')
+        .reply(500);
+      await assert.rejects(backend.browse('foo/'), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'Azure');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
   });
 });
