@@ -12,6 +12,7 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
+import { Readable } from 'node:stream';
 import { promisify } from 'util';
 import zlib from 'zlib';
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
@@ -229,6 +230,20 @@ describe('AzureBackend storage test', () => {
       .reply(201, '', { etag: '"abc"' });
     const raw = await backend.put('foo', Buffer.from('hello, world.'));
     assert.strictEqual(raw.etag, '"abc"');
+  });
+
+  it('can put a stream (staged block + commit block list, unlike put()\'s single upload())', async () => {
+    nock(BASE_URL)
+      .put((uri) => uri.startsWith('/helix-code-bus/foo?comp=block&blockid='))
+      .reply(201)
+      .put('/helix-code-bus/foo?comp=blocklist')
+      .matchHeader('x-ms-blob-content-type', 'text/plain')
+      .matchHeader('x-ms-meta-myid', '1234')
+      .reply(201, '', { etag: '"abc"' });
+    const stream = Readable.from([Buffer.from('hello, world.')]);
+    const raw = await backend.putStream('foo', stream, { contentType: 'text/plain', metadata: { myid: '1234' } });
+    assert.strictEqual(raw.etag, '"abc"');
+    assert.strictEqual(raw.contentType, 'text/plain');
   });
 
   it('put substitutes `-` with `_` in metadata keys (Azure does not allow `-`)', async () => {

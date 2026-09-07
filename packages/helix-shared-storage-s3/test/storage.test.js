@@ -12,6 +12,7 @@
 
 /* eslint-env mocha */
 import { Agent } from 'node:https';
+import { Readable } from 'node:stream';
 import { Response } from '@adobe/fetch';
 import assert from 'assert';
 import { promises as fs } from 'fs';
@@ -324,6 +325,46 @@ describe('Storage test', () => {
     await bus.put('/foo', 'hello, world.', 'text/plain', {
       myid: '1234',
     }, false);
+
+    const req = {
+      '/foo?x-id=PutObject': {
+        body: Buffer.from('hello, world.', 'utf-8'),
+        headers: {
+          'content-type': 'text/plain',
+          'x-amz-meta-myid': '1234',
+        },
+      },
+    };
+    assert.deepEqual(reqs.s3, req);
+    assert.deepEqual(reqs.r2, req);
+  });
+
+  it('can put a stream (small enough to use a single PutObject, not multipart)', async () => {
+    const reqs = { s3: {}, r2: {} };
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(function cb(uri) {
+        reqs.s3[uri] = {
+          body: Buffer.concat(this.req.requestBodyBuffers),
+          headers: Object.fromEntries(Object.entries(this.req.headers)
+            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
+        };
+        return [201];
+      });
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .put('/foo?x-id=PutObject')
+      .reply(function cb(uri) {
+        reqs.r2[uri] = {
+          body: Buffer.concat(this.req.requestBodyBuffers),
+          headers: Object.fromEntries(Object.entries(this.req.headers)
+            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
+        };
+        return [201];
+      });
+
+    const bus = storage.codeBus();
+    const stream = Readable.from([Buffer.from('hello, world.', 'utf-8')]);
+    await bus.putStream('/foo', stream, 'text/plain', { myid: '1234' });
 
     const req = {
       '/foo?x-id=PutObject': {

@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import { PassThrough } from 'node:stream';
+
 /**
  * @typedef {Object} MirroringBackendOptions
  * @property {import('./AbstractStorageBackend.js').StorageBackend} primary
@@ -81,12 +83,14 @@ export class MirroringBackend {
   }
 
   /**
-   * Fans `method(...args)` out to every backend in parallel. Returns the primary's result if
-   * all succeed; otherwise throws the first-failing backend's error (array order), tagged
-   * with `[<backend.name>] ` on its message.
+   * Fans a set of per-backend calls out in parallel, one thunk per entry in `this._backends`
+   * (same order). Returns the primary's (first) result if all succeed; otherwise throws the
+   * first-failing backend's error (array order), tagged with `[<backend.name>] ` on its message.
+   *
+   * @param {Array<function(): Promise<*>>} calls
    */
-  async _fanOut(method, args) {
-    const settled = await Promise.allSettled(this._backends.map((b) => b[method](...args)));
+  async _fanOutCalls(calls) {
+    const settled = await Promise.allSettled(calls.map((call) => call()));
     const zipped = settled.map((result, i) => ({ backend: this._backends[i], result }));
     const rejected = zipped.filter(({ result }) => result.status === 'rejected');
     if (!rejected.length) {
@@ -98,8 +102,36 @@ export class MirroringBackend {
     throw err;
   }
 
+  /**
+   * Fans `method(...args)` out to every backend in parallel, with the same `args` for each.
+   */
+  _fanOut(method, args) {
+    return this._fanOutCalls(this._backends.map((b) => () => b[method](...args)));
+  }
+
   put(...args) {
     return this._fanOut('put', args);
+  }
+
+  /**
+   * Streams `body` to every backend in parallel. A single backend streams the source directly;
+   * 2+ backends tee it into one `PassThrough` per backend first, since a `Readable` can only be
+   * consumed once — mirrors `helix-mediahandler`'s pre-existing S3+R2 dual-write pattern. A read
+   * error on the source stream is forwarded to every tee, so a broken source aborts all
+   * in-flight uploads instead of leaving them hanging.
+   *
+   * @param {string} key
+   * @param {import('node:stream').Readable} stream
+   * @param {import('./AbstractStorageBackend.js').PutOptions} [opts]
+   */
+  putStream(key, stream, opts) {
+    if (this._backends.length === 1) {
+      return this._primary.putStream(key, stream, opts);
+    }
+    const tees = this._backends.map(() => new PassThrough());
+    stream.on('error', (err) => tees.forEach((tee) => tee.destroy(err)));
+    tees.forEach((tee) => stream.pipe(tee));
+    return this._fanOutCalls(this._backends.map((b, i) => () => b.putStream(key, tees[i], opts)));
   }
 
   copy(...args) {

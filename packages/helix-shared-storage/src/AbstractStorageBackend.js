@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import { buffer } from 'node:stream/consumers';
+
 /**
  * Common, backend-agnostic object metadata fields (lowerCamelCase). Every {@link StorageBackend}
  * method that returns object metadata returns (at least) these fields, plus the backend's raw,
@@ -123,9 +125,11 @@ export const SYSTEM_META_FIELD_NAMES = [
  * Implementors need to provide the 7 mandatory primitives below (`putMeta` is mandatory
  * rather than a generic default because a correct, efficient implementation is inherently
  * backend-specific — e.g. S3's self-copy trick vs. Azure's native `setMetadata`); `metadata`,
- * `getMeta`, `listFolders`, and `browse` have generic default implementations in
+ * `getMeta`, `listFolders`, `browse`, and `putStream` have generic default implementations in
  * {@link AbstractStorageBackend}, overridable for efficiency (e.g. Azure can implement
- * `listFolders` via `listBlobsByHierarchy` instead of the generic list+filter fallback).
+ * `listFolders` via `listBlobsByHierarchy` instead of the generic list+filter fallback, or S3
+ * can implement `putStream` via a real multipart upload instead of the generic
+ * buffer-then-`put()` fallback).
  *
  * @typedef {Object} StorageBackend
  * @property {string} name backend family tag used for error tagging when mirrored, e.g.
@@ -147,6 +151,12 @@ export const SYSTEM_META_FIELD_NAMES = [
  *  default, since `head()` already normalizes system fields into these common names
  * @property {function(string, (Buffer|string), PutOptions=): Promise<CommonObjectMeta>} put
  *  store an object's contents along with metadata/system headers
+ * @property {function(string, import('node:stream').Readable, PutOptions=):
+ *   Promise<CommonObjectMeta>} putStream
+ *  store an object's contents from a `Readable`, without requiring its length upfront; generic
+ *  default in {@link AbstractStorageBackend} buffers the stream fully then delegates to `put()`
+ *  — backends that can do real chunked/multipart streaming (S3's `Upload` from
+ *  `@aws-sdk/lib-storage`, Azure's `uploadStream()`) should override this for large payloads
  * @property {function(string, Object.<string, string>): Promise<CommonObjectMeta>} putMeta
  *  replace an object's metadata. `meta` may mix custom keys with common system-property field
  *  names (e.g. `contentType`); it's up to the backend to recognize and apply those
@@ -183,9 +193,9 @@ export const SYSTEM_META_FIELD_NAMES = [
 /**
  * Convenience base class for {@link StorageBackend} implementations. Subclasses only need to
  * implement the 7 mandatory primitives (`get`, `head`, `put`, `copy`, `remove`, `list`,
- * `putMeta`) to get all 11 interface methods for free; `metadata`/`getMeta`/`listFolders`/
- * `browse` have generic default bodies here, in terms of the mandatory primitives, overridable
- * for efficiency.
+ * `putMeta`) to get all 12 interface methods for free; `metadata`/`getMeta`/`listFolders`/
+ * `browse`/`putStream` have generic default bodies here, in terms of the mandatory primitives,
+ * overridable for efficiency.
  *
  * @implements {StorageBackend}
  */
@@ -216,6 +226,22 @@ export class AbstractStorageBackend {
 
   async list() {
     throw new Error('list() not implemented');
+  }
+
+  /**
+   * Generic default: buffers the stream fully, then delegates to {@link StorageBackend#put}.
+   * Works for any backend without extra work, but defeats the purpose of streaming for large
+   * payloads — backends that can do real chunked/multipart uploads (S3's `Upload` helper,
+   * Azure's `uploadStream()`) should override this.
+   *
+   * @param {string} key
+   * @param {import('node:stream').Readable} stream
+   * @param {PutOptions} [opts]
+   * @returns {Promise<CommonObjectMeta>}
+   */
+  async putStream(key, stream, opts = {}) {
+    const body = await buffer(stream);
+    return this.put(key, body, opts);
   }
 
   /**

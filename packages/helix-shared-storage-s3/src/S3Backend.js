@@ -22,6 +22,7 @@ import {
   ListObjectsV2Command,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import { Response } from '@adobe/fetch';
 import mime from 'mime';
 import processQueue from '@adobe/helix-shared-process-queue';
@@ -223,12 +224,14 @@ export class S3Backend extends AbstractStorageBackend {
   }
 
   /**
+   * Builds the shared `PutObjectCommand`/`Upload` input for `put()`/`putStream()`.
+   *
    * @param {string} key already-sanitized object key
-   * @param {Buffer|string} body data to store
-   * @param {import('@adobe/helix-shared-storage').PutOptions} [opts]
-   * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
+   * @param {Buffer|string|import('node:stream').Readable} body
+   * @param {import('@adobe/helix-shared-storage').PutOptions} opts
+   * @returns {Object.<string, *>}
    */
-  async put(key, body, opts = {}) {
+  _buildPutInput(key, body, opts) {
     const input = {
       Body: body,
       Bucket: this._bucketName,
@@ -238,7 +241,37 @@ export class S3Backend extends AbstractStorageBackend {
     Object.entries(SYSTEM_META_FIELDS).forEach(([common, pascal]) => {
       input[pascal] = opts[common];
     });
+    return input;
+  }
+
+  /**
+   * @param {string} key already-sanitized object key
+   * @param {Buffer|string} body data to store
+   * @param {import('@adobe/helix-shared-storage').PutOptions} [opts]
+   * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
+   */
+  async put(key, body, opts = {}) {
+    const input = this._buildPutInput(key, body, opts);
     const raw = await this._client.send(new PutObjectCommand(input));
+    this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
+    return {
+      etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
+    };
+  }
+
+  /**
+   * Streams `body` to S3 via `@aws-sdk/lib-storage`'s `Upload` helper, which transparently
+   * switches to a multipart upload for large streams instead of requiring the length upfront.
+   *
+   * @param {string} key already-sanitized object key
+   * @param {import('node:stream').Readable} body data to store
+   * @param {import('@adobe/helix-shared-storage').PutOptions} [opts]
+   * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
+   */
+  async putStream(key, body, opts = {}) {
+    const input = this._buildPutInput(key, body, opts);
+    const upload = new Upload({ client: this._client, params: input });
+    const raw = await upload.done();
     this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
     return {
       etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,

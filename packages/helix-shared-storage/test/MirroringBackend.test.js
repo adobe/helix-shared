@@ -12,6 +12,8 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
+import { PassThrough, Readable } from 'node:stream';
+import { buffer as readStreamBuffer } from 'node:stream/consumers';
 import { MirroringBackend } from '../src/MirroringBackend.js';
 
 /**
@@ -19,13 +21,16 @@ import { MirroringBackend } from '../src/MirroringBackend.js';
  * fixed error, for every method.
  */
 class FakeBackend {
-  constructor(name, { fails = false, value = `${name}-value`, client = `${name}-client` } = {}) {
+  constructor(name, {
+    fails = false, value = `${name}-value`, client = `${name}-client`, consumeStream = false,
+  } = {}) {
     this.name = name;
     this.bucketName = 'fake-bucket';
     this.client = client;
     this.calls = {};
     this._fails = fails;
     this._value = value;
+    this._consumeStream = consumeStream;
   }
 
   async _invoke(method, args) {
@@ -57,6 +62,21 @@ class FakeBackend {
   remove(...args) { return this._invoke('remove', args); }
 
   putMeta(...args) { return this._invoke('putMeta', args); }
+
+  /**
+   * When `consumeStream` is set, actually reads the given stream (recording the full body on
+   * `this.received`) instead of the generic `_invoke()` behavior, which would ignore it —
+   * needed to verify `MirroringBackend#putStream`'s teeing actually delivers the full body to
+   * every backend, not just that it was called.
+   */
+  async putStream(key, stream, opts) {
+    if (!this._consumeStream) {
+      return this._invoke('putStream', [key, stream, opts]);
+    }
+    this.calls.putStream = (this.calls.putStream || 0) + 1;
+    this.received = await readStreamBuffer(stream);
+    return { method: 'putStream', value: this._value };
+  }
 }
 
 describe('MirroringBackend', () => {
@@ -145,6 +165,48 @@ describe('MirroringBackend', () => {
         assert.strictEqual(primary.calls[method], 1);
         assert.strictEqual(r2.calls[method], 1);
         assert.strictEqual(azure.calls[method], 1);
+      });
+    });
+  });
+
+  describe('putStream()', () => {
+    it('streams directly to the primary when there is a single backend (no tee)', async () => {
+      const primary = new FakeBackend('S3');
+      const mirror = new MirroringBackend({ primary });
+      // a bare sentinel (not a real stream) proves no `.pipe()`/tee was attempted
+      const sentinelStream = {};
+      const result = await mirror.putStream('key', sentinelStream, { contentType: 'text/plain' });
+      assert.strictEqual(result.value, 'S3-value');
+      assert.strictEqual(primary.calls.putStream, 1);
+    });
+
+    it('tees the stream to every backend, each receiving the full body', async () => {
+      const primary = new FakeBackend('S3', { consumeStream: true });
+      const r2 = new FakeBackend('R2', { consumeStream: true });
+      const azure = new FakeBackend('Azure', { consumeStream: true });
+      const mirror = new MirroringBackend({ primary, secondaries: [r2, azure] });
+      const source = Readable.from([Buffer.from('hello world')]);
+
+      const result = await mirror.putStream('key', source, {});
+      assert.strictEqual(result.value, 'S3-value');
+      [primary, r2, azure].forEach((backend) => {
+        assert.strictEqual(backend.calls.putStream, 1);
+        assert.strictEqual(backend.received.toString(), 'hello world');
+      });
+    });
+
+    it('propagates a source stream error to every tee', async () => {
+      const primary = new FakeBackend('S3', { consumeStream: true });
+      const secondary = new FakeBackend('R2', { consumeStream: true });
+      const mirror = new MirroringBackend({ primary, secondaries: [secondary] });
+      const source = new PassThrough();
+
+      const promise = mirror.putStream('key', source, {});
+      source.destroy(new Error('source read failed'));
+
+      await assert.rejects(promise, (err) => {
+        assert.strictEqual(err.message, '[S3] source read failed');
+        return true;
       });
     });
   });

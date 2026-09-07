@@ -82,6 +82,21 @@ function fromAzureMetadata(metadata = {}) {
 }
 
 /**
+ * Maps the common, lowerCamelCase system-property fields on `opts` (e.g. `contentType`) onto
+ * Azure's `BlobHTTPHeaders` shape, shared by `AzureBackend#put`/`AzureBackend#putStream`.
+ *
+ * @param {import('@adobe/helix-shared-storage').PutOptions} opts
+ * @returns {Object.<string, string>}
+ */
+function buildBlobHTTPHeaders(opts) {
+  const blobHTTPHeaders = {};
+  Object.entries(SYSTEM_META_FIELDS).forEach(([common, azure]) => {
+    blobHTTPHeaders[azure] = opts[common];
+  });
+  return blobHTTPHeaders;
+}
+
+/**
  * Maps a downloaded blob's HTTP headers into the common, lowerCamelCase `CommonObjectMeta`
  * field names, shared by `get()`'s `meta` output and `head()`'s return value. Falls back to a
  * `content_encoding` custom metadata property when the native `Content-Encoding` header is
@@ -219,12 +234,30 @@ export class AzureBackend extends AbstractStorageBackend {
   async put(key, body, opts = {}) {
     const data = typeof body === 'string' ? Buffer.from(body) : body;
     const blockBlobClient = this._client.getBlockBlobClient(key);
-    const blobHTTPHeaders = {};
-    Object.entries(SYSTEM_META_FIELDS).forEach(([common, azure]) => {
-      blobHTTPHeaders[azure] = opts[common];
-    });
     const raw = await blockBlobClient.upload(data, data.length, {
-      blobHTTPHeaders,
+      blobHTTPHeaders: buildBlobHTTPHeaders(opts),
+      metadata: toAzureMetadata(opts.metadata),
+    });
+    this._log.info(`object uploaded to: ${this._bucketName}/${key}`);
+    return {
+      etag: raw.etag, contentType: opts.contentType, raw,
+    };
+  }
+
+  /**
+   * Streams `body` to Azure via `BlockBlobClient.uploadStream()`, which reads and uploads the
+   * stream in chunks instead of requiring the length upfront — Azure's equivalent of S3's
+   * `Upload` helper.
+   *
+   * @param {string} key already-sanitized object key
+   * @param {import('node:stream').Readable} body data to store
+   * @param {import('@adobe/helix-shared-storage').PutOptions} [opts]
+   * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
+   */
+  async putStream(key, body, opts = {}) {
+    const blockBlobClient = this._client.getBlockBlobClient(key);
+    const raw = await blockBlobClient.uploadStream(body, undefined, undefined, {
+      blobHTTPHeaders: buildBlobHTTPHeaders(opts),
       metadata: toAzureMetadata(opts.metadata),
     });
     this._log.info(`object uploaded to: ${this._bucketName}/${key}`);

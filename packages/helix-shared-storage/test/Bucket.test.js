@@ -12,6 +12,7 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
+import { Readable } from 'node:stream';
 import { Response } from '@adobe/fetch';
 import { AbstractStorageBackend } from '../src/AbstractStorageBackend.js';
 import { Bucket } from '../src/Bucket.js';
@@ -169,6 +170,18 @@ describe('Bucket', () => {
       const obj = backend.objects.get('foo');
       assert.strictEqual(obj.body.toString('utf-8'), 'hello, world.');
       assert.strictEqual(obj.contentEncoding, undefined);
+    });
+  });
+
+  describe('putStream()', () => {
+    it('delegates to the backend, sanitizing the key, without compressing', async () => {
+      const stream = Readable.from([Buffer.from('hello, world.')]);
+      await bucket.putStream('/foo', stream, 'text/plain', { a: '1' });
+      const obj = backend.objects.get('foo');
+      assert.strictEqual(obj.body.toString('utf-8'), 'hello, world.');
+      assert.strictEqual(obj.contentEncoding, undefined);
+      assert.strictEqual(obj.contentType, 'text/plain');
+      assert.deepStrictEqual(obj.metadata, { a: '1' });
     });
   });
 
