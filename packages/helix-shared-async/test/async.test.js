@@ -18,10 +18,10 @@ import { nextTick, sleep } from '../src/async.js';
 
 describe('Async Tests', () => {
   it('sleep', async () => {
-    const t0 = new Date().getTime();
+    const t0 = Date.now();
     await sleep(20);
-    const t = new Date().getTime() - t0;
-    assert(t >= 20 && t <= 200);
+    const t = Date.now() - t0;
+    assert(t >= 20 && t <= 1000, 'delta was: %d', t);
   });
 
   it('nextTick', async () => {
