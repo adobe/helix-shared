@@ -258,6 +258,26 @@ export class Bucket {
   }
 
   /**
+   * Store an object's contents from a `Readable`, without requiring its length or fully
+   * buffering it in memory — for large, already-compressed binary payloads (e.g. media) where
+   * `put()`'s always-buffer-and-gzip behavior would be wasteful or wrong. There is no `compress`
+   * option: compressing a streamed upload isn't supported. Mirrored to any secondary backends
+   * configured on the resolved `StorageBackend`.
+   *
+   * @param {string} path object key
+   * @param {import('node:stream').Readable} stream data to store
+   * @param {string} [contentType] content type. Defaults to `application/octet-stream`.
+   * @param {Record<string, string>} [meta] metadata to store with the object. Defaults to `{}`.
+   * @returns {Promise<CommonObjectMeta>}
+   */
+  async putStream(path, stream, contentType = 'application/octet-stream', meta = {}) {
+    const dstKey = sanitizeKey(path);
+    const res = await this._backend.putStream(dstKey, stream, { contentType, metadata: meta });
+    this._log.info(`object uploaded to: ${this.bucket}/${dstKey}`);
+    return res;
+  }
+
+  /**
    * Replace an object's metadata. `meta` may mix custom, user-defined keys with any of the
    * common system-property field names (e.g. `contentType`); it's up to the backend to
    * recognize and apply those appropriately (e.g. S3 maps `contentType` onto its own

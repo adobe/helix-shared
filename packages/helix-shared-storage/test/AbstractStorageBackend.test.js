@@ -12,6 +12,7 @@
 
 /* eslint-env mocha */
 import assert from 'assert';
+import { Readable } from 'node:stream';
 import { AbstractStorageBackend } from '../src/AbstractStorageBackend.js';
 
 class MinimalBackend extends AbstractStorageBackend {
@@ -27,6 +28,11 @@ class MinimalBackend extends AbstractStorageBackend {
 
   async list() {
     return this._listResult;
+  }
+
+  async put(key, body, opts) {
+    this.putCall = { key, body, opts };
+    return { etag: 'fake-etag' };
   }
 }
 
@@ -81,6 +87,18 @@ describe('AbstractStorageBackend', () => {
         objects: [{ key: 'foo/bar.md', name: 'bar.md', isFolder: false }],
         continuationToken: undefined,
       });
+    });
+
+    it('putStream() buffers the stream fully, then delegates to put()', async () => {
+      const backend = new MinimalBackend();
+      const stream = Readable.from([Buffer.from('hello world')]);
+      const opts = { contentType: 'text/plain' };
+
+      const result = await backend.putStream('foo', stream, opts);
+      assert.deepStrictEqual(result, { etag: 'fake-etag' });
+      assert.strictEqual(backend.putCall.key, 'foo');
+      assert.strictEqual(backend.putCall.body.toString(), 'hello world');
+      assert.strictEqual(backend.putCall.opts, opts);
     });
   });
 
