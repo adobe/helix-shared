@@ -267,9 +267,13 @@ export class AzureBackend extends AbstractStorageBackend {
   /**
    * @param {string} src already-sanitized source key
    * @param {string} dst already-sanitized destination key
-   * @param {import('@adobe/helix-shared-storage').CopyOptions} [opts]
+   * @param {import('@adobe/helix-shared-storage').CopyOptions} [opts] `ifMatch`/`ifNoneMatch`
+   *  map onto `beginCopyFromURL`'s `conditions.ifMatch`/`conditions.ifNoneMatch` (destination);
+   *  `sourceIfMatch` maps onto `sourceConditions.ifMatch`
    * @returns {Promise<import('@adobe/helix-shared-storage').CommonObjectMeta>}
-   * @throws an error with `status: 404` if the source object does not exist
+   * @throws an error with `status: 404` if the source object does not exist; `status` is
+   *  otherwise normalized from `statusCode` for any other failure (e.g. a failed precondition,
+   *  typically 412)
    */
   async copy(src, dst, opts = {}) {
     const srcBlobClient = this._client.getBlobClient(src);
@@ -283,6 +287,19 @@ export class AzureBackend extends AbstractStorageBackend {
     const copyOpts = { ...opts.copyOpts };
     if (opts.metadataDirective === 'REPLACE') {
       copyOpts.metadata = opts.metadata ?? {};
+    }
+    // Normalized conditional-copy preconditions (see `CopyOptions` in `@adobe/helix-shared-
+    // storage`) map directly onto the Azure SDK's own `conditions`/`sourceConditions` shape —
+    // only include the destination `conditions` bag at all when one of its fields is actually
+    // set, so we never send an empty object that could confuse the SDK/service.
+    if (opts.ifMatch !== undefined || opts.ifNoneMatch !== undefined) {
+      copyOpts.conditions = {
+        ...(opts.ifMatch !== undefined && { ifMatch: opts.ifMatch }),
+        ...(opts.ifNoneMatch !== undefined && { ifNoneMatch: opts.ifNoneMatch }),
+      };
+    }
+    if (opts.sourceIfMatch !== undefined) {
+      copyOpts.sourceConditions = { ifMatch: opts.sourceIfMatch };
     }
 
     try {
@@ -298,13 +315,17 @@ export class AzureBackend extends AbstractStorageBackend {
       this._log.info(`object copied from ${this._bucketName}/${src} to: ${this._bucketName}/${dst}`);
       return { etag: raw.etag, raw };
     } catch (e) {
-      /* c8 ignore next 3 */
-      if (e.statusCode !== 404) {
-        throw e;
+      if (e.statusCode === 404) {
+        const e2 = new Error(`source does not exist: ${this._bucketName}/${src}`);
+        e2.status = 404;
+        throw e2;
       }
-      const e2 = new Error(`source does not exist: ${this._bucketName}/${src}`);
-      e2.status = 404;
-      throw e2;
+      // Normalize the native error's HTTP status onto `.status`, same convention as the 404
+      // case above, so callers (e.g. optimistic-concurrency retry logic keying off a failed
+      // `ifMatch`/`ifNoneMatch`/`sourceIfMatch` precondition) can branch on it without knowing
+      // this is an Azure SDK error shape.
+      e.status = e.statusCode;
+      throw e;
     }
   }
 

@@ -1232,6 +1232,42 @@ describe('Storage test', () => {
     );
   });
 
+  it('maps normalized ifMatch/ifNoneMatch/sourceIfMatch onto their CopyObjectCommand fields', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
+      .matchHeader('if-match', '"dest-etag"')
+      .matchHeader('if-none-match', '*')
+      .matchHeader('x-amz-copy-source-if-match', '"src-etag"')
+      .reply(200, '<?xml version="1.0" encoding="UTF-8"?>\n<CopyObjectResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2021-05-05T08:37:23.000Z</LastModified><ETag>&quot;f278c0035a9b4398629613a33abe6451&quot;</ETag></CopyObjectResult>');
+
+    const bus = storage.codeBus({ disableR2: true });
+    await bus.copy(
+      '/owner/repo/ref/foo.md',
+      '/owner/repo/ref/foo/bar.md',
+      {
+        ifMatch: '"dest-etag"',
+        ifNoneMatch: '*',
+        sourceIfMatch: '"src-etag"',
+      },
+    );
+  });
+
+  it('normalizes a non-404 copy error\'s status onto e.status', async () => {
+    const body = '<?xml version="1.0" encoding="UTF-8"?><Error><Code>PreconditionFailed</Code><Message>At least one of the pre-conditions you specified did not hold</Message></Error>';
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
+      .reply(412, body);
+
+    const bus = storage.codeBus({ disableR2: true });
+    await assert.rejects(
+      bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md', { ifNoneMatch: '*' }),
+      (e) => {
+        assert.strictEqual(e.status, 412);
+        return true;
+      },
+    );
+  });
+
   it('an explicit copyOpts.ContentType is not clobbered when no metadata mutation is requested', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .put('/owner/repo/ref/foo/bar.md?x-id=CopyObject')
