@@ -184,11 +184,7 @@ export class S3Backend extends AbstractStorageBackend {
       }
       return buf;
     } catch (e) {
-      /* c8 ignore next 3 */
-      if (e.$metadata.httpStatusCode !== 404) {
-        throw e;
-      }
-      return null;
+      return this._wrapOr404(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
     }
   }
 
@@ -215,11 +211,7 @@ export class S3Backend extends AbstractStorageBackend {
       });
       return result;
     } catch (e) {
-      /* c8 ignore next 3 */
-      if (e.$metadata.httpStatusCode !== 404) {
-        throw e;
-      }
-      return null;
+      return this._wrapOr404(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
     }
   }
 
@@ -252,11 +244,15 @@ export class S3Backend extends AbstractStorageBackend {
    */
   async put(key, body, opts = {}) {
     const input = this._buildPutInput(key, body, opts);
-    const raw = await this._client.send(new PutObjectCommand(input));
-    this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
-    return {
-      etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
-    };
+    try {
+      const raw = await this._client.send(new PutObjectCommand(input));
+      this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
+      return {
+        etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
+      };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
+    }
   }
 
   /**
@@ -270,12 +266,16 @@ export class S3Backend extends AbstractStorageBackend {
    */
   async putStream(key, body, opts = {}) {
     const input = this._buildPutInput(key, body, opts);
-    const upload = new Upload({ client: this._client, params: input });
-    const raw = await upload.done();
-    this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
-    return {
-      etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
-    };
+    try {
+      const upload = new Upload({ client: this._client, params: input });
+      const raw = await upload.done();
+      this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
+      return {
+        etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
+      };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
+    }
   }
 
   /**
@@ -305,9 +305,13 @@ export class S3Backend extends AbstractStorageBackend {
         input.Metadata[key] = value;
       }
     });
-    const raw = await this._client.send(new CopyObjectCommand(input));
-    this._log.info(`Metadata updated for: ${input.CopySource}`);
-    return { raw };
+    try {
+      const raw = await this._client.send(new CopyObjectCommand(input));
+      this._log.info(`Metadata updated for: ${input.CopySource}`);
+      return { raw };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
+    }
   }
 
   /**
@@ -363,16 +367,13 @@ export class S3Backend extends AbstractStorageBackend {
     } catch (e) {
       const status = e.$metadata?.httpStatusCode;
       if (e.Code === 'NoSuchKey' || status === 404) {
-        const e2 = new Error(`source does not exist: ${input.CopySource}`);
-        e2.status = 404;
-        throw e2;
+        throw this._wrapError(e, `source does not exist: ${input.CopySource}`, { status: 404, code: e.Code });
       }
       // Normalize the native error's HTTP status onto `.status`, same convention as the 404
       // case above, so callers (e.g. optimistic-concurrency retry logic keying off a failed
       // `ifMatch`/`ifNoneMatch`/`sourceIfMatch` precondition) can branch on it without knowing
       // this is an AWS SDK error shape.
-      e.status = status;
-      throw e;
+      throw this._wrapError(e, e.message, { status, code: e.Code });
     }
   }
 
@@ -422,14 +423,12 @@ export class S3Backend extends AbstractStorageBackend {
             errors += res.Errors.length;
           }
         } catch (e) {
-          log.warn(`error while deleting ${chunk.length} from ${bucket}/${sourceInfo}: ${e.message} (${e.$metadata.httpStatusCode})`);
+          log.warn(`error while deleting ${chunk.length} from ${bucket}/${sourceInfo}: ${e.message} (${e.$metadata?.httpStatusCode})`);
           errors += chunk.length;
           if (stopOnError) {
             const msg = `removing ${input.Delete.Objects.length} objects from bucket ${input.Bucket} failed: ${e.message}`;
             log.error(msg);
-            const e2 = new Error(msg);
-            e2.status = e.$metadata.httpStatusCode;
-            throw e2;
+            throw this._wrapError(e, msg, { status: e.$metadata?.httpStatusCode, code: e.Code });
           }
         }
       }, 2);
@@ -449,12 +448,10 @@ export class S3Backend extends AbstractStorageBackend {
       const msg = `removing ${bucket}/${input.Key} from storage failed: ${e.message}`;
       log.error(msg);
 
-      const e2 = /Deserialization error: to see the raw response, inspect the hidden field \{error\}\.\$response/.test(e.message)
-        ? new Error(e.$response.body)
-        : new Error(msg);
+      const isDeserializationError = /Deserialization error: to see the raw response, inspect the hidden field \{error\}\.\$response/.test(e.message);
+      const message = isDeserializationError ? e.$response.body : msg;
 
-      e2.status = e.$metadata.httpStatusCode;
-      throw e2;
+      throw this._wrapError(e, message, { status: e.$metadata?.httpStatusCode, code: e.Code });
     }
   }
 
@@ -468,22 +465,26 @@ export class S3Backend extends AbstractStorageBackend {
 
     let ContinuationToken;
     const objects = [];
-    do {
-      const input = {
-        Bucket: this._bucketName,
-        ContinuationToken,
-        Prefix: prefix,
-        Delimiter: shallow ? '/' : undefined,
-      };
-      if (maxItems - objects.length < 1000) {
-        input.MaxKeys = maxItems - objects.length;
-      }
-      // eslint-disable-next-line no-await-in-loop
-      const result = await this._client.send(new ListObjectsV2Command(input));
-      ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
-      objects.push(...listResultToObjectInfos(result));
-    } while (ContinuationToken && objects.length < maxItems);
-    return { prefix, objects, continuationToken: undefined };
+    try {
+      do {
+        const input = {
+          Bucket: this._bucketName,
+          ContinuationToken,
+          Prefix: prefix,
+          Delimiter: shallow ? '/' : undefined,
+        };
+        if (maxItems - objects.length < 1000) {
+          input.MaxKeys = maxItems - objects.length;
+        }
+        // eslint-disable-next-line no-await-in-loop
+        const result = await this._client.send(new ListObjectsV2Command(input));
+        ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
+        objects.push(...listResultToObjectInfos(result));
+      } while (ContinuationToken && objects.length < maxItems);
+      return { prefix, objects, continuationToken: undefined };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
+    }
   }
 
   /**
@@ -494,20 +495,24 @@ export class S3Backend extends AbstractStorageBackend {
   async browse(prefix, opts = {}) {
     const { continuationToken, maxItems } = opts;
 
-    const result = await this._client.send(new ListObjectsV2Command({
-      Bucket: this._bucketName,
-      Prefix: prefix,
-      Delimiter: '/',
-      ContinuationToken: continuationToken || undefined,
-      MaxKeys: maxItems,
-    }));
+    try {
+      const result = await this._client.send(new ListObjectsV2Command({
+        Bucket: this._bucketName,
+        Prefix: prefix,
+        Delimiter: '/',
+        ContinuationToken: continuationToken || undefined,
+        MaxKeys: maxItems,
+      }));
 
-    return {
-      prefix,
-      objects: listResultToObjectInfos(result),
-      continuationToken: result.IsTruncated
-        ? result.NextContinuationToken
-        : undefined,
-    };
+      return {
+        prefix,
+        objects: listResultToObjectInfos(result),
+        continuationToken: result.IsTruncated
+          ? result.NextContinuationToken
+          : undefined,
+      };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
+    }
   }
 }

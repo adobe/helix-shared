@@ -22,7 +22,7 @@ import xml2js from 'xml2js';
 import zlib from 'zlib';
 import { S3Client } from '@aws-sdk/client-s3';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
-import { Storage, MirroringBackend } from '@adobe/helix-shared-storage';
+import { Storage, MirroringBackend, StorageError } from '@adobe/helix-shared-storage';
 import { Nock } from './utils.js';
 import { StorageS3 } from '../src/StorageS3.js';
 import { S3Backend } from '../src/S3Backend.js';
@@ -213,9 +213,13 @@ describe('Storage test', () => {
       .get('/foo?x-id=GetObject')
       .reply(401);
     const bus = storage.codeBus();
-    const error = Error('UnknownError');
-    error.name = 'Unknown';
-    await assert.rejects(bus.get('/foo'), error);
+    await assert.rejects(bus.get('/foo'), (e) => {
+      assert.ok(e instanceof StorageError);
+      assert.strictEqual(e.message, 'UnknownError');
+      assert.strictEqual(e.status, 401);
+      assert.strictEqual(e.backend, 'S3');
+      return true;
+    });
   });
 
   it('can get metadata of an object', async () => {
@@ -602,8 +606,6 @@ describe('Storage test', () => {
     // (previously it was the other way around, and the tag was incidentally lost when the
     // deserialization-error branch reconstructed the error from the raw response body).
     const rawBody = 'this is not an XML error';
-    const expected = new Error(`[R2] ${rawBody}`);
-    expected.status = 500;
 
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .delete('/foo?x-id=DeleteObject')
@@ -614,10 +616,15 @@ describe('Storage test', () => {
 
     nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
       .delete('/foo?x-id=DeleteObject')
-      .reply(expected.status, rawBody);
+      .reply(500, rawBody);
 
     const bus = storage.codeBus();
-    await assert.rejects(async () => bus.remove('/foo'), expected);
+    await assert.rejects(async () => bus.remove('/foo'), (e) => {
+      assert.ok(e instanceof StorageError);
+      assert.strictEqual(e.message, `[R2] ${rawBody}`);
+      assert.strictEqual(e.status, 500);
+      return true;
+    });
   });
 
   it('can remove objects', async () => {
@@ -1248,7 +1255,9 @@ describe('Storage test', () => {
       .reply(200, body);
     const bus = storage.codeBus();
     await assert.rejects(bus.copy('/owner/repo/ref/foo.md', '/owner/repo/ref/foo/bar.md'), (e) => {
+      assert.ok(e instanceof StorageError);
       assert.strictEqual(e.status, 404);
+      assert.strictEqual(e.code, 'NoSuchKey');
       assert.match(e.message, /source does not exist/);
       return true;
     });
@@ -1883,6 +1892,94 @@ describe('Storage test', () => {
     const changes = await bus.copyDeep('src/', '');
     assert.strictEqual(changes.length, 1);
     assert.strictEqual(changes[0].dst, 'foo.txt');
+  });
+
+  describe('error normalization', () => {
+    it('putStream() throws a StorageError on SDK failure', async () => {
+      nock('https://helix-code-bus.s3.fake.amazonaws.com')
+        .put('/foo?x-id=PutObject')
+        .reply(500);
+
+      const bus = storage.codeBus({ disableR2: true });
+      const stream = Readable.from([Buffer.from('hello, world.')]);
+      await assert.rejects(bus.putStream('/foo', stream), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'S3');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
+
+    it('put() throws a StorageError on SDK failure', async () => {
+      nock('https://helix-code-bus.s3.fake.amazonaws.com')
+        .put('/foo?x-id=PutObject')
+        .reply(500);
+
+      const bus = storage.codeBus({ disableR2: true });
+      await assert.rejects(bus.put('/foo', 'hello, world.'), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'S3');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
+
+    it('putMeta() throws a StorageError on SDK failure', async () => {
+      nock('https://helix-code-bus.s3.fake.amazonaws.com')
+        .put('/owner/repo/ref?x-id=CopyObject')
+        .reply(500);
+
+      const bus = storage.codeBus({ disableR2: true });
+      await assert.rejects(bus.putMeta('/owner/repo/ref', { 'source-location': 'new-location' }), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'S3');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
+
+    it('list() throws a StorageError on SDK failure', async () => {
+      nock('https://helix-code-bus.s3.fake.amazonaws.com')
+        .get('/')
+        .query({
+          delimiter: '/',
+          'list-type': 2,
+          prefix: 'owner/repo/ref/',
+        })
+        .reply(500);
+
+      const bus = storage.codeBus({ disableR2: true });
+      await assert.rejects(bus.list('owner/repo/ref/', { shallow: true }), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'S3');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
+
+    it('browse() throws a StorageError on SDK failure', async () => {
+      nock('https://helix-code-bus.s3.fake.amazonaws.com')
+        .get('/')
+        .query({
+          delimiter: '/',
+          'list-type': 2,
+          prefix: '',
+        })
+        .reply(500);
+
+      const bus = storage.codeBus({ disableR2: true });
+      await assert.rejects(bus.browse(''), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        assert.strictEqual(e.backend, 'S3');
+        assert.ok(e.cause);
+        return true;
+      });
+    });
   });
 });
 

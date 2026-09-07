@@ -11,6 +11,7 @@
  */
 
 import { buffer } from 'node:stream/consumers';
+import { StorageError } from './StorageError.js';
 
 /**
  * Common, backend-agnostic object metadata fields (lowerCamelCase). Every {@link StorageBackend}
@@ -200,6 +201,52 @@ export const SYSTEM_META_FIELD_NAMES = [
  * @implements {StorageBackend}
  */
 export class AbstractStorageBackend {
+  /**
+   * Wraps a caught, backend-native SDK error into a {@link StorageError} tagged with this
+   * backend's `name`. Passes an already-`StorageError` through unchanged instead of
+   * double-wrapping it (e.g. one that bubbled up through a generic-default method's inner
+   * call to another mandatory primitive on `this`, such as `getMeta()`'s call to `head()`).
+   *
+   * @protected
+   * @param {Error} e the raw, caught SDK error
+   * @param {string} message normalized message for the new `StorageError` — callers without a
+   *  better message should pass `e.message` through verbatim
+   * @param {Object} [fields]
+   * @param {number} [fields.status]
+   * @param {string} [fields.code]
+   * @returns {StorageError}
+   */
+  _wrapError(e, message, { status, code } = {}) {
+    if (e instanceof StorageError) {
+      return e;
+    }
+    return new StorageError(message, {
+      status, code, backend: this.name, cause: e,
+    });
+  }
+
+  /**
+   * Shared helper for `get()`/`head()`'s "swallow 404 into `null`" convention: wraps `e` via
+   * {@link AbstractStorageBackend#_wrapError} and, if its normalized `status` is `404`,
+   * returns `null` instead of throwing.
+   *
+   * @protected
+   * @param {Error} e the raw, caught SDK error
+   * @param {string} message
+   * @param {Object} [fields]
+   * @param {number} [fields.status]
+   * @param {string} [fields.code]
+   * @returns {null}
+   * @throws {StorageError} when `status` is not `404`
+   */
+  _wrapOr404(e, message, fields = {}) {
+    const wrapped = this._wrapError(e, message, fields);
+    if (wrapped.status === 404) {
+      return null;
+    }
+    throw wrapped;
+  }
+
   async get() {
     throw new Error('get() not implemented');
   }

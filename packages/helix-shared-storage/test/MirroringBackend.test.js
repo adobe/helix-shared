@@ -15,6 +15,7 @@ import assert from 'assert';
 import { PassThrough, Readable } from 'node:stream';
 import { buffer as readStreamBuffer } from 'node:stream/consumers';
 import { MirroringBackend } from '../src/MirroringBackend.js';
+import { StorageError } from '../src/StorageError.js';
 
 /**
  * Minimal fake backend: records calls, either resolves with a fixed value or rejects with a
@@ -22,19 +23,23 @@ import { MirroringBackend } from '../src/MirroringBackend.js';
  */
 class FakeBackend {
   constructor(name, {
-    fails = false, value = `${name}-value`, client = `${name}-client`, consumeStream = false,
+    fails = false, throwError = null, value = `${name}-value`, client = `${name}-client`, consumeStream = false,
   } = {}) {
     this.name = name;
     this.bucketName = 'fake-bucket';
     this.client = client;
     this.calls = {};
     this._fails = fails;
+    this._throwError = throwError;
     this._value = value;
     this._consumeStream = consumeStream;
   }
 
   async _invoke(method, args) {
     this.calls[method] = (this.calls[method] || 0) + 1;
+    if (this._throwError) {
+      throw this._throwError;
+    }
     if (this._fails) {
       throw new Error(`${method} failed`);
     }
@@ -165,6 +170,26 @@ describe('MirroringBackend', () => {
         assert.strictEqual(primary.calls[method], 1);
         assert.strictEqual(r2.calls[method], 1);
         assert.strictEqual(azure.calls[method], 1);
+      });
+
+      it('passes a thrown StorageError through unchanged, only prefixing its message', async () => {
+        const cause = new Error('root cause');
+        const storageErr = new StorageError('boom', {
+          status: 500, code: 'X', backend: 'S3', cause,
+        });
+        const primary = new FakeBackend('S3', { throwError: storageErr });
+        const secondary = new FakeBackend('R2');
+        const mirror = new MirroringBackend({ primary, secondaries: [secondary] });
+        await assert.rejects(mirror[method]('foo'), (err) => {
+          assert.strictEqual(err, storageErr);
+          assert.ok(err instanceof StorageError);
+          assert.strictEqual(err.message, '[S3] boom');
+          assert.strictEqual(err.status, 500);
+          assert.strictEqual(err.code, 'X');
+          assert.strictEqual(err.backend, 'S3');
+          assert.strictEqual(err.cause, cause);
+          return true;
+        });
       });
     });
   });

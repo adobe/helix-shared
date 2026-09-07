@@ -14,12 +14,18 @@
 import assert from 'assert';
 import { Readable } from 'node:stream';
 import { AbstractStorageBackend } from '../src/AbstractStorageBackend.js';
+import { StorageError } from '../src/StorageError.js';
 
 class MinimalBackend extends AbstractStorageBackend {
   constructor(heads = {}, listResult = { prefix: '', objects: [], continuationToken: undefined }) {
     super();
     this._heads = heads;
     this._listResult = listResult;
+  }
+
+  // eslint-disable-next-line class-methods-use-this -- fixed tag, like real backends' `name`
+  get name() {
+    return 'Minimal';
   }
 
   async head(key) {
@@ -99,6 +105,49 @@ describe('AbstractStorageBackend', () => {
       assert.strictEqual(backend.putCall.key, 'foo');
       assert.strictEqual(backend.putCall.body.toString(), 'hello world');
       assert.strictEqual(backend.putCall.opts, opts);
+    });
+  });
+
+  describe('_wrapError()/_wrapOr404()', () => {
+    it('_wrapError() wraps a raw error into a StorageError tagged with this.name', () => {
+      const backend = new MinimalBackend();
+      const raw = new Error('boom');
+      // eslint-disable-next-line no-underscore-dangle -- exercising the protected helper directly
+      const wrapped = backend._wrapError(raw, 'wrapped msg', { status: 500, code: 'X' });
+      assert.ok(wrapped instanceof StorageError);
+      assert.strictEqual(wrapped.message, 'wrapped msg');
+      assert.strictEqual(wrapped.status, 500);
+      assert.strictEqual(wrapped.code, 'X');
+      assert.strictEqual(wrapped.backend, 'Minimal');
+      assert.strictEqual(wrapped.cause, raw);
+    });
+
+    it('_wrapError() passes an already-StorageError through unchanged', () => {
+      const backend = new MinimalBackend();
+      const original = new StorageError('original msg', { status: 404, backend: 'Other' });
+      // eslint-disable-next-line no-underscore-dangle -- exercising the protected helper directly
+      const result = backend._wrapError(original, 'other msg', { status: 500 });
+      assert.strictEqual(result, original);
+      assert.strictEqual(result.message, 'original msg');
+      assert.strictEqual(result.status, 404);
+      assert.strictEqual(result.backend, 'Other');
+    });
+
+    it('_wrapOr404() returns null when the normalized status is 404', () => {
+      const backend = new MinimalBackend();
+      // eslint-disable-next-line no-underscore-dangle -- exercising the protected helper directly
+      const result = backend._wrapOr404(new Error('not found'), 'not found', { status: 404 });
+      assert.strictEqual(result, null);
+    });
+
+    it('_wrapOr404() throws a StorageError when the normalized status is not 404', () => {
+      const backend = new MinimalBackend();
+      // eslint-disable-next-line no-underscore-dangle -- exercising the protected helper directly
+      assert.throws(() => backend._wrapOr404(new Error('boom'), 'boom', { status: 500 }), (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 500);
+        return true;
+      });
     });
   });
 

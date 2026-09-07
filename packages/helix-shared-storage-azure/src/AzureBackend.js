@@ -189,11 +189,7 @@ export class AzureBackend extends AbstractStorageBackend {
       }
       return buf;
     } catch (e) {
-      /* c8 ignore next 3 */
-      if (e.statusCode !== 404) {
-        throw e;
-      }
-      return null;
+      return this._wrapOr404(e, e.message, { status: e.statusCode, code: e.code });
     }
   }
 
@@ -217,11 +213,7 @@ export class AzureBackend extends AbstractStorageBackend {
         raw,
       };
     } catch (e) {
-      /* c8 ignore next 3 */
-      if (e.statusCode !== 404) {
-        throw e;
-      }
-      return null;
+      return this._wrapOr404(e, e.message, { status: e.statusCode, code: e.code });
     }
   }
 
@@ -234,14 +226,18 @@ export class AzureBackend extends AbstractStorageBackend {
   async put(key, body, opts = {}) {
     const data = typeof body === 'string' ? Buffer.from(body) : body;
     const blockBlobClient = this._client.getBlockBlobClient(key);
-    const raw = await blockBlobClient.upload(data, data.length, {
-      blobHTTPHeaders: buildBlobHTTPHeaders(opts),
-      metadata: toAzureMetadata(opts.metadata),
-    });
-    this._log.info(`object uploaded to: ${this._bucketName}/${key}`);
-    return {
-      etag: raw.etag, contentType: opts.contentType, raw,
-    };
+    try {
+      const raw = await blockBlobClient.upload(data, data.length, {
+        blobHTTPHeaders: buildBlobHTTPHeaders(opts),
+        metadata: toAzureMetadata(opts.metadata),
+      });
+      this._log.info(`object uploaded to: ${this._bucketName}/${key}`);
+      return {
+        etag: raw.etag, contentType: opts.contentType, raw,
+      };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.statusCode, code: e.code });
+    }
   }
 
   /**
@@ -256,14 +252,18 @@ export class AzureBackend extends AbstractStorageBackend {
    */
   async putStream(key, body, opts = {}) {
     const blockBlobClient = this._client.getBlockBlobClient(key);
-    const raw = await blockBlobClient.uploadStream(body, undefined, undefined, {
-      blobHTTPHeaders: buildBlobHTTPHeaders(opts),
-      metadata: toAzureMetadata(opts.metadata),
-    });
-    this._log.info(`object uploaded to: ${this._bucketName}/${key}`);
-    return {
-      etag: raw.etag, contentType: opts.contentType, raw,
-    };
+    try {
+      const raw = await blockBlobClient.uploadStream(body, undefined, undefined, {
+        blobHTTPHeaders: buildBlobHTTPHeaders(opts),
+        metadata: toAzureMetadata(opts.metadata),
+      });
+      this._log.info(`object uploaded to: ${this._bucketName}/${key}`);
+      return {
+        etag: raw.etag, contentType: opts.contentType, raw,
+      };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.statusCode, code: e.code });
+    }
   }
 
   /**
@@ -289,12 +289,16 @@ export class AzureBackend extends AbstractStorageBackend {
         customMetadata[key] = value;
       }
     });
-    const [metadataRaw, headersRaw] = await Promise.all([
-      blobClient.setMetadata(toAzureMetadata(customMetadata)),
-      blobClient.setHTTPHeaders(blobHTTPHeaders),
-    ]);
-    this._log.info(`Metadata updated for: ${this._bucketName}/${path}`);
-    return { raw: { metadata: metadataRaw, headers: headersRaw } };
+    try {
+      const [metadataRaw, headersRaw] = await Promise.all([
+        blobClient.setMetadata(toAzureMetadata(customMetadata)),
+        blobClient.setHTTPHeaders(blobHTTPHeaders),
+      ]);
+      this._log.info(`Metadata updated for: ${this._bucketName}/${path}`);
+      return { raw: { metadata: metadataRaw, headers: headersRaw } };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.statusCode, code: e.code });
+    }
   }
 
   /**
@@ -349,16 +353,13 @@ export class AzureBackend extends AbstractStorageBackend {
       return { etag: raw.etag, raw };
     } catch (e) {
       if (e.statusCode === 404) {
-        const e2 = new Error(`source does not exist: ${this._bucketName}/${src}`);
-        e2.status = 404;
-        throw e2;
+        throw this._wrapError(e, `source does not exist: ${this._bucketName}/${src}`, { status: 404, code: e.code });
       }
       // Normalize the native error's HTTP status onto `.status`, same convention as the 404
       // case above, so callers (e.g. optimistic-concurrency retry logic keying off a failed
       // `ifMatch`/`ifNoneMatch`/`sourceIfMatch` precondition) can branch on it without knowing
       // this is an Azure SDK error shape.
-      e.status = e.statusCode;
-      throw e;
+      throw this._wrapError(e, e.message, { status: e.statusCode, code: e.code });
     }
   }
 
@@ -385,9 +386,7 @@ export class AzureBackend extends AbstractStorageBackend {
           if (stopOnError) {
             const msg = `removing ${key} from bucket ${bucket} failed: ${e.message}`;
             log.error(msg);
-            const e2 = new Error(msg);
-            e2.status = e.statusCode;
-            throw e2;
+            throw this._wrapError(e, msg, { status: e.statusCode, code: e.code });
           }
         }
       }, REMOVE_CONCURRENCY);
@@ -402,9 +401,7 @@ export class AzureBackend extends AbstractStorageBackend {
     } catch (e) {
       const msg = `removing ${bucket}/${pathOrPaths} from storage failed: ${e.message}`;
       log.error(msg);
-      const e2 = new Error(msg);
-      e2.status = e.statusCode;
-      throw e2;
+      throw this._wrapError(e, msg, { status: e.statusCode, code: e.code });
     }
   }
 
@@ -417,28 +414,32 @@ export class AzureBackend extends AbstractStorageBackend {
     const { shallow = false, maxItems = Number.POSITIVE_INFINITY } = opts;
 
     const objects = [];
-    const iter = shallow
-      ? this._client.listBlobsByHierarchy('/', { prefix })
-      : this._client.listBlobsFlat({ prefix });
-    // eslint-disable-next-line no-restricted-syntax
-    for await (const item of iter) {
-      if (objects.length >= maxItems) {
-        break;
+    try {
+      const iter = shallow
+        ? this._client.listBlobsByHierarchy('/', { prefix })
+        : this._client.listBlobsFlat({ prefix });
+      // eslint-disable-next-line no-restricted-syntax
+      for await (const item of iter) {
+        if (objects.length >= maxItems) {
+          break;
+        }
+        if (item.kind === 'prefix') {
+          objects.push({ key: item.name, name: basename(item.name), isFolder: true });
+        } else {
+          objects.push({
+            key: item.name,
+            name: basename(item.name),
+            isFolder: item.name.endsWith('/'),
+            lastModified: item.properties.lastModified,
+            contentLength: item.properties.contentLength,
+            contentType: item.properties.contentType,
+          });
+        }
       }
-      if (item.kind === 'prefix') {
-        objects.push({ key: item.name, name: basename(item.name), isFolder: true });
-      } else {
-        objects.push({
-          key: item.name,
-          name: basename(item.name),
-          isFolder: item.name.endsWith('/'),
-          lastModified: item.properties.lastModified,
-          contentLength: item.properties.contentLength,
-          contentType: item.properties.contentType,
-        });
-      }
+      return { prefix, objects, continuationToken: undefined };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.statusCode, code: e.code });
     }
-    return { prefix, objects, continuationToken: undefined };
   }
 
   /**
@@ -449,30 +450,34 @@ export class AzureBackend extends AbstractStorageBackend {
   async browse(prefix, opts = {}) {
     const { continuationToken, maxItems } = opts;
 
-    const iter = this._client
-      .listBlobsByHierarchy('/', { prefix })
-      .byPage({ continuationToken, maxPageSize: maxItems });
-    const { value } = await iter.next();
+    try {
+      const iter = this._client
+        .listBlobsByHierarchy('/', { prefix })
+        .byPage({ continuationToken, maxPageSize: maxItems });
+      const { value } = await iter.next();
 
-    const objects = [];
-    value.segment.blobPrefixes.forEach(({ name }) => {
-      objects.push({ key: name, name: basename(name), isFolder: true });
-    });
-    value.segment.blobItems.forEach((item) => {
-      objects.push({
-        key: item.name,
-        name: basename(item.name),
-        isFolder: false,
-        lastModified: item.properties.lastModified,
-        contentLength: item.properties.contentLength,
-        contentType: item.properties.contentType,
+      const objects = [];
+      value.segment.blobPrefixes.forEach(({ name }) => {
+        objects.push({ key: name, name: basename(name), isFolder: true });
       });
-    });
+      value.segment.blobItems.forEach((item) => {
+        objects.push({
+          key: item.name,
+          name: basename(item.name),
+          isFolder: false,
+          lastModified: item.properties.lastModified,
+          contentLength: item.properties.contentLength,
+          contentType: item.properties.contentType,
+        });
+      });
 
-    return {
-      prefix,
-      objects,
-      continuationToken: value.continuationToken || undefined,
-    };
+      return {
+        prefix,
+        objects,
+        continuationToken: value.continuationToken || undefined,
+      };
+    } catch (e) {
+      throw this._wrapError(e, e.message, { status: e.statusCode, code: e.code });
+    }
   }
 }
