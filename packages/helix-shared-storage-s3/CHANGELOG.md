@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-s3-v1.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-s3-v1.3.0...@adobe/helix-shared-storage-s3-v1.4.0) (2026-09-07)
+
+
+### Features
+
+* **storage:** add a common StorageError class shared by S3Backend and AzureBackend ([#1267](https://github.com/adobe/helix-shared/issues/1267)) ([2163aaf](https://github.com/adobe/helix-shared/commit/2163aaf878b122fb40564a694fa7f1de407a8948)), closes [#1264](https://github.com/adobe/helix-shared/issues/1264)
+
 # [@adobe/helix-shared-storage-s3-v1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-s3-v1.2.0...@adobe/helix-shared-storage-s3-v1.3.0) (2026-09-07)
 
 
