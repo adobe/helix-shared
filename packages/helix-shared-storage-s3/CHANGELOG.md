@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-s3-v1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-s3-v1.2.0...@adobe/helix-shared-storage-s3-v1.3.0) (2026-09-07)
+
+
+### Features
+
+* **storage:** add streaming putStream() to the storage backend interface ([#1266](https://github.com/adobe/helix-shared/issues/1266)) ([475e287](https://github.com/adobe/helix-shared/commit/475e28786dc129ec98e52185efc791f6a88d4b16))
+
 # [@adobe/helix-shared-storage-s3-v1.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-s3-v1.1.1...@adobe/helix-shared-storage-s3-v1.2.0) (2026-09-07)
 
 
