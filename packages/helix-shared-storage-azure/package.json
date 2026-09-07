@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-storage-azure",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Shared modules of the Helix Project - Azure Blob Storage backend for @adobe/helix-shared-storage",
   "main": "src/index.js",
   "type": "module",
