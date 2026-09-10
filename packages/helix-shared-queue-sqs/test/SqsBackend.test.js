@@ -417,7 +417,8 @@ describe('SqsBackend', () => {
 
       const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
       assert.strictEqual(result.messages[0].body, '{"hello":"world"}');
-      assert.strictEqual(result.messages[0].raw.swapKey, undefined);
+      assert.strictEqual(typeof result.messages[0].raw.cleanup, 'function');
+      await result.messages[0].raw.cleanup(); // no-op; must not throw
     });
 
     it('legacySwapFormat: passes a plain JSON body through unchanged when it is not a swap pointer', async () => {
@@ -442,7 +443,7 @@ describe('SqsBackend', () => {
       assert.deepStrictEqual(JSON.parse(result.messages[0].body), {
         owner: 'adobe', repo: 'helix-indexer', data: 'small',
       });
-      assert.strictEqual(result.messages[0].raw.swapKey, undefined);
+      assert.strictEqual(typeof result.messages[0].raw.cleanup, 'function');
     });
 
     it('transparently dereferences a generic-format swap pointer', async () => {
@@ -469,7 +470,9 @@ describe('SqsBackend', () => {
       const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
       const [msg] = result.messages;
       assert.strictEqual(msg.body, 'the real, original body');
-      assert.strictEqual(msg.raw.swapKey, 'default/sqs-swap/my-queue-123.json');
+      assert.strictEqual(typeof msg.raw.cleanup, 'function');
+      await msg.raw.cleanup();
+      assert.strictEqual(bucket.objects.has('default/sqs-swap/my-queue-123.json'), false);
     });
 
     it('throws when a generic-format pointer references a different bucket than configured', async () => {
@@ -531,7 +534,9 @@ describe('SqsBackend', () => {
       assert.deepStrictEqual(JSON.parse(msg.body), {
         owner: 'adobe', repo: 'helix-indexer', data: 'the real payload',
       });
-      assert.strictEqual(msg.raw.swapKey, 'default/sqs-swap/adobe/helix-indexer-123.json');
+      assert.strictEqual(typeof msg.raw.cleanup, 'function');
+      await msg.raw.cleanup();
+      assert.strictEqual(bucket.objects.has('default/sqs-swap/adobe/helix-indexer-123.json'), false);
     });
 
     it('throws when a legacySwapFormat pointer references a different bucket than configured', async () => {
@@ -755,7 +760,10 @@ describe('SqsBackend', () => {
       const messages = [{
         id: 'mid-1',
         body: 'the real body',
-        raw: { ReceiptHandle: 'rh-1', swapKey: 'default/sqs-swap/my-queue-123.json' },
+        raw: {
+          ReceiptHandle: 'rh-1',
+          cleanup: async () => bucket.remove('default/sqs-swap/my-queue-123.json'),
+        },
       }];
       await backend.deleteBatch(messages);
       assert.deepStrictEqual(bucket.removeCalls, ['default/sqs-swap/my-queue-123.json']);
@@ -779,8 +787,9 @@ describe('SqsBackend', () => {
       assert.deepStrictEqual(bucket.removeCalls, []);
     });
 
-    it('logs (but does not throw for) a failure to clean up a swapped message body', async () => {
+    it('does not propagate a failure to clean up a swapped message body (end-to-end)', async () => {
       const bucket = new FakeBucket();
+      await bucket.put('default/sqs-swap/my-queue-123.json', 'the real body');
       bucket.remove = async () => {
         throw new Error('boom');
       };
@@ -790,13 +799,23 @@ describe('SqsBackend', () => {
         .post('/')
         .reply(200, { QueueUrl: QUEUE_URL });
       nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{
+            MessageId: 'mid-1',
+            ReceiptHandle: 'rh-1',
+            Body: JSON.stringify({
+              swapBucket: 'fake-spill-bucket', swapKey: 'default/sqs-swap/my-queue-123.json',
+            }),
+          }],
+        });
+      nock('https://sqs.fake.amazonaws.com')
         .matchHeader('x-amz-target', 'AmazonSQS.DeleteMessageBatch')
         .post('/')
         .reply(200, { Successful: [{ Id: 'mid-1' }], Failed: [] });
 
-      const messages = [{
-        id: 'mid-1', body: 'hi', raw: { ReceiptHandle: 'rh-1', swapKey: 'k.json' },
-      }];
+      const { messages } = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
       const result = await backend.deleteBatch(messages);
       assert.strictEqual(result.deleted[0], messages[0]);
     });

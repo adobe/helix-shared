@@ -18,6 +18,7 @@ import {
   SendMessageBatchCommand,
 } from '@aws-sdk/client-sqs';
 import { AbstractQueueBackend } from '@adobe/helix-shared-queue';
+import { dereferenceMessageBody } from './dereferenceMessageBody.js';
 
 /**
  * Maximum number of entries in a single `SendMessageBatchCommand`/`DeleteMessageBatchCommand`
@@ -281,7 +282,7 @@ export class SqsBackend extends AbstractQueueBackend {
    * up to `maxTime` seconds total; stops early once `maxMessages` is reached or no time budget
    * remains. Each individual `ReceiveMessageCommand` call is capped at SQS's own per-call limits
    * (10 messages, 20s wait). Messages spilled by {@link SqsBackend#_spill} are transparently
-   * dereferenced back to their real body — see {@link SqsBackend#_dereference} — so callers
+   * dereferenced back to their real body — see {@link dereferenceMessageBody} — so callers
    * never see a swap pointer.
    *
    * @param {import('@adobe/helix-shared-queue').ReceiveOptions} [opts]
@@ -330,111 +331,26 @@ export class SqsBackend extends AbstractQueueBackend {
   /**
    * Builds a {@link import('@adobe/helix-shared-queue').ReceivedMessage} from a raw SQS
    * message, transparently dereferencing it if it's a swap pointer produced by
-   * {@link SqsBackend#_spill}.
+   * {@link SqsBackend#_spill}, via the standalone {@link dereferenceMessageBody}. The
+   * resulting `cleanup` closure is stashed on `raw` so {@link SqsBackend#deleteBatch} can
+   * invoke it once the message is acknowledged.
    *
    * @param {Object} raw raw `ReceiveMessageCommand` message
    * @returns {Promise<import('@adobe/helix-shared-queue').ReceivedMessage>}
    */
   async _toReceivedMessage(raw) {
-    const message = {
+    const { body, cleanup } = await dereferenceMessageBody(raw.Body, {
+      bucket: this._bucket, legacySwapFormat: this._legacySwapFormat, log: this._log,
+    });
+    return {
       id: raw.MessageId,
-      body: raw.Body,
+      body,
       groupId: raw.Attributes?.MessageGroupId,
       receiveCount: raw.Attributes?.ApproximateReceiveCount === undefined
         ? undefined
         : Number(raw.Attributes.ApproximateReceiveCount),
-      raw,
+      raw: { ...raw, cleanup },
     };
-    await this._dereference(message);
-    return message;
-  }
-
-  /**
-   * If `message.body` is a swap pointer (in whichever shape `legacySwapFormat` implies),
-   * fetches the real content from `bucket` and replaces `message.body` with it, in place.
-   * Stashes the swap key on `message.raw` so {@link SqsBackend#deleteBatch} can clean it up
-   * once the message is acknowledged — mirroring `BatchedQueueClient`'s deferred
-   * `msg.cleanup()`, but tied to the queue abstraction's own ack point instead of a
-   * caller-invoked hook.
-   *
-   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
-   * @returns {Promise<void>}
-   */
-  async _dereference(message) {
-    let parsed;
-    try {
-      parsed = JSON.parse(message.body);
-    } catch (e) {
-      return;
-    }
-    const swapKey = this._legacySwapFormat
-      ? this._extractLegacySwapKey(parsed)
-      : this._extractGenericSwapKey(parsed);
-    if (!swapKey) {
-      return;
-    }
-    if (!this._bucket) {
-      throw this._wrapError(
-        new Error('message was swapped out but no spill bucket is configured'),
-        'message was swapped out but no spill bucket is configured',
-        { status: 500 },
-      );
-    }
-    const content = await this._bucket.get(swapKey);
-    if (content === null) {
-      throw this._wrapError(
-        new Error(`swapped message body not found: ${this._bucket.bucket}/${swapKey}`),
-        `swapped message body not found: ${this._bucket.bucket}/${swapKey}`,
-        { status: 404 },
-      );
-    }
-    message.body = content.toString('utf-8');
-    message.raw.swapKey = swapKey;
-  }
-
-  /**
-   * @param {Object} parsed the parsed message body
-   * @returns {string|undefined} the swap key, if `parsed` is a `legacySwapFormat` pointer
-   *  referencing the configured `bucket`
-   * @throws {QueueError} if `parsed` is a pointer but references a different bucket than
-   *  `bucket` is configured for
-   */
-  _extractLegacySwapKey(parsed) {
-    const { swapS3Url } = parsed;
-    if (!swapS3Url) {
-      return undefined;
-    }
-    const { hostname, pathname } = new URL(swapS3Url);
-    if (hostname !== this._bucket?.bucket) {
-      throw this._wrapError(
-        new Error(`swapped message references bucket "${hostname}", but this backend is configured for "${this._bucket?.bucket}"`),
-        `swapped message references bucket "${hostname}", but this backend is configured for "${this._bucket?.bucket}"`,
-        { status: 500 },
-      );
-    }
-    return pathname.substring(1);
-  }
-
-  /**
-   * @param {Object} parsed the parsed message body
-   * @returns {string|undefined} the swap key, if `parsed` is a generic-format pointer
-   *  referencing the configured `bucket`
-   * @throws {QueueError} if `parsed` is a pointer but references a different bucket than
-   *  `bucket` is configured for
-   */
-  _extractGenericSwapKey(parsed) {
-    const { swapBucket, swapKey } = parsed;
-    if (!swapKey) {
-      return undefined;
-    }
-    if (swapBucket !== this._bucket?.bucket) {
-      throw this._wrapError(
-        new Error(`swapped message references bucket "${swapBucket}", but this backend is configured for "${this._bucket?.bucket}"`),
-        `swapped message references bucket "${swapBucket}", but this backend is configured for "${this._bucket?.bucket}"`,
-        { status: 500 },
-      );
-    }
-    return swapKey;
   }
 
   /**
@@ -474,31 +390,10 @@ export class SqsBackend extends AbstractQueueBackend {
         });
       });
     }
-    await Promise.all(deleted.map((m) => this._cleanupSwap(m)));
+    // `cleanup` is always present (a no-op when the message was never swapped) — see
+    // dereferenceMessageBody(). Deferred to this ack point so a message that's never
+    // successfully deleted (and gets redelivered instead) can still find its swapped body.
+    await Promise.all(deleted.map((m) => m.raw?.cleanup?.()));
     return { deleted, failed };
-  }
-
-  /**
-   * Best-effort cleanup of a swapped-out message body once the message itself has been
-   * acknowledged (deleted from the queue) — mirrors `BatchedQueueClient`'s deferred
-   * `msg.cleanup()`, tied to this queue abstraction's own ack point (`deleteBatch()`) rather
-   * than a caller-invoked hook, so a message that's never successfully processed/deleted
-   * (and gets redelivered instead) can still find its swapped body. Never throws — a failure
-   * to delete the swap object is logged and otherwise ignored.
-   *
-   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
-   * @returns {Promise<void>}
-   */
-  async _cleanupSwap(message) {
-    const swapKey = message?.raw?.swapKey;
-    if (!swapKey || !this._bucket) {
-      return;
-    }
-    try {
-      await this._bucket.remove(swapKey);
-      this._log.debug(`deleted swapped message body: ${this._bucket.bucket}/${swapKey}`);
-    } catch (e) {
-      this._log.warn(`unable to delete swapped message body at ${this._bucket.bucket}/${swapKey}: ${e.message}`);
-    }
   }
 }

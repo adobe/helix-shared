@@ -62,6 +62,28 @@ Notes:
 - `bucket` must be backed by real AWS S3 (e.g. `@adobe/helix-shared-storage-s3`) in this mode — the emitted `swapS3Url` is a literal `s3://` URI that non-abstracted legacy consumers parse and fetch directly, bypassing this package's storage abstraction entirely.
 - `legacySwapFormat` can also be set per queue: `service.queue('my-queue-name', { legacySwapFormat: true })`.
 
+### Using Outside `receive()`/`delete()` (e.g. a Lambda SQS Event Source Mapping)
+
+`queue.receive()`'s transparent dereferencing only helps consumers that actually call it. A very common alternative — e.g. `helix-indexer`'s [`extractBody()`](https://github.com/adobe/helix-indexer/blob/main/src/index.js#L150) — is an AWS Lambda triggered directly by an SQS event source mapping: AWS itself does the "receive" and hands `event.Records[].body` straight to the handler, so this package's `receiveBatch()` is never involved at all.
+
+For exactly that case, the same dereferencing logic is available standalone, with no `Queue`/`SqsBackend` instance required — just a `Bucket`:
+
+```js
+import { dereferenceMessageBody } from '@adobe/helix-shared-queue-sqs';
+
+export async function handler(event, context) {
+  for (const record of event.Records) {
+    const { body, cleanup } = await dereferenceMessageBody(record.body, {
+      bucket, legacySwapFormat: true, log: context.log,
+    });
+    await process(JSON.parse(body));
+    await cleanup(); // only after successful, durable processing
+  }
+}
+```
+
+`cleanup()` is always a function (a no-op when nothing was swapped), so it's safe to call unconditionally, and it never throws — a failure to delete the swapped body is logged and otherwise ignored. `SqsBackend` uses this same function internally for `receiveBatch()`/`deleteBatch()`.
+
 ## Long-Polling
 
 `queue.receive({ minTime, maxTime, maxMessages })` generalizes `BatchedQueueClient.receive()`'s long-poll loop — see `@adobe/helix-shared-queue`'s README for the semantics. Each individual `ReceiveMessageCommand` call is capped at SQS's own per-call limits (10 messages, 20s wait), looped transparently.

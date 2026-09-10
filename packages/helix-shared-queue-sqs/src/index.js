@@ -16,3 +16,4 @@ export {
   createBackendFactory,
 } from './createDefaultBackendFactory.js';
 export { QueueServiceSqs } from './QueueServiceSqs.js';
+export { dereferenceMessageBody } from './dereferenceMessageBody.js';
