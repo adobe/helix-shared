@@ -1,0 +1,40 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import { QueueService } from '@adobe/helix-shared-queue';
+import { createDefaultBackendFactory } from './createDefaultBackendFactory.js';
+
+/**
+ * `QueueService` subclass pre-wired with the default SQS `backendFactory`, so existing
+ * consumers of `BatchedQueueClient` (`@adobe/helix-admin-support`) migrate with a one-line
+ * import change:
+ *
+ * ```diff
+ * - import { QueueService } from '@adobe/helix-shared-queue';
+ * + import { QueueServiceSqs as QueueService } from '@adobe/helix-shared-queue-sqs';
+ * ```
+ *
+ * No other call site changes are required.
+ */
+export class QueueServiceSqs extends QueueService {
+  /**
+   * @param {import('@adobe/helix-shared-queue').QueueServiceContext} context
+   * @param {Partial<import('@adobe/helix-shared-queue').QueueServiceOptions>} [opts]
+   * @returns {QueueServiceSqs}
+   */
+  static fromContext(context, opts = {}) {
+    return super.fromContext(context, {
+      backendFactory: createDefaultBackendFactory(context.env, { log: context.log }),
+      ...opts,
+    });
+  }
+}
