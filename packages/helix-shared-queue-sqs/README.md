@@ -47,6 +47,21 @@ const service = QueueService.fromContext(context, { bucket });
 
 `bucket` (and `swapPrefix`, defaulting to `'default/sqs-swap'`) can also be set per queue: `service.queue('my-queue-name', { bucket, swapPrefix })`. Without a configured bucket, attempting to send a message too large for SQS on its own throws.
 
+Spillover is fully transparent on the receive side too: `queue.receive()` automatically detects a swapped-out message, fetches the real body from `bucket`, and returns it in place of the pointer — callers never see a swap pointer. The swapped body is cleaned up from `bucket` once the message is acknowledged via `queue.delete()` (not eagerly on receive, so a message that's redelivered before being successfully processed can still find its swapped body); cleanup failures are logged and otherwise ignored.
+
+### Wire Compatibility with `BatchedQueueClient` (`legacySwapFormat`)
+
+By default, spilled messages use this package's own pointer shape (`{swapBucket, swapKey}`). If the same queue is also read by consumers that haven't migrated off `BatchedQueueClient` yet (e.g. `helix-indexer`'s `extractBody()`, which looks for a `swapS3Url` field), set `legacySwapFormat: true` to emit the exact wire format `BatchedQueueClient.serialize()` used instead: `{owner, repo, key, swapS3Url: 's3://bucket/key'}`.
+
+```js
+const service = QueueService.fromContext(context, { bucket, legacySwapFormat: true });
+```
+
+Notes:
+- The spilled message body must already contain `owner`/`repo` fields (or an explicit `key`) — `sendBatch()` throws if neither is present when a message needs spilling.
+- `bucket` must be backed by real AWS S3 (e.g. `@adobe/helix-shared-storage-s3`) in this mode — the emitted `swapS3Url` is a literal `s3://` URI that non-abstracted legacy consumers parse and fetch directly, bypassing this package's storage abstraction entirely.
+- `legacySwapFormat` can also be set per queue: `service.queue('my-queue-name', { legacySwapFormat: true })`.
+
 ## Long-Polling
 
 `queue.receive({ minTime, maxTime, maxMessages })` generalizes `BatchedQueueClient.receive()`'s long-poll loop — see `@adobe/helix-shared-queue`'s README for the semantics. Each individual `ReceiveMessageCommand` call is capped at SQS's own per-call limits (10 messages, 20s wait), looped transparently.

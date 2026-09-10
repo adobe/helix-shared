@@ -43,13 +43,27 @@ function buildTestBackend(opts = {}) {
  * In-memory fake `Bucket`, sufficient to exercise spillover without any real storage backend.
  */
 class FakeBucket {
-  constructor() {
-    this.bucket = 'fake-spill-bucket';
+  constructor({ bucket = 'fake-spill-bucket' } = {}) {
+    this.bucket = bucket;
     this.objects = new Map();
+    this.removeCalls = [];
   }
 
   async put(key, body) {
     this.objects.set(key, body);
+    return { key };
+  }
+
+  async get(key) {
+    if (!this.objects.has(key)) {
+      return null;
+    }
+    return Buffer.from(this.objects.get(key));
+  }
+
+  async remove(key) {
+    this.removeCalls.push(key);
+    this.objects.delete(key);
     return { key };
   }
 }
@@ -230,6 +244,84 @@ describe('SqsBackend', () => {
       });
     });
 
+    it('legacySwapFormat: spills using the BatchedQueueClient-compatible pointer shape', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket, legacySwapFormat: true });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.SendMessageBatch')
+        .post('/', (body) => {
+          const pointer = JSON.parse(body.Entries[0].MessageBody);
+          assert.strictEqual(pointer.owner, 'adobe');
+          assert.strictEqual(pointer.repo, 'helix-indexer');
+          assert.strictEqual(pointer.key, 'adobe/helix-indexer');
+          assert.match(pointer.swapS3Url, /^s3:\/\/fake-spill-bucket\/default\/sqs-swap\/adobe\/helix-indexer-\d+-\w+\.json$/);
+          return true;
+        })
+        .reply(200, { Successful: [{ Id: 'msg0', MessageId: 'mid-1' }], Failed: [] });
+
+      const big = JSON.stringify({ owner: 'adobe', repo: 'helix-indexer', data: 'x'.repeat(300_000) });
+      const result = await backend.sendBatch([{ body: big }]);
+      assert.deepStrictEqual(result.messageIds, ['mid-1']);
+    });
+
+    it('legacySwapFormat: uses an explicit "key" field over owner/repo when present', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket, legacySwapFormat: true });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.SendMessageBatch')
+        .post('/', (body) => {
+          const pointer = JSON.parse(body.Entries[0].MessageBody);
+          assert.strictEqual(pointer.key, 'custom-key');
+          return true;
+        })
+        .reply(200, { Successful: [{ Id: 'msg0', MessageId: 'mid-1' }], Failed: [] });
+
+      const big = JSON.stringify({
+        owner: 'adobe', repo: 'helix-indexer', key: 'custom-key', data: 'x'.repeat(300_000),
+      });
+      await backend.sendBatch([{ body: big }]);
+    });
+
+    it('legacySwapFormat: throws when the oversized message body is not JSON', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket, legacySwapFormat: true });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+
+      const big = 'x'.repeat(300_000);
+      await assert.rejects(backend.sendBatch([{ body: big }]), (e) => {
+        assert.ok(e instanceof QueueError);
+        assert.strictEqual(e.status, 400);
+        return true;
+      });
+    });
+
+    it('legacySwapFormat: throws when the body has neither owner/repo nor an explicit key', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket, legacySwapFormat: true });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+
+      const big = JSON.stringify({ data: 'x'.repeat(300_000) });
+      await assert.rejects(backend.sendBatch([{ body: big }]), (e) => {
+        assert.ok(e instanceof QueueError);
+        assert.strictEqual(e.status, 400);
+        return true;
+      });
+    });
+
     it('logs (but does not throw for) per-entry Failed results, returning fewer ids', async () => {
       const backend = buildTestBackend();
       nock('https://sqs.fake.amazonaws.com')
@@ -307,6 +399,226 @@ describe('SqsBackend', () => {
       const [msg] = result.messages;
       assert.strictEqual(msg.groupId, undefined);
       assert.strictEqual(msg.receiveCount, undefined);
+    });
+
+    it('passes a plain JSON body through unchanged when it is not a swap pointer', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{ MessageId: 'mid-1', ReceiptHandle: 'rh-1', Body: '{"hello":"world"}' }],
+        });
+
+      const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
+      assert.strictEqual(result.messages[0].body, '{"hello":"world"}');
+      assert.strictEqual(result.messages[0].raw.swapKey, undefined);
+    });
+
+    it('legacySwapFormat: passes a plain JSON body through unchanged when it is not a swap pointer', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket, legacySwapFormat: true });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{
+            MessageId: 'mid-1',
+            ReceiptHandle: 'rh-1',
+            Body: JSON.stringify({ owner: 'adobe', repo: 'helix-indexer', data: 'small' }),
+          }],
+        });
+
+      const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
+      assert.deepStrictEqual(JSON.parse(result.messages[0].body), {
+        owner: 'adobe', repo: 'helix-indexer', data: 'small',
+      });
+      assert.strictEqual(result.messages[0].raw.swapKey, undefined);
+    });
+
+    it('transparently dereferences a generic-format swap pointer', async () => {
+      const bucket = new FakeBucket();
+      await bucket.put('default/sqs-swap/my-queue-123.json', 'the real, original body');
+      const backend = buildTestBackend({ bucket });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{
+            MessageId: 'mid-1',
+            ReceiptHandle: 'rh-1',
+            Body: JSON.stringify({
+              swapBucket: 'fake-spill-bucket', swapKey: 'default/sqs-swap/my-queue-123.json',
+            }),
+          }],
+        });
+
+      const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
+      const [msg] = result.messages;
+      assert.strictEqual(msg.body, 'the real, original body');
+      assert.strictEqual(msg.raw.swapKey, 'default/sqs-swap/my-queue-123.json');
+    });
+
+    it('throws when a generic-format pointer references a different bucket than configured', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{
+            MessageId: 'mid-1',
+            ReceiptHandle: 'rh-1',
+            Body: JSON.stringify({ swapBucket: 'some-other-bucket', swapKey: 'k.json' }),
+          }],
+        });
+
+      await assert.rejects(
+        backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 }),
+        (e) => {
+          assert.ok(e instanceof QueueError);
+          assert.strictEqual(e.status, 500);
+          return true;
+        },
+      );
+    });
+
+    it('transparently dereferences a legacySwapFormat (BatchedQueueClient-compatible) pointer', async () => {
+      const bucket = new FakeBucket();
+      await bucket.put('default/sqs-swap/adobe/helix-indexer-123.json', JSON.stringify({
+        owner: 'adobe', repo: 'helix-indexer', data: 'the real payload',
+      }));
+      const backend = buildTestBackend({ bucket, legacySwapFormat: true });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{
+            MessageId: 'mid-1',
+            ReceiptHandle: 'rh-1',
+            Body: JSON.stringify({
+              owner: 'adobe',
+              repo: 'helix-indexer',
+              key: 'adobe/helix-indexer',
+              swapS3Url: 's3://fake-spill-bucket/default/sqs-swap/adobe/helix-indexer-123.json',
+            }),
+          }],
+        });
+
+      const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
+      const [msg] = result.messages;
+      assert.deepStrictEqual(JSON.parse(msg.body), {
+        owner: 'adobe', repo: 'helix-indexer', data: 'the real payload',
+      });
+      assert.strictEqual(msg.raw.swapKey, 'default/sqs-swap/adobe/helix-indexer-123.json');
+    });
+
+    it('throws when a legacySwapFormat pointer references a different bucket than configured', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket, legacySwapFormat: true });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{
+            MessageId: 'mid-1',
+            ReceiptHandle: 'rh-1',
+            Body: JSON.stringify({
+              owner: 'adobe', repo: 'helix-indexer', key: 'adobe/helix-indexer', swapS3Url: 's3://some-other-bucket/k.json',
+            }),
+          }],
+        });
+
+      await assert.rejects(
+        backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 }),
+        (e) => {
+          assert.ok(e instanceof QueueError);
+          assert.strictEqual(e.status, 500);
+          return true;
+        },
+      );
+    });
+
+    it('throws when a message was swapped out but no spill bucket is configured', async () => {
+      const backend = buildTestBackend();
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{
+            MessageId: 'mid-1',
+            ReceiptHandle: 'rh-1',
+            // omits `swapBucket` so this doesn't first trip the bucket-mismatch check —
+            // exercises the "no bucket configured at all" branch specifically
+            Body: JSON.stringify({ swapKey: 'k.json' }),
+          }],
+        });
+
+      await assert.rejects(
+        backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 }),
+        (e) => {
+          assert.ok(e instanceof QueueError);
+          assert.strictEqual(e.status, 500);
+          return true;
+        },
+      );
+    });
+
+    it('throws when the swapped message body cannot be found in the bucket', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+        .post('/')
+        .reply(200, {
+          Messages: [{
+            MessageId: 'mid-1',
+            ReceiptHandle: 'rh-1',
+            Body: JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'missing.json' }),
+          }],
+        });
+
+      await assert.rejects(
+        backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 }),
+        (e) => {
+          assert.ok(e instanceof QueueError);
+          assert.strictEqual(e.status, 404);
+          return true;
+        },
+      );
     });
 
     it('stops once maxMessages is reached, without waiting out minTime', async () => {
@@ -425,6 +737,68 @@ describe('SqsBackend', () => {
       const result = await backend.deleteBatch(messages);
       assert.strictEqual(result.deleted[0], messages[0]);
       assert.deepStrictEqual(result.failed, []);
+    });
+
+    it('cleans up a swapped message body once the message is acknowledged', async () => {
+      const bucket = new FakeBucket();
+      await bucket.put('default/sqs-swap/my-queue-123.json', 'the real body');
+      const backend = buildTestBackend({ bucket });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.DeleteMessageBatch')
+        .post('/')
+        .reply(200, { Successful: [{ Id: 'mid-1' }], Failed: [] });
+
+      const messages = [{
+        id: 'mid-1',
+        body: 'the real body',
+        raw: { ReceiptHandle: 'rh-1', swapKey: 'default/sqs-swap/my-queue-123.json' },
+      }];
+      await backend.deleteBatch(messages);
+      assert.deepStrictEqual(bucket.removeCalls, ['default/sqs-swap/my-queue-123.json']);
+      assert.strictEqual(bucket.objects.has('default/sqs-swap/my-queue-123.json'), false);
+    });
+
+    it('does not attempt cleanup for a message that was never swapped', async () => {
+      const bucket = new FakeBucket();
+      const backend = buildTestBackend({ bucket });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.DeleteMessageBatch')
+        .post('/')
+        .reply(200, { Successful: [{ Id: 'mid-1' }], Failed: [] });
+
+      const messages = [{ id: 'mid-1', body: 'hi', raw: { ReceiptHandle: 'rh-1' } }];
+      await backend.deleteBatch(messages);
+      assert.deepStrictEqual(bucket.removeCalls, []);
+    });
+
+    it('logs (but does not throw for) a failure to clean up a swapped message body', async () => {
+      const bucket = new FakeBucket();
+      bucket.remove = async () => {
+        throw new Error('boom');
+      };
+      const backend = buildTestBackend({ bucket });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.DeleteMessageBatch')
+        .post('/')
+        .reply(200, { Successful: [{ Id: 'mid-1' }], Failed: [] });
+
+      const messages = [{
+        id: 'mid-1', body: 'hi', raw: { ReceiptHandle: 'rh-1', swapKey: 'k.json' },
+      }];
+      const result = await backend.deleteBatch(messages);
+      assert.strictEqual(result.deleted[0], messages[0]);
     });
 
     it('splits more than 10 messages into multiple DeleteMessageBatchCommand calls', async () => {
