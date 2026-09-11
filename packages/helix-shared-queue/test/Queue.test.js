@@ -80,6 +80,15 @@ describe('Queue', () => {
     });
   });
 
+  describe('sendOne()', () => {
+    it('wraps the message in a single-element array and unwraps the resulting id', async () => {
+      const message = { body: 'a' };
+      const messageId = await queue.sendOne(message);
+      assert.deepStrictEqual(backend.sendCalls, [[message]]);
+      assert.strictEqual(messageId, 'id-0');
+    });
+  });
+
   describe('receive()', () => {
     it('forwards to backend.receiveBatch() with the given opts', async () => {
       const result = await queue.receive({ minTime: 1, maxTime: 2, maxMessages: 3 });
