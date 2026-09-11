@@ -59,33 +59,24 @@ describe('dereferenceMessageBody()', () => {
     assert.deepStrictEqual(bucket.removeCalls, []);
   });
 
-  it('dereferences a generic-format pointer and cleans it up on request', async () => {
-    const bucket = new FakeBucket();
-    await bucket.put('k.json', 'the real body');
-    const body = JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' });
-
-    const result = await dereferenceMessageBody(body, { bucket });
-    assert.strictEqual(result.body, 'the real body');
-    await result.cleanup();
-    assert.deepStrictEqual(bucket.removeCalls, ['k.json']);
-  });
-
-  it('dereferences a legacySwapFormat (BatchedQueueClient-compatible) pointer', async () => {
+  it('dereferences a BatchedQueueClient-compatible pointer and cleans it up on request', async () => {
     const bucket = new FakeBucket();
     await bucket.put('k.json', JSON.stringify({ owner: 'adobe', repo: 'helix-indexer', data: 'x' }));
     const body = JSON.stringify({
       owner: 'adobe', repo: 'helix-indexer', key: 'adobe/helix-indexer', swapS3Url: 's3://fake-spill-bucket/k.json',
     });
 
-    const result = await dereferenceMessageBody(body, { bucket, legacySwapFormat: true });
+    const result = await dereferenceMessageBody(body, { bucket });
     assert.deepStrictEqual(JSON.parse(result.body), { owner: 'adobe', repo: 'helix-indexer', data: 'x' });
     await result.cleanup();
     assert.deepStrictEqual(bucket.removeCalls, ['k.json']);
   });
 
-  it('throws when a generic-format pointer references a different bucket than configured', async () => {
+  it('throws when a pointer references a different bucket than configured', async () => {
     const bucket = new FakeBucket();
-    const body = JSON.stringify({ swapBucket: 'some-other-bucket', swapKey: 'k.json' });
+    const body = JSON.stringify({
+      owner: 'adobe', repo: 'helix-indexer', key: 'adobe/helix-indexer', swapS3Url: 's3://some-other-bucket/k.json',
+    });
     await assert.rejects(dereferenceMessageBody(body, { bucket }), (e) => {
       assert.ok(e instanceof QueueError);
       assert.strictEqual(e.status, 500);
@@ -93,20 +84,10 @@ describe('dereferenceMessageBody()', () => {
     });
   });
 
-  it('throws when a legacySwapFormat pointer references a different bucket than configured', async () => {
-    const bucket = new FakeBucket();
-    const body = JSON.stringify({
-      owner: 'adobe', repo: 'helix-indexer', key: 'adobe/helix-indexer', swapS3Url: 's3://some-other-bucket/k.json',
-    });
-    await assert.rejects(dereferenceMessageBody(body, { bucket, legacySwapFormat: true }), (e) => {
-      assert.ok(e instanceof QueueError);
-      assert.strictEqual(e.status, 500);
-      return true;
-    });
-  });
-
   it('throws when the message was swapped out but no bucket is configured', async () => {
-    const body = JSON.stringify({ swapKey: 'k.json' });
+    const body = JSON.stringify({
+      owner: 'adobe', repo: 'helix-indexer', key: 'adobe/helix-indexer', swapS3Url: 's3://fake-spill-bucket/k.json',
+    });
     await assert.rejects(dereferenceMessageBody(body), (e) => {
       assert.ok(e instanceof QueueError);
       assert.strictEqual(e.status, 500);
@@ -116,7 +97,9 @@ describe('dereferenceMessageBody()', () => {
 
   it('throws when the swapped message body cannot be found in the bucket', async () => {
     const bucket = new FakeBucket();
-    const body = JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'missing.json' });
+    const body = JSON.stringify({
+      owner: 'adobe', repo: 'helix-indexer', key: 'adobe/helix-indexer', swapS3Url: 's3://fake-spill-bucket/missing.json',
+    });
     await assert.rejects(dereferenceMessageBody(body, { bucket }), (e) => {
       assert.ok(e instanceof QueueError);
       assert.strictEqual(e.status, 404);
@@ -137,7 +120,9 @@ describe('dereferenceMessageBody()', () => {
     bucket.remove = async () => {
       throw new Error('boom');
     };
-    const body = JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' });
+    const body = JSON.stringify({
+      owner: 'adobe', repo: 'helix-indexer', key: 'adobe/helix-indexer', swapS3Url: 's3://fake-spill-bucket/k.json',
+    });
 
     const result = await dereferenceMessageBody(body, { bucket });
     await result.cleanup(); // must not throw

@@ -23,9 +23,6 @@ import { SqsBackend } from './SqsBackend.js';
  *  `{bucket}` passed to `QueueService#queue()`.
  * @property {string} [swapPrefix] default spill key prefix; see {@link SqsBackend}. Can be
  *  overridden per queue via `{swapPrefix}` passed to `QueueService#queue()`.
- * @property {boolean} [legacySwapFormat] default legacy-wire-format flag; see
- *  {@link SqsBackend}. Can be overridden per queue via `{legacySwapFormat}` passed to
- *  `QueueService#queue()`.
  */
 
 /**
@@ -72,14 +69,11 @@ function parseBackendFactoryEnvOpts(env = {}) {
  * @param {BackendFactoryOpts} opts
  * @param {CreateDefaultBackendFactoryOptions} [factoryOpts]
  * @returns {function(string, {bucket?: import('@adobe/helix-shared-storage').Bucket,
- *   swapPrefix?: string, legacySwapFormat?: boolean}=):
- *   import('@adobe/helix-shared-queue').QueueBackend}
+ *   swapPrefix?: string}=): import('@adobe/helix-shared-queue').QueueBackend}
  */
 export function createBackendFactory({
   region, connectionTimeout, socketTimeout, keepAlive, maxAttempts,
-}, {
-  log = console, bucket, swapPrefix, legacySwapFormat,
-} = {}) {
+}, { log = console, bucket, swapPrefix } = {}) {
   const clientOpts = {
     requestHandler: new NodeHttpHandler({
       httpsAgent: new Agent({ keepAlive }),
@@ -103,7 +97,6 @@ export function createBackendFactory({
     log,
     bucket: opts.bucket ?? bucket,
     swapPrefix: opts.swapPrefix ?? swapPrefix,
-    legacySwapFormat: opts.legacySwapFormat ?? legacySwapFormat,
   });
 }
 
@@ -114,8 +107,7 @@ export function createBackendFactory({
  * @param {Record<string, string|undefined>} [env] environment variables (e.g. `context.env`)
  * @param {CreateDefaultBackendFactoryOptions} [opts]
  * @returns {function(string, {bucket?: import('@adobe/helix-shared-storage').Bucket,
- *   swapPrefix?: string, legacySwapFormat?: boolean}=):
- *   import('@adobe/helix-shared-queue').QueueBackend}
+ *   swapPrefix?: string}=): import('@adobe/helix-shared-queue').QueueBackend}
  */
 export function createDefaultBackendFactory(env = {}, opts = {}) {
   return createBackendFactory(parseBackendFactoryEnvOpts(env), opts);

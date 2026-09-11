@@ -15,46 +15,34 @@ import { QueueError } from '@adobe/helix-shared-queue';
 const NOOP_CLEANUP = async () => {};
 
 /**
+ * Cheap (no I/O): detects whether an already-parsed message body is a swap pointer produced
+ * by {@link SqsBackend#sendBatch} (the `BatchedQueueClient`-compatible
+ * `{owner, repo, key, swapS3Url}` shape) and, if so, extracts its storage key. Exported so
+ * {@link SqsBackend} can reuse this same detection logic for its `isSwapped()`/`receiveBatch()`
+ * split without needing to also import the (fetching) {@link dereferenceMessageBody}.
+ *
  * @param {Object} parsed the parsed message body
- * @param {string} [bucketName]
- * @returns {string|undefined} the swap key, if `parsed` is a `legacySwapFormat` pointer
- *  referencing `bucketName`
- * @throws {QueueError} if `parsed` is a pointer but references a different bucket
+ * @param {string} [bucketName] the configured bucket's name, if any. When omitted (no bucket
+ *  configured at all), the mismatch check below is skipped — that's a distinct "no bucket
+ *  configured" condition for the caller to check separately once it actually needs to fetch
+ *  (see {@link dereferenceMessageBody}/`SqsBackend#deserialize`), not a mismatch.
+ * @returns {string|undefined} the swap key, if `parsed` is a swap pointer
+ * @throws {QueueError} if `parsed` is a pointer, `bucketName` is configured, but they
+ *  reference different buckets
  */
-function extractLegacySwapKey(parsed, bucketName) {
+export function extractSwapKey(parsed, bucketName) {
   const { swapS3Url } = parsed;
   if (!swapS3Url) {
     return undefined;
   }
   const { hostname, pathname } = new URL(swapS3Url);
-  if (hostname !== bucketName) {
+  if (bucketName !== undefined && hostname !== bucketName) {
     throw new QueueError(
       `swapped message references bucket "${hostname}", but this backend is configured for "${bucketName}"`,
       { status: 500, backend: 'SQS' },
     );
   }
   return pathname.substring(1);
-}
-
-/**
- * @param {Object} parsed the parsed message body
- * @param {string} [bucketName]
- * @returns {string|undefined} the swap key, if `parsed` is a generic-format pointer
- *  referencing `bucketName`
- * @throws {QueueError} if `parsed` is a pointer but references a different bucket
- */
-function extractGenericSwapKey(parsed, bucketName) {
-  const { swapBucket, swapKey } = parsed;
-  if (!swapKey) {
-    return undefined;
-  }
-  if (swapBucket !== bucketName) {
-    throw new QueueError(
-      `swapped message references bucket "${swapBucket}", but this backend is configured for "${bucketName}"`,
-      { status: 500, backend: 'SQS' },
-    );
-  }
-  return swapKey;
 }
 
 /**
@@ -69,27 +57,24 @@ function extractGenericSwapKey(parsed, bucketName) {
  */
 
 /**
- * Given a raw SQS message body, transparently resolves it to the real content, dereferencing
- * it from blob storage if {@link SqsBackend#sendBatch} spilled it there. Standalone (no
- * `Queue`/`SqsBackend` instance required) so it can be used directly wherever SQS messages are
+ * Given a raw SQS message body, resolves it to the real content, dereferencing it from blob
+ * storage if {@link SqsBackend#sendBatch} spilled it there. Standalone (no `Queue`/
+ * `SqsBackend` instance required) so it can be used directly wherever SQS messages are
  * consumed outside of this package's own `receive()`/`delete()` flow — most notably in an AWS
  * Lambda function triggered by an SQS event source mapping, where AWS delivers
  * `event.Records[].body` directly to the handler rather than going through `Queue#receive()`
- * at all (`SqsBackend` itself uses this same function internally for its `receiveBatch()`/
- * `deleteBatch()`).
+ * at all, and where (typically processing one record at a time) there's little benefit to the
+ * lazy `isSwapped()`/`deserialize()` split `Queue` offers — this fetches immediately.
  *
  * @param {string} body raw SQS message body (e.g. a Lambda SQS event's `record.body`)
  * @param {Object} [opts]
  * @param {import('@adobe/helix-shared-storage').Bucket} [opts.bucket] required if `body` might
  *  reference a swapped-out message
- * @param {boolean} [opts.legacySwapFormat] whether to recognize `BatchedQueueClient`'s pointer
- *  shape (`swapS3Url`) instead of this package's own generic one (`swapBucket`/`swapKey`) — see
- *  {@link SqsBackend}. Defaults to `false`.
  * @param {Console} [opts.log]
  * @returns {Promise<DereferenceResult>}
  */
 export async function dereferenceMessageBody(body, opts = {}) {
-  const { bucket, legacySwapFormat = false, log = console } = opts;
+  const { bucket, log = console } = opts;
 
   let parsed;
   try {
@@ -98,9 +83,7 @@ export async function dereferenceMessageBody(body, opts = {}) {
     return { body, cleanup: NOOP_CLEANUP };
   }
 
-  const swapKey = legacySwapFormat
-    ? extractLegacySwapKey(parsed, bucket?.bucket)
-    : extractGenericSwapKey(parsed, bucket?.bucket);
+  const swapKey = extractSwapKey(parsed, bucket?.bucket);
   if (!swapKey) {
     return { body, cleanup: NOOP_CLEANUP };
   }

@@ -47,42 +47,46 @@ const service = QueueService.fromContext(context, { bucket });
 
 `bucket` (and `swapPrefix`, defaulting to `'default/sqs-swap'`) can also be set per queue: `service.queue('my-queue-name', { bucket, swapPrefix })`. Without a configured bucket, attempting to send a message too large for SQS on its own throws.
 
-Spillover is fully transparent on the receive side too: `queue.receive()` automatically detects a swapped-out message, fetches the real body from `bucket`, and returns it in place of the pointer — callers never see a swap pointer. The swapped body is cleaned up from `bucket` once the message is acknowledged via `queue.delete()` (not eagerly on receive, so a message that's redelivered before being successfully processed can still find its swapped body); cleanup failures are logged and otherwise ignored.
+Spilled messages always use the exact wire format `BatchedQueueClient.serialize()` used — `{owner, repo, key, swapS3Url: 's3://bucket/key'}` — there is no alternate pointer shape for this backend. Realistically, anything adopting this backend in the Helix context has (or will have) `helix-indexer`-style consumers to stay compatible with, so there's no reason to offer a different shape. Two consequences:
+- The spilled message body must already contain `owner`/`repo` fields (or an explicit `key`) — `sendBatch()` throws if neither is present when a message needs spilling.
+- `bucket` must be backed by real AWS S3 (e.g. `@adobe/helix-shared-storage-s3`) — the emitted `swapS3Url` is a literal `s3://` URI that non-abstracted legacy consumers parse and fetch directly, bypassing this package's storage abstraction entirely.
 
-### Wire Compatibility with `BatchedQueueClient` (`legacySwapFormat`)
+### Receiving a Swapped Message: `isSwapped()`/`deserialize()`
 
-By default, spilled messages use this package's own pointer shape (`{swapBucket, swapKey}`). If the same queue is also read by consumers that haven't migrated off `BatchedQueueClient` yet (e.g. `helix-indexer`'s `extractBody()`, which looks for a `swapS3Url` field), set `legacySwapFormat: true` to emit the exact wire format `BatchedQueueClient.serialize()` used instead: `{owner, repo, key, swapS3Url: 's3://bucket/key'}`.
+`queue.receive()` does **not** transparently fetch a swapped-out message's real content — see `@adobe/helix-shared-queue`'s README for why (in short: forcing a blob fetch for every swapped message regardless of whether the caller needs the full body defeats an optimization `helix-indexer`'s `notify()` already relies on, reading just `owner`/`repo` off the message without ever touching storage). Check and resolve explicitly instead:
 
 ```js
-const service = QueueService.fromContext(context, { bucket, legacySwapFormat: true });
+const { messages } = await queue.receive();
+for (let message of messages) {
+  if (await queue.isSwapped(message)) {
+    message = await queue.deserialize(message);
+  }
+  console.log(message.body); // guaranteed real now
+}
+await queue.delete(messages);
 ```
 
-Notes:
-- The spilled message body must already contain `owner`/`repo` fields (or an explicit `key`) — `sendBatch()` throws if neither is present when a message needs spilling.
-- `bucket` must be backed by real AWS S3 (e.g. `@adobe/helix-shared-storage-s3`) in this mode — the emitted `swapS3Url` is a literal `s3://` URI that non-abstracted legacy consumers parse and fetch directly, bypassing this package's storage abstraction entirely.
-- `legacySwapFormat` can also be set per queue: `service.queue('my-queue-name', { legacySwapFormat: true })`.
+`queue.delete()` cleans up the swapped body from `bucket` once the message is acknowledged — regardless of whether `deserialize()` was ever called for it (deferred to this ack point, not done eagerly on receive, so a message redelivered before being successfully processed can still find its swapped body); cleanup failures are logged and otherwise ignored.
 
 ### Using Outside `receive()`/`delete()` (e.g. a Lambda SQS Event Source Mapping)
 
-`queue.receive()`'s transparent dereferencing only helps consumers that actually call it. A very common alternative — e.g. `helix-indexer`'s [`extractBody()`](https://github.com/adobe/helix-indexer/blob/main/src/index.js#L150) — is an AWS Lambda triggered directly by an SQS event source mapping: AWS itself does the "receive" and hands `event.Records[].body` straight to the handler, so this package's `receiveBatch()` is never involved at all.
+`isSwapped()`/`deserialize()` only help consumers going through `Queue`. A very common alternative — e.g. `helix-indexer`'s [`extractBody()`](https://github.com/adobe/helix-indexer/blob/main/src/index.js#L150) — is an AWS Lambda triggered directly by an SQS event source mapping: AWS itself does the "receive" and hands `event.Records[].body` straight to the handler, so this package's `receiveBatch()` is never involved at all.
 
-For exactly that case, the same dereferencing logic is available standalone, with no `Queue`/`SqsBackend` instance required — just a `Bucket`:
+For exactly that case, the same dereference-and-cleanup logic is available standalone, with no `Queue`/`SqsBackend` instance required — just a `Bucket` — and fetches immediately rather than lazily (there's little benefit to laziness when processing one record at a time anyway):
 
 ```js
 import { dereferenceMessageBody } from '@adobe/helix-shared-queue-sqs';
 
 export async function handler(event, context) {
   for (const record of event.Records) {
-    const { body, cleanup } = await dereferenceMessageBody(record.body, {
-      bucket, legacySwapFormat: true, log: context.log,
-    });
+    const { body, cleanup } = await dereferenceMessageBody(record.body, { bucket, log: context.log });
     await process(JSON.parse(body));
     await cleanup(); // only after successful, durable processing
   }
 }
 ```
 
-`cleanup()` is always a function (a no-op when nothing was swapped), so it's safe to call unconditionally, and it never throws — a failure to delete the swapped body is logged and otherwise ignored. `SqsBackend` uses this same function internally for `receiveBatch()`/`deleteBatch()`.
+`cleanup()` is always a function (a no-op when nothing was swapped), so it's safe to call unconditionally, and it never throws — a failure to delete the swapped body is logged and otherwise ignored.
 
 ## Long-Polling
 

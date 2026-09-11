@@ -44,17 +44,6 @@ describe('createDefaultBackendFactory()', () => {
     assert.strictEqual(backend._swapPrefix, 'per-queue');
   });
 
-  it('forwards a factory-level default legacySwapFormat, overridable per queue', () => {
-    const factory = createDefaultBackendFactory({}, { log: console, legacySwapFormat: true });
-    const backend = factory('my-queue');
-    // eslint-disable-next-line no-underscore-dangle -- exercising internal wiring directly
-    assert.strictEqual(backend._legacySwapFormat, true);
-
-    const overridden = factory('my-queue', { legacySwapFormat: false });
-    // eslint-disable-next-line no-underscore-dangle -- exercising internal wiring directly
-    assert.strictEqual(overridden._legacySwapFormat, false);
-  });
-
   it('parses HELIX_QUEUE_MAX_ATTEMPTS and defaults to undefined when absent/invalid', () => {
     const withAttempts = createDefaultBackendFactory({ HELIX_QUEUE_MAX_ATTEMPTS: '5' }, { log: console });
     assert.ok(withAttempts('q') instanceof SqsBackend);
