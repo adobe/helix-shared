@@ -37,15 +37,24 @@
  * needed to ack (SQS's `ReceiptHandle`, a future Azure Service Bus lock token); `Queue`
  * itself never interprets it.
  *
+ * `body` may be a backend-specific spillover pointer rather than the real message content,
+ * if the backend spilled it to blob storage because it was too large to send inline —
+ * `receive()` does **not** transparently resolve this (unlike a prior design of this
+ * package): call {@link Queue#isSwapped} to check cheaply (no I/O), and
+ * {@link Queue#deserialize} to fetch the real content only when actually needed. This
+ * split exists so a caller that only needs a few cheap fields out of a large message (e.g.
+ * routing metadata) never pays for the blob fetch.
+ *
  * @typedef {Object} ReceivedMessage
  * @property {string} id backend-native message id (e.g. SQS's `MessageId`)
- * @property {string} body message payload, verbatim
+ * @property {string} body message payload, verbatim — see note above about spillover
  * @property {string} [groupId] echoes the ordering/session key that produced this message,
  *  when the backend can report one
  * @property {number} [receiveCount] number of times this message has been delivered so far
  *  (SQS's `ApproximateReceiveCount`), when the backend can report it
  * @property {*} raw the backend's raw, native SDK message object — opaque to `Queue`;
- *  required by {@link Queue#delete} to ack this specific message
+ *  required by {@link Queue#delete} to ack this specific message, and used by backends to
+ *  privately track spillover state between `isSwapped`/`deserialize`/`delete`
  */
 
 /**
@@ -157,5 +166,30 @@ export class Queue {
    */
   async delete(messages) {
     return this._backend.deleteBatch(messages);
+  }
+
+  /**
+   * Cheap (no I/O) check for whether `message.body` is a backend-specific spillover pointer
+   * rather than the real content. Backends that don't support spillover at all always
+   * return `false` (see {@link AbstractQueueBackend#isSwapped}).
+   *
+   * @param {ReceivedMessage} message
+   * @returns {Promise<boolean>}
+   */
+  async isSwapped(message) {
+    return this._backend.isSwapped(message);
+  }
+
+  /**
+   * If `isSwapped(message)` is true, fetches the real content from blob storage and returns
+   * a new message with `body` replaced; otherwise returns `message` unchanged. Only fetches
+   * when actually called — see the note on {@link ReceivedMessage} for why this is a
+   * separate, opt-in step rather than something `receive()` does automatically.
+   *
+   * @param {ReceivedMessage} message
+   * @returns {Promise<ReceivedMessage>}
+   */
+  async deserialize(message) {
+    return this._backend.deserialize(message);
   }
 }

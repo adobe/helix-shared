@@ -108,4 +108,30 @@ describe('Queue', () => {
       assert.strictEqual(result.failed[0].error.message, 'boom');
     });
   });
+
+  describe('isSwapped()', () => {
+    it('delegates to backend.isSwapped()', async () => {
+      backend.isSwapped = async (message) => message.id === 'swapped';
+      assert.strictEqual(await queue.isSwapped({ id: 'swapped' }), true);
+      assert.strictEqual(await queue.isSwapped({ id: 'other' }), false);
+    });
+
+    it('uses the inherited generic default (always false) when not overridden', async () => {
+      assert.strictEqual(await queue.isSwapped({ id: 'm1', body: 'hello', raw: {} }), false);
+    });
+  });
+
+  describe('deserialize()', () => {
+    it('delegates to backend.deserialize()', async () => {
+      const swapped = { id: 'm1', body: 'pointer' };
+      const real = { id: 'm1', body: 'real' };
+      backend.deserialize = async (message) => (message === swapped ? real : message);
+      assert.strictEqual(await queue.deserialize(swapped), real);
+    });
+
+    it('uses the inherited generic default (returns message unchanged) when not overridden', async () => {
+      const message = { id: 'm1', body: 'hello', raw: {} };
+      assert.strictEqual(await queue.deserialize(message), message);
+    });
+  });
 });

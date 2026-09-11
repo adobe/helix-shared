@@ -58,4 +58,19 @@ describe('AbstractQueueBackend', () => {
       });
     });
   });
+
+  describe('generic defaults', () => {
+    it('isSwapped() always returns false', async () => {
+      const backend = new AbstractQueueBackend();
+      assert.strictEqual(await backend.isSwapped({ id: 'm1', body: 'hello', raw: {} }), false);
+    });
+
+    it('deserialize() returns the message unchanged', async () => {
+      const backend = new AbstractQueueBackend();
+      const message = {
+        id: 'm1', body: 'hello', raw: {},
+      };
+      assert.strictEqual(await backend.deserialize(message), message);
+    });
+  });
 });
