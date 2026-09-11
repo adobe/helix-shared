@@ -48,6 +48,18 @@ const DEFAULT_SWAP_PREFIX = 'default/servicebus-swap';
  * @implements {import('@adobe/helix-shared-queue').QueueBackend}
  */
 export class ServiceBusBackend extends AbstractQueueBackend {
+  #sender;
+
+  #receiver;
+
+  #queueName;
+
+  #log;
+
+  #bucket;
+
+  #swapPrefix;
+
   /**
    * @param {ServiceBusBackendOptions} opts
    */
@@ -55,12 +67,12 @@ export class ServiceBusBackend extends AbstractQueueBackend {
     sender, receiver, queueName, log = console, bucket, swapPrefix = DEFAULT_SWAP_PREFIX,
   }) {
     super();
-    this._sender = sender;
-    this._receiver = receiver;
-    this._queueName = queueName;
-    this._log = log;
-    this._bucket = bucket;
-    this._swapPrefix = swapPrefix;
+    this.#sender = sender;
+    this.#receiver = receiver;
+    this.#queueName = queueName;
+    this.#log = log;
+    this.#bucket = bucket;
+    this.#swapPrefix = swapPrefix;
   }
 
   // eslint-disable-next-line class-methods-use-this -- fixed tag, like SqsBackend's `name`
@@ -70,12 +82,12 @@ export class ServiceBusBackend extends AbstractQueueBackend {
 
   /** @type {string} */
   get queueName() {
-    return this._queueName;
+    return this.#queueName;
   }
 
   /** @type {import('@azure/service-bus').ServiceBusSender} */
   get client() {
-    return this._sender;
+    return this.#sender;
   }
 
   /**
@@ -83,7 +95,7 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * @returns {import('@azure/service-bus').ServiceBusMessage}
    */
   // eslint-disable-next-line class-methods-use-this
-  _toServiceBusMessage({ body, groupId, dedupId }) {
+  #toServiceBusMessage({ body, groupId, dedupId }) {
     return { body, sessionId: groupId, messageId: dedupId ?? randomUUID() };
   }
 
@@ -94,20 +106,20 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * @param {import('@azure/service-bus').ServiceBusMessage} message
    * @returns {Promise<import('@azure/service-bus').ServiceBusMessage>}
    */
-  async _spill(message) {
-    if (!this._bucket) {
+  async #spill(message) {
+    if (!this.#bucket) {
       throw this._wrapError(
         new Error('message too large for Service Bus and no spill bucket configured'),
         'message too large for Service Bus and no spill bucket configured',
         { status: 413 },
       );
     }
-    const swapKey = `${this._swapPrefix}/${this._queueName}-${Date.now()}-${Math.random().toString(36).slice(2)}.json`;
-    await this._bucket.put(swapKey, message.body, 'application/json', {}, false);
-    this._log.debug(`message too big for Service Bus, spilled to ${this._bucket.bucket}/${swapKey}`);
+    const swapKey = `${this.#swapPrefix}/${this.#queueName}-${Date.now()}-${Math.random().toString(36).slice(2)}.json`;
+    await this.#bucket.put(swapKey, message.body, 'application/json', {}, false);
+    this.#log.debug(`message too big for Service Bus, spilled to ${this.#bucket.bucket}/${swapKey}`);
     return {
       ...message,
-      body: JSON.stringify({ swapBucket: this._bucket.bucket, swapKey }),
+      body: JSON.stringify({ swapBucket: this.#bucket.bucket, swapKey }),
     };
   }
 
@@ -116,19 +128,19 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * @returns {Promise<import('@adobe/helix-shared-queue').SendResult>}
    */
   async sendBatch(messages) {
-    const pending = messages.map((m) => this._toServiceBusMessage(m));
+    const pending = messages.map((m) => this.#toServiceBusMessage(m));
     const messageIds = pending.map((m) => String(m.messageId));
 
     const chunks = [];
-    let batch = await this._sender.createMessageBatch();
+    let batch = await this.#sender.createMessageBatch();
     while (pending.length) {
       const message = pending[0];
       if (batch.tryAddMessage(message)) {
         pending.shift();
       } else if (batch.count === 0) {
-        this._log.debug('message too big for the current batch. spilling...');
+        this.#log.debug('message too big for the current batch. spilling...');
         // eslint-disable-next-line no-await-in-loop
-        const spilled = await this._spill(message);
+        const spilled = await this.#spill(message);
         if (!batch.tryAddMessage(spilled)) {
           throw this._wrapError(
             new Error('spilled message pointer still too large to send'),
@@ -140,7 +152,7 @@ export class ServiceBusBackend extends AbstractQueueBackend {
       } else {
         chunks.push(batch);
         // eslint-disable-next-line no-await-in-loop
-        batch = await this._sender.createMessageBatch();
+        batch = await this.#sender.createMessageBatch();
       }
     }
     if (batch.count > 0) {
@@ -149,7 +161,7 @@ export class ServiceBusBackend extends AbstractQueueBackend {
 
     for (const chunk of chunks) {
       // eslint-disable-next-line no-await-in-loop
-      await this._sendChunk(chunk);
+      await this.#sendChunk(chunk);
     }
     return { messageIds };
   }
@@ -162,9 +174,9 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * @param {import('@azure/service-bus').ServiceBusMessageBatch} batch
    * @returns {Promise<void>}
    */
-  async _sendChunk(batch) {
+  async #sendChunk(batch) {
     try {
-      await this._sender.sendMessages(batch);
+      await this.#sender.sendMessages(batch);
     } catch (e) {
       throw this._wrapError(e, e.message, { code: e.code });
     }
@@ -199,7 +211,7 @@ export class ServiceBusBackend extends AbstractQueueBackend {
       let batch;
       try {
         // eslint-disable-next-line no-await-in-loop
-        batch = await this._receiver.receiveMessages(maxMsgs, {
+        batch = await this.#receiver.receiveMessages(maxMsgs, {
           maxWaitTimeInMs: timeRemaining * 1000,
         });
       } catch (e) {
@@ -209,7 +221,7 @@ export class ServiceBusBackend extends AbstractQueueBackend {
       maybeMore = batch.length > 0;
     }
 
-    const messages = rawMessages.map((raw) => this._toReceivedMessage(raw));
+    const messages = rawMessages.map((raw) => this.#toReceivedMessage(raw));
     return { messages };
   }
 
@@ -226,8 +238,8 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * @param {import('@azure/service-bus').ServiceBusReceivedMessage} raw
    * @returns {import('@adobe/helix-shared-queue').ReceivedMessage}
    */
-  _toReceivedMessage(raw) {
-    raw.swapKey = this._detectSwapKey(raw.body);
+  #toReceivedMessage(raw) {
+    raw.swapKey = this.#detectSwapKey(raw.body);
     return {
       id: raw.messageId === undefined ? undefined : String(raw.messageId),
       body: raw.body,
@@ -244,14 +256,14 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * @throws {import('@adobe/helix-shared-queue').QueueError} if `body` is a pointer but
    *  references a different bucket than configured
    */
-  _detectSwapKey(body) {
+  #detectSwapKey(body) {
     let parsed;
     try {
       parsed = JSON.parse(body);
     } catch (e) {
       return undefined;
     }
-    return extractSwapKey(parsed, this._bucket?.bucket);
+    return extractSwapKey(parsed, this.#bucket?.bucket);
   }
 
   /**
@@ -278,18 +290,18 @@ export class ServiceBusBackend extends AbstractQueueBackend {
     if (!swapKey) {
       return message;
     }
-    if (!this._bucket) {
+    if (!this.#bucket) {
       throw this._wrapError(
         new Error('message was swapped out but no spill bucket is configured'),
         'message was swapped out but no spill bucket is configured',
         { status: 500 },
       );
     }
-    const content = await this._bucket.get(swapKey);
+    const content = await this.#bucket.get(swapKey);
     if (content === null) {
       throw this._wrapError(
-        new Error(`swapped message body not found: ${this._bucket.bucket}/${swapKey}`),
-        `swapped message body not found: ${this._bucket.bucket}/${swapKey}`,
+        new Error(`swapped message body not found: ${this.#bucket.bucket}/${swapKey}`),
+        `swapped message body not found: ${this.#bucket.bucket}/${swapKey}`,
         { status: 404 },
       );
     }
@@ -311,13 +323,13 @@ export class ServiceBusBackend extends AbstractQueueBackend {
     const failed = [];
     await Promise.all(messages.map(async (message) => {
       try {
-        await this._receiver.completeMessage(message.raw);
+        await this.#receiver.completeMessage(message.raw);
         deleted.push(message);
       } catch (e) {
         failed.push({ message, error: this._wrapError(e, e.message, { code: e.code }) });
       }
     }));
-    await Promise.all(deleted.map((m) => this._cleanupSwap(m)));
+    await Promise.all(deleted.map((m) => this.#cleanupSwap(m)));
     return { deleted, failed };
   }
 
@@ -331,16 +343,16 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
    * @returns {Promise<void>}
    */
-  async _cleanupSwap(message) {
+  async #cleanupSwap(message) {
     const swapKey = message?.raw?.swapKey;
-    if (!swapKey || !this._bucket) {
+    if (!swapKey || !this.#bucket) {
       return;
     }
     try {
-      await this._bucket.remove(swapKey);
-      this._log.debug(`deleted swapped message body: ${this._bucket.bucket}/${swapKey}`);
+      await this.#bucket.remove(swapKey);
+      this.#log.debug(`deleted swapped message body: ${this.#bucket.bucket}/${swapKey}`);
     } catch (e) {
-      this._log.warn(`unable to delete swapped message body at ${this._bucket.bucket}/${swapKey}: ${e.message}`);
+      this.#log.warn(`unable to delete swapped message body at ${this.#bucket.bucket}/${swapKey}: ${e.message}`);
     }
   }
 }
