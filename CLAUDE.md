@@ -35,7 +35,7 @@ Each package releases independently via **semantic-release** with `semantic-rele
 
 ## Packages
 
-Most packages are middleware "wrappers" composed via `@adobe/helix-shared-wrap`'s `.with()` chain on a main handler. A few (`config`, `git`, `storage`, `string`, `utils`, `async`, `process-queue`, `prune`, `tokencache`, `indexer`) are plain libraries.
+Most packages are middleware "wrappers" composed via `@adobe/helix-shared-wrap`'s `.with()` chain on a main handler. A few (`config`, `git`, `storage`, `queue`, `string`, `utils`, `async`, `process-queue`, `prune`, `tokencache`, `indexer`) are plain libraries.
 
 - **helix-shared-async** — Tiny async primitives (`sleep(ms)`, `nextTick()`). Used to yield to the event loop or pause within async flows.
 - **helix-shared-body-data** — Wrap middleware that parses form/JSON request bodies (POST/PUT) and exposes them on `context.data` for Helix Universal serverless functions.
@@ -46,6 +46,7 @@ Most packages are middleware "wrappers" composed via `@adobe/helix-shared-wrap`'
 - **helix-shared-indexer** — HTML-to-record indexer driven by `helix-query.yaml` `indices` config. Resolves CSS selectors, applies value/values expressions (`textContent`, `attribute`, `match`, etc.) to produce queryable records.
 - **helix-shared-process-queue** — Bounded-concurrency async task runner. Takes a list of tasks plus a worker fn; returns aggregated results, with optional access to in-progress results inside the worker.
 - **helix-shared-prune** — `pruneEmptyValues(obj)` recursively strips falsy values and empty arrays from an object in place. Returns `null` when everything is removed; used to keep configs/payloads tidy.
+- **helix-shared-queue** — Pluggable queue abstraction (`QueueService.fromContext(context)` → `.queue(name)` → `Queue` with `send`/`receive`/`delete`), mirroring `helix-shared-storage`'s `Storage`/`Bucket`/`backendFactory` pattern so a concrete provider package (e.g. `@adobe/helix-shared-queue-sqs`) can be swapped in. No cloud SDK dependency in this base package.
 - **helix-shared-secrets** — Wrap middleware that loads secrets (currently AWS Secrets Manager) named `<package>/<function>` into `context` and `process.env` before the handler runs. Supports a custom `nameFunction` for non-default paths.
 - **helix-shared-server-timing** — Wrap middleware that injects a `timer` onto `context`; `timer.update(label)` records milestones and the response automatically gets a `Server-Timing` header.
 - **helix-shared-storage** — `HelixStorage` client over AWS S3 and Cloudflare R2 with `bucket(name).get/put/...`. Most consumers create it from the Helix function `context` rather than direct credentials.
