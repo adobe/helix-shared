@@ -77,6 +77,11 @@ export class AbstractQueueBackend {
    * backend's `name`. Passes an already-`QueueError` through unchanged instead of
    * double-wrapping it.
    *
+   * `_`-prefixed rather than a true `#private` method: it must be callable as
+   * `this._wrapError(...)` from within concrete backend subclasses' (e.g. `SqsBackend`)
+   * own method bodies, and `#private` members declared on an ancestor class are not
+   * reachable from a subclass's method bodies at all.
+   *
    * @protected
    * @param {Error} e the raw, caught SDK error
    * @param {string} message normalized message for the new `QueueError` — callers without a

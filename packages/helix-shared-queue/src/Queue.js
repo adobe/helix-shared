@@ -107,19 +107,23 @@ export class Queue {
   /**
    * @param {QueueOptions} opts
    */
+  #backend;
+
+  #log;
+
   constructor({ backend, log = console }) {
-    this._backend = backend;
-    this._log = log;
+    this.#backend = backend;
+    this.#log = log;
   }
 
   /** @type {string} the queue name */
   get name() {
-    return this._backend.queueName;
+    return this.#backend.queueName;
   }
 
   /** @type {Console} */
   get log() {
-    return this._log;
+    return this.#log;
   }
 
   /**
@@ -128,7 +132,7 @@ export class Queue {
    * @returns {*}
    */
   get client() {
-    const c = this._backend.client;
+    const c = this.#backend.client;
     if (!c) {
       throw new Error('client is only available for some backends');
     }
@@ -143,8 +147,8 @@ export class Queue {
    * @returns {Promise<SendResult>}
    */
   async send(messages) {
-    const result = await this._backend.sendBatch(messages);
-    this._log.info(`sent ${messages.length} message(s) to queue: ${this.name}`);
+    const result = await this.#backend.sendBatch(messages);
+    this.#log.info(`sent ${messages.length} message(s) to queue: ${this.name}`);
     return result;
   }
 
@@ -155,7 +159,7 @@ export class Queue {
    * @returns {Promise<ReceiveResult>}
    */
   async receive(opts = {}) {
-    return this._backend.receiveBatch(opts);
+    return this.#backend.receiveBatch(opts);
   }
 
   /**
@@ -165,7 +169,7 @@ export class Queue {
    * @returns {Promise<DeleteResult>}
    */
   async delete(messages) {
-    return this._backend.deleteBatch(messages);
+    return this.#backend.deleteBatch(messages);
   }
 
   /**
@@ -177,7 +181,7 @@ export class Queue {
    * @returns {Promise<boolean>}
    */
   async isSwapped(message) {
-    return this._backend.isSwapped(message);
+    return this.#backend.isSwapped(message);
   }
 
   /**
@@ -190,6 +194,6 @@ export class Queue {
    * @returns {Promise<ReceivedMessage>}
    */
   async deserialize(message) {
-    return this._backend.deserialize(message);
+    return this.#backend.deserialize(message);
   }
 }

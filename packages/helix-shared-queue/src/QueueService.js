@@ -70,11 +70,17 @@ export class QueueService {
    *
    * @param {QueueServiceOptions} [opts]
    */
+  #log;
+
+  #backendFactory;
+
+  #closed;
+
   constructor(opts = {}) {
     const { log = console, backendFactory } = opts;
-    this._log = log;
-    this._backendFactory = backendFactory;
-    this._closed = false;
+    this.#log = log;
+    this.#backendFactory = backendFactory;
+    this.#closed = false;
   }
 
   /**
@@ -90,13 +96,13 @@ export class QueueService {
    *  `backendFactory` was configured
    */
   queue(queueName, opts = {}) {
-    if (this._closed) {
+    if (this.#closed) {
       throw new Error('queue service already closed.');
     }
     if (!queueName) {
       throw new Error('queueName is required.');
     }
-    if (!this._backendFactory) {
+    if (!this.#backendFactory) {
       throw new Error(
         'No backendFactory configured. Install @adobe/helix-shared-queue-sqs (or another '
         + 'backend package) and pass its factory as `backendFactory`, e.g. '
@@ -104,8 +110,8 @@ export class QueueService {
       );
     }
     return new Queue({
-      backend: this._backendFactory(queueName, opts),
-      log: this._log,
+      backend: this.#backendFactory(queueName, opts),
+      log: this.#log,
     });
   }
 
@@ -115,6 +121,6 @@ export class QueueService {
    * any native clients it created.
    */
   close() {
-    this._closed = true;
+    this.#closed = true;
   }
 }
