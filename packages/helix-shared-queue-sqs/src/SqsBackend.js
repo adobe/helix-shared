@@ -75,6 +75,18 @@ function entrySize(entry) {
  * @implements {import('@adobe/helix-shared-queue').QueueBackend}
  */
 export class SqsBackend extends AbstractQueueBackend {
+  #client;
+
+  #queueName;
+
+  #log;
+
+  #bucket;
+
+  #swapPrefix;
+
+  #queueUrlPromise;
+
   /**
    * @param {SqsBackendOptions} opts
    */
@@ -82,11 +94,11 @@ export class SqsBackend extends AbstractQueueBackend {
     client, queueName, log = console, bucket, swapPrefix = DEFAULT_SWAP_PREFIX,
   }) {
     super();
-    this._client = client;
-    this._queueName = queueName;
-    this._log = log;
-    this._bucket = bucket;
-    this._swapPrefix = swapPrefix;
+    this.#client = client;
+    this.#queueName = queueName;
+    this.#log = log;
+    this.#bucket = bucket;
+    this.#swapPrefix = swapPrefix;
   }
 
   // eslint-disable-next-line class-methods-use-this -- fixed tag, like S3Backend's `name`
@@ -96,12 +108,12 @@ export class SqsBackend extends AbstractQueueBackend {
 
   /** @type {string} */
   get queueName() {
-    return this._queueName;
+    return this.#queueName;
   }
 
   /** @type {import('@aws-sdk/client-sqs').SQSClient} */
   get client() {
-    return this._client;
+    return this.#client;
   }
 
   /**
@@ -109,20 +121,20 @@ export class SqsBackend extends AbstractQueueBackend {
    *
    * @returns {Promise<string>}
    */
-  async _resolveQueueUrl() {
-    if (!this._queueUrlPromise) {
-      this._queueUrlPromise = this._client
-        .send(new GetQueueUrlCommand({ QueueName: this._queueName }))
+  async #resolveQueueUrl() {
+    if (!this.#queueUrlPromise) {
+      this.#queueUrlPromise = this.#client
+        .send(new GetQueueUrlCommand({ QueueName: this.#queueName }))
         .then(({ QueueUrl }) => QueueUrl)
         .catch((e) => {
-          this._queueUrlPromise = undefined;
+          this.#queueUrlPromise = undefined;
           throw this._wrapError(e, e.message, {
             status: e.$metadata?.httpStatusCode,
             code: e.Code,
           });
         });
     }
-    return this._queueUrlPromise;
+    return this.#queueUrlPromise;
   }
 
   /**
@@ -133,8 +145,8 @@ export class SqsBackend extends AbstractQueueBackend {
    * @param {Object} entry a `SendMessageBatchRequestEntry`-shaped object, without `Id`
    * @returns {Promise<Object>}
    */
-  async _spill(entry) {
-    if (!this._bucket) {
+  async #spill(entry) {
+    if (!this.#bucket) {
       throw this._wrapError(
         new Error('message too large for SQS and no spill bucket configured'),
         'message too large for SQS and no spill bucket configured',
@@ -155,10 +167,10 @@ export class SqsBackend extends AbstractQueueBackend {
         { status: 400 },
       );
     }
-    const swapKey = `${this._swapPrefix}/${key}-${Date.now()}-${Math.random().toString(36).slice(2)}.json`;
-    await this._bucket.put(swapKey, entry.MessageBody, 'application/json', {}, false);
-    const swapS3Url = `s3://${this._bucket.bucket}/${swapKey}`;
-    this._log.debug(`message too big for SQS, spilled to ${swapS3Url}`);
+    const swapKey = `${this.#swapPrefix}/${key}-${Date.now()}-${Math.random().toString(36).slice(2)}.json`;
+    await this.#bucket.put(swapKey, entry.MessageBody, 'application/json', {}, false);
+    const swapS3Url = `s3://${this.#bucket.bucket}/${swapKey}`;
+    this.#log.debug(`message too big for SQS, spilled to ${swapS3Url}`);
     return {
       ...entry,
       MessageBody: JSON.stringify({
@@ -172,7 +184,7 @@ export class SqsBackend extends AbstractQueueBackend {
    * @returns {Promise<import('@adobe/helix-shared-queue').SendResult>}
    */
   async sendBatch(messages) {
-    const queueUrl = await this._resolveQueueUrl();
+    const queueUrl = await this.#resolveQueueUrl();
     const pending = messages.map(({ body, groupId, dedupId }) => ({
       MessageBody: body,
       MessageGroupId: groupId,
@@ -192,9 +204,9 @@ export class SqsBackend extends AbstractQueueBackend {
         batch.push(entry);
         batchSize += size;
       } else if (batch.length === 0) {
-        this._log.debug(`message too big: ${size} bytes. spilling...`);
+        this.#log.debug(`message too big: ${size} bytes. spilling...`);
         // eslint-disable-next-line no-await-in-loop
-        entry = await this._spill(entry);
+        entry = await this.#spill(entry);
         size = entrySize(entry);
         batch.push(entry);
         batchSize += size;
@@ -205,7 +217,7 @@ export class SqsBackend extends AbstractQueueBackend {
 
       if (flush || batch.length === MAX_BATCH_ENTRIES || pending.length === 0) {
         // eslint-disable-next-line no-await-in-loop
-        messageIds.push(...(await this._sendChunk(queueUrl, batch)));
+        messageIds.push(...(await this.#sendChunk(queueUrl, batch)));
         batch = [];
         batchSize = 0;
       }
@@ -223,17 +235,17 @@ export class SqsBackend extends AbstractQueueBackend {
    * @param {Object[]} batch entries without `Id` (assigned here, local to this chunk)
    * @returns {Promise<string[]>} `MessageId`s of the successfully sent entries
    */
-  async _sendChunk(queueUrl, batch) {
+  async #sendChunk(queueUrl, batch) {
     const entries = batch.map((entry, idx) => ({ Id: `msg${idx}`, ...entry }));
     try {
-      const result = await this._client.send(new SendMessageBatchCommand({
+      const result = await this.#client.send(new SendMessageBatchCommand({
         QueueUrl: queueUrl,
         Entries: entries,
       }));
       const { Successful = [], Failed = [] } = result;
       if (Failed.length) {
         const details = Failed.map(({ Id, Code, Message }) => `- ${Id}: ${Message} (${Code})`);
-        this._log.warn(`failed to send ${Failed.length} message(s) to ${this._queueName}:\n${details.join('\n')}`);
+        this.#log.warn(`failed to send ${Failed.length} message(s) to ${this.#queueName}:\n${details.join('\n')}`);
       }
       return Successful.map(({ MessageId }) => MessageId);
     } catch (e) {
@@ -253,7 +265,7 @@ export class SqsBackend extends AbstractQueueBackend {
    * @returns {Promise<import('@adobe/helix-shared-queue').ReceiveResult>}
    */
   async receiveBatch({ minTime = 10, maxTime = 30, maxMessages = 1000 } = {}) {
-    const queueUrl = await this._resolveQueueUrl();
+    const queueUrl = await this.#resolveQueueUrl();
     const rawMessages = [];
     const endMinTime = Date.now() + minTime * 1000;
     const endMaxTime = Date.now() + maxTime * 1000;
@@ -273,7 +285,7 @@ export class SqsBackend extends AbstractQueueBackend {
       let result;
       try {
         // eslint-disable-next-line no-await-in-loop
-        result = await this._client.send(new ReceiveMessageCommand({
+        result = await this.#client.send(new ReceiveMessageCommand({
           QueueUrl: queueUrl,
           MaxNumberOfMessages: maxMsgs,
           WaitTimeSeconds: waitTime,
@@ -288,7 +300,7 @@ export class SqsBackend extends AbstractQueueBackend {
       maybeMore = Messages.length > 0;
     }
 
-    const messages = rawMessages.map((raw) => this._toReceivedMessage(raw));
+    const messages = rawMessages.map((raw) => this.#toReceivedMessage(raw));
     return { messages };
   }
 
@@ -302,8 +314,8 @@ export class SqsBackend extends AbstractQueueBackend {
    * @param {Object} raw raw `ReceiveMessageCommand` message
    * @returns {import('@adobe/helix-shared-queue').ReceivedMessage}
    */
-  _toReceivedMessage(raw) {
-    raw.swapKey = this._detectSwapKey(raw.Body);
+  #toReceivedMessage(raw) {
+    raw.swapKey = this.#detectSwapKey(raw.Body);
     return {
       id: raw.MessageId,
       body: raw.Body,
@@ -322,14 +334,14 @@ export class SqsBackend extends AbstractQueueBackend {
    * @throws {import('@adobe/helix-shared-queue').QueueError} if `body` is a pointer but
    *  references a different bucket than configured
    */
-  _detectSwapKey(body) {
+  #detectSwapKey(body) {
     let parsed;
     try {
       parsed = JSON.parse(body);
     } catch (e) {
       return undefined;
     }
-    return extractSwapKey(parsed, this._bucket?.bucket);
+    return extractSwapKey(parsed, this.#bucket?.bucket);
   }
 
   /**
@@ -356,18 +368,18 @@ export class SqsBackend extends AbstractQueueBackend {
     if (!swapKey) {
       return message;
     }
-    if (!this._bucket) {
+    if (!this.#bucket) {
       throw this._wrapError(
         new Error('message was swapped out but no spill bucket is configured'),
         'message was swapped out but no spill bucket is configured',
         { status: 500 },
       );
     }
-    const content = await this._bucket.get(swapKey);
+    const content = await this.#bucket.get(swapKey);
     if (content === null) {
       throw this._wrapError(
-        new Error(`swapped message body not found: ${this._bucket.bucket}/${swapKey}`),
-        `swapped message body not found: ${this._bucket.bucket}/${swapKey}`,
+        new Error(`swapped message body not found: ${this.#bucket.bucket}/${swapKey}`),
+        `swapped message body not found: ${this.#bucket.bucket}/${swapKey}`,
         { status: 404 },
       );
     }
@@ -386,7 +398,7 @@ export class SqsBackend extends AbstractQueueBackend {
    * @returns {Promise<import('@adobe/helix-shared-queue').DeleteResult>}
    */
   async deleteBatch(messages) {
-    const queueUrl = await this._resolveQueueUrl();
+    const queueUrl = await this.#resolveQueueUrl();
     const byId = new Map(messages.map((m) => [m.id, m]));
     const deleted = [];
     const failed = [];
@@ -397,7 +409,7 @@ export class SqsBackend extends AbstractQueueBackend {
       let result;
       try {
         // eslint-disable-next-line no-await-in-loop
-        result = await this._client.send(new DeleteMessageBatchCommand({
+        result = await this.#client.send(new DeleteMessageBatchCommand({
           QueueUrl: queueUrl,
           Entries: entries,
         }));
@@ -413,7 +425,7 @@ export class SqsBackend extends AbstractQueueBackend {
         });
       });
     }
-    await Promise.all(deleted.map((m) => this._cleanupSwap(m)));
+    await Promise.all(deleted.map((m) => this.#cleanupSwap(m)));
     return { deleted, failed };
   }
 
@@ -427,16 +439,16 @@ export class SqsBackend extends AbstractQueueBackend {
    * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
    * @returns {Promise<void>}
    */
-  async _cleanupSwap(message) {
+  async #cleanupSwap(message) {
     const swapKey = message?.raw?.swapKey;
-    if (!swapKey || !this._bucket) {
+    if (!swapKey || !this.#bucket) {
       return;
     }
     try {
-      await this._bucket.remove(swapKey);
-      this._log.debug(`deleted swapped message body: ${this._bucket.bucket}/${swapKey}`);
+      await this.#bucket.remove(swapKey);
+      this.#log.debug(`deleted swapped message body: ${this.#bucket.bucket}/${swapKey}`);
     } catch (e) {
-      this._log.warn(`unable to delete swapped message body at ${this._bucket.bucket}/${swapKey}: ${e.message}`);
+      this.#log.warn(`unable to delete swapped message body at ${this.#bucket.bucket}/${swapKey}: ${e.message}`);
     }
   }
 }
