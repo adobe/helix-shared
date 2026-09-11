@@ -1,0 +1,43 @@
+{
+  "name": "@adobe/helix-shared-queue-sqs",
+  "version": "0.0.9",
+  "description": "Shared modules of the Helix Project - SQS queue backend for @adobe/helix-shared-queue",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "c8 mocha",
+    "lint": "eslint .",
+    "clean": "rm -rf package-lock.json node_modules"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json",
+    "require": [
+      "test/setup-env.js",
+      "mocha-suppress-logs"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/helix-shared.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/helix-shared/issues"
+  },
+  "homepage": "https://github.com/adobe/helix-shared#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "nock": "14.0.17",
+    "sinon": "22.1.0",
+    "@adobe/helix-shared-storage": "^3.0.0"
+  },
+  "dependencies": {
+    "@adobe/helix-shared-queue": "^0.0.9",
+    "@aws-sdk/client-sqs": "^3.1129.0",
+    "@smithy/node-http-handler": "^4.0.0"
+  }
+}
