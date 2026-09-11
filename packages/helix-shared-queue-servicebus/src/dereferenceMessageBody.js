@@ -15,6 +15,36 @@ import { QueueError } from '@adobe/helix-shared-queue';
 const NOOP_CLEANUP = async () => {};
 
 /**
+ * Cheap (no I/O): detects whether an already-parsed message body is a swap pointer produced
+ * by {@link ServiceBusBackend#sendBatch} and, if so, extracts its storage key. Exported so
+ * {@link ServiceBusBackend} can reuse this same detection logic for its
+ * `isSwapped()`/`receiveBatch()` split without needing to also import the (fetching)
+ * {@link dereferenceMessageBody}.
+ *
+ * @param {Object} parsed the parsed message body
+ * @param {string} [bucketName] the configured bucket's name, if any. When omitted (no bucket
+ *  configured at all), the mismatch check below is skipped — that's a distinct "no bucket
+ *  configured" condition for the caller to check separately once it actually needs to fetch
+ *  (see {@link dereferenceMessageBody}/`ServiceBusBackend#deserialize`), not a mismatch.
+ * @returns {string|undefined} the swap key, if `parsed` is a swap pointer
+ * @throws {QueueError} if `parsed` is a pointer, `bucketName` is configured, but they
+ *  reference different buckets
+ */
+export function extractSwapKey(parsed, bucketName) {
+  const { swapBucket, swapKey } = parsed;
+  if (!swapKey) {
+    return undefined;
+  }
+  if (bucketName !== undefined && swapBucket !== bucketName) {
+    throw new QueueError(
+      `swapped message references bucket "${swapBucket}", but this backend is configured for "${bucketName}"`,
+      { status: 500, backend: 'ServiceBus' },
+    );
+  }
+  return swapKey;
+}
+
+/**
  * @typedef {Object} DereferenceResult
  * @property {string} body the real message body — unchanged from the input unless it was a
  *  swap pointer
@@ -26,14 +56,14 @@ const NOOP_CLEANUP = async () => {};
  */
 
 /**
- * Given a raw Service Bus message body, transparently resolves it to the real content,
- * dereferencing it from blob storage if {@link ServiceBusBackend#sendBatch} spilled it there.
- * Standalone (no `Queue`/`ServiceBusBackend` instance required) so it can be used directly
- * wherever Service Bus messages are consumed outside of this package's own
- * `receive()`/`delete()` flow — most notably an Azure Function triggered by a Service Bus
- * trigger, where the runtime delivers the message body directly to the handler rather than
- * going through `Queue#receive()` at all (`ServiceBusBackend` uses this same function
- * internally for its `receiveBatch()`/`deleteBatch()`).
+ * Given a raw Service Bus message body, resolves it to the real content, dereferencing it
+ * from blob storage if {@link ServiceBusBackend#sendBatch} spilled it there. Standalone (no
+ * `Queue`/`ServiceBusBackend` instance required) so it can be used directly wherever Service
+ * Bus messages are consumed outside of this package's own `receive()`/`delete()` flow — most
+ * notably an Azure Function triggered by a Service Bus trigger, where the runtime delivers
+ * the message body directly to the handler rather than going through `Queue#receive()` at
+ * all, and where (typically processing one message at a time) there's little benefit to the
+ * lazy `isSwapped()`/`deserialize()` split `Queue` offers — this fetches immediately.
  *
  * @param {string} body raw Service Bus message body (e.g. an Azure Function Service Bus
  *  trigger's message argument, coerced to a string)
@@ -53,15 +83,9 @@ export async function dereferenceMessageBody(body, opts = {}) {
     return { body, cleanup: NOOP_CLEANUP };
   }
 
-  const { swapBucket, swapKey } = parsed;
+  const swapKey = extractSwapKey(parsed, bucket?.bucket);
   if (!swapKey) {
     return { body, cleanup: NOOP_CLEANUP };
-  }
-  if (swapBucket !== bucket?.bucket) {
-    throw new QueueError(
-      `swapped message references bucket "${swapBucket}", but this backend is configured for "${bucket?.bucket}"`,
-      { status: 500, backend: 'ServiceBus' },
-    );
   }
   if (!bucket) {
     throw new QueueError('message was swapped out but no spill bucket is configured', {

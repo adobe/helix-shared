@@ -13,7 +13,7 @@
 /* eslint-disable no-param-reassign */
 import { randomUUID } from 'node:crypto';
 import { AbstractQueueBackend } from '@adobe/helix-shared-queue';
-import { dereferenceMessageBody } from './dereferenceMessageBody.js';
+import { extractSwapKey } from './dereferenceMessageBody.js';
 
 const DEFAULT_SWAP_PREFIX = 'default/servicebus-swap';
 
@@ -173,9 +173,9 @@ export class ServiceBusBackend extends AbstractQueueBackend {
   /**
    * Long-polls for messages, mirroring the same `minTime`/`maxTime`/`maxMessages` contract as
    * the SQS backend's `receiveBatch()`, adapted to `receiveMessages()`'s single-call shape
-   * (which, unlike SQS, has no fixed per-call message-count cap). Messages spilled by
-   * {@link ServiceBusBackend#_spill} are transparently dereferenced back to their real body —
-   * see {@link dereferenceMessageBody} — so callers never see a swap pointer.
+   * (which, unlike SQS, has no fixed per-call message-count cap). A message spilled by
+   * {@link ServiceBusBackend#_spill} is returned as-is (still a pointer) — see
+   * {@link ServiceBusBackend#isSwapped}/{@link ServiceBusBackend#deserialize}.
    *
    * @param {import('@adobe/helix-shared-queue').ReceiveOptions} [opts]
    * @returns {Promise<import('@adobe/helix-shared-queue').ReceiveResult>}
@@ -209,28 +209,28 @@ export class ServiceBusBackend extends AbstractQueueBackend {
       maybeMore = batch.length > 0;
     }
 
-    const messages = await Promise.all(rawMessages.map((raw) => this._toReceivedMessage(raw)));
+    const messages = rawMessages.map((raw) => this._toReceivedMessage(raw));
     return { messages };
   }
 
   /**
    * Builds a {@link import('@adobe/helix-shared-queue').ReceivedMessage} from a raw Service
-   * Bus message, transparently dereferencing it if it's a swap pointer. Unlike the SQS
-   * backend, `cleanup` is attached to the raw message itself (mutated in place) rather than a
-   * shallow copy — `completeMessage()` requires the exact same object instance the SDK
-   * returned to settle it, so copying it would break acknowledgement.
+   * Bus message. Cheaply (no I/O) detects whether the body is a swap pointer produced by
+   * {@link ServiceBusBackend#_spill} and, if so, stashes its storage key on `raw` (mutated in
+   * place — `completeMessage()` requires the exact same object instance the SDK returned to
+   * settle it, so a shallow copy would break acknowledgement) for
+   * {@link ServiceBusBackend#isSwapped}/{@link ServiceBusBackend#deserialize}/
+   * {@link ServiceBusBackend#deleteBatch} to use later — the actual blob fetch is deferred to
+   * `deserialize()`.
    *
    * @param {import('@azure/service-bus').ServiceBusReceivedMessage} raw
-   * @returns {Promise<import('@adobe/helix-shared-queue').ReceivedMessage>}
+   * @returns {import('@adobe/helix-shared-queue').ReceivedMessage}
    */
-  async _toReceivedMessage(raw) {
-    const { body, cleanup } = await dereferenceMessageBody(raw.body, {
-      bucket: this._bucket, log: this._log,
-    });
-    raw.cleanup = cleanup;
+  _toReceivedMessage(raw) {
+    raw.swapKey = this._detectSwapKey(raw.body);
     return {
       id: raw.messageId === undefined ? undefined : String(raw.messageId),
-      body,
+      body: raw.body,
       groupId: raw.sessionId,
       receiveCount: raw.deliveryCount,
       raw,
@@ -238,9 +238,70 @@ export class ServiceBusBackend extends AbstractQueueBackend {
   }
 
   /**
+   * @param {string} body raw message body
+   * @returns {string|undefined} the swap key, if `body` is a pointer referencing this
+   *  backend's configured `bucket`
+   * @throws {import('@adobe/helix-shared-queue').QueueError} if `body` is a pointer but
+   *  references a different bucket than configured
+   */
+  _detectSwapKey(body) {
+    let parsed;
+    try {
+      parsed = JSON.parse(body);
+    } catch (e) {
+      return undefined;
+    }
+    return extractSwapKey(parsed, this._bucket?.bucket);
+  }
+
+  /**
+   * Cheap (no I/O) check for whether `message.body` is a swap pointer — see
+   * {@link ServiceBusBackend#_toReceivedMessage}.
+   *
+   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
+   * @returns {Promise<boolean>}
+   */
+  // eslint-disable-next-line class-methods-use-this -- swapKey lives on the message, not this
+  async isSwapped(message) {
+    return !!message.raw?.swapKey;
+  }
+
+  /**
+   * If `message` was swapped, fetches the real content from `bucket` and returns a new
+   * message with `body` replaced; otherwise returns `message` unchanged.
+   *
+   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
+   * @returns {Promise<import('@adobe/helix-shared-queue').ReceivedMessage>}
+   */
+  async deserialize(message) {
+    const swapKey = message.raw?.swapKey;
+    if (!swapKey) {
+      return message;
+    }
+    if (!this._bucket) {
+      throw this._wrapError(
+        new Error('message was swapped out but no spill bucket is configured'),
+        'message was swapped out but no spill bucket is configured',
+        { status: 500 },
+      );
+    }
+    const content = await this._bucket.get(swapKey);
+    if (content === null) {
+      throw this._wrapError(
+        new Error(`swapped message body not found: ${this._bucket.bucket}/${swapKey}`),
+        `swapped message body not found: ${this._bucket.bucket}/${swapKey}`,
+        { status: 404 },
+      );
+    }
+    return { ...message, body: content.toString('utf-8') };
+  }
+
+  /**
    * Best-effort acknowledge/delete of previously received messages. Unlike SQS, there is no
    * bulk-ack API — each message is completed individually, so per-message failures are
-   * naturally isolated (collected into `DeleteResult.failed`) without needing chunking.
+   * naturally isolated (collected into `DeleteResult.failed`) without needing chunking. Also
+   * cleans up any swapped-out message body once its message is acknowledged, regardless of
+   * whether {@link ServiceBusBackend#deserialize} was ever called for it.
    *
    * @param {import('@adobe/helix-shared-queue').ReceivedMessage[]} messages
    * @returns {Promise<import('@adobe/helix-shared-queue').DeleteResult>}
@@ -251,13 +312,35 @@ export class ServiceBusBackend extends AbstractQueueBackend {
     await Promise.all(messages.map(async (message) => {
       try {
         await this._receiver.completeMessage(message.raw);
-        // deferred until the message is durably acked, mirroring the SQS backend
-        await message.raw?.cleanup?.();
         deleted.push(message);
       } catch (e) {
         failed.push({ message, error: this._wrapError(e, e.message, { code: e.code }) });
       }
     }));
+    await Promise.all(deleted.map((m) => this._cleanupSwap(m)));
     return { deleted, failed };
+  }
+
+  /**
+   * Best-effort cleanup of a swapped-out message body once the message itself has been
+   * acknowledged — deferred to this ack point (rather than done eagerly, or only when
+   * {@link ServiceBusBackend#deserialize} happens to have been called) so a message that's
+   * never successfully processed/deleted (and gets redelivered instead) can still find its
+   * swapped body. Never throws — a failure to delete is logged and otherwise ignored.
+   *
+   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
+   * @returns {Promise<void>}
+   */
+  async _cleanupSwap(message) {
+    const swapKey = message?.raw?.swapKey;
+    if (!swapKey || !this._bucket) {
+      return;
+    }
+    try {
+      await this._bucket.remove(swapKey);
+      this._log.debug(`deleted swapped message body: ${this._bucket.bucket}/${swapKey}`);
+    } catch (e) {
+      this._log.warn(`unable to delete swapped message body at ${this._bucket.bucket}/${swapKey}: ${e.message}`);
+    }
   }
 }

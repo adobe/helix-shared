@@ -41,9 +41,9 @@ Porting the same abstraction onto Azure Service Bus surfaced genuine API-shape d
 - **Ack requires the exact received object.** SQS acks via a `ReceiptHandle` string copied out of the message; Service Bus's `completeMessage(message)` requires the *same* `ServiceBusReceivedMessage` instance the SDK returned (it's used for internal lock tracking) — so unlike the SQS backend, this one mutates the raw message in place to attach its `cleanup` closure rather than building a plain-object copy.
 - **`groupId` → `sessionId`, send-side only.** Service Bus's `sessionId` (mapped from `groupId`) requires session-enabled queues, and session-ordered *consumption* requires an entirely different receiver (`acceptSession()`/`acceptNextSession()`, not the plain `createReceiver()` this backend uses). This backend supports the send-side mapping but does not implement session-based receive — a known, documented limitation, not an oversight.
 
-## Oversized-Message Spillover and Transparent Dereferencing
+## Oversized-Message Spillover
 
-Same pattern as the SQS backend: a single message too large to fit any batch is spilled to an injected `@adobe/helix-shared-storage` `Bucket`, and `receive()`/`delete()` transparently dereference/clean it up — see `@adobe/helix-shared-queue-sqs`'s README for the full design rationale (this package has no prior wire format to stay compatible with, so there's only one pointer shape: `{swapBucket, swapKey}`, no `legacySwapFormat` equivalent).
+Same pattern as the SQS backend: a single message too large to fit any batch is spilled to an injected `@adobe/helix-shared-storage` `Bucket`. This package has no prior wire format to stay compatible with, so there's only one pointer shape: `{swapBucket, swapKey}` — no SQS-style `legacySwapFormat` equivalent.
 
 ```js
 import { QueueServiceServiceBus as QueueService } from '@adobe/helix-shared-queue-servicebus';
@@ -55,9 +55,26 @@ const service = QueueService.fromContext(context, { bucket });
 
 `bucket` (and `swapPrefix`, defaulting to `'default/servicebus-swap'`) can also be set per queue: `service.queue('my-queue-name', { bucket, swapPrefix })`.
 
+### Receiving a Swapped Message: `isSwapped()`/`deserialize()`
+
+`queue.receive()` does **not** transparently fetch a swapped-out message's real content — see `@adobe/helix-shared-queue`'s README for why (in short: forcing a blob fetch for every swapped message regardless of whether the caller needs the full body is wasteful). Check and resolve explicitly instead:
+
+```js
+const { messages } = await queue.receive();
+for (let message of messages) {
+  if (await queue.isSwapped(message)) {
+    message = await queue.deserialize(message);
+  }
+  console.log(message.body); // guaranteed real now
+}
+await queue.delete(messages);
+```
+
+`queue.delete()` cleans up the swapped body from `bucket` once the message is acknowledged — regardless of whether `deserialize()` was ever called for it; cleanup failures are logged and otherwise ignored.
+
 ### Using Outside `receive()`/`delete()` (e.g. an Azure Function Service Bus Trigger)
 
-Same standalone pattern as the SQS backend's `dereferenceMessageBody()`, for consumers triggered directly by Azure (an Azure Function with a Service Bus trigger delivers the message straight to the handler, never calling `Queue#receive()`):
+`isSwapped()`/`deserialize()` only help consumers going through `Queue`. An Azure Function with a Service Bus trigger delivers the message straight to the handler, never calling `Queue#receive()` at all. For that case, the same dereference-and-cleanup logic is available standalone — fetching immediately, since there's little benefit to laziness processing one message at a time:
 
 ```js
 import { dereferenceMessageBody } from '@adobe/helix-shared-queue-servicebus';

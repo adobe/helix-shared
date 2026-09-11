@@ -98,6 +98,7 @@ class FakeBucket {
     this.bucket = bucket;
     this.objects = new Map();
     this.removeCalls = [];
+    this.getCalls = [];
   }
 
   async put(key, body) {
@@ -106,6 +107,7 @@ class FakeBucket {
   }
 
   async get(key) {
+    this.getCalls.push(key);
     if (!this.objects.has(key)) {
       return null;
     }
@@ -237,7 +239,20 @@ describe('ServiceBusBackend', () => {
       assert.strictEqual(result.messages[0].id, undefined);
     });
 
-    it('transparently dereferences a swap pointer', async () => {
+    it('passes a plain JSON body through unchanged, not marked as swapped', async () => {
+      const bucket = new FakeBucket();
+      const { backend } = buildTestBackend({
+        bucket,
+        receiverOpts: { messageBatches: [[{ messageId: 'mid-1', body: '{"hello":"world"}' }]] },
+      });
+      const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
+      const [msg] = result.messages;
+      assert.strictEqual(msg.body, '{"hello":"world"}');
+      assert.strictEqual(msg.raw.swapKey, undefined);
+      assert.deepStrictEqual(bucket.getCalls, []);
+    });
+
+    it('detects a swap pointer and stashes its key, without fetching its content', async () => {
       const bucket = new FakeBucket();
       await bucket.put('k.json', 'the real body');
       const { backend } = buildTestBackend({
@@ -251,10 +266,10 @@ describe('ServiceBusBackend', () => {
       });
       const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
       const [msg] = result.messages;
-      assert.strictEqual(msg.body, 'the real body');
-      assert.strictEqual(typeof msg.raw.cleanup, 'function');
-      await msg.raw.cleanup();
-      assert.strictEqual(bucket.objects.has('k.json'), false);
+      // body is still the pointer -- receive() does not fetch
+      assert.strictEqual(JSON.parse(msg.body).swapKey, 'k.json');
+      assert.strictEqual(msg.raw.swapKey, 'k.json');
+      assert.deepStrictEqual(bucket.getCalls, []);
     });
 
     it('throws when a pointer references a different bucket than configured', async () => {
@@ -276,6 +291,19 @@ describe('ServiceBusBackend', () => {
           return true;
         },
       );
+    });
+
+    it('does not throw when no bucket is configured -- that is deferred to deserialize()', async () => {
+      const { backend } = buildTestBackend({
+        receiverOpts: {
+          messageBatches: [[{
+            messageId: 'mid-1',
+            body: JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' }),
+          }]],
+        },
+      });
+      const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
+      assert.strictEqual(result.messages[0].raw.swapKey, 'k.json');
     });
 
     it('stops once maxMessages is reached, without waiting out minTime', async () => {
@@ -354,6 +382,62 @@ describe('ServiceBusBackend', () => {
     });
   });
 
+  describe('isSwapped()', () => {
+    it('returns true when the message was detected as a swap pointer at receive time', async () => {
+      const { backend } = buildTestBackend();
+      const message = { id: 'm1', body: 'pointer', raw: { swapKey: 'k.json' } };
+      assert.strictEqual(await backend.isSwapped(message), true);
+    });
+
+    it('returns false otherwise', async () => {
+      const { backend } = buildTestBackend();
+      const message = { id: 'm1', body: 'hello', raw: {} };
+      assert.strictEqual(await backend.isSwapped(message), false);
+    });
+  });
+
+  describe('deserialize()', () => {
+    it('returns the message unchanged when it was not swapped', async () => {
+      const { backend } = buildTestBackend();
+      const message = { id: 'm1', body: 'hello', raw: {} };
+      assert.strictEqual(await backend.deserialize(message), message);
+    });
+
+    it('fetches and returns a new message with the real body when swapped', async () => {
+      const bucket = new FakeBucket();
+      await bucket.put('k.json', 'the real body');
+      const { backend } = buildTestBackend({ bucket });
+      const message = {
+        id: 'm1', body: JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' }), raw: { swapKey: 'k.json' },
+      };
+      const result = await backend.deserialize(message);
+      assert.strictEqual(result.body, 'the real body');
+      assert.notStrictEqual(result, message);
+      assert.deepStrictEqual(bucket.getCalls, ['k.json']);
+    });
+
+    it('throws when the swapped message body cannot be found in the bucket', async () => {
+      const bucket = new FakeBucket();
+      const { backend } = buildTestBackend({ bucket });
+      const message = { id: 'm1', body: '{}', raw: { swapKey: 'missing.json' } };
+      await assert.rejects(backend.deserialize(message), (e) => {
+        assert.ok(e instanceof QueueError);
+        assert.strictEqual(e.status, 404);
+        return true;
+      });
+    });
+
+    it('throws when the message was swapped out but no spill bucket is configured', async () => {
+      const { backend } = buildTestBackend();
+      const message = { id: 'm1', body: '{}', raw: { swapKey: 'k.json' } };
+      await assert.rejects(backend.deserialize(message), (e) => {
+        assert.ok(e instanceof QueueError);
+        assert.strictEqual(e.status, 500);
+        return true;
+      });
+    });
+  });
+
   describe('deleteBatch()', () => {
     it('completes each message individually and runs cleanup after a successful ack', async () => {
       const bucket = new FakeBucket();
@@ -410,6 +494,25 @@ describe('ServiceBusBackend', () => {
       const { messages } = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
       await backend.deleteBatch(messages);
       assert.deepStrictEqual(bucket.removeCalls, []);
+    });
+
+    it('does not propagate a failure to clean up a swapped message body', async () => {
+      const bucket = new FakeBucket();
+      bucket.remove = async () => {
+        throw new Error('boom');
+      };
+      const { backend } = buildTestBackend({
+        bucket,
+        receiverOpts: {
+          messageBatches: [[{
+            messageId: 'mid-1',
+            body: JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' }),
+          }]],
+        },
+      });
+      const { messages } = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
+      const result = await backend.deleteBatch(messages);
+      assert.strictEqual(result.deleted[0], messages[0]);
     });
   });
 });
