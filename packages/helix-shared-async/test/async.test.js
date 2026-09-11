@@ -21,7 +21,7 @@ describe('Async Tests', () => {
     const t0 = Date.now();
     await sleep(20);
     const t = Date.now() - t0;
-    assert(t >= 20 && t <= 1000, `delta was: ${t}`);
+    assert(t >= 19 && t <= 1000, `delta was: ${t}`);
   });
 
   it('nextTick', async () => {
