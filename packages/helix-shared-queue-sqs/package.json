@@ -36,7 +36,7 @@
     "@adobe/helix-shared-storage": "^3.0.0"
   },
   "dependencies": {
-    "@adobe/helix-shared-queue": "^0.0.9",
+    "@adobe/helix-shared-queue": "^1.0.0",
     "@aws-sdk/client-sqs": "^3.1129.0",
     "@smithy/node-http-handler": "^4.0.0"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-queue",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "description": "Shared modules of the Helix Project - queue",
   "main": "src/index.js",
   "type": "module",
