@@ -153,6 +153,18 @@ export class Queue {
   }
 
   /**
+   * Convenience wrapper around {@link Queue#send} for the common case of a single message —
+   * `await queue.sendOne(msg)` instead of `(await queue.send([msg])).messageIds[0]`.
+   *
+   * @param {OutboundMessage} message
+   * @returns {Promise<string>} the backend-assigned message id
+   */
+  async sendOne(message) {
+    const { messageIds } = await this.send([message]);
+    return messageIds[0];
+  }
+
+  /**
    * Long-poll for messages. See {@link ReceiveOptions}.
    *
    * @param {ReceiveOptions} [opts]

@@ -34,7 +34,7 @@
     "@adobe/helix-shared-storage": "^3.0.0"
   },
   "dependencies": {
-    "@adobe/helix-shared-queue": "^0.0.9",
+    "@adobe/helix-shared-queue": "^1.0.0",
     "@azure/service-bus": "^7.9.5"
   }
 }
