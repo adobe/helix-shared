@@ -12,6 +12,7 @@
 
 import { QueueService } from '@adobe/helix-shared-queue';
 import { createDefaultBackendFactory } from './createDefaultBackendFactory.js';
+import { toReceivedMessage } from './toReceivedMessage.js';
 
 /**
  * `QueueService` subclass pre-wired with the default Azure Service Bus `backendFactory`, so
@@ -35,5 +36,14 @@ export class QueueServiceServiceBus extends QueueService {
       backendFactory: createDefaultBackendFactory(context.env, { log: context.log }),
       ...opts,
     });
+  }
+
+  /**
+   * @param {Object[]} rawMessages `ServiceBusReceivedMessage`-shaped messages -- see
+   *  {@link toReceivedMessage} for the expected field names
+   * @returns {import('@adobe/helix-shared-queue').ReceivedMessage[]}
+   */
+  static toReceivedMessages(rawMessages) {
+    return rawMessages.map(toReceivedMessage);
   }
 }

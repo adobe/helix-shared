@@ -14,6 +14,7 @@
 import { randomUUID } from 'node:crypto';
 import { AbstractQueueBackend } from '@adobe/helix-shared-queue';
 import { extractSwapKey } from './dereferenceMessageBody.js';
+import { toReceivedMessage } from './toReceivedMessage.js';
 
 const DEFAULT_SWAP_PREFIX = 'default/servicebus-swap';
 
@@ -240,13 +241,7 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    */
   #toReceivedMessage(raw) {
     raw.swapKey = this.#detectSwapKey(raw.body);
-    return {
-      id: raw.messageId === undefined ? undefined : String(raw.messageId),
-      body: raw.body,
-      groupId: raw.sessionId,
-      receiveCount: raw.deliveryCount,
-      raw,
-    };
+    return toReceivedMessage(raw);
   }
 
   /**

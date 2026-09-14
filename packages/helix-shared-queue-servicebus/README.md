@@ -86,6 +86,16 @@ export async function handler(message, context) {
 }
 ```
 
+If that same trigger handler also wants the normalized `ReceivedMessage` shape (`{id, body, groupId, receiveCount, raw}`) that `queue.receive()` itself produces — rather than working with the raw trigger message directly — use `QueueServiceServiceBus.toReceivedMessages()`:
+
+```js
+import { QueueServiceServiceBus as QueueService } from '@adobe/helix-shared-queue-servicebus';
+
+const [received] = QueueService.toReceivedMessages([rawMessage]);
+```
+
+`rawMessage` must be shaped like a `ServiceBusReceivedMessage` (`messageId`/`body`/`sessionId`/`deliveryCount`). The Azure Functions v4 programming model's binding hands the trigger handler only the (possibly already-parsed) message body by default — `messageId`/`sessionId`/`deliveryCount` live on `context.triggerMetadata` instead, so assemble `rawMessage` from both before calling this. This transform does not detect or resolve swapped message bodies — combine it with `dereferenceMessageBody()` above for that.
+
 ## Long-Polling
 
 `queue.receive({ minTime, maxTime, maxMessages })` follows the same contract as the SQS backend (see `@adobe/helix-shared-queue`'s README), adapted to `receiveMessages()`'s single-call shape — unlike SQS, there's no fixed per-call message-count cap to chunk against.

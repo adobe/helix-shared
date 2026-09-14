@@ -51,4 +51,19 @@ describe('QueueServiceServiceBus', () => {
     const queue = service.queue('my-queue');
     assert.strictEqual(queue.name, 'my-queue');
   });
+
+  it('toReceivedMessages() maps an array of raw Service Bus messages', () => {
+    const raw1 = { messageId: 'mid-1', body: 'one' };
+    const raw2 = {
+      messageId: 'mid-2', body: 'two', sessionId: 'g1', deliveryCount: 3,
+    };
+    assert.deepStrictEqual(QueueServiceServiceBus.toReceivedMessages([raw1, raw2]), [
+      {
+        id: 'mid-1', body: 'one', groupId: undefined, receiveCount: undefined, raw: raw1,
+      },
+      {
+        id: 'mid-2', body: 'two', groupId: 'g1', receiveCount: 3, raw: raw2,
+      },
+    ]);
+  });
 });

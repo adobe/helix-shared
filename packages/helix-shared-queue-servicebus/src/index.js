@@ -17,3 +17,4 @@ export {
 } from './createDefaultBackendFactory.js';
 export { QueueServiceServiceBus } from './QueueServiceServiceBus.js';
 export { dereferenceMessageBody } from './dereferenceMessageBody.js';
+export { toReceivedMessage } from './toReceivedMessage.js';
