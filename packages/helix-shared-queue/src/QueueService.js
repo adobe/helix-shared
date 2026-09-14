@@ -123,4 +123,23 @@ export class QueueService {
   close() {
     this.#closed = true;
   }
+
+  /**
+   * Transform raw, backend-native messages into the same `ReceivedMessage[]` shape
+   * {@link Queue#receive} produces -- for a consumer that receives messages directly from the
+   * runtime (e.g. an Azure Function Service Bus trigger, or an AWS Lambda SQS event source
+   * mapping) rather than through `Queue#receive()`. Mandatory override point for a
+   * backend-specific `QueueService` subclass (e.g. `QueueServiceSqs`, `QueueServiceServiceBus`)
+   * -- the base class has no way to know any backend's raw message shape.
+   *
+   * @param {*[]} rawMessages
+   * @returns {import('./Queue.js').ReceivedMessage[]}
+   */
+  static toReceivedMessages(rawMessages) { // eslint-disable-line no-unused-vars
+    throw new Error(
+      'toReceivedMessages() is not implemented by the base QueueService -- use a '
+      + 'backend-specific subclass (e.g. QueueServiceSqs from @adobe/helix-shared-queue-sqs, '
+      + 'or QueueServiceServiceBus from @adobe/helix-shared-queue-servicebus).',
+    );
+  }
 }

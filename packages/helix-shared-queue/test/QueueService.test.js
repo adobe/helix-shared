@@ -91,6 +91,13 @@ describe('QueueService', () => {
     assert.strictEqual(s.queue('my-queue').name, 'my-queue');
   });
 
+  it('toReceivedMessages() throws on the base QueueService', () => {
+    assert.throws(
+      () => QueueService.toReceivedMessages([]),
+      /toReceivedMessages\(\) is not implemented by the base QueueService/,
+    );
+  });
+
   it('fromContext() lets a subclass compose correctly via new this(...)', () => {
     class MyQueueService extends QueueService {
       static fromContext(context, opts = {}) {

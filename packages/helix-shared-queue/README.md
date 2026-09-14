@@ -70,6 +70,10 @@ const { deleted, failed } = await queue.delete(messages);
 
 Each `message` returned by `receive()` carries an opaque `raw` field with the backend-native message object (e.g. SQS's full message including its `ReceiptHandle`). Pass the same message objects back into `delete()` unmodified — the backend reads whatever ack token it needs off `raw`. `delete()` is best-effort: individual per-message failures are collected into `failed` rather than thrown; only a total, whole-call failure throws.
 
+### Receiving Messages Outside `Queue#receive()`
+
+Some consumers never call `receive()` at all — the runtime hands messages straight to the handler (an AWS Lambda triggered by an SQS event source mapping, an Azure Function Service Bus trigger, ...). To normalize such a message into the same `ReceivedMessage` shape, use the backend-specific `QueueService` subclass's static `toReceivedMessages()`, e.g. `QueueServiceSqs.toReceivedMessages(rawMessages)` from `@adobe/helix-shared-queue-sqs` or `QueueServiceServiceBus.toReceivedMessages(rawMessages)` from `@adobe/helix-shared-queue-servicebus` — see each package's README for its expected raw shape. The base `QueueService` has no way to know any backend's raw message shape, so calling it there throws; each backend package implements it.
+
 ## Oversized Messages: `isSwapped()` / `deserialize()`
 
 A backend that spills oversized messages to blob storage (see "Notes for Backend Authors" below) does **not** transparently resolve them during `receive()` — `message.body` may be a backend-specific pointer rather than the real content. Check cheaply (no I/O) and resolve only when actually needed:
