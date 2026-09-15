@@ -13,7 +13,7 @@
 /* eslint-env mocha */
 import assert from 'assert';
 import { QueueError } from '@adobe/helix-shared-queue';
-import { dereferenceMessageBody } from '../src/dereferenceMessageBody.js';
+import { dereferenceMessageBody, isSwappedBody } from '../src/dereferenceMessageBody.js';
 
 /**
  * In-memory fake `Bucket`.
@@ -44,6 +44,22 @@ class FakeBucket {
   }
 }
 
+/**
+ * In-memory fake `Storage`: resolves any bucket name, lazily creating one if it wasn't
+ * pre-registered -- mirrors the real `Storage.bucket()`'s "no allowlist" behavior.
+ */
+function createFakeStorage(bucketsByName = {}) {
+  return {
+    buckets: bucketsByName,
+    bucket(name) {
+      if (!this.buckets[name]) {
+        this.buckets[name] = new FakeBucket({ bucket: name });
+      }
+      return this.buckets[name];
+    },
+  };
+}
+
 describe('dereferenceMessageBody()', () => {
   it('passes a non-JSON body through unchanged, with a no-op cleanup', async () => {
     const result = await dereferenceMessageBody('not json at all');
@@ -53,7 +69,8 @@ describe('dereferenceMessageBody()', () => {
 
   it('passes a JSON body through unchanged when it is not a swap pointer', async () => {
     const bucket = new FakeBucket();
-    const result = await dereferenceMessageBody('{"hello":"world"}', { bucket });
+    const storage = createFakeStorage({ [bucket.bucket]: bucket });
+    const result = await dereferenceMessageBody('{"hello":"world"}', { storage });
     assert.strictEqual(result.body, '{"hello":"world"}');
     await result.cleanup();
     assert.deepStrictEqual(bucket.removeCalls, []);
@@ -62,26 +79,27 @@ describe('dereferenceMessageBody()', () => {
   it('dereferences a swap pointer and cleans it up on request', async () => {
     const bucket = new FakeBucket();
     await bucket.put('k.json', 'the real body');
+    const storage = createFakeStorage({ [bucket.bucket]: bucket });
     const body = JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' });
 
-    const result = await dereferenceMessageBody(body, { bucket });
+    const result = await dereferenceMessageBody(body, { storage });
     assert.strictEqual(result.body, 'the real body');
     await result.cleanup();
     assert.deepStrictEqual(bucket.removeCalls, ['k.json']);
   });
 
-  it('throws when a pointer references a different bucket than configured', async () => {
-    const bucket = new FakeBucket();
+  it('trusts the pointer and resolves whichever bucket it names, not a pre-configured one', async () => {
+    const bucket = new FakeBucket({ bucket: 'some-other-bucket' });
+    await bucket.put('k.json', 'the real body');
+    const storage = createFakeStorage({ [bucket.bucket]: bucket });
     const body = JSON.stringify({ swapBucket: 'some-other-bucket', swapKey: 'k.json' });
-    await assert.rejects(dereferenceMessageBody(body, { bucket }), (e) => {
-      assert.ok(e instanceof QueueError);
-      assert.strictEqual(e.status, 500);
-      return true;
-    });
+
+    const result = await dereferenceMessageBody(body, { storage });
+    assert.strictEqual(result.body, 'the real body');
   });
 
-  it('throws when the message was swapped out but no bucket is configured', async () => {
-    const body = JSON.stringify({ swapKey: 'k.json' });
+  it('throws when the message was swapped out but no storage is configured', async () => {
+    const body = JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' });
     await assert.rejects(dereferenceMessageBody(body), (e) => {
       assert.ok(e instanceof QueueError);
       assert.strictEqual(e.status, 500);
@@ -90,9 +108,9 @@ describe('dereferenceMessageBody()', () => {
   });
 
   it('throws when the swapped message body cannot be found in the bucket', async () => {
-    const bucket = new FakeBucket();
+    const storage = createFakeStorage();
     const body = JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'missing.json' });
-    await assert.rejects(dereferenceMessageBody(body, { bucket }), (e) => {
+    await assert.rejects(dereferenceMessageBody(body, { storage }), (e) => {
       assert.ok(e instanceof QueueError);
       assert.strictEqual(e.status, 404);
       return true;
@@ -100,10 +118,10 @@ describe('dereferenceMessageBody()', () => {
   });
 
   it('cleanup() is a no-op, and safe to call, when nothing was swapped', async () => {
-    const bucket = new FakeBucket();
-    const result = await dereferenceMessageBody('{"plain":"message"}', { bucket });
+    const storage = createFakeStorage();
+    const result = await dereferenceMessageBody('{"plain":"message"}', { storage });
     await result.cleanup();
-    assert.deepStrictEqual(bucket.removeCalls, []);
+    assert.deepStrictEqual(Object.keys(storage.buckets), []);
   });
 
   it("cleanup() logs (but doesn't throw for) a failure to delete the swapped body", async () => {
@@ -112,9 +130,25 @@ describe('dereferenceMessageBody()', () => {
     bucket.remove = async () => {
       throw new Error('boom');
     };
+    const storage = createFakeStorage({ [bucket.bucket]: bucket });
     const body = JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' });
 
-    const result = await dereferenceMessageBody(body, { bucket });
+    const result = await dereferenceMessageBody(body, { storage });
     await result.cleanup(); // must not throw
+  });
+});
+
+describe('isSwappedBody()', () => {
+  it('returns false for a non-JSON body', () => {
+    assert.strictEqual(isSwappedBody('not json at all'), false);
+  });
+
+  it('returns false for a plain JSON body', () => {
+    assert.strictEqual(isSwappedBody('{"hello":"world"}'), false);
+  });
+
+  it('returns true for a swap pointer', () => {
+    const body = JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' });
+    assert.strictEqual(isSwappedBody(body), true);
   });
 });

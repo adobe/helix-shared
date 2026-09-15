@@ -43,58 +43,70 @@ Porting the same abstraction onto Azure Service Bus surfaced genuine API-shape d
 
 ## Oversized-Message Spillover
 
-Same pattern as the SQS backend: a single message too large to fit any batch is spilled to an injected `@adobe/helix-shared-storage` `Bucket`. This package has no prior wire format to stay compatible with, so there's only one pointer shape: `{swapBucket, swapKey}` — no SQS-style `legacySwapFormat` equivalent.
+Same pattern as the SQS backend: a single message too large to fit any batch is spilled to a bucket resolved by name from an injected `@adobe/helix-shared-storage` `Storage`. This package has no prior wire format to stay compatible with, so there's only one pointer shape: `{swapBucket, swapKey}` — no SQS-style `legacySwapFormat` equivalent.
 
 ```js
 import { QueueServiceServiceBus as QueueService } from '@adobe/helix-shared-queue-servicebus';
 import { StorageAzure as Storage } from '@adobe/helix-shared-storage-azure';
 
-const bucket = Storage.fromContext(context).contentBus();
-const service = QueueService.fromContext(context, { bucket });
+const storage = Storage.fromContext(context);
+const service = QueueService.fromContext(context, { storage, bucketName: 'my-bucket' });
 ```
 
-`bucket` (and `swapPrefix`, defaulting to `'default/servicebus-swap'`) can also be set per queue: `service.queue('my-queue-name', { bucket, swapPrefix })`.
+`storage`/`bucketName` (and `swapPrefix`, defaulting to `'default/servicebus-swap'`) can also be set per queue: `service.queue('my-queue-name', { storage, bucketName, swapPrefix })`.
 
 ### Receiving a Swapped Message: `isSwapped()`/`deserialize()`
 
-`queue.receive()` does **not** transparently fetch a swapped-out message's real content — see `@adobe/helix-shared-queue`'s README for why (in short: forcing a blob fetch for every swapped message regardless of whether the caller needs the full body is wasteful). Check and resolve explicitly instead:
+`queue.receive()` does **not** transparently fetch a swapped-out message's real content — see `@adobe/helix-shared-queue`'s README for why (in short: forcing a blob fetch for every swapped message regardless of whether the caller needs the full body is wasteful). Check and resolve explicitly instead, off the `service` itself — no need to call `service.queue(name)` just for this:
 
 ```js
 const { messages } = await queue.receive();
 for (let message of messages) {
-  if (await queue.isSwapped(message)) {
-    message = await queue.deserialize(message);
+  if (await service.isSwapped(message)) {
+    message = await service.deserialize(message);
   }
   console.log(message.body); // guaranteed real now
 }
 await queue.delete(messages);
 ```
 
-`queue.delete()` cleans up the swapped body from `bucket` once the message is acknowledged — regardless of whether `deserialize()` was ever called for it; cleanup failures are logged and otherwise ignored.
+`service.deserialize()` resolves the bucket named by the message's own pointer (`swapBucket`) via `storage.bucket(swapBucket)` — it does **not** require that name to match the `bucketName` configured above. `Storage.bucket()` itself enforces no allowlist, so the only thing bounding which bucket actually gets read is whatever IAM/ACL scope the underlying cloud credentials already have; don't grant those credentials broader bucket access than you're comfortable with a queue message being able to reach.
+
+`queue.delete()` cleans up the spilled body from this backend's own configured bucket once the message is acknowledged — regardless of whether `deserialize()` was ever called for it; cleanup failures are logged and otherwise ignored.
 
 ### Using Outside `receive()`/`delete()` (e.g. an Azure Function Service Bus Trigger)
 
-`isSwapped()`/`deserialize()` only help consumers going through `Queue`. An Azure Function with a Service Bus trigger delivers the message straight to the handler, never calling `Queue#receive()` at all. For that case, the same dereference-and-cleanup logic is available standalone — fetching immediately, since there's little benefit to laziness processing one message at a time:
+An Azure Function with a Service Bus trigger delivers the message straight to the handler, never calling `Queue#receive()` at all. For that case, use the same `service.isSwapped()`/`service.deserialize()` shown above — they resolve directly from `message.body`, so they work identically whether the message came from `receive()` or from a trigger. First normalize the raw trigger message into the same `ReceivedMessage` shape `queue.receive()` produces, using `service.toReceivedMessages()`:
+
+```js
+import { QueueServiceServiceBus as QueueService } from '@adobe/helix-shared-queue-servicebus';
+
+export async function handler(message, context) {
+  const service = QueueService.fromContext(context, { storage, bucketName: 'my-bucket' });
+  const rawMessage = { ...context.triggerMetadata, body: message };
+  const [received] = service.toReceivedMessages([rawMessage]);
+
+  let resolved = received;
+  if (await service.isSwapped(resolved)) {
+    resolved = await service.deserialize(resolved);
+  }
+  await process(JSON.parse(resolved.body));
+}
+```
+
+`rawMessage` must be shaped like a `ServiceBusReceivedMessage` (`messageId`/`body`/`sessionId`/`deliveryCount`). The Azure Functions v4 programming model's binding hands the trigger handler only the (possibly already-parsed) message body by default — `messageId`/`sessionId`/`deliveryCount` live on `context.triggerMetadata` instead, so assemble `rawMessage` from both before calling this.
+
+For a consumer that doesn't want a `QueueService` instance at all, the same dereference-and-cleanup logic is available standalone via `dereferenceMessageBody()`/`isSwappedBody()`, fetching immediately since there's little benefit to laziness processing one message at a time:
 
 ```js
 import { dereferenceMessageBody } from '@adobe/helix-shared-queue-servicebus';
 
 export async function handler(message, context) {
-  const { body, cleanup } = await dereferenceMessageBody(String(message.body), { bucket, log: context.log });
+  const { body, cleanup } = await dereferenceMessageBody(String(message.body), { storage, log: context.log });
   await process(JSON.parse(body));
   await cleanup(); // only after successful, durable processing
 }
 ```
-
-If that same trigger handler also wants the normalized `ReceivedMessage` shape (`{id, body, groupId, receiveCount, raw}`) that `queue.receive()` itself produces — rather than working with the raw trigger message directly — use `QueueServiceServiceBus.toReceivedMessages()`:
-
-```js
-import { QueueServiceServiceBus as QueueService } from '@adobe/helix-shared-queue-servicebus';
-
-const [received] = QueueService.toReceivedMessages([rawMessage]);
-```
-
-`rawMessage` must be shaped like a `ServiceBusReceivedMessage` (`messageId`/`body`/`sessionId`/`deliveryCount`). The Azure Functions v4 programming model's binding hands the trigger handler only the (possibly already-parsed) message body by default — `messageId`/`sessionId`/`deliveryCount` live on `context.triggerMetadata` instead, so assemble `rawMessage` from both before calling this. This transform does not detect or resolve swapped message bodies — combine it with `dereferenceMessageBody()` above for that.
 
 ## Long-Polling
 

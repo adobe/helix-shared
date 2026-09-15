@@ -16,43 +16,45 @@ const NOOP_CLEANUP = async () => {};
 
 /**
  * Cheap (no I/O): detects whether an already-parsed message body is a swap pointer produced
- * by {@link ServiceBusBackend#sendBatch} and, if so, extracts its storage key. Exported so
- * {@link ServiceBusBackend} can reuse this same detection logic for its
- * `isSwapped()`/`receiveBatch()` split without needing to also import the (fetching)
+ * by {@link ServiceBusBackend#sendBatch} and, if so, extracts its storage bucket/key. Exported
+ * so {@link ServiceBusBackend} can reuse this same detection logic for its own internal
+ * receive-time bookkeeping without needing to also import the (fetching)
  * {@link dereferenceMessageBody}.
  *
  * @param {Object} parsed the parsed message body
- * @param {string} [bucketName] the configured bucket's name, if any. When omitted (no bucket
- *  configured at all), the mismatch check below is skipped — that's a distinct "no bucket
- *  configured" condition for the caller to check separately once it actually needs to fetch
- *  (see {@link dereferenceMessageBody}/`ServiceBusBackend#deserialize`), not a mismatch.
- * @returns {string|undefined} the swap key, if `parsed` is a swap pointer
- * @throws {QueueError} if `parsed` is a pointer, `bucketName` is configured, but they
- *  reference different buckets
+ * @returns {{swapBucket: string, swapKey: string}|undefined} the pointer's bucket/key, if
+ *  `parsed` is a swap pointer
  */
-export function extractSwapKey(parsed, bucketName) {
+export function extractSwapKey(parsed) {
   const { swapBucket, swapKey } = parsed;
-  if (!swapKey) {
-    return undefined;
+  return swapKey ? { swapBucket, swapKey } : undefined;
+}
+
+/**
+ * Cheap (no I/O) check for whether `body` is a swap pointer produced by
+ * {@link ServiceBusBackend#sendBatch} rather than the real message content.
+ *
+ * @param {string} body raw message body
+ * @returns {boolean}
+ */
+export function isSwappedBody(body) {
+  try {
+    return !!extractSwapKey(JSON.parse(body));
+  } catch (e) {
+    return false;
   }
-  if (bucketName !== undefined && swapBucket !== bucketName) {
-    throw new QueueError(
-      `swapped message references bucket "${swapBucket}", but this backend is configured for "${bucketName}"`,
-      { status: 500, backend: 'ServiceBus' },
-    );
-  }
-  return swapKey;
 }
 
 /**
  * @typedef {Object} DereferenceResult
  * @property {string} body the real message body — unchanged from the input unless it was a
  *  swap pointer
- * @property {function(): Promise<void>} cleanup deletes the swapped-out body from `bucket`, if
- *  there was one to clean up; a no-op otherwise, so it's always safe to call unconditionally.
- *  Call this only once the message has been durably, successfully processed — deleting the
- *  swapped body eagerly would lose it if the message needs to be redelivered after a failure.
- *  Never throws; a failure to delete is logged and otherwise ignored.
+ * @property {function(): Promise<void>} cleanup deletes the swapped-out body from its bucket,
+ *  if there was one to clean up; a no-op otherwise, so it's always safe to call
+ *  unconditionally. Call this only once the message has been durably, successfully
+ *  processed — deleting the swapped body eagerly would lose it if the message needs to be
+ *  redelivered after a failure. Never throws; a failure to delete is logged and otherwise
+ *  ignored.
  */
 
 /**
@@ -63,18 +65,23 @@ export function extractSwapKey(parsed, bucketName) {
  * notably an Azure Function triggered by a Service Bus trigger, where the runtime delivers
  * the message body directly to the handler rather than going through `Queue#receive()` at
  * all, and where (typically processing one message at a time) there's little benefit to the
- * lazy `isSwapped()`/`deserialize()` split `Queue` offers — this fetches immediately.
+ * lazy `isSwapped()`/`deserialize()` split `QueueService` offers — this fetches immediately.
+ *
+ * Trusts the pointer's own `swapBucket` name to resolve the bucket via `storage.bucket(...)` —
+ * it does not require it to match any particular configured bucket name. `Storage.bucket()`
+ * itself enforces no allowlist, so the only thing bounding which bucket actually gets read is
+ * whatever IAM/ACL scope the underlying cloud credentials already have.
  *
  * @param {string} body raw Service Bus message body (e.g. an Azure Function Service Bus
  *  trigger's message argument, coerced to a string)
  * @param {Object} [opts]
- * @param {import('@adobe/helix-shared-storage').Bucket} [opts.bucket] required if `body` might
- *  reference a swapped-out message
+ * @param {import('@adobe/helix-shared-storage').Storage} [opts.storage] required if `body`
+ *  might reference a swapped-out message
  * @param {Console} [opts.log]
  * @returns {Promise<DereferenceResult>}
  */
 export async function dereferenceMessageBody(body, opts = {}) {
-  const { bucket, log = console } = opts;
+  const { storage, log = console } = opts;
 
   let parsed;
   try {
@@ -83,20 +90,21 @@ export async function dereferenceMessageBody(body, opts = {}) {
     return { body, cleanup: NOOP_CLEANUP };
   }
 
-  const swapKey = extractSwapKey(parsed, bucket?.bucket);
-  if (!swapKey) {
+  const swap = extractSwapKey(parsed);
+  if (!swap) {
     return { body, cleanup: NOOP_CLEANUP };
   }
-  if (!bucket) {
-    throw new QueueError('message was swapped out but no spill bucket is configured', {
+  if (!storage) {
+    throw new QueueError('message was swapped out but no storage is configured', {
       status: 500,
       backend: 'ServiceBus',
     });
   }
 
-  const content = await bucket.get(swapKey);
+  const bucket = storage.bucket(swap.swapBucket);
+  const content = await bucket.get(swap.swapKey);
   if (content === null) {
-    throw new QueueError(`swapped message body not found: ${bucket.bucket}/${swapKey}`, {
+    throw new QueueError(`swapped message body not found: ${swap.swapBucket}/${swap.swapKey}`, {
       status: 404,
       backend: 'ServiceBus',
     });
@@ -106,10 +114,10 @@ export async function dereferenceMessageBody(body, opts = {}) {
     body: content.toString('utf-8'),
     cleanup: async () => {
       try {
-        await bucket.remove(swapKey);
-        log.debug(`deleted swapped message body: ${bucket.bucket}/${swapKey}`);
+        await bucket.remove(swap.swapKey);
+        log.debug(`deleted swapped message body: ${swap.swapBucket}/${swap.swapKey}`);
       } catch (e) {
-        log.warn(`unable to delete swapped message body at ${bucket.bucket}/${swapKey}: ${e.message}`);
+        log.warn(`unable to delete swapped message body at ${swap.swapBucket}/${swap.swapKey}: ${e.message}`);
       }
     },
   };

@@ -40,10 +40,12 @@
  * `body` may be a backend-specific spillover pointer rather than the real message content,
  * if the backend spilled it to blob storage because it was too large to send inline —
  * `receive()` does **not** transparently resolve this (unlike a prior design of this
- * package): call {@link Queue#isSwapped} to check cheaply (no I/O), and
- * {@link Queue#deserialize} to fetch the real content only when actually needed. This
- * split exists so a caller that only needs a few cheap fields out of a large message (e.g.
- * routing metadata) never pays for the blob fetch.
+ * package): call {@link import('./QueueService.js').QueueService#isSwapped} to check cheaply
+ * (no I/O), and {@link import('./QueueService.js').QueueService#deserialize} to fetch the
+ * real content only when actually needed. This split exists so a caller that only needs a
+ * few cheap fields out of a large message (e.g. routing metadata) never pays for the blob
+ * fetch, and so the same resolution works for a message obtained via `Queue#receive()` or via
+ * `QueueService#toReceivedMessages()` (e.g. a cloud-trigger delivery path).
  *
  * @typedef {Object} ReceivedMessage
  * @property {string} id backend-native message id (e.g. SQS's `MessageId`)
@@ -182,30 +184,5 @@ export class Queue {
    */
   async delete(messages) {
     return this.#backend.deleteBatch(messages);
-  }
-
-  /**
-   * Cheap (no I/O) check for whether `message.body` is a backend-specific spillover pointer
-   * rather than the real content. Backends that don't support spillover at all always
-   * return `false` (see {@link AbstractQueueBackend#isSwapped}).
-   *
-   * @param {ReceivedMessage} message
-   * @returns {Promise<boolean>}
-   */
-  async isSwapped(message) {
-    return this.#backend.isSwapped(message);
-  }
-
-  /**
-   * If `isSwapped(message)` is true, fetches the real content from blob storage and returns
-   * a new message with `body` replaced; otherwise returns `message` unchanged. Only fetches
-   * when actually called — see the note on {@link ReceivedMessage} for why this is a
-   * separate, opt-in step rather than something `receive()` does automatically.
-   *
-   * @param {ReceivedMessage} message
-   * @returns {Promise<ReceivedMessage>}
-   */
-  async deserialize(message) {
-    return this.#backend.deserialize(message);
   }
 }

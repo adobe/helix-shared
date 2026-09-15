@@ -16,9 +16,12 @@ import { ServiceBusBackend } from './ServiceBusBackend.js';
 /**
  * @typedef {Object} CreateDefaultBackendFactoryOptions
  * @property {Console} [log]
- * @property {import('@adobe/helix-shared-storage').Bucket} [bucket] default spill bucket for
- *  every queue this factory hands out; see {@link ServiceBusBackend}. Can be overridden per
- *  queue via `{bucket}` passed to `QueueService#queue()`.
+ * @property {import('@adobe/helix-shared-storage').Storage} [storage] default storage used to
+ *  resolve the spill bucket for every queue this factory hands out; see
+ *  {@link ServiceBusBackend}. Can be overridden per queue via `{storage}` passed to
+ *  `QueueService#queue()`.
+ * @property {string} [bucketName] default spill bucket name; see {@link ServiceBusBackend}.
+ *  Can be overridden per queue via `{bucketName}` passed to `QueueService#queue()`.
  * @property {string} [swapPrefix] default spill key prefix; see {@link ServiceBusBackend}. Can
  *  be overridden per queue via `{swapPrefix}` passed to `QueueService#queue()`.
  */
@@ -50,11 +53,12 @@ function parseBackendFactoryEnvOpts(env = {}) {
  *
  * @param {BackendFactoryOpts} opts
  * @param {CreateDefaultBackendFactoryOptions} [factoryOpts]
- * @returns {function(string, {bucket?: import('@adobe/helix-shared-storage').Bucket,
- *   swapPrefix?: string}=): import('@adobe/helix-shared-queue').QueueBackend}
+ * @returns {function(string, {storage?: import('@adobe/helix-shared-storage').Storage,
+ *   bucketName?: string, swapPrefix?: string}=):
+ *   import('@adobe/helix-shared-queue').QueueBackend}
  */
 export function createBackendFactory({ connectionString }, {
-  log = console, bucket, swapPrefix,
+  log = console, storage, bucketName, swapPrefix,
 } = {}) {
   log.debug('Creating ServiceBusClient from connection string');
   const client = new ServiceBusClient(connectionString);
@@ -64,7 +68,8 @@ export function createBackendFactory({ connectionString }, {
     receiver: client.createReceiver(queueName),
     queueName,
     log,
-    bucket: opts.bucket ?? bucket,
+    storage: opts.storage ?? storage,
+    bucketName: opts.bucketName ?? bucketName,
     swapPrefix: opts.swapPrefix ?? swapPrefix,
   });
 }
@@ -75,8 +80,9 @@ export function createBackendFactory({ connectionString }, {
  *
  * @param {Record<string, string|undefined>} [env] environment variables (e.g. `context.env`)
  * @param {CreateDefaultBackendFactoryOptions} [opts]
- * @returns {function(string, {bucket?: import('@adobe/helix-shared-storage').Bucket,
- *   swapPrefix?: string}=): import('@adobe/helix-shared-queue').QueueBackend}
+ * @returns {function(string, {storage?: import('@adobe/helix-shared-storage').Storage,
+ *   bucketName?: string, swapPrefix?: string}=):
+ *   import('@adobe/helix-shared-queue').QueueBackend}
  */
 export function createDefaultBackendFactory(env = {}, opts = {}) {
   return createBackendFactory(parseBackendFactoryEnvOpts(env), opts);

@@ -93,9 +93,25 @@ describe('QueueService', () => {
 
   it('toReceivedMessages() throws on the base QueueService', () => {
     assert.throws(
-      () => QueueService.toReceivedMessages([]),
+      () => service.toReceivedMessages([]),
       /toReceivedMessages\(\) is not implemented by the base QueueService/,
     );
+  });
+
+  it('isSwapped() defaults to false', async () => {
+    assert.strictEqual(await service.isSwapped({ id: 'm1', body: 'hello', raw: {} }), false);
+  });
+
+  it('deserialize() defaults to returning the message unchanged', async () => {
+    const message = { id: 'm1', body: 'hello', raw: {} };
+    assert.strictEqual(await service.deserialize(message), message);
+  });
+
+  it('exposes the configured log and storage', () => {
+    const storage = { bucket: () => {} };
+    const s = new QueueService({ backendFactory, log: console, storage });
+    assert.strictEqual(s.log, console);
+    assert.strictEqual(s.storage, storage);
   });
 
   it('fromContext() lets a subclass compose correctly via new this(...)', () => {

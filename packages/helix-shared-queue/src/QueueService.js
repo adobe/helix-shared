@@ -23,6 +23,10 @@ import { Queue } from './Queue.js';
  *  `@adobe/helix-shared-queue-sqs`) provide this, typically via a convenience `QueueService`
  *  subclass overriding `fromContext`. The second argument is an opaque bag forwarded
  *  verbatim from {@link QueueService#queue} — core does not interpret it.
+ * @property {import('@adobe/helix-shared-storage').Storage} [storage] storage instance used by
+ *  a backend-specific subclass's {@link QueueService#isSwapped}/{@link QueueService#deserialize}
+ *  override to resolve a message's spillover bucket by name. Core does not interpret it -- see
+ *  the note on {@link QueueService#deserialize}.
  */
 
 /**
@@ -74,13 +78,26 @@ export class QueueService {
 
   #backendFactory;
 
+  #storage;
+
   #closed;
 
   constructor(opts = {}) {
-    const { log = console, backendFactory } = opts;
+    const { log = console, backendFactory, storage } = opts;
     this.#log = log;
     this.#backendFactory = backendFactory;
+    this.#storage = storage;
     this.#closed = false;
+  }
+
+  /** @type {Console} */
+  get log() {
+    return this.#log;
+  }
+
+  /** @type {import('@adobe/helix-shared-storage').Storage} */
+  get storage() {
+    return this.#storage;
   }
 
   /**
@@ -135,11 +152,41 @@ export class QueueService {
    * @param {*[]} rawMessages
    * @returns {import('./Queue.js').ReceivedMessage[]}
    */
-  static toReceivedMessages(rawMessages) { // eslint-disable-line no-unused-vars
+  toReceivedMessages(rawMessages) { // eslint-disable-line no-unused-vars, class-methods-use-this
     throw new Error(
       'toReceivedMessages() is not implemented by the base QueueService -- use a '
       + 'backend-specific subclass (e.g. QueueServiceSqs from @adobe/helix-shared-queue-sqs, '
       + 'or QueueServiceServiceBus from @adobe/helix-shared-queue-servicebus).',
     );
+  }
+
+  /**
+   * Cheap (no I/O) check for whether `message.body` is a backend-specific spillover pointer
+   * rather than the real content. Generic default: this class has no opinion on any backend's
+   * pointer format, so it always returns `false`. A backend-specific subclass (e.g.
+   * `QueueServiceSqs`, `QueueServiceServiceBus`) that supports spillover overrides this.
+   *
+   * @param {import('./Queue.js').ReceivedMessage} message
+   * @returns {Promise<boolean>}
+   */
+  // eslint-disable-next-line class-methods-use-this, no-unused-vars
+  async isSwapped(message) {
+    return false;
+  }
+
+  /**
+   * If `isSwapped(message)` is true, fetches the real content and returns a new message with
+   * `body` replaced; otherwise returns `message` unchanged. Generic default: always returns
+   * `message` unchanged. A backend-specific subclass that supports spillover overrides this,
+   * typically resolving the message's own embedded bucket name against {@link
+   * QueueService#storage} -- see that subclass's docs for whether/how it validates the
+   * embedded name against any configured expectation.
+   *
+   * @param {import('./Queue.js').ReceivedMessage} message
+   * @returns {Promise<import('./Queue.js').ReceivedMessage>}
+   */
+  // eslint-disable-next-line class-methods-use-this
+  async deserialize(message) {
+    return message;
   }
 }
