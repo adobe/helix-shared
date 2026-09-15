@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.2.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.2.1...@adobe/helix-shared-config-v11.2.2) (2026-09-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ignore to v7.0.8 ([#1276](https://github.com/adobe/helix-shared/issues/1276)) ([e5965f8](https://github.com/adobe/helix-shared/commit/e5965f8851d9e7cab4af60c907f3ad336784b4b9))
+
 # [@adobe/helix-shared-config-v11.2.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.2.0...@adobe/helix-shared-config-v11.2.1) (2026-08-31)
 
 
