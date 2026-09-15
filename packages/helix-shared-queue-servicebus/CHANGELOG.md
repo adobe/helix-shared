@@ -1,3 +1,15 @@
+# [@adobe/helix-shared-queue-servicebus-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-servicebus-v1.1.0...@adobe/helix-shared-queue-servicebus-v2.0.0) (2026-09-15)
+
+
+### Features
+
+* **queue:** move isSwapped()/deserialize() to QueueService, backed by Storage ([#1280](https://github.com/adobe/helix-shared/issues/1280)) ([f02cb94](https://github.com/adobe/helix-shared/commit/f02cb94d5c1bfb8abcdbe30d791928e1c77c1e06)), closes [isSwapped/QueueService#deserialize](https://github.com/isSwapped/QueueService/issues/deserialize)
+
+
+### BREAKING CHANGES
+
+* **queue:** Queue#isSwapped/Queue#deserialize have been removed. Use
+
 # [@adobe/helix-shared-queue-servicebus-v1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-servicebus-v1.0.0...@adobe/helix-shared-queue-servicebus-v1.1.0) (2026-09-14)
 
 
