@@ -22,9 +22,7 @@ import { QueueError } from './QueueError.js';
  * implementation in {@link AbstractQueueBackend} — unlike `StorageBackend`'s 7 mandatory + 5
  * generic-default split, batch-size/payload-size limits, long-poll call shape, and ack-token
  * shape are all inherently provider-specific, so there is nothing safe to implement
- * generically here in terms of the other primitives. `isSwapped`/`deserialize`, by contrast,
- * default to a safe no-spillover-support implementation, since spillover is an optional
- * concern most backends won't need at all.
+ * generically here in terms of the other primitives.
  *
  * @typedef {Object} QueueBackend
  * @property {string} name backend family tag used for error tagging, e.g. `'SQS'`,
@@ -51,16 +49,8 @@ import { QueueError } from './QueueError.js';
  *  individual per-message ack failures (collect them into `DeleteResult.failed` instead),
  *  only for a total, whole-call failure — mandatory. Also responsible for cleaning up any
  *  spilled blob-storage object a message references, once the message itself is
- *  successfully acknowledged, regardless of whether `deserialize` was ever called for it.
- * @property {function(import('./Queue.js').ReceivedMessage): Promise<boolean>} isSwapped
- *  cheap (no I/O), synchronous-in-practice check for whether a message's `body` is a
- *  backend-specific spillover pointer rather than the real content — generic default:
- *  always `false`
- * @property {function(import('./Queue.js').ReceivedMessage):
- *   Promise<import('./Queue.js').ReceivedMessage>} deserialize
- *  if `isSwapped(message)` is true, fetches the real content from blob storage and returns a
- *  new message with `body` replaced; otherwise returns `message` unchanged — generic
- *  default: always returns `message` unchanged
+ *  successfully acknowledged, regardless of whether `QueueService#deserialize` was ever
+ *  called for it.
  */
 
 /* eslint-disable class-methods-use-this -- mandatory-primitive stubs intentionally ignore `this` */
@@ -110,26 +100,5 @@ export class AbstractQueueBackend {
 
   async deleteBatch() {
     throw new Error('deleteBatch() not implemented');
-  }
-
-  /**
-   * Generic default: this backend never spills messages to blob storage, so nothing is ever
-   * swapped.
-   *
-   * @returns {Promise<boolean>}
-   */
-  async isSwapped() {
-    return false;
-  }
-
-  /**
-   * Generic default: since {@link AbstractQueueBackend#isSwapped} always returns `false` for
-   * this backend, there's never anything to resolve — return `message` unchanged.
-   *
-   * @param {import('./Queue.js').ReceivedMessage} message
-   * @returns {Promise<import('./Queue.js').ReceivedMessage>}
-   */
-  async deserialize(message) {
-    return message;
   }
 }

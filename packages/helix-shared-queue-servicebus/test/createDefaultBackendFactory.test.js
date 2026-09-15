@@ -21,10 +21,10 @@ import { ServiceBusBackend } from '../src/ServiceBusBackend.js';
 const FAKE_CONNECTION_STRING = 'Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=fake;SharedAccessKey=ZmFrZQ==';
 
 /**
- * AMQP can't be mocked with `nock`, so proving the factory wired `bucket`/`swapPrefix` into the
- * real `ServiceBusClient`-backed backend requires stubbing `createSender`/`createReceiver` on
- * the client prototype with hand-rolled fakes (same style as `ServiceBusBackend.test.js`),
- * rather than mocking at the wire level.
+ * AMQP can't be mocked with `nock`, so proving the factory wired `storage`/`bucketName`/
+ * `swapPrefix` into the real `ServiceBusClient`-backed backend requires stubbing
+ * `createSender`/`createReceiver` on the client prototype with hand-rolled fakes (same style
+ * as `ServiceBusBackend.test.js`), rather than mocking at the wire level.
  */
 function createFakeSender({ maxSizeInBytes = 200 } = {}) {
   return {
@@ -67,6 +67,18 @@ class FakeBucket {
   }
 }
 
+/**
+ * In-memory fake `Storage`, resolving a single pre-registered bucket by name.
+ */
+function createFakeStorage(bucket) {
+  return {
+    bucket(name) {
+      assert.strictEqual(name, bucket.bucket);
+      return bucket;
+    },
+  };
+}
+
 describe('createDefaultBackendFactory()', () => {
   afterEach(() => {
     sinon.restore();
@@ -82,14 +94,17 @@ describe('createDefaultBackendFactory()', () => {
     assert.strictEqual(backend.queueName, 'my-queue');
   });
 
-  it('forwards a factory-level default bucket/swapPrefix to every queue', async () => {
+  it('forwards a factory-level default storage/bucketName/swapPrefix to every queue', async () => {
     const bucket = new FakeBucket({ bucket: 'fake-bucket' });
+    const storage = createFakeStorage(bucket);
     sinon.stub(ServiceBusClient.prototype, 'createSender').returns(createFakeSender());
     sinon.stub(ServiceBusClient.prototype, 'createReceiver').returns({});
 
     const factory = createDefaultBackendFactory(
       { HLX_AZURE_SERVICE_BUS_CONNECTION_STRING: FAKE_CONNECTION_STRING },
-      { log: console, bucket, swapPrefix: 'custom' },
+      {
+        log: console, storage, bucketName: 'fake-bucket', swapPrefix: 'custom',
+      },
     );
     const backend = factory('my-queue');
     await backend.sendBatch([{ body: JSON.stringify({ payload: 'x'.repeat(1000) }) }]);
@@ -98,17 +113,21 @@ describe('createDefaultBackendFactory()', () => {
     assert.match(bucket.putCalls[0].key, /^custom\//);
   });
 
-  it('lets a per-queue opts bag override the factory-level bucket/swapPrefix', async () => {
+  it('lets a per-queue opts bag override the factory-level storage/bucketName/swapPrefix', async () => {
     const defaultBucket = new FakeBucket({ bucket: 'default-bucket' });
+    const defaultStorage = createFakeStorage(defaultBucket);
     const perQueueBucket = new FakeBucket({ bucket: 'per-queue-bucket' });
+    const perQueueStorage = createFakeStorage(perQueueBucket);
     sinon.stub(ServiceBusClient.prototype, 'createSender').returns(createFakeSender());
     sinon.stub(ServiceBusClient.prototype, 'createReceiver').returns({});
 
     const factory = createDefaultBackendFactory(
       { HLX_AZURE_SERVICE_BUS_CONNECTION_STRING: FAKE_CONNECTION_STRING },
-      { log: console, bucket: defaultBucket },
+      { log: console, storage: defaultStorage, bucketName: 'default-bucket' },
     );
-    const backend = factory('my-queue', { bucket: perQueueBucket, swapPrefix: 'per-queue' });
+    const backend = factory('my-queue', {
+      storage: perQueueStorage, bucketName: 'per-queue-bucket', swapPrefix: 'per-queue',
+    });
     await backend.sendBatch([{ body: JSON.stringify({ payload: 'x'.repeat(1000) }) }]);
 
     assert.strictEqual(defaultBucket.putCalls.length, 0);

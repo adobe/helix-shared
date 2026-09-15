@@ -121,6 +121,18 @@ class FakeBucket {
   }
 }
 
+/**
+ * In-memory fake `Storage`, resolving a single pre-registered bucket by name.
+ */
+function createFakeStorage(bucket) {
+  return {
+    bucket(name) {
+      assert.strictEqual(name, bucket.bucket);
+      return bucket;
+    },
+  };
+}
+
 function buildTestBackend({
   senderOpts, receiverOpts, ...opts
 } = {}) {
@@ -168,8 +180,11 @@ describe('ServiceBusBackend', () => {
 
     it('spills a single message too large to fit any batch to the configured bucket', async () => {
       const bucket = new FakeBucket();
+      const storage = createFakeStorage(bucket);
       // small enough to reject the 300-char message, large enough for the ~110-byte pointer
-      const { backend, sender } = buildTestBackend({ senderOpts: { maxSizeInBytes: 200 }, bucket });
+      const { backend, sender } = buildTestBackend({
+        senderOpts: { maxSizeInBytes: 200 }, storage, bucketName: bucket.bucket,
+      });
       const big = 'x'.repeat(300);
       const result = await backend.sendBatch([{ body: big, dedupId: 'id-1' }]);
       assert.deepStrictEqual(result.messageIds, ['id-1']);
@@ -191,8 +206,11 @@ describe('ServiceBusBackend', () => {
 
     it('throws when even the spilled pointer does not fit the batch', async () => {
       const bucket = new FakeBucket();
+      const storage = createFakeStorage(bucket);
       // an unreasonably tiny cap that not even the small pointer JSON fits into
-      const { backend } = buildTestBackend({ senderOpts: { maxSizeInBytes: 1 }, bucket });
+      const { backend } = buildTestBackend({
+        senderOpts: { maxSizeInBytes: 1 }, storage, bucketName: bucket.bucket,
+      });
       await assert.rejects(backend.sendBatch([{ body: 'x'.repeat(300) }]), QueueError);
     });
 
@@ -240,23 +258,17 @@ describe('ServiceBusBackend', () => {
     });
 
     it('passes a plain JSON body through unchanged, not marked as swapped', async () => {
-      const bucket = new FakeBucket();
       const { backend } = buildTestBackend({
-        bucket,
         receiverOpts: { messageBatches: [[{ messageId: 'mid-1', body: '{"hello":"world"}' }]] },
       });
       const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
       const [msg] = result.messages;
       assert.strictEqual(msg.body, '{"hello":"world"}');
       assert.strictEqual(msg.raw.swapKey, undefined);
-      assert.deepStrictEqual(bucket.getCalls, []);
     });
 
     it('detects a swap pointer and stashes its key, without fetching its content', async () => {
-      const bucket = new FakeBucket();
-      await bucket.put('k.json', 'the real body');
       const { backend } = buildTestBackend({
-        bucket,
         receiverOpts: {
           messageBatches: [[{
             messageId: 'mid-1',
@@ -269,13 +281,14 @@ describe('ServiceBusBackend', () => {
       // body is still the pointer -- receive() does not fetch
       assert.strictEqual(JSON.parse(msg.body).swapKey, 'k.json');
       assert.strictEqual(msg.raw.swapKey, 'k.json');
-      assert.deepStrictEqual(bucket.getCalls, []);
     });
 
-    it('throws when a pointer references a different bucket than configured', async () => {
+    it('stashes a swap key even when it references a bucket other than the one configured', async () => {
       const bucket = new FakeBucket();
+      const storage = createFakeStorage(bucket);
       const { backend } = buildTestBackend({
-        bucket,
+        storage,
+        bucketName: bucket.bucket,
         receiverOpts: {
           messageBatches: [[{
             messageId: 'mid-1',
@@ -283,17 +296,11 @@ describe('ServiceBusBackend', () => {
           }]],
         },
       });
-      await assert.rejects(
-        backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 }),
-        (e) => {
-          assert.ok(e instanceof QueueError);
-          assert.strictEqual(e.status, 500);
-          return true;
-        },
-      );
+      const result = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
+      assert.strictEqual(result.messages[0].raw.swapKey, 'k.json');
     });
 
-    it('does not throw when no bucket is configured -- that is deferred to deserialize()', async () => {
+    it('does not throw when no storage is configured -- that is deferred to QueueService#deserialize()', async () => {
       const { backend } = buildTestBackend({
         receiverOpts: {
           messageBatches: [[{
@@ -382,68 +389,14 @@ describe('ServiceBusBackend', () => {
     });
   });
 
-  describe('isSwapped()', () => {
-    it('returns true when the message was detected as a swap pointer at receive time', async () => {
-      const { backend } = buildTestBackend();
-      const message = { id: 'm1', body: 'pointer', raw: { swapKey: 'k.json' } };
-      assert.strictEqual(await backend.isSwapped(message), true);
-    });
-
-    it('returns false otherwise', async () => {
-      const { backend } = buildTestBackend();
-      const message = { id: 'm1', body: 'hello', raw: {} };
-      assert.strictEqual(await backend.isSwapped(message), false);
-    });
-  });
-
-  describe('deserialize()', () => {
-    it('returns the message unchanged when it was not swapped', async () => {
-      const { backend } = buildTestBackend();
-      const message = { id: 'm1', body: 'hello', raw: {} };
-      assert.strictEqual(await backend.deserialize(message), message);
-    });
-
-    it('fetches and returns a new message with the real body when swapped', async () => {
-      const bucket = new FakeBucket();
-      await bucket.put('k.json', 'the real body');
-      const { backend } = buildTestBackend({ bucket });
-      const message = {
-        id: 'm1', body: JSON.stringify({ swapBucket: 'fake-spill-bucket', swapKey: 'k.json' }), raw: { swapKey: 'k.json' },
-      };
-      const result = await backend.deserialize(message);
-      assert.strictEqual(result.body, 'the real body');
-      assert.notStrictEqual(result, message);
-      assert.deepStrictEqual(bucket.getCalls, ['k.json']);
-    });
-
-    it('throws when the swapped message body cannot be found in the bucket', async () => {
-      const bucket = new FakeBucket();
-      const { backend } = buildTestBackend({ bucket });
-      const message = { id: 'm1', body: '{}', raw: { swapKey: 'missing.json' } };
-      await assert.rejects(backend.deserialize(message), (e) => {
-        assert.ok(e instanceof QueueError);
-        assert.strictEqual(e.status, 404);
-        return true;
-      });
-    });
-
-    it('throws when the message was swapped out but no spill bucket is configured', async () => {
-      const { backend } = buildTestBackend();
-      const message = { id: 'm1', body: '{}', raw: { swapKey: 'k.json' } };
-      await assert.rejects(backend.deserialize(message), (e) => {
-        assert.ok(e instanceof QueueError);
-        assert.strictEqual(e.status, 500);
-        return true;
-      });
-    });
-  });
-
   describe('deleteBatch()', () => {
     it('completes each message individually and runs cleanup after a successful ack', async () => {
       const bucket = new FakeBucket();
       await bucket.put('k.json', 'the real body');
+      const storage = createFakeStorage(bucket);
       const { backend, receiver } = buildTestBackend({
-        bucket,
+        storage,
+        bucketName: bucket.bucket,
         receiverOpts: {
           messageBatches: [[{
             messageId: 'mid-1',
@@ -487,8 +440,10 @@ describe('ServiceBusBackend', () => {
 
     it('does not attempt cleanup for a message that was never swapped', async () => {
       const bucket = new FakeBucket();
+      const storage = createFakeStorage(bucket);
       const { backend } = buildTestBackend({
-        bucket,
+        storage,
+        bucketName: bucket.bucket,
         receiverOpts: { messageBatches: [[{ messageId: 'mid-1', body: 'hi' }]] },
       });
       const { messages } = await backend.receiveBatch({ minTime: 1, maxTime: 1, maxMessages: 1 });
@@ -501,8 +456,10 @@ describe('ServiceBusBackend', () => {
       bucket.remove = async () => {
         throw new Error('boom');
       };
+      const storage = createFakeStorage(bucket);
       const { backend } = buildTestBackend({
-        bucket,
+        storage,
+        bucketName: bucket.bucket,
         receiverOpts: {
           messageBatches: [[{
             messageId: 'mid-1',

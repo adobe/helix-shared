@@ -13,6 +13,7 @@
 import { QueueService } from '@adobe/helix-shared-queue';
 import { createDefaultBackendFactory } from './createDefaultBackendFactory.js';
 import { toReceivedMessage } from './toReceivedMessage.js';
+import { dereferenceMessageBody, isSwappedBody } from './dereferenceMessageBody.js';
 
 /**
  * `QueueService` subclass pre-wired with the default Azure Service Bus `backendFactory`, so
@@ -28,13 +29,20 @@ import { toReceivedMessage } from './toReceivedMessage.js';
 export class QueueServiceServiceBus extends QueueService {
   /**
    * @param {import('@adobe/helix-shared-queue').QueueServiceContext} context
-   * @param {Partial<import('@adobe/helix-shared-queue').QueueServiceOptions>} [opts]
+   * @param {Partial<import('@adobe/helix-shared-queue').QueueServiceOptions
+   *   & {bucketName: string, swapPrefix: string}>} [opts]
    * @returns {QueueServiceServiceBus}
    */
   static fromContext(context, opts = {}) {
+    const {
+      storage, bucketName, swapPrefix, ...rest
+    } = opts;
     return super.fromContext(context, {
-      backendFactory: createDefaultBackendFactory(context.env, { log: context.log }),
-      ...opts,
+      backendFactory: createDefaultBackendFactory(context.env, {
+        log: context.log, storage, bucketName, swapPrefix,
+      }),
+      storage,
+      ...rest,
     });
   }
 
@@ -43,7 +51,38 @@ export class QueueServiceServiceBus extends QueueService {
    *  {@link toReceivedMessage} for the expected field names
    * @returns {import('@adobe/helix-shared-queue').ReceivedMessage[]}
    */
-  static toReceivedMessages(rawMessages) {
+  // eslint-disable-next-line class-methods-use-this
+  toReceivedMessages(rawMessages) {
     return rawMessages.map(toReceivedMessage);
+  }
+
+  /**
+   * Cheap (no I/O) check for whether `message.body` is a spillover pointer -- works for a
+   * message obtained via `Queue#receive()` or via
+   * {@link QueueServiceServiceBus#toReceivedMessages}.
+   *
+   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
+   * @returns {Promise<boolean>}
+   */
+  // eslint-disable-next-line class-methods-use-this
+  async isSwapped(message) {
+    return isSwappedBody(message.body);
+  }
+
+  /**
+   * If `isSwapped(message)` is true, fetches the real content and returns a new message with
+   * `body` replaced; otherwise returns `message` unchanged. Resolves the bucket named by the
+   * message's own pointer via {@link QueueService#storage} -- see
+   * {@link dereferenceMessageBody} for the trust model.
+   *
+   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
+   * @returns {Promise<import('@adobe/helix-shared-queue').ReceivedMessage>}
+   */
+  async deserialize(message) {
+    const { body } = await dereferenceMessageBody(message.body, {
+      storage: this.storage,
+      log: this.log,
+    });
+    return body === message.body ? message : { ...message, body };
   }
 }

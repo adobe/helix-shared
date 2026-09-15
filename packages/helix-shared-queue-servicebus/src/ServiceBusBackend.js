@@ -24,9 +24,11 @@ const DEFAULT_SWAP_PREFIX = 'default/servicebus-swap';
  * @property {import('@azure/service-bus').ServiceBusReceiver} receiver
  * @property {string} queueName
  * @property {Console} [log]
- * @property {import('@adobe/helix-shared-storage').Bucket} [bucket] optional storage bucket
- *  used to spill a single message too large to fit in any batch on its own. When omitted,
- *  attempting to send such a message throws.
+ * @property {import('@adobe/helix-shared-storage').Storage} [storage] optional storage used
+ *  to resolve the spill bucket (by `bucketName`) for a single message too large to fit in any
+ *  batch on its own. When omitted, attempting to send such a message throws.
+ * @property {string} [bucketName] name of the bucket (resolved via `storage.bucket(...)`)
+ *  spilled messages are written to.
  * @property {string} [swapPrefix] key prefix used for spilled messages. Defaults to
  *  `'default/servicebus-swap'`.
  */
@@ -57,7 +59,9 @@ export class ServiceBusBackend extends AbstractQueueBackend {
 
   #log;
 
-  #bucket;
+  #storage;
+
+  #bucketName;
 
   #swapPrefix;
 
@@ -65,14 +69,16 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * @param {ServiceBusBackendOptions} opts
    */
   constructor({
-    sender, receiver, queueName, log = console, bucket, swapPrefix = DEFAULT_SWAP_PREFIX,
+    sender, receiver, queueName, log = console, storage, bucketName,
+    swapPrefix = DEFAULT_SWAP_PREFIX,
   }) {
     super();
     this.#sender = sender;
     this.#receiver = receiver;
     this.#queueName = queueName;
     this.#log = log;
-    this.#bucket = bucket;
+    this.#storage = storage;
+    this.#bucketName = bucketName;
     this.#swapPrefix = swapPrefix;
   }
 
@@ -102,25 +108,27 @@ export class ServiceBusBackend extends AbstractQueueBackend {
 
   /**
    * Spills a single message too large to fit in any batch on its own into the configured
-   * `bucket`, replacing its body with a small pointer.
+   * bucket (resolved via `storage.bucket(bucketName)`), replacing its body with a small
+   * pointer.
    *
    * @param {import('@azure/service-bus').ServiceBusMessage} message
    * @returns {Promise<import('@azure/service-bus').ServiceBusMessage>}
    */
   async #spill(message) {
-    if (!this.#bucket) {
+    if (!this.#storage || !this.#bucketName) {
       throw this._wrapError(
         new Error('message too large for Service Bus and no spill bucket configured'),
         'message too large for Service Bus and no spill bucket configured',
         { status: 413 },
       );
     }
+    const bucket = this.#storage.bucket(this.#bucketName);
     const swapKey = `${this.#swapPrefix}/${this.#queueName}-${Date.now()}-${Math.random().toString(36).slice(2)}.json`;
-    await this.#bucket.put(swapKey, message.body, 'application/json', {}, false);
-    this.#log.debug(`message too big for Service Bus, spilled to ${this.#bucket.bucket}/${swapKey}`);
+    await bucket.put(swapKey, message.body, 'application/json', {}, false);
+    this.#log.debug(`message too big for Service Bus, spilled to ${this.#bucketName}/${swapKey}`);
     return {
       ...message,
-      body: JSON.stringify({ swapBucket: this.#bucket.bucket, swapKey }),
+      body: JSON.stringify({ swapBucket: this.#bucketName, swapKey }),
     };
   }
 
@@ -188,7 +196,7 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * the SQS backend's `receiveBatch()`, adapted to `receiveMessages()`'s single-call shape
    * (which, unlike SQS, has no fixed per-call message-count cap). A message spilled by
    * {@link ServiceBusBackend#_spill} is returned as-is (still a pointer) — see
-   * {@link ServiceBusBackend#isSwapped}/{@link ServiceBusBackend#deserialize}.
+   * `QueueServiceServiceBus#isSwapped`/`#deserialize`.
    *
    * @param {import('@adobe/helix-shared-queue').ReceiveOptions} [opts]
    * @returns {Promise<import('@adobe/helix-shared-queue').ReceiveResult>}
@@ -232,9 +240,9 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    * {@link ServiceBusBackend#_spill} and, if so, stashes its storage key on `raw` (mutated in
    * place — `completeMessage()` requires the exact same object instance the SDK returned to
    * settle it, so a shallow copy would break acknowledgement) for
-   * {@link ServiceBusBackend#isSwapped}/{@link ServiceBusBackend#deserialize}/
-   * {@link ServiceBusBackend#deleteBatch} to use later — the actual blob fetch is deferred to
-   * `deserialize()`.
+   * {@link ServiceBusBackend#deleteBatch}'s post-ack cleanup to use later. Consumers checking
+   * spillover on the returned message use `QueueServiceServiceBus#isSwapped`/`#deserialize`
+   * instead, which resolve directly from `message.body` rather than this internal stash.
    *
    * @param {import('@azure/service-bus').ServiceBusReceivedMessage} raw
    * @returns {import('@adobe/helix-shared-queue').ReceivedMessage}
@@ -246,11 +254,9 @@ export class ServiceBusBackend extends AbstractQueueBackend {
 
   /**
    * @param {string} body raw message body
-   * @returns {string|undefined} the swap key, if `body` is a pointer referencing this
-   *  backend's configured `bucket`
-   * @throws {import('@adobe/helix-shared-queue').QueueError} if `body` is a pointer but
-   *  references a different bucket than configured
+   * @returns {string|undefined} the swap key, if `body` is a swap pointer
    */
+  // eslint-disable-next-line class-methods-use-this
   #detectSwapKey(body) {
     let parsed;
     try {
@@ -258,49 +264,7 @@ export class ServiceBusBackend extends AbstractQueueBackend {
     } catch (e) {
       return undefined;
     }
-    return extractSwapKey(parsed, this.#bucket?.bucket);
-  }
-
-  /**
-   * Cheap (no I/O) check for whether `message.body` is a swap pointer — see
-   * {@link ServiceBusBackend#_toReceivedMessage}.
-   *
-   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
-   * @returns {Promise<boolean>}
-   */
-  // eslint-disable-next-line class-methods-use-this -- swapKey lives on the message, not this
-  async isSwapped(message) {
-    return !!message.raw?.swapKey;
-  }
-
-  /**
-   * If `message` was swapped, fetches the real content from `bucket` and returns a new
-   * message with `body` replaced; otherwise returns `message` unchanged.
-   *
-   * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
-   * @returns {Promise<import('@adobe/helix-shared-queue').ReceivedMessage>}
-   */
-  async deserialize(message) {
-    const swapKey = message.raw?.swapKey;
-    if (!swapKey) {
-      return message;
-    }
-    if (!this.#bucket) {
-      throw this._wrapError(
-        new Error('message was swapped out but no spill bucket is configured'),
-        'message was swapped out but no spill bucket is configured',
-        { status: 500 },
-      );
-    }
-    const content = await this.#bucket.get(swapKey);
-    if (content === null) {
-      throw this._wrapError(
-        new Error(`swapped message body not found: ${this.#bucket.bucket}/${swapKey}`),
-        `swapped message body not found: ${this.#bucket.bucket}/${swapKey}`,
-        { status: 404 },
-      );
-    }
-    return { ...message, body: content.toString('utf-8') };
+    return extractSwapKey(parsed)?.swapKey;
   }
 
   /**
@@ -340,14 +304,14 @@ export class ServiceBusBackend extends AbstractQueueBackend {
    */
   async #cleanupSwap(message) {
     const swapKey = message?.raw?.swapKey;
-    if (!swapKey || !this.#bucket) {
+    if (!swapKey || !this.#storage || !this.#bucketName) {
       return;
     }
     try {
-      await this.#bucket.remove(swapKey);
-      this.#log.debug(`deleted swapped message body: ${this.#bucket.bucket}/${swapKey}`);
+      await this.#storage.bucket(this.#bucketName).remove(swapKey);
+      this.#log.debug(`deleted swapped message body: ${this.#bucketName}/${swapKey}`);
     } catch (e) {
-      this.#log.warn(`unable to delete swapped message body at ${this.#bucket.bucket}/${swapKey}: ${e.message}`);
+      this.#log.warn(`unable to delete swapped message body at ${this.#bucketName}/${swapKey}: ${e.message}`);
     }
   }
 }
