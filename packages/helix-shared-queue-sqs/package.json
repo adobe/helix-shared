@@ -33,10 +33,10 @@
   "devDependencies": {
     "nock": "14.0.17",
     "sinon": "22.1.0",
-    "@adobe/helix-shared-storage": "^3.0.0"
+    "@adobe/helix-shared-storage": "^3.3.0"
   },
   "dependencies": {
-    "@adobe/helix-shared-queue": "^1.0.0",
+    "@adobe/helix-shared-queue": "^2.0.0",
     "@aws-sdk/client-sqs": "^3.1129.0",
     "@smithy/node-http-handler": "^4.0.0"
   }
