@@ -31,10 +31,10 @@
   },
   "devDependencies": {
     "sinon": "22.1.0",
-    "@adobe/helix-shared-storage": "^3.0.0"
+    "@adobe/helix-shared-storage": "^3.3.0"
   },
   "dependencies": {
-    "@adobe/helix-shared-queue": "^1.0.0",
+    "@adobe/helix-shared-queue": "^2.0.0",
     "@azure/service-bus": "^7.9.5"
   }
 }
