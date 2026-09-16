@@ -323,7 +323,7 @@ export class AzureBackend extends AbstractStorageBackend {
     // needs a follow-up `setHTTPHeaders()` call against the destination once the copy lands.
     const copyOpts = { ...opts.copyOpts };
     if (opts.metadataDirective === 'REPLACE') {
-      copyOpts.metadata = opts.metadata ?? {};
+      copyOpts.metadata = toAzureMetadata(opts.metadata ?? {});
     }
     // Normalized conditional-copy preconditions (see `CopyOptions` in `@adobe/helix-shared-
     // storage`) map directly onto the Azure SDK's own `conditions`/`sourceConditions` shape —
