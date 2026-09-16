@@ -349,6 +349,27 @@ describe('AzureBackend storage test', () => {
     assert.strictEqual(raw.etag, '"def"');
   });
 
+  it('sanitizes hyphenated metadata keys to underscores on copy (REPLACE directive)', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/dst')
+      .matchHeader('x-ms-meta-content_type', 'text/markdown')
+      .matchHeader('x-ms-meta-x_last_modified_by', 'anonymous')
+      .reply(202, '', {
+        etag: '"abc"',
+        'x-ms-copy-id': 'copy-1',
+        'x-ms-copy-status': 'success',
+      });
+    nock(BASE_URL)
+      .put('/helix-code-bus/dst')
+      .query({ comp: 'properties' })
+      .reply(200, '', { etag: '"def"' });
+    const raw = await backend.copy('src', 'dst', {
+      metadataDirective: 'REPLACE',
+      metadata: { 'content-type': 'text/markdown', 'x-last-modified-by': 'anonymous' },
+    });
+    assert.strictEqual(raw.etag, '"def"');
+  });
+
   it('copy throws 404 when source is missing', async () => {
     nock(BASE_URL)
       .put('/helix-code-bus/dst')
