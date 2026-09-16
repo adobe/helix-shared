@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-azure-v1.3.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-azure-v1.3.0...@adobe/helix-shared-storage-azure-v1.3.1) (2026-09-16)
+
+
+### Bug Fixes
+
+* **storage:** sanitize hyphenated metadata keys on Azure copy (REPLACE directive) ([#1281](https://github.com/adobe/helix-shared/issues/1281)) ([462ba4d](https://github.com/adobe/helix-shared/commit/462ba4d52a7871a68dfb29da7d70df4f84fbbfcc))
+
 # [@adobe/helix-shared-storage-azure-v1.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-azure-v1.2.0...@adobe/helix-shared-storage-azure-v1.3.0) (2026-09-07)
 
 
