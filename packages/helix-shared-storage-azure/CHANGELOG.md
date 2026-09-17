@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-azure-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-azure-v2.0.0...@adobe/helix-shared-storage-azure-v2.0.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* fix versions ([#1285](https://github.com/adobe/helix-shared/issues/1285)) ([ba97f5e](https://github.com/adobe/helix-shared/commit/ba97f5e72237d6cfaafafd1a30bfad7a41292ce3))
+
 # [@adobe/helix-shared-storage-azure-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-azure-v1.3.1...@adobe/helix-shared-storage-azure-v2.0.0) (2026-09-17)
 
 
