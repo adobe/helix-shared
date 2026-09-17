@@ -94,6 +94,42 @@ describe('createDefaultBackendFactory()', () => {
     assert.strictEqual(backend.queueName, 'my-queue');
   });
 
+  it('defaults to raw AMQP (no WebSocket transport) when HLX_AZURE_SERVICE_BUS_TRANSPORT is unset', () => {
+    const factory = createDefaultBackendFactory(
+      { HLX_AZURE_SERVICE_BUS_CONNECTION_STRING: FAKE_CONNECTION_STRING },
+      { log: console },
+    );
+    const backend = factory('my-queue');
+    // eslint-disable-next-line no-underscore-dangle
+    assert.strictEqual(backend.client._context.config.webSocket, undefined);
+  });
+
+  it('falls back to raw AMQP for an unrecognized HLX_AZURE_SERVICE_BUS_TRANSPORT value', () => {
+    const factory = createDefaultBackendFactory(
+      {
+        HLX_AZURE_SERVICE_BUS_CONNECTION_STRING: FAKE_CONNECTION_STRING,
+        HLX_AZURE_SERVICE_BUS_TRANSPORT: 'bogus',
+      },
+      { log: console },
+    );
+    const backend = factory('my-queue');
+    // eslint-disable-next-line no-underscore-dangle
+    assert.strictEqual(backend.client._context.config.webSocket, undefined);
+  });
+
+  it('switches to AMQP-over-WebSockets when HLX_AZURE_SERVICE_BUS_TRANSPORT=ws', () => {
+    const factory = createDefaultBackendFactory(
+      {
+        HLX_AZURE_SERVICE_BUS_CONNECTION_STRING: FAKE_CONNECTION_STRING,
+        HLX_AZURE_SERVICE_BUS_TRANSPORT: 'ws',
+      },
+      { log: console },
+    );
+    const backend = factory('my-queue');
+    // eslint-disable-next-line no-underscore-dangle
+    assert.strictEqual(backend.client._context.config.webSocket, globalThis.WebSocket);
+  });
+
   it('forwards a factory-level default storage/bucketName/swapPrefix to every queue', async () => {
     const bucket = new FakeBucket({ bucket: 'fake-bucket' });
     const storage = createFakeStorage(bucket);

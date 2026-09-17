@@ -4,6 +4,9 @@
   "description": "Shared modules of the Helix Project - Azure Service Bus queue backend for @adobe/helix-shared-queue",
   "main": "src/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "test": "c8 mocha",
     "lint": "eslint .",

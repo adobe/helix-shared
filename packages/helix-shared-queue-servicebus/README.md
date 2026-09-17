@@ -30,6 +30,7 @@ export async function main(req, context) {
 `createDefaultBackendFactory(env, opts)` (used internally by `QueueServiceServiceBus.fromContext()`) reads:
 
 - `HLX_AZURE_SERVICE_BUS_CONNECTION_STRING` — a Service Bus namespace connection string. This is the only supported auth method for now — there is no managed-identity (`@azure/identity`) support yet, matching `@adobe/helix-shared-storage-azure`'s connection-string/account-key-only precedent. See issue #1271 for context on this being a deferred decision.
+- `HLX_AZURE_SERVICE_BUS_TRANSPORT` — set to `ws` to connect over AMQP-over-WebSockets (port 443) instead of raw AMQP (port 5671, the default when this var is unset or has any other value). Useful when raw AMQP connections get reset by a corporate VPN/firewall — a common source of otherwise-opaque `ECONNRESET` errors from `ServiceBusBackend`. Uses the platform global `WebSocket`, so no extra dependency is required.
 
 ## Real API Differences from the SQS Backend (not implementation choices)
 
