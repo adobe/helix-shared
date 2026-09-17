@@ -29,6 +29,8 @@ import { ServiceBusBackend } from './ServiceBusBackend.js';
 /**
  * @typedef {Object} BackendFactoryOpts
  * @property {string} connectionString
+ * @property {'tcp'|'ws'} [transport] AMQP transport used to reach the Service Bus namespace;
+ *  see `createBackendFactory()`.
  */
 
 /**
@@ -38,12 +40,18 @@ import { ServiceBusBackend } from './ServiceBusBackend.js';
  * R2 credentials or `@adobe/helix-shared-storage-azure`'s account name/key, there is no
  * managed-identity (`@azure/identity`) support yet; see issue #1271 for context.
  *
+ * `HLX_AZURE_SERVICE_BUS_TRANSPORT=ws` switches to AMQP-over-WebSockets; any other value
+ * (including unset/unrecognized) falls back to the default raw-AMQP (`tcp`) transport.
+ *
  * @param {Record<string, string|undefined>} [env] environment variables (e.g. `context.env`)
  * @returns {BackendFactoryOpts}
  */
 function parseBackendFactoryEnvOpts(env = {}) {
-  const { HLX_AZURE_SERVICE_BUS_CONNECTION_STRING: connectionString } = env;
-  return { connectionString };
+  const {
+    HLX_AZURE_SERVICE_BUS_CONNECTION_STRING: connectionString,
+    HLX_AZURE_SERVICE_BUS_TRANSPORT: transport,
+  } = env;
+  return { connectionString, transport: transport === 'ws' ? 'ws' : 'tcp' };
 }
 
 /**
@@ -51,17 +59,29 @@ function parseBackendFactoryEnvOpts(env = {}) {
  * {@link BackendFactoryOpts}. Use this directly when you need to override individual values;
  * use `createDefaultBackendFactory()` to build straight from `env`.
  *
+ * Raw AMQP (port 5671, `transport: 'tcp'`, the default) is frequently reset by corporate
+ * VPNs/firewalls even when the TCP handshake itself succeeds, surfacing as an opaque
+ * `ECONNRESET` deep inside `ServiceBusBackend`. Set `transport: 'ws'` (or
+ * `HLX_AZURE_SERVICE_BUS_TRANSPORT=ws` for `createDefaultBackendFactory()`) to switch the
+ * underlying `ServiceBusClient` to AMQP-over-WebSockets (port 443), which is much less likely
+ * to be interfered with. Uses the platform global `WebSocket`, so no extra dependency is
+ * required.
+ *
  * @param {BackendFactoryOpts} opts
  * @param {CreateDefaultBackendFactoryOptions} [factoryOpts]
  * @returns {function(string, {storage?: import('@adobe/helix-shared-storage').Storage,
  *   bucketName?: string, swapPrefix?: string}=):
  *   import('@adobe/helix-shared-queue').QueueBackend}
  */
-export function createBackendFactory({ connectionString }, {
+export function createBackendFactory({ connectionString, transport }, {
   log = console, storage, bucketName, swapPrefix,
 } = {}) {
-  log.debug('Creating ServiceBusClient from connection string');
-  const client = new ServiceBusClient(connectionString);
+  const useWebSocket = transport === 'ws';
+  const clientOptions = useWebSocket
+    ? { webSocketOptions: { webSocket: globalThis.WebSocket } }
+    : {};
+  log.debug(`Creating ServiceBusClient from connection string${useWebSocket ? ' (WebSocket transport)' : ''}`);
+  const client = new ServiceBusClient(connectionString, clientOptions);
 
   return (queueName, opts = {}) => new ServiceBusBackend({
     sender: client.createSender(queueName),
