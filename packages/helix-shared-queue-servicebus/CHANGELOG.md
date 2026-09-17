@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-queue-servicebus-v2.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-servicebus-v2.1.0...@adobe/helix-shared-queue-servicebus-v2.1.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* preserve swap-cleanup closure in QueueServiceServiceBus#deserialize() ([#1286](https://github.com/adobe/helix-shared/issues/1286)) ([1bd1beb](https://github.com/adobe/helix-shared/commit/1bd1beb92cee87b639ba860e5425a5f5fcff8be5))
+
 # [@adobe/helix-shared-queue-servicebus-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-servicebus-v2.0.0...@adobe/helix-shared-queue-servicebus-v2.1.0) (2026-09-17)
 
 
