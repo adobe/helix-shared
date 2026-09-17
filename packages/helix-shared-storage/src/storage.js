@@ -169,17 +169,21 @@ export class Storage {
    * gets an instance of itself, not of the base `Storage`.
    *
    * @param {StorageContext} context
+   * @param {function(StorageContext): function(string, Object.<string, *>):
+   *   import('./AbstractStorageBackend.js').StorageBackend} createBackendFactory
    * @param {Partial<StorageOptions>} [opts]
    * @returns {Storage}
    */
-  static fromContext(context, opts = {}) {
+  static fromContext(context, createBackendFactory, opts = {}) {
     if (!context.attributes.storage) {
       const { HELIX_BUCKET_NAMES: bucketNames, ...rest } = context.env;
+
       context.attributes.storage = new this({
         bucketNames,
         log: context.log,
         ...rest,
         ...opts,
+        backendFactory: createBackendFactory(context),
       });
     }
     return context.attributes.storage;
