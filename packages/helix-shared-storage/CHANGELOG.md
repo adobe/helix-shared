@@ -1,3 +1,17 @@
+# [@adobe/helix-shared-storage-v4.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v3.3.0...@adobe/helix-shared-storage-v4.0.0) (2026-09-17)
+
+
+* feat(storage)!: add second argument to lazily create backendFactory ([#1284](https://github.com/adobe/helix-shared/issues/1284)) ([725bc7e](https://github.com/adobe/helix-shared/commit/725bc7e609acb66107eae244339e85e3f0e33273))
+
+
+### BREAKING CHANGES
+
+* `Storage.fromContext` expects a second non-optional argument
+
+* feat(storage)!: add second argument to lazily create backendFactory
+
+* fix: update Storage implementations
+
 # [@adobe/helix-shared-storage-v3.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v3.2.0...@adobe/helix-shared-storage-v3.3.0) (2026-09-07)
 
 
