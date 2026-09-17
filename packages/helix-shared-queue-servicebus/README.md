@@ -92,10 +92,15 @@ export async function handler(message, context) {
     resolved = await service.deserialize(resolved);
   }
   await process(JSON.parse(resolved.body));
+  if (resolved.cleanup) {
+    await resolved.cleanup(); // only after successful, durable processing
+  }
 }
 ```
 
 `rawMessage` must be shaped like a `ServiceBusReceivedMessage` (`messageId`/`body`/`sessionId`/`deliveryCount`). The Azure Functions v4 programming model's binding hands the trigger handler only the (possibly already-parsed) message body by default — `messageId`/`sessionId`/`deliveryCount` live on `context.triggerMetadata` instead, so assemble `rawMessage` from both before calling this.
+
+Unlike the `receive()`/`delete()` flow above, there's no `Queue#delete()` call here to clean up a swapped body on ack, so `deserialize()` attaches a `cleanup` function to the resolved message instead (present only when a swap was actually resolved) — call it yourself once processing has durably succeeded.
 
 For a consumer that doesn't want a `QueueService` instance at all, the same dereference-and-cleanup logic is available standalone via `dereferenceMessageBody()`/`isSwappedBody()`, fetching immediately since there's little benefit to laziness processing one message at a time:
 
