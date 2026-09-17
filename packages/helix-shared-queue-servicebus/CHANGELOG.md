@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-queue-servicebus-v2.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-servicebus-v2.0.0...@adobe/helix-shared-queue-servicebus-v2.1.0) (2026-09-17)
+
+
+### Features
+
+* **queue-servicebus:** support AMQP-over-WebSocket transport ([#1283](https://github.com/adobe/helix-shared/issues/1283)) ([4c6a4c4](https://github.com/adobe/helix-shared/commit/4c6a4c497e6d2ac8121317149a5b28658477b933)), closes [#1282](https://github.com/adobe/helix-shared/issues/1282)
+
 # [@adobe/helix-shared-queue-servicebus-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-servicebus-v1.1.0...@adobe/helix-shared-queue-servicebus-v2.0.0) (2026-09-15)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-queue-servicebus",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Shared modules of the Helix Project - Azure Service Bus queue backend for @adobe/helix-shared-queue",
   "main": "src/index.js",
   "type": "module",
