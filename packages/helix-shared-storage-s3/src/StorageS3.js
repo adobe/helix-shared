@@ -26,14 +26,22 @@ import { createDefaultBackendFactory } from './createDefaultBackendFactory.js';
  */
 export class StorageS3 extends Storage {
   /**
+   * Build the default S3/R2 backend factory for this storage context.
+   *
+   * @param {import('@adobe/helix-shared-storage').StorageContext} context
+   * @returns {function(string, {disableR2?: boolean}=):
+   *   import('@adobe/helix-shared-storage').StorageBackend}
+   */
+  static createBackendFactory(context) {
+    return createDefaultBackendFactory(context.env, { log: context.log });
+  }
+
+  /**
    * @param {import('@adobe/helix-shared-storage').StorageContext} context
    * @param {Partial<import('@adobe/helix-shared-storage').StorageOptions>} [opts]
    * @returns {StorageS3}
    */
   static fromContext(context, opts = {}) {
-    return super.fromContext(context, {
-      backendFactory: createDefaultBackendFactory(context.env, { log: context.log }),
-      ...opts,
-    });
+    return super.fromContext(context, StorageS3.createBackendFactory, opts);
   }
 }

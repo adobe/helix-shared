@@ -183,12 +183,14 @@ describe('Storage', () => {
     assert.strictEqual(storage.codeBus().bucket, 'bucket-01');
   });
 
+  const createBackendFactory = () => (backendFactory);
+
   it('creates a storage from context and caches it', () => {
     const ctx = {
-      env: { backendFactory },
+      env: {},
       attributes: {},
     };
-    const stor = Storage.fromContext(ctx);
+    const stor = Storage.fromContext(ctx, createBackendFactory);
     assert.ok(stor instanceof Storage);
     assert.strictEqual(Storage.fromContext(ctx), stor);
   });
@@ -198,7 +200,7 @@ describe('Storage', () => {
       env: {},
       attributes: {},
     };
-    const stor = Storage.fromContext(ctx, { backendFactory });
+    const stor = Storage.fromContext(ctx, createBackendFactory);
     assert.strictEqual(stor.contentBus().bucket, 'helix-content-bus');
   });
 });
