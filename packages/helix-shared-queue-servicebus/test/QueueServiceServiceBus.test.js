@@ -130,6 +130,9 @@ describe('QueueServiceServiceBus', () => {
       assert.strictEqual(await service.isSwapped(message), true);
       const resolved = await service.deserialize(message);
       assert.strictEqual(resolved.body, 'the real body');
+      assert.strictEqual(typeof resolved.cleanup, 'function');
+      await resolved.cleanup();
+      assert.strictEqual(bucket.objects.has('k.json'), false);
     });
 
     it('isSwapped() returns false for a plain (non-swapped) message', async () => {
@@ -141,7 +144,9 @@ describe('QueueServiceServiceBus', () => {
     it('deserialize() returns the message unchanged when it was not swapped', async () => {
       const service = buildService(createFakeStorage());
       const [message] = service.toReceivedMessages([{ messageId: 'mid-1', body: 'hello' }]);
-      assert.strictEqual(await service.deserialize(message), message);
+      const resolved = await service.deserialize(message);
+      assert.strictEqual(resolved, message);
+      assert.strictEqual(resolved.cleanup, undefined);
     });
 
     it('deserialize() resolves a bucket different from the one configured on the service -- trust the pointer', async () => {

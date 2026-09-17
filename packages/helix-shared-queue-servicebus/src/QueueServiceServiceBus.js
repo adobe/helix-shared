@@ -71,18 +71,27 @@ export class QueueServiceServiceBus extends QueueService {
 
   /**
    * If `isSwapped(message)` is true, fetches the real content and returns a new message with
-   * `body` replaced; otherwise returns `message` unchanged. Resolves the bucket named by the
-   * message's own pointer via {@link QueueService#storage} -- see
-   * {@link dereferenceMessageBody} for the trust model.
+   * `body` replaced and a `cleanup` function attached; otherwise returns `message` unchanged.
+   * Resolves the bucket named by the message's own pointer via {@link QueueService#storage} --
+   * see {@link dereferenceMessageBody} for the trust model.
+   *
+   * `cleanup` deletes the swapped-out body from its bucket -- only present when a swap was
+   * actually resolved, since there's nothing to clean up otherwise. Relevant when this message
+   * didn't come from `Queue#receive()` (e.g. an Azure Function Service Bus trigger), so there's
+   * no `Queue#delete()` call to clean it up on ack instead -- call it yourself once the message
+   * has been durably, successfully processed. A message obtained via `Queue#receive()` doesn't
+   * need this: `Queue#delete()` already cleans up the swapped body on ack, regardless of
+   * whether `deserialize()` was ever called.
    *
    * @param {import('@adobe/helix-shared-queue').ReceivedMessage} message
-   * @returns {Promise<import('@adobe/helix-shared-queue').ReceivedMessage>}
+   * @returns {Promise<import('@adobe/helix-shared-queue').ReceivedMessage
+   *   & {cleanup?: function(): Promise<void>}>}
    */
   async deserialize(message) {
-    const { body } = await dereferenceMessageBody(message.body, {
+    const { body, cleanup } = await dereferenceMessageBody(message.body, {
       storage: this.storage,
       log: this.log,
     });
-    return body === message.body ? message : { ...message, body };
+    return body === message.body ? message : { ...message, body, cleanup };
   }
 }
