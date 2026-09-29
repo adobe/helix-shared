@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.2.4](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.2.3...@adobe/helix-shared-config-v11.2.4) (2026-09-29)
+
+
+### Bug Fixes
+
+* **index:** excessive alias exception thrown for more than 100 aliases ([#1290](https://github.com/adobe/helix-shared/issues/1290)) ([d5aac8e](https://github.com/adobe/helix-shared/commit/d5aac8ebce2c4bf924684063eb0ba87e4e82abb3))
+
 # [@adobe/helix-shared-config-v11.2.3](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.2.2...@adobe/helix-shared-config-v11.2.3) (2026-09-28)
 
 
