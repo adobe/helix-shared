@@ -24,6 +24,9 @@ async function isFile(filePath) {
   }
 }
 
+/** Maximum number of YAML aliases allowed when parsing a config. */
+const MAX_ALIAS_COUNT = 1000;
+
 export class BaseConfig {
   /**
    *
@@ -198,7 +201,9 @@ export class BaseConfig {
         merge: true,
         schema: 'core',
       });
-      this._cfg = this._document.toJSON() || {};
+      this._cfg = this._document.toJS({
+        json: true, mapAsMap: false, maxAliasCount: MAX_ALIAS_COUNT,
+      }) || {};
     }
   }
 

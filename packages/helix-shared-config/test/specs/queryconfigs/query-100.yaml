@@ -1,0 +1,741 @@
+# Query index configuration with more than 100 aliases
+
+indices:
+  website: &website
+    include:
+      - '/events/**'
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+  de:
+    <<: *website
+    include:
+      - '/de/events/**'
+    target: s3://de/events/query-index.json
+  fr:
+    <<: *website
+    include:
+      - '/fr/events/**'
+    target: s3://fr/events/query-index.json
+  jp:
+    <<: *website
+    include:
+      - '/jp/events/**'
+    target: s3://jp/events/query-index.json
+  uk:
+    <<: *website
+    include:
+      - '/uk/events/**'
+    target: s3://uk/events/query-index.json
+
+  dk:
+    <<: *website
+    include:
+      - '/dk/events/**'
+    target: s3://dk/events/query-index.json
+  es:
+    <<: *website
+    include:
+      - '/es/events/**'
+    target: s3://es/events/query-index.json
+  fi:
+    <<: *website
+    include:
+      - '/fi/events/**'
+    target: s3://fi/events/query-index.json
+  it:
+    <<: *website
+    include:
+      - '/it/events/**'
+    target: s3://it/events/query-index.json
+  nl:
+    <<: *website
+    include:
+      - '/nl/events/**'
+    target: s3://nl/events/query-index.json
+  no:
+    <<: *website
+    include:
+      - '/no/events/**'
+    target: s3://no/events/query-index.json
+  se:
+    <<: *website
+    include:
+      - '/se/events/**'
+    target: s3://se/events/query-index.json
+
+  au:
+    <<: *website
+    include:
+      - '/au/events/**'
+    target: s3://au/events/query-index.json
+  br:
+    <<: *website
+    include:
+      - '/br/events/**'
+    target: s3://br/events/query-index.json
+  cn:
+    <<: *website
+    include:
+      - '/cn/events/**'
+    target: s3://cn/events/query-index.json
+  kr:
+    <<: *website
+    include:
+      - '/kr/events/**'
+    target: s3://kr/events/query-index.json
+  la:
+    <<: *website
+    include:
+      - '/la/events/**'
+    target: s3://la/events/query-index.json
+  mx:
+    <<: *website
+    include:
+      - '/mx/events/**'
+    target: s3://mx/events/query-index.json
+  tw:
+    <<: *website
+    include:
+      - '/tw/events/**'
+    target: s3://tw/events/query-index.json
+
+  ae_ar:
+    <<: *website
+    include:
+      - '/ae_ar/events/**'
+    target: s3://ae_ar/events/query-index.json
+  ae_en:
+    <<: *website
+    include:
+      - '/ae_en/events/**'
+    target: s3://ae_en/events/query-index.json
+  africa:
+    <<: *website
+    include:
+      - '/africa/events/**'
+    target: s3://africa/events/query-index.json
+  ar:
+    <<: *website
+    include:
+      - '/ar/events/**'
+    target: s3://ar/events/query-index.json
+  at:
+    <<: *website
+    include:
+      - '/at/events/**'
+    target: s3://at/events/query-index.json
+  be_en:
+    <<: *website
+    include:
+      - '/be_en/events/**'
+    target: s3://be_en/events/query-index.json
+  be_fr:
+    <<: *website
+    include:
+      - '/be_fr/events/**'
+    target: s3://be_fr/events/query-index.json
+  be_nl:
+    <<: *website
+    include:
+      - '/be_nl/events/**'
+    target: s3://be_nl/events/query-index.json
+  bg:
+    <<: *website
+    include:
+      - '/bg/events/**'
+    target: s3://bg/events/query-index.json
+  ca:
+    <<: *website
+    include:
+      - '/ca/events/**'
+    target: s3://ca/events/query-index.json
+  ca_fr:
+    <<: *website
+    include:
+      - '/ca_fr/events/**'
+    target: s3://ca_fr/events/query-index.json
+  ch_de:
+    <<: *website
+    include:
+      - '/ch_de/events/**'
+    target: s3://ch_de/events/query-index.json
+  ch_fr:
+    <<: *website
+    include:
+      - '/ch_fr/events/**'
+    target: s3://ch_fr/events/query-index.json
+  ch_it:
+    <<: *website
+    include:
+      - '/ch_it/events/**'
+    target: s3://ch_it/events/query-index.json
+  cis_en:
+    <<: *website
+    include:
+      - '/cis_en/events/**'
+    target: s3://cis_en/events/query-index.json
+  cl:
+    <<: *website
+    include:
+      - '/cl/events/**'
+    target: s3://cl/events/query-index.json
+  co:
+    <<: *website
+    include:
+      - '/co/events/**'
+    target: s3://co/events/query-index.json
+  cr:
+    <<: *website
+    include:
+      - '/cr/events/**'
+    target: s3://cr/events/query-index.json
+  cz:
+    <<: *website
+    include:
+      - '/cz/events/**'
+    target: s3://cz/events/query-index.json
+  ec:
+    <<: *website
+    include:
+      - '/ec/events/**'
+    target: s3://ec/events/query-index.json
+  ee:
+    <<: *website
+    include:
+      - '/ee/events/**'
+    target: s3://ee/events/query-index.json
+  eg_en:
+    <<: *website
+    include:
+      - '/eg_en/events/**'
+    target: s3://eg_en/events/query-index.json
+  gr_en:
+    <<: *website
+    include:
+      - '/gr_en/events/**'
+    target: s3://gr_en/events/query-index.json
+  gt:
+    <<: *website
+    include:
+      - '/gt/events/**'
+    target: s3://gt/events/query-index.json
+  hk_en:
+    <<: *website
+    include:
+      - '/hk_en/events/**'
+    target: s3://hk_en/events/query-index.json
+  hk_zh:
+    <<: *website
+    include:
+      - '/hk_zh/events/**'
+    target: s3://hk_zh/events/query-index.json
+  hu:
+    <<: *website
+    include:
+      - '/hu/events/**'
+    target: s3://hu/events/query-index.json
+  id_en:
+    <<: *website
+    include:
+      - '/id_en/events/**'
+    target: s3://id_en/events/query-index.json
+  id_id:
+    <<: *website
+    include:
+      - '/id_id/events/**'
+    target: s3://id_id/events/query-index.json
+  ie:
+    <<: *website
+    include:
+      - '/ie/events/**'
+    target: s3://ie/events/query-index.json
+  il_en:
+    <<: *website
+    include:
+      - '/il_en/events/**'
+    target: s3://il_en/events/query-index.json
+  il_he:
+    <<: *website
+    include:
+      - '/il_he/events/**'
+    target: s3://il_he/events/query-index.json
+  in:
+    <<: *website
+    include:
+      - '/in/events/**'
+    target: s3://in/events/query-index.json
+  in_hi:
+    <<: *website
+    include:
+      - '/in_hi/events/**'
+    target: s3://in_hi/events/query-index.json
+  kw_en:
+    <<: *website
+    include:
+      - '/kw_en/events/**'
+    target: s3://kw_en/events/query-index.json
+  lt:
+    <<: *website
+    include:
+      - '/lt/events/**'
+    target: s3://lt/events/query-index.json
+  lu_de:
+    <<: *website
+    include:
+      - '/lu_de/events/**'
+    target: s3://lu_de/events/query-index.json
+  lu_en:
+    <<: *website
+    include:
+      - '/lu_en/events/**'
+    target: s3://lu_en/events/query-index.json
+  lu_fr:
+    <<: *website
+    include:
+      - '/lu_fr/events/**'
+    target: s3://lu_fr/events/query-index.json
+  lv:
+    <<: *website
+    include:
+      - '/lv/events/**'
+    target: s3://lv/events/query-index.json
+  mena_ar:
+    <<: *website
+    include:
+      - '/mena_ar/events/**'
+    target: s3://mena_ar/events/query-index.json
+  mena_en:
+    <<: *website
+    include:
+      - '/mena_en/events/**'
+    target: s3://mena_en/events/query-index.json
+  my_en:
+    <<: *website
+    include:
+      - '/my_en/events/**'
+    target: s3://my_en/events/query-index.json
+  my_ms:
+    <<: *website
+    include:
+      - '/my_ms/events/**'
+    target: s3://my_ms/events/query-index.json
+  ng:
+    <<: *website
+    include:
+      - '/ng/events/**'
+    target: s3://ng/events/query-index.json
+  nz:
+    <<: *website
+    include:
+      - '/nz/events/**'
+    target: s3://nz/events/query-index.json
+  pe:
+    <<: *website
+    include:
+      - '/pe/events/**'
+    target: s3://pe/events/query-index.json
+  ph_en:
+    <<: *website
+    include:
+      - '/ph_en/events/**'
+    target: s3://ph_en/events/query-index.json
+  ph_fil:
+    <<: *website
+    include:
+      - '/ph_fil/events/**'
+    target: s3://ph_fil/events/query-index.json
+  pl:
+    <<: *website
+    include:
+      - '/pl/events/**'
+    target: s3://pl/events/query-index.json
+  pr:
+    <<: *website
+    include:
+      - '/pr/events/**'
+    target: s3://pr/events/query-index.json
+  pt:
+    <<: *website
+    include:
+      - '/pt/events/**'
+    target: s3://pt/events/query-index.json
+  qa_en:
+    <<: *website
+    include:
+      - '/qa_en/events/**'
+    target: s3://qa_en/events/query-index.json
+  ro:
+    <<: *website
+    include:
+      - '/ro/events/**'
+    target: s3://ro/events/query-index.json
+  ru:
+    <<: *website
+    include:
+      - '/ru/events/**'
+    target: s3://ru/events/query-index.json
+  sa_ar:
+    <<: *website
+    include:
+      - '/sa_ar/events/**'
+    target: s3://sa_ar/events/query-index.json
+  sa_en:
+    <<: *website
+    include:
+      - '/sa_en/events/**'
+    target: s3://sa_en/events/query-index.json
+  sg:
+    <<: *website
+    include:
+      - '/sg/events/**'
+    target: s3://sg/events/query-index.json
+  si:
+    <<: *website
+    include:
+      - '/si/events/**'
+    target: s3://si/events/query-index.json
+  sk:
+    <<: *website
+    include:
+      - '/sk/events/**'
+    target: s3://sk/events/query-index.json
+  th_en:
+    <<: *website
+    include:
+      - '/th_en/events/**'
+    target: s3://th_en/events/query-index.json
+  th_th:
+    <<: *website
+    include:
+      - '/th_th/events/**'
+    target: s3://th_th/events/query-index.json
+  tr:
+    <<: *website
+    include:
+      - '/tr/events/**'
+    target: s3://tr/events/query-index.json
+  ua:
+    <<: *website
+    include:
+      - '/ua/events/**'
+    target: s3://ua/events/query-index.json
+  vn_en:
+    <<: *website
+    include:
+      - '/vn_en/events/**'
+    target: s3://vn_en/events/query-index.json
+  vn_vi:
+    <<: *website
+    include:
+      - '/vn_vi/events/**'
+    target: s3://vn_vi/events/query-index.json
+  za:
+    <<: *website
+    include:
+      - '/za/events/**'
+    target: s3://za/events/query-index.json
+
+  other-website:
+    <<: *website
+    include:
+      - '/events/**'
+    target: s3://events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-ae_en:
+    <<: *website
+    include:
+      - '/ae_en/events/**'
+    target: s3://ae_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-africa:
+    <<: *website
+    include:
+      - '/africa/events/**'
+    target: s3://africa/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-be_en:
+    <<: *website
+    include:
+      - '/be_en/events/**'
+    target: s3://be_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-ca:
+    <<: *website
+    include:
+      - '/ca/events/**'
+    target: s3://ca/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-cis_en:
+    <<: *website
+    include:
+      - '/cis_en/events/**'
+    target: s3://cis_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-eg_en:
+    <<: *website
+    include:
+      - '/eg_en/events/**'
+    target: s3://eg_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-gr_en:
+    <<: *website
+    include:
+      - '/gr_en/events/**'
+    target: s3://gr_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-hk_en:
+    <<: *website
+    include:
+      - '/hk_en/events/**'
+    target: s3://hk_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-id_en:
+    <<: *website
+    include:
+      - '/id_en/events/**'
+    target: s3://id_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-ie:
+    <<: *website
+    include:
+      - '/ie/events/**'
+    target: s3://ie/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-il_en:
+    <<: *website
+    include:
+      - '/il_en/events/**'
+    target: s3://il_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-kw_en:
+    <<: *website
+    include:
+      - '/kw_en/events/**'
+    target: s3://kw_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-lu_en:
+    <<: *website
+    include:
+      - '/lu_en/events/**'
+    target: s3://lu_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-mena_en:
+    <<: *website
+    include:
+      - '/mena_en/events/**'
+    target: s3://mena_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-my_en:
+    <<: *website
+    include:
+      - '/my_en/events/**'
+    target: s3://my_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-ng:
+    <<: *website
+    include:
+      - '/ng/events/**'
+    target: s3://ng/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-nz:
+    <<: *website
+    include:
+      - '/nz/events/**'
+    target: s3://nz/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-ph_en:
+    <<: *website
+    include:
+      - '/ph_en/events/**'
+    target: s3://ph_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-qa_en:
+    <<: *website
+    include:
+      - '/qa_en/events/**'
+    target: s3://qa_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-sa_en:
+    <<: *website
+    include:
+      - '/sa_en/events/**'
+    target: s3://sa_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-sg:
+    <<: *website
+    include:
+      - '/sg/events/**'
+    target: s3://sg/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-th_en:
+    <<: *website
+    include:
+      - '/th_en/events/**'
+    target: s3://th_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-vn_en:
+    <<: *website
+    include:
+      - '/vn_en/events/**'
+    target: s3://vn_en/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-za:
+    <<: *website
+    include:
+      - '/za/events/**'
+    target: s3://za/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+
+  other-fr:
+    <<: *website
+    include:
+      - '/fr/events/**'
+    target: s3://fr/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-ca_fr:
+    <<: *website
+    include:
+      - '/ca_fr/events/**'
+    target: s3://ca_fr/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-be_fr:
+    <<: *website
+    include:
+      - '/be_fr/events/**'
+    target: s3://be_fr/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-ch_fr:
+    <<: *website
+    include:
+      - '/ch_fr/events/**'
+    target: s3://ch_fr/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+  other-lu_fr:
+    <<: *website
+    include:
+      - '/lu_fr/events/**'
+    target: s3://lu_fr/events/assets/lingo/query-index.json
+    properties:
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')

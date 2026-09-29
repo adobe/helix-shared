@@ -289,4 +289,11 @@ describe('Index Config Loading', () => {
       properties: {},
     }));
   });
+
+  it('loads a configuration containing more than 100 aliases', async () => {
+    const cfg = new IndexConfig()
+      .withConfigPath(path.resolve(SPEC_ROOT, 'query-100.yaml'));
+    await cfg.init();
+    assert(cfg.indices.length > 100);
+  });
 });
