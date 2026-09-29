@@ -198,7 +198,9 @@ export class BaseConfig {
         merge: true,
         schema: 'core',
       });
-      this._cfg = this._document.toJSON() || {};
+      this._cfg = this._document.toJS({
+        json: true, mapAsMap: false, maxAliasCount: 1000,
+      }) || {};
     }
   }
 
