@@ -115,6 +115,10 @@ export class MemCachePlugin {
     return this.base ? this.base.location : this.key;
   }
 
+  getLastModified() {
+    return this.base?.getLastModified?.() ?? null;
+  }
+
   async getPluginMetadata() {
     const cache = this.#getOrCreateCache();
     if (!cache.metadata && this.base) {

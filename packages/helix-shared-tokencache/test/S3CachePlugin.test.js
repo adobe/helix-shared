@@ -270,6 +270,7 @@ describe('S3CachePlugin Test', () => {
       key: 'myproject/auth-default/json',
       secret: '',
     });
+    const lastModified = new Date('Fri, 12 Jun 2026 14:44:36 GMT');
 
     nock('https://test-bucket.s3.us-east-1.amazonaws.com')
       .get('/myproject/auth-default/json?x-id=GetObject')
@@ -278,13 +279,16 @@ describe('S3CachePlugin Test', () => {
         cachePluginMetadata: {
           foo: 'bar',
         },
-      }));
+      }), {
+        'last-modified': lastModified.toUTCString(),
+      });
 
     const ctx = new MockTokenCacheContext({});
     const ret = await p.beforeCacheAccess(ctx);
     assert.strictEqual(ret, true);
     assert.strictEqual(ctx.token, '1234');
     assert.deepStrictEqual(await p.getPluginMetadata(), { foo: 'bar' });
+    assert.strictEqual(p.getLastModified().getTime(), lastModified.getTime());
   });
 
   it('read cache data from s3 with encryption', async () => {
