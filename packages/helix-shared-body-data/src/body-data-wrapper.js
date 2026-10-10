@@ -35,20 +35,24 @@ async function getData(request, opts) {
     return json;
   }
 
-  const { supportYAML } = opts;
+  const { supportYAML, supportPlainText } = opts;
   if (supportYAML && /\/(x-)?yaml/.test(contentType) && BODY_METHODS.includes(request.method)) {
     return request.text();
   }
 
   let data;
+  let text;
   if (/^application\/x-www-form-urlencoded/.test(contentType) && BODY_METHODS.includes(request.method)) {
     data = new URLSearchParams(await request.text());
   } else {
     data = new URL(request.url).searchParams;
+    if (supportPlainText && /^text\/plain/.test(contentType) && BODY_METHODS.includes(request.method)) {
+      text = await request.text();
+    }
   }
 
   const { coerceNumber, coerceInt, coerceBoolean } = opts;
-  return Array.from(data.entries()).reduce((alldata, [key, value]) => {
+  const params = Array.from(data.entries()).reduce((alldata, [key, value]) => {
     const bracketpattern = /\[([0-9]*)\]$/;
     // check for key names like [1] or [0]
     const isArray = bracketpattern.test(key);
@@ -79,6 +83,10 @@ async function getData(request, opts) {
     }
     return alldata;
   }, Object.create(null));
+  if (text) {
+    params.body = text;
+  }
+  return params;
 }
 
 /**

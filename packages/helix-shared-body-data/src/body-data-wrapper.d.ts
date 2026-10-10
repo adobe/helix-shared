@@ -36,6 +36,12 @@ export declare interface BodyDataOptions {
    * Support YAML in the POST body.
    */
   supportYAML?:boolean;
+
+  /**
+   * Support plain text (`text/plain`) in the POST body. The text is added to the request
+   * parameters as `body`.
+   */
+  supportPlainText?:boolean;
 }
 
 /**
