@@ -24,6 +24,12 @@ export default defineConfig([
   source,
   {
     ...test,
-    files: [...test.files, '**/test/**.js'],
+    files: [...test.files, '**/test/**/*.js'],
+    rules: {
+      'import/no-extraneous-dependencies': ['error', {
+        ...recommended.rules['import/no-extraneous-dependencies'][1],
+        devDependencies: true,
+      }],
+    },
   }
 ]);
