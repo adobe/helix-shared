@@ -46,7 +46,26 @@ function createWriter(org, site, log, opts) {
   return new Writer(org, site, log, resolveOptions(opts));
 }
 
+/**
+ * Return the S3 bucket and object key for a custom file in the
+ * journal folder.
+ *
+ * @param {String} org org
+ * @param {String|undefined} site site, optional
+ * @param {String} filename custom filename
+ * @param {Options} [opts] options
+ * @returns {{ bucket: string, key: string }} S3 bucket name and object key
+ */
+function getBucketAndKey(org, site, filename, opts) {
+  const prefix = site ? `${org}/${site}` : `${org}/.all`;
+  return {
+    bucket: resolveOptions(opts).bucketName,
+    key: `${prefix}/${filename}`,
+  };
+}
+
 export const Journal = {
   createReader,
   createWriter,
+  getBucketAndKey,
 };
