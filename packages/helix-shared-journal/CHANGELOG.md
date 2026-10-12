@@ -1,3 +1,13 @@
+# [@adobe/helix-shared-journal-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-journal-v1.0.0...@adobe/helix-shared-journal-v2.0.0) (2026-10-12)
+
+
+* feat(journal)!: use `start` and `end` for pagination ([#1296](https://github.com/adobe/helix-shared/issues/1296)) ([96f6389](https://github.com/adobe/helix-shared/commit/96f6389d7555d1cad25944f6d68cbe2584e788a4))
+
+
+### BREAKING CHANGES
+
+* different API and signatures
+
 # @adobe/helix-shared-journal-v1.0.0 (2026-10-12)
 
 

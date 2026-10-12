@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-shared-journal",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Shared modules of the Helix Project - journal",
   "main": "src/index.js",
   "type": "module",
