@@ -1,0 +1,191 @@
+name: Lambda
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        type: string
+        default: 'ci'
+        required: false
+        description: "'ci' (test + test-deploy/release) or 'deploy' (deploy to a target account)"
+      ref:
+        type: string
+        default: ''
+        required: false
+        description: Tag or branch to check out (required in deploy mode)
+      account-id:
+        type: string
+        default: ''
+        required: false
+        description: Target AWS account ID for test-deploy and deploy (empty = prod account 118435662149; release always uses prod)
+      region:
+        type: string
+        default: ''
+        required: false
+        description: Target AWS region for test-deploy and deploy (empty = us-east-1; release always uses us-east-1)
+      lambda-role:
+        type: string
+        required: true
+        description: Lambda execution role name, exported as HLX_LAMBDA_ROLE
+      node-version:
+        type: string
+        default: '24.x'
+        required: false
+        description: Node.js version to use for setup-node
+      lint:
+        type: boolean
+        default: true
+        required: false
+        description: Run npm run lint in the test job (ci mode)
+      codecov:
+        type: boolean
+        default: true
+        required: false
+        description: Upload coverage via codecov in the test job (ci mode)
+      release-dry-run:
+        type: boolean
+        default: true
+        required: false
+        description: Run semantic-release-dry in the test-deploy job
+      unit-tests:
+        type: boolean
+        default: false
+        required: false
+        description: Also run the test job in deploy mode
+      post-deploy-tests:
+        type: boolean
+        default: false
+        required: false
+        description: Run post-deploy integration tests in deploy mode
+      pre-deploy-command:
+        type: string
+        default: ''
+        required: false
+        description: Optional shell command to run right before deploying
+      env-secrets:
+        type: string
+        default: ''
+        required: false
+        description: Space-separated names of caller repo secrets to export as env vars
+
+env:
+  CI_BUILD_NUM: ${{ github.run_id }}
+  CI_BRANCH: ${{ github.ref_name }}
+  HLX_LAMBDA_ROLE: ${{ inputs.lambda-role }}
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    if: inputs.mode == 'ci' || inputs.unit-tests
+    steps:
+      - name: Setup
+        uses: adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template
+        with:
+          ref: ${{ inputs.ref }}
+          node-version: ${{ inputs.node-version }}
+          npm-token: ${{ secrets.NPM_TOKEN }}
+
+      - name: Lint
+        if: inputs.mode == 'ci' && inputs.lint
+        run: npm run lint
+      - run: npm test
+      - name: Upload coverage
+        if: inputs.mode == 'ci' && inputs.codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-deploy:
+    name: Test Deploy
+    runs-on: ubuntu-latest
+    needs: test
+    if: inputs.mode == 'ci' && github.ref != 'refs/heads/main'
+    steps:
+      - name: Setup
+        uses: adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template
+        with:
+          ref: ${{ inputs.ref }}
+          node-version: ${{ inputs.node-version }}
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          aws-account-id: ${{ inputs.account-id || '118435662149' }}
+          aws-region: ${{ inputs.region || 'us-east-1' }}
+          env-secrets: ${{ inputs.env-secrets }}
+          secrets-json: ${{ inputs.env-secrets != '' && toJSON(secrets) || '{}' }}
+          pre-deploy-command: ${{ inputs.pre-deploy-command }}
+
+      - name: Branch Deployment
+        run: npm run deploy-ci
+        env:
+          HLX_TEST_HEADERS: ${{ secrets.HLX_TEST_HEADERS }}
+      - name: Post-Deployment Integration Test
+        run: npm run test-postdeploy --if-present
+        env:
+          HLX_TEST_HEADERS: ${{ secrets.HLX_TEST_HEADERS }}
+      - name: Release Dry Run
+        if: inputs.release-dry-run
+        run: npm run semantic-release-dry --if-present
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: test
+    if: inputs.mode == 'ci' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Setup
+        uses: adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template
+        with:
+          ref: ${{ inputs.ref }}
+          node-version: ${{ inputs.node-version }}
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          aws-account-id: '118435662149'
+          aws-region: us-east-1
+          env-secrets: ${{ inputs.env-secrets }}
+          secrets-json: ${{ inputs.env-secrets != '' && toJSON(secrets) || '{}' }}
+          pre-deploy-command: ${{ inputs.pre-deploy-command }}
+
+      - name: Semantic Release
+        run: npm run semantic-release
+        env:
+          HLX_TEST_HEADERS: ${{ secrets.HLX_TEST_HEADERS }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ !failure() && !cancelled() && inputs.mode == 'deploy' }}
+    steps:
+      - name: Validate inputs
+        env:
+          REF: ${{ inputs.ref }}
+        run: |
+          if [ -z "$REF" ]; then
+            echo "::error::ref input is empty"
+            exit 1
+          fi
+      - name: Setup
+        uses: adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template
+        with:
+          ref: ${{ inputs.ref }}
+          node-version: ${{ inputs.node-version }}
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          aws-account-id: ${{ inputs.account-id || '118435662149' }}
+          aws-region: ${{ inputs.region || 'us-east-1' }}
+          env-secrets: ${{ inputs.env-secrets }}
+          secrets-json: ${{ inputs.env-secrets != '' && toJSON(secrets) || '{}' }}
+          pre-deploy-command: ${{ inputs.pre-deploy-command }}
+
+      - name: Deploy
+        run: npm run deploy
+        env:
+          HLX_TEST_HEADERS: ${{ secrets.HLX_TEST_HEADERS }}
+      - name: Post-Deployment Integration Test
+        if: inputs.post-deploy-tests
+        run: npm run test-postdeploy
+        env:
+          HLX_TEST_HEADERS: ${{ secrets.HLX_TEST_HEADERS }}
+      - name: Deploy Routes
+        run: npm run deploy-routes

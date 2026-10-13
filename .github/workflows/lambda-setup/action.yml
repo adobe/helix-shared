@@ -1,0 +1,100 @@
+name: Lambda setup
+description: Checkout, Node.js and npm ci; with aws-account-id also AWS login, secrets and pre-deploy command
+
+inputs:
+  ref:
+    description: Tag or branch to check out
+    required: false
+    default: ''
+  node-version:
+    description: Node.js version to use for setup-node
+    required: true
+  npm-token:
+    description: Token for the npmjs.org registry
+    required: true
+  aws-account-id:
+    description: Target AWS account ID; if empty, only the base setup steps run (no AWS login/secrets/pre-deploy)
+    required: false
+    default: ''
+  aws-region:
+    description: Target AWS region
+    required: false
+    default: 'us-east-1'
+  env-secrets:
+    description: Space-separated names of caller repo secrets to export as env vars
+    required: false
+    default: ''
+  secrets-json:
+    description: JSON of the caller's secrets (e.g. toJSON(secrets)), used to resolve env-secrets
+    required: false
+    default: '{}'
+  pre-deploy-command:
+    description: Optional shell command to run right before deploying
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ inputs.ref }}
+    - name: Use Node.js
+      uses: actions/setup-node@v7
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+    - name: setup .npmrc
+      shell: bash
+      env:
+        NPM_TOKEN: ${{ inputs.npm-token }}
+      run: npm set "//registry.npmjs.org/:_authToken=$NPM_TOKEN"
+    - run: npm ci
+      shell: bash
+
+    - name: Check lambda role
+      if: inputs.aws-account-id != ''
+      shell: bash
+      run: |
+        if [ -z "$HLX_LAMBDA_ROLE" ]; then
+          echo "::error::lambda-role input is empty"
+          exit 1
+        fi
+    - name: Configure AWS Credentials
+      if: inputs.aws-account-id != ''
+      uses: aws-actions/configure-aws-credentials@v6
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: arn:aws:iam::${{ inputs.aws-account-id }}:role/helix-gh-deploy-config-service
+    - name: Fetch AWS Secrets
+      if: inputs.aws-account-id != ''
+      uses: aws-actions/aws-secretsmanager-get-secrets@v3
+      with:
+        parse-json-secrets: true
+        # leading comma = secret keys exported without a prefix
+        secret-ids: |
+          ,/helix/github-action-secrets
+    - name: Export repo secrets
+      if: inputs.aws-account-id != '' && inputs.env-secrets != ''
+      shell: bash
+      env:
+        ALL_SECRETS: ${{ inputs.secrets-json }}
+        NAMES: ${{ inputs.env-secrets }}
+      run: |
+        for name in $NAMES; do
+          value=$(echo "$ALL_SECRETS" | jq -r --arg n "$name" '.[$n] // empty')
+          if [ -z "$value" ]; then
+            echo "::error::secret '$name' listed in env-secrets is not available"
+            exit 1
+          fi
+          delim="EOF_$(openssl rand -hex 8)"
+          {
+            echo "$name<<$delim"
+            echo "$value"
+            echo "$delim"
+          } >> "$GITHUB_ENV"
+        done
+    - name: Pre-deploy command
+      if: inputs.aws-account-id != '' && inputs.pre-deploy-command != ''
+      run: ${{ inputs.pre-deploy-command }}
+      shell: bash
