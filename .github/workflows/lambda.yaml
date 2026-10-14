@@ -80,7 +80,7 @@ jobs:
     if: inputs.mode == 'ci' || inputs.unit-tests
     steps:
       - name: Setup
-        uses: adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template
+        uses: adobe/helix-shared/.github/actions/lambda-setup@vhs/workflow-template
         with:
           ref: ${{ inputs.ref }}
           node-version: ${{ inputs.node-version }}
@@ -103,7 +103,7 @@ jobs:
     if: inputs.mode == 'ci' && github.ref != 'refs/heads/main'
     steps:
       - name: Setup
-        uses: adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template
+        uses: adobe/helix-shared/.github/actions/lambda-setup@vhs/workflow-template
         with:
           ref: ${{ inputs.ref }}
           node-version: ${{ inputs.node-version }}
@@ -135,7 +135,7 @@ jobs:
     if: inputs.mode == 'ci' && github.ref == 'refs/heads/main'
     steps:
       - name: Setup
-        uses: adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template
+        uses: adobe/helix-shared/.github/actions/lambda-setup@vhs/workflow-template
         with:
           ref: ${{ inputs.ref }}
           node-version: ${{ inputs.node-version }}
@@ -167,7 +167,7 @@ jobs:
             exit 1
           fi
       - name: Setup
-        uses: adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template
+        uses: adobe/helix-shared/.github/actions/lambda-setup@vhs/workflow-template
         with:
           ref: ${{ inputs.ref }}
           node-version: ${{ inputs.node-version }}

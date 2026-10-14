@@ -51,7 +51,7 @@ These are hardcoded in the template, not exposed as inputs:
 
 ## Setup action
 
-`.github/workflows/lambda-setup/action.yml` is a composite action that
+`.github/actions/lambda-setup/action.yml` is a composite action that
 factors out the steps shared by the `test`, `test-deploy`, `release` and
 `deploy` jobs: checkout, Node.js setup, `.npmrc`/`npm ci`, and — when an
 `aws-account-id` is given — the lambda-role check, AWS credentials,
@@ -59,7 +59,7 @@ fetching the shared AWS secret, exporting any `env-secrets`, and running
 `pre-deploy-command`. All four jobs in `lambda.yaml` use it via a single
 `Setup` step.
 
-It is referenced as `adobe/helix-shared/.github/workflows/lambda-setup@vhs/workflow-template`
+It is referenced as `adobe/helix-shared/.github/actions/lambda-setup@vhs/workflow-template`
 (a `./` path would resolve against the caller repo, not this one) and must
 always be referenced with the same ref as `lambda.yaml`, since the
 workflow's jobs depend on this exact version of the action.
@@ -108,4 +108,3 @@ can control it:
 ```json
 "awsRole!important": "${env.HLX_LAMBDA_ROLE}"
 ```
-
