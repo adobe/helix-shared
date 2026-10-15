@@ -103,6 +103,7 @@ export default class Reader {
     this.prefix = site ? `${org}/${site}` : `${org}/.all`;
     this.log = log;
     this.bucketName = opts.bucketName;
+    this.logFiles = [];
   }
 
   /**
@@ -120,8 +121,8 @@ export default class Reader {
         Bucket: this.bucketName,
         Key: `${prefix}/${INDEX_FILE}`,
       }));
-      const logContents = await new Response(res.Body, {}).text();
-      this.logFiles = logContents.split('\n').map((name) => ({
+      const indexContents = await new Response(res.Body, {}).text();
+      this.logFilenames = indexContents.split('\n').map((name) => ({
         name,
         timestamp: DateFormat.parse(name).getTime(),
       }));
@@ -130,7 +131,7 @@ export default class Reader {
       if (e.$metadata?.httpStatusCode !== 404) {
         throw e;
       }
-      this.logFiles = [];
+      this.logFilenames = [];
     }
     return this;
   }
@@ -143,21 +144,25 @@ export default class Reader {
    */
   async #getLogContents(fileIndex) {
     const {
-      prefix, logFiles, s3, log,
+      prefix, logFilenames, logFiles, s3, log,
     } = this;
 
-    const key = `${prefix}/${logFiles[fileIndex].name}.gz`;
-    try {
-      const res = await s3.send(new GetObjectCommand({
-        Bucket: this.bucketName,
-        Key: key,
-      }));
-      const buf = await new Response(res.Body, {}).buffer();
-      return JSON.parse(await gunzip(buf));
-    } catch (e) {
-      log.debug(e);
-      throw new Error(`Unable to find journal log file '${key}': ${e.message}`);
+    if (logFiles[fileIndex] === undefined) {
+      const key = `${prefix}/${logFilenames[fileIndex].name}.gz`;
+      try {
+        const res = await s3.send(new GetObjectCommand({
+          Bucket: this.bucketName,
+          Key: key,
+        }));
+        const buf = await new Response(res.Body, {}).buffer();
+        const contents = JSON.parse(await gunzip(buf));
+        logFiles[fileIndex] = contents;
+      } catch (e) {
+        log.debug(e);
+        throw new Error(`Unable to find journal log file '${key}': ${e.message}`);
+      }
     }
+    return logFiles[fileIndex];
   }
 
   /**
@@ -168,15 +173,15 @@ export default class Reader {
    * @returns {Promise<LogLocation|null>} matching location or null if no entry is found
    */
   async #findStart(from) {
-    const { logFiles } = this;
+    const { logFilenames } = this;
 
     // stop if there are no log files at all
-    if (logFiles.length === 0) {
+    if (logFilenames.length === 0) {
       return null;
     }
 
     // find the last log file that started before the given date
-    const fileIndex = logFiles.findLastIndex(({ timestamp }) => timestamp <= from);
+    const fileIndex = logFilenames.findLastIndex(({ timestamp }) => timestamp <= from);
     if (fileIndex === -1) {
       // none found, so return the very first log file
       return { fileIndex: 0, entryIndex: 0 };
@@ -193,7 +198,7 @@ export default class Reader {
     }
 
     // the log file found stops before the date given, so start at next one
-    if (fileIndex === logFiles.length - 1) {
+    if (fileIndex === logFilenames.length - 1) {
       // there is no next log file
       return null;
     }
@@ -209,10 +214,10 @@ export default class Reader {
    * @returns {Promise<LogLocation|null>} matching location or null if no entry is found
    */
   async #findEnd(to) {
-    const { logFiles } = this;
+    const { logFilenames } = this;
 
     // find the last log file that started before the given date
-    const fileIndex = logFiles.findLastIndex(({ timestamp }) => timestamp <= to);
+    const fileIndex = logFilenames.findLastIndex(({ timestamp }) => timestamp <= to);
     if (fileIndex === -1) {
       // none found, so `to` stops before the very first log file
       return null;
@@ -241,20 +246,20 @@ export default class Reader {
    * @returns {Promise<LogLocation|null>} validated location or null when invalid
    */
   async #validateLocation(location, normalizeEnd) {
-    const { log, logFiles } = this;
+    const { log, logFilenames } = this;
 
     const { fileIndex, entryIndex } = location;
     if (!Number.isInteger(fileIndex) || !Number.isInteger(entryIndex)) {
       log.warn(`Next file and entry index are not numbers: ${fileIndex}/${entryIndex}`);
       return null;
     }
-    if (fileIndex < 0 || fileIndex >= logFiles.length) {
-      log.warn(`Next file index (${fileIndex}) out of log files range: ${logFiles.length}`);
+    if (fileIndex < 0 || fileIndex >= logFilenames.length) {
+      log.warn(`Next file index (${fileIndex}) out of log files range: ${logFilenames.length}`);
       return null;
     }
     const entries = await this.#getLogContents(fileIndex);
     if (normalizeEnd && entryIndex === entries.length) {
-      if (fileIndex + 1 < logFiles.length) {
+      if (fileIndex + 1 < logFilenames.length) {
         return { fileIndex: fileIndex + 1, entryIndex: 0 };
       }
       return null;
@@ -351,15 +356,15 @@ export default class Reader {
    * @returns {Promise<LogLocation>} last log location
    */
   async getEndLocation() {
-    const { logFiles } = this;
+    const { logFilenames } = this;
 
-    if (logFiles.length === 0) {
+    if (logFilenames.length === 0) {
       // point to beginning
       return {
         fileIndex: 0, entryIndex: 0,
       };
     }
-    const fileIndex = logFiles.length - 1;
+    const fileIndex = logFilenames.length - 1;
     const entries = await this.#getLogContents(fileIndex);
     return {
       fileIndex, entryIndex: entries.length,
