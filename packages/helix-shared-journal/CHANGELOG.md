@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-journal-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-journal-v2.0.0...@adobe/helix-shared-journal-v2.0.1) (2026-10-15)
+
+
+### Bug Fixes
+
+* **journal:** cache log files read ([#1300](https://github.com/adobe/helix-shared/issues/1300)) ([63a53bf](https://github.com/adobe/helix-shared/commit/63a53bf5d2301b767c86c1d6370979aba35e1c1c))
+
 # [@adobe/helix-shared-journal-v2.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-journal-v1.0.0...@adobe/helix-shared-journal-v2.0.0) (2026-10-12)
 
 
