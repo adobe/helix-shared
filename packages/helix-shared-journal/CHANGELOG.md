@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-journal-v2.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-journal-v2.0.1...@adobe/helix-shared-journal-v2.0.2) (2026-10-16)
+
+
+### Bug Fixes
+
+* finish reading log file, not just discard ([#1301](https://github.com/adobe/helix-shared/issues/1301)) ([54c55e8](https://github.com/adobe/helix-shared/commit/54c55e8ba9b225c19274aa396f4e46cb7cbf1145))
+
 # [@adobe/helix-shared-journal-v2.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-journal-v2.0.0...@adobe/helix-shared-journal-v2.0.1) (2026-10-15)
 
 
