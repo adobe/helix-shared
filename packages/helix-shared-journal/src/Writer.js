@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+import { finished } from 'node:stream/promises';
 import crypto from 'crypto';
 import { promisify } from 'util';
 import zlib from 'zlib';
@@ -55,6 +55,7 @@ export default class Writer {
     this.prefix = site ? `${org}/${site}` : `${org}/.all`;
     this.log = log;
     this.bucketName = opts.bucketName;
+    this.maxObjectSize = opts.maxObjectSize ?? MAX_OBJECT_SIZE;
   }
 
   /**
@@ -83,7 +84,7 @@ export default class Writer {
       return logContents.split('\n');
     } catch (e) {
       /* c8 ignore next 3 */
-      if (e.$metadata.httpStatusCode !== 404) {
+      if (e.$metadata?.httpStatusCode !== 404) {
         throw e;
       }
     }
@@ -97,20 +98,22 @@ export default class Writer {
    * @param {string} key
    */
   async #fetchLogFile(key) {
-    const { s3 } = this;
+    const { s3, maxObjectSize } = this;
 
     try {
       const res = await s3.send(new GetObjectCommand({
         Bucket: this.bucketName,
         Key: `${key}.gz`,
       }));
-      if (res.ContentLength < MAX_OBJECT_SIZE) {
+      if (res.ContentLength < maxObjectSize) {
         const buf = await new Response(res.Body, {}).buffer();
         return { key, contents: JSON.parse(await gunzip(buf)) };
       }
+      // Finish the download before the S3 client can be destroyed.
+      await finished(res.Body.resume(), { cleanup: true });
     } catch (e) {
       /* c8 ignore next 3 */
-      if (e.$metadata.httpStatusCode !== 404) {
+      if (e.$metadata?.httpStatusCode !== 404) {
         throw e;
       }
     }

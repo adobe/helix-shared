@@ -132,7 +132,9 @@ describe('Journal writer tests', () => {
   });
 
   it('Simulate environment where last log is too large', async () => {
-    const contents = await gzip(JSON.stringify([]));
+    const largeContents = await gzip(JSON.stringify(
+      Array.from({ length: 100 }, () => (updates[0])),
+    ));
     let lastLog;
 
     nock('https://helix-adobe-logs.s3.us-east-1.amazonaws.com')
@@ -141,9 +143,9 @@ describe('Journal writer tests', () => {
         'content-type': 'text/plain',
       })
       .get('/org/.all/2023-09-14-14-14-23-3ADD0B52867FF57D.gz?x-id=GetObject')
-      .reply(200, contents, {
+      .reply(200, largeContents, {
         'content-type': 'application/json',
-        'content-length': 700000,
+        'content-length': largeContents.length,
         'content-encoding': 'gzip',
       })
       .put('/org/.all/.index?x-id=PutObject')
@@ -156,7 +158,9 @@ describe('Journal writer tests', () => {
       .put((uri) => uri.startsWith(`/org/.all/${lastLog}.gz`))
       .reply(201);
 
-    writer = await Journal.createWriter('org', null, console).init();
+    writer = await Journal.createWriter('org', null, console, {
+      maxObjectSize: 100,
+    }).init();
     await writer.append(updates);
   });
 
