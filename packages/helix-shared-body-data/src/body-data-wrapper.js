@@ -14,6 +14,12 @@ import { Request, Response } from '@adobe/fetch';
 
 const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 
+const JSON_TYPE = /\/([^;\s]*\+)?json\s*(;|$)/i;
+
+const NUMBER_PATTERN = /^-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
+
+export const MAX_ARRAY_INDEX = 99;
+
 /**
  * Extracts the _data_ from the given request. The data can be provided either as request
  * parameters, url-encoded form data body, or a json body.
@@ -27,7 +33,7 @@ const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
  */
 async function getData(request, opts) {
   const contentType = request.headers.get('content-type');
-  if (/\/json/.test(contentType) && BODY_METHODS.includes(request.method)) {
+  if (JSON_TYPE.test(contentType) && BODY_METHODS.includes(request.method)) {
     const json = await request.json();
     if (typeof json !== 'object' || json === null) {
       throw new Error('JSON body must be an object');
@@ -58,7 +64,10 @@ async function getData(request, opts) {
     const values = (isArray ? [value] : data.getAll(key))
       .map((v) => (coerceBoolean && (v === 'true' || v === 'false') ? v === 'true' : v))
       .map((v) => (coerceInt && /^-?[0-9]+$/.test(v) ? Number.parseInt(v, 10) : v))
-      .map((v) => (coerceNumber && /^[0-9.]+([eE][+-]?[0-9]*)?$/.test(v) && !Number.isNaN(parseFloat(v)) ? parseFloat(v) : v));
+      .map((v) => (coerceNumber && NUMBER_PATTERN.test(v) ? Number(v) : v));
+    if (arrayIndex > MAX_ARRAY_INDEX) {
+      throw new Error(`array index out of range: ${key}`);
+    }
     if (values.length === 1 && isArray && Number.isNaN(arrayIndex)) {
       // this means foo[] = 'bar'
       if (!Array.isArray(alldata[cleanKey])) {

@@ -28,7 +28,7 @@ export declare interface BodyDataOptions {
   coerceInt?:boolean;
 
   /**
-   * Flag that coerces  number strings to numbers.
+   * Flag that coerces number strings (e.g. `-1.5`, `2e3`) to numbers.
    */
   coerceNumber?:boolean;
 
@@ -43,20 +43,23 @@ export declare interface BodyDataOptions {
  * The data can be provided either as request parameters, url-encoded form data body, or a json
  * body.
  *
- * The extracted data is added to the universal context 'data' property.
+ * The extracted data is added to the universal context 'data' property. Indexed parameters
+ * (e.g. `foo[2]=bar`) are limited to indices up to {@link MAX_ARRAY_INDEX}; larger indices
+ * result in a 400 response.
  *
- * @example <caption></caption>
+ * @example
  *
  * ```js
- * const { wrap, bodyData } = require('@adobe/helix-shared');
+ * import wrap from '@adobe/helix-shared-wrap';
+ * import bodyData from '@adobe/helix-shared-body-data';
  *
- * async function main(req, context) {
+ * async function run(req, context) {
  *   const { data } = context;
  *
- *   //…my action cod using 'data'…
+ *   // …my action code using 'data'…
  * }
  *
- * module.exports.main = wrap(main)
+ * export const main = wrap(run)
  *   .with(bodyData);
  * ```
  *
@@ -65,4 +68,9 @@ export declare interface BodyDataOptions {
  * @param {BodyDataOptions} [opts] - optional options.
  * @returns {UniversalFunction} a new function that wraps the original one.
  */
-export declare function bodyData(fn: UniversalFunction, opts: BodyDataOptions): UniversalFunction;
+export default function bodyData(fn: UniversalFunction, opts?: BodyDataOptions): UniversalFunction;
+
+/**
+ * Maximum array index accepted for indexed parameters like `foo[99]`.
+ */
+export declare const MAX_ARRAY_INDEX: number;
