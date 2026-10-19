@@ -369,3 +369,126 @@ describe('Body Data Wrapper Unit Tests (YAML Body)', () => {
     assert.strictEqual(response.status, 200);
   });
 });
+
+describe('Body Data Wrapper Unit Tests (Plain Text Body)', () => {
+  const contents = 'User-agent: *\nDisallow: /';
+
+  ['POST', 'post', 'PUT', 'PATCH'].forEach((method) => {
+    ['text/plain', 'text/plain; charset=utf-8'].forEach((textType) => {
+      it(`Adds plain text with type ${textType} as body to the parameters (${method})`, async () => {
+        const universalfunct = async (request, context) => {
+          assert.deepStrictEqual({ ...context.data }, { foo: 'bar', body: contents });
+          return new Response('ok');
+        };
+
+        const actualfunct = wrap(universalfunct).with(bodyData, { supportPlainText: true });
+        const response = await actualfunct(new Request('http://localhost?foo=bar', {
+          body: contents,
+          method,
+          headers: {
+            'content-type': textType,
+          },
+        }), {
+          log,
+        });
+        assert.strictEqual(response.status, 200, 'universal function should be executed');
+      });
+    });
+  });
+
+  it('Does not coerce the plain text body', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual({ ...context.data }, { foo: 42, body: '42' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData, {
+      supportPlainText: true, coerceInt: true, coerceNumber: true,
+    });
+    const response = await actualfunct(new Request('http://localhost?foo=42', {
+      body: '42',
+      method: 'POST',
+      headers: {
+        'content-type': 'text/plain',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
+  });
+
+  it('Keeps the body parameter when the plain text body is empty', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual({ ...context.data }, { body: 'from-query' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData, { supportPlainText: true });
+    const response = await actualfunct(new Request('http://localhost?body=from-query', {
+      body: '',
+      method: 'POST',
+      headers: {
+        'content-type': 'text/plain',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
+  });
+
+  it('Ignores body for GET requests.', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual({ ...context.data }, { foo: 'bar' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData, { supportPlainText: true });
+    const response = await actualfunct(new Request('http://localhost?foo=bar', {
+      method: 'GET',
+      headers: {
+        'content-type': 'text/plain',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
+  });
+
+  it('Ignores other text types.', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual({ ...context.data }, { foo: 'bar' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData, { supportPlainText: true });
+    const response = await actualfunct(new Request('http://localhost?foo=bar', {
+      body: '<html></html>',
+      method: 'POST',
+      headers: {
+        'content-type': 'text/html',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
+  });
+
+  it('Ignores body when support plain text is not enabled.', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual({ ...context.data }, { foo: 'bar' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost?foo=bar', {
+      body: contents,
+      method: 'POST',
+      headers: {
+        'content-type': 'text/plain',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
+  });
+});
