@@ -18,7 +18,7 @@ import YAML from 'yaml';
 import { Request, Response } from '@adobe/fetch';
 
 import wrap from '@adobe/helix-shared-wrap';
-import bodyData from '../src/body-data-wrapper.js';
+import bodyData, { MAX_ARRAY_INDEX } from '../src/body-data-wrapper.js';
 
 const log = {
   info: console.log,
@@ -123,6 +123,46 @@ describe('Body Data Wrapper Unit Tests (JSON Body)', () => {
     assert.strictEqual(response.headers.get('x-error'), 'error parsing request body');
   });
 
+  ['application/vnd.api+json', 'application/ld+json', 'application/json; charset=utf-8', 'Application/JSON'].forEach((type) => {
+    it(`Loads JSON with type ${type}`, async () => {
+      const universalfunct = async (request, context) => {
+        assert.deepStrictEqual(context.data, { foo: 'bar' });
+        return new Response('ok');
+      };
+
+      const actualfunct = wrap(universalfunct).with(bodyData);
+      const response = await actualfunct(new Request('http://localhost', {
+        body: JSON.stringify({ foo: 'bar' }),
+        method: 'POST',
+        headers: {
+          'content-type': type,
+        },
+      }), {
+        log,
+      });
+      assert.strictEqual(response.status, 200);
+    });
+  });
+
+  it('Does not treat json-like subtypes as JSON', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepStrictEqual({ ...context.data }, { foo: 'zoo' });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost?foo=zoo', {
+      body: '{"a":1}\n{"b":2}',
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json-seq',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200);
+  });
+
   it('Loads JSON array body', async () => {
     const universalfunct = async (request, context) => {
       assert.deepStrictEqual(context.data, ['a', 'b']);
@@ -220,6 +260,29 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
     assert.strictEqual(response.status, 200, 'universal function should be executed');
   });
 
+  it('Coerces only well-formed numbers from URL Parameters', async () => {
+    const universalfunct = async (request, context) => {
+      assert.deepEqual(context.data, {
+        version: '1.2.3',
+        ip: '192.168.1.1',
+        neg: -5,
+        negf: -1.5,
+        exp: 2e3,
+        dot: '.',
+        trailing: '10e',
+        frac: 0.5,
+      });
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData, { coerceNumber: true });
+    const response = await actualfunct(new Request('http://localhost?version=1.2.3&ip=192.168.1.1&neg=-5&negf=-1.5&exp=2e3&dot=.&trailing=10e&frac=.5', {
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
+  });
+
   it('Loads duplicate URL Parameters into arrays', async () => {
     const universalfunct = async (request, context) => {
       assert.deepEqual(context.data, { foo: ['bar', 'baz'] });
@@ -263,6 +326,49 @@ describe('Body Data Wrapper Unit Tests (URL Parameters)', () => {
       log,
     });
     assert.strictEqual(response.status, 200, 'universal function should be executed');
+  });
+
+  it('Accepts array index up to the limit', async () => {
+    const universalfunct = async (request, context) => {
+      assert.strictEqual(context.data.foo.length, MAX_ARRAY_INDEX + 1);
+      assert.strictEqual(context.data.foo[MAX_ARRAY_INDEX], 'bar');
+      return new Response('ok');
+    };
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request(`http://localhost?foo[${MAX_ARRAY_INDEX}]=bar`, {
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 200, 'universal function should be executed');
+  });
+
+  it('Responds with 400 for array index above the limit', async () => {
+    const universalfunct = async () => assert.fail('should not be called');
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request(`http://localhost?foo[${MAX_ARRAY_INDEX + 1}]=bar`, {
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.headers.get('x-error'), 'error parsing request body');
+  });
+
+  it('Responds with 400 for huge array index in form data', async () => {
+    const universalfunct = async () => assert.fail('should not be called');
+
+    const actualfunct = wrap(universalfunct).with(bodyData);
+    const response = await actualfunct(new Request('http://localhost', {
+      body: 'foo[4294967294]=bar',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    }), {
+      log,
+    });
+    assert.strictEqual(response.status, 400);
   });
 });
 
