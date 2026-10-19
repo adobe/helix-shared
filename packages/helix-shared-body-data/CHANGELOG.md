@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-body-data-v2.2.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.2.7...@adobe/helix-shared-body-data-v2.2.8) (2026-10-19)
+
+
+### Bug Fixes
+
+* **body-data:** stricter number coercion, +json types, array index limit ([#1302](https://github.com/adobe/helix-shared/issues/1302)) ([3d0630a](https://github.com/adobe/helix-shared/commit/3d0630ad575306cd85b56e454782d008607ab943))
+
 # [@adobe/helix-shared-body-data-v2.2.7](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-body-data-v2.2.6...@adobe/helix-shared-body-data-v2.2.7) (2026-06-03)
 
 
