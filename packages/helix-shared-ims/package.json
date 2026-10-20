@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@adobe/fetch": "^4.0.1",
-    "@adobe/helix-shared-body-data": "^1.1.19",
     "@adobe/helix-shared-utils": "^2.1.0",
     "@adobe/helix-shared-wrap": "^1.0.5",
     "cookie": "2.0.1"

@@ -101,6 +101,12 @@ The IMS access token can be provided in two ways:
 1. Via the `ims_access_token` HTTP-only cookie (automatically set during login)
 2. Via a request parameter named `ims_access_token`
 
+Request parameters, including the `access_token` that IMS sends back to the login redirect
+routes, are read from `context.data`, which `@adobe/helix-shared-body-data` 3.x sets. Add
+`.with(bodyData)` after `.with(ims)` so that body-data runs first, as in the example below.
+When body-data read a JSON or form body, the parameters come from that body, otherwise from
+the query.
+
 ## Context Properties
 
 After wrapping your function with IMS middleware, the context object will include:

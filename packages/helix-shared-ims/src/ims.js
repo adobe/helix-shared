@@ -202,6 +202,8 @@ async function logout(ctx) {
 export default function imsWrapper(func, options = {}) {
   return async (req, ctx) => {
     const { data = {} } = ctx;
+    // a JSON or form body wins over the query, like body-data 2.x did
+    const params = data.type === 'json' || data.type === 'form' ? data.body : (data.query || {});
 
     // support dynamic envs
     const opts = Object.entries(options).reduce((prev, [key, value]) => {
@@ -245,7 +247,7 @@ export default function imsWrapper(func, options = {}) {
     ctx.ims = {
       config,
       // get the access token either from the cookie or from the request data
-      accessToken: ctx.cookies.ims_access_token || data.ims_access_token,
+      accessToken: ctx.cookies.ims_access_token || params.ims_access_token,
     };
 
     let newToken = '';
@@ -257,7 +259,7 @@ export default function imsWrapper(func, options = {}) {
 
     // handle /login/ack route
     if (ctx.pathInfo.suffix === config.routeLoginRedirect) {
-      newToken = data.access_token;
+      newToken = params.access_token;
       if (!newToken) {
         // if redirected from ims, but no token was provided, try login with prompt
         // IMS has a bug here as it doesn't honor the response_type with the no-prompt login
@@ -267,7 +269,7 @@ export default function imsWrapper(func, options = {}) {
 
     // handle /login/ack2 route
     if (ctx.pathInfo.suffix === config.routeLoginRedirectPrompt) {
-      newToken = data.access_token;
+      newToken = params.access_token;
       if (!newToken) {
         // if still no access token, send 401
         return new Response('', {
