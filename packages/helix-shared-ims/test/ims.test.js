@@ -129,7 +129,7 @@ describe('IMS Wrapper test', () => {
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack'),
-        data: { access_token: 'foo' },
+        data: { query: { access_token: 'foo' } },
       });
       assert.strictEqual(resp.status, 302);
       assert.deepStrictEqual(resp.headers.plain(), {
@@ -148,7 +148,7 @@ describe('IMS Wrapper test', () => {
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack'),
-        data: { error: 'rejected' },
+        data: { query: { error: 'rejected' } },
       });
       assert.strictEqual(resp.status, 302);
       assert.deepStrictEqual(resp.headers.plain(), {
@@ -166,7 +166,7 @@ describe('IMS Wrapper test', () => {
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack2'),
-        data: { access_token: 'foo' },
+        data: { query: { access_token: 'foo' } },
       });
       assert.strictEqual(resp.status, 302);
       assert.deepStrictEqual(resp.headers.plain(), {
@@ -187,7 +187,7 @@ describe('IMS Wrapper test', () => {
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack2'),
-        data: { access_token: 'foo' },
+        data: { query: { access_token: 'foo' } },
       });
       assert.strictEqual(resp.status, 302);
       assert.deepStrictEqual(resp.headers.plain(), {
@@ -198,6 +198,20 @@ describe('IMS Wrapper test', () => {
       });
     });
 
+    it('accepts the token from a form body on the redirect', async () => {
+      const fn = wrap(main).with(ims, {
+        clientId: 'my-id',
+        forceAuth: true,
+      });
+
+      const resp = await fn(new Request('https://www.example.com/'), {
+        ...DEFAULT_CONTEXT('/login/ack'),
+        data: { query: {}, body: { access_token: 'foo' }, type: 'form' },
+      });
+      assert.strictEqual(resp.status, 302);
+      assert.strictEqual(resp.headers.get('set-cookie'), 'ims_access_token=foo; Path=/; HttpOnly; Secure');
+    });
+
     it('rejects 2nd redirect response and responds with 401', async () => {
       const fn = wrap(main).with(ims, {
         clientId: 'my-id',
@@ -206,7 +220,7 @@ describe('IMS Wrapper test', () => {
 
       const resp = await fn(new Request('https://www.example.com/'), {
         ...DEFAULT_CONTEXT('/login/ack2'),
-        data: { error: 'invalid' },
+        data: { query: { error: 'invalid' } },
       });
       assert.strictEqual(resp.status, 401);
       assert.deepStrictEqual(resp.headers.plain(), {
@@ -228,7 +242,7 @@ describe('IMS Wrapper test', () => {
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
         ...DEFAULT_CONTEXT('/logout'),
-        data: { ims_access_token: 'foo' },
+        data: { query: { ims_access_token: 'foo' } },
       });
 
       assert.strictEqual(resp.status, 200);
@@ -271,7 +285,7 @@ describe('IMS Wrapper test', () => {
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
         ...DEFAULT_CONTEXT('/logout'),
-        data: { ims_access_token: 'foo' },
+        data: { query: { ims_access_token: 'foo' } },
       });
 
       assert.strictEqual(resp.status, 200);
@@ -291,7 +305,7 @@ describe('IMS Wrapper test', () => {
 
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
         ...DEFAULT_CONTEXT('/logout'),
-        data: { ims_access_token: 'foo' },
+        data: { query: { ims_access_token: 'foo' } },
       });
 
       assert.strictEqual(resp.status, 200);
@@ -317,7 +331,7 @@ describe('IMS Wrapper test', () => {
       const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo'), {
         ...DEFAULT_CONTEXT(),
         data: {
-          ims_access_token: 'foo',
+          query: { ims_access_token: 'foo' },
         },
       });
 
@@ -330,6 +344,83 @@ describe('IMS Wrapper test', () => {
       assert.deepStrictEqual(resp.headers.plain(), {
         'content-type': 'application/json',
       });
+    });
+
+    it('fetches profile with the token from a JSON body', async () => {
+      nock('https://ims-na1-stg1.adobelogin.com')
+        .post('/ims/profile/v1')
+        .reply(imsProfileHandler());
+
+      const fn = wrap(main).with(ims, {
+        clientId: 'my-id',
+        forceAuth: true,
+      });
+
+      const resp = await fn(new Request('https://www.example.com/', { method: 'POST' }), {
+        ...DEFAULT_CONTEXT(),
+        data: { query: {}, body: { ims_access_token: 'foo' }, type: 'json' },
+      });
+
+      assert.strictEqual(resp.status, 200);
+      assert.strictEqual((await resp.json()).userId, '112233');
+    });
+
+    ['json', 'form'].forEach((type) => {
+      it(`ignores a token in the query when the request had a ${type} body`, async () => {
+        const fn = wrap(main).with(ims, {
+          clientId: 'my-id',
+          forceAuth: true,
+        });
+
+        const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo', { method: 'POST' }), {
+          ...DEFAULT_CONTEXT(),
+          data: { query: { ims_access_token: 'foo' }, body: {}, type },
+        });
+
+        assert.strictEqual(resp.status, 401);
+      });
+    });
+
+    it('reads the token from the query when the body is text', async () => {
+      nock('https://ims-na1-stg1.adobelogin.com')
+        .post('/ims/profile/v1')
+        .reply(imsProfileHandler());
+
+      const fn = wrap(main).with(ims, {
+        clientId: 'my-id',
+        forceAuth: true,
+      });
+
+      const resp = await fn(new Request('https://www.example.com/?ims_access_token=foo', { method: 'POST' }), {
+        ...DEFAULT_CONTEXT(),
+        data: { query: { ims_access_token: 'foo' }, body: 'hello', type: 'text' },
+      });
+
+      assert.strictEqual(resp.status, 200);
+      assert.strictEqual((await resp.json()).userId, '112233');
+    });
+
+    it('prefers the cookie over the token in the request data', async () => {
+      nock('https://ims-na1-stg1.adobelogin.com')
+        .post('/ims/profile/v1')
+        .reply(imsProfileHandler());
+
+      const fn = wrap(main).with(ims, {
+        clientId: 'my-id',
+        forceAuth: true,
+      });
+
+      const resp = await fn(new Request('https://www.example.com/?ims_access_token=bar', {
+        headers: {
+          cookie: 'ims_access_token=foo',
+        },
+      }), {
+        ...DEFAULT_CONTEXT(),
+        data: { query: { ims_access_token: 'bar' } },
+      });
+
+      assert.strictEqual(resp.status, 200);
+      assert.strictEqual((await resp.json()).userId, '112233');
     });
 
     it('fetches profile with provided token (cookie)', async () => {
