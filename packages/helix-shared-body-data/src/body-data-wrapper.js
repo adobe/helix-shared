@@ -14,45 +14,18 @@ import { Request, Response } from '@adobe/fetch';
 
 const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 
-const JSON_TYPE = /\/([^;\s]*\+)?json\s*(;|$)/i;
-
 const NUMBER_PATTERN = /^-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 
 export const MAX_ARRAY_INDEX = 99;
 
 /**
- * Extracts the _data_ from the given request. The data can be provided either as request
- * parameters, url-encoded form data body, or a json body.
+ * Parses url-encoded parameters (the query or a form body) into an object without prototype.
  *
- * Note that for post body requests, the body is consumed from the request and is no longer
- * available.
- *
- * @param {Request} request The universal request
- * @param {import('./body-data-wrapper').BodyDataOptions} [opts] Options
- * @returns {Promise<object>} the parsed data object.
+ * @param {URLSearchParams} data the parameters
+ * @param {import('./body-data-wrapper').BodyDataOptions} opts Options
+ * @returns {object} the parsed parameters
  */
-async function getData(request, opts) {
-  const contentType = request.headers.get('content-type');
-  if (JSON_TYPE.test(contentType) && BODY_METHODS.includes(request.method)) {
-    const json = await request.json();
-    if (typeof json !== 'object' || json === null) {
-      throw new Error('JSON body must be an object');
-    }
-    return json;
-  }
-
-  const { supportYAML } = opts;
-  if (supportYAML && /\/(x-)?yaml/.test(contentType) && BODY_METHODS.includes(request.method)) {
-    return request.text();
-  }
-
-  let data;
-  if (/^application\/x-www-form-urlencoded/.test(contentType) && BODY_METHODS.includes(request.method)) {
-    data = new URLSearchParams(await request.text());
-  } else {
-    data = new URL(request.url).searchParams;
-  }
-
+function parseParams(data, opts) {
   const { coerceNumber, coerceInt, coerceBoolean } = opts;
   return Array.from(data.entries()).reduce((alldata, [key, value]) => {
     const bracketpattern = /\[([0-9]*)\]$/;
@@ -91,27 +64,114 @@ async function getData(request, opts) {
 }
 
 /**
- * Wraps a function with a body data middleware that extracts the request data.
+ * Returns which kind of body the wrapper reads for this request, or `undefined` if it leaves
+ * the body alone. Only the media type counts, not the parameters after `;`.
+ *
+ * @param {Request} request The universal request
+ * @returns {string|undefined} `json`, `form`, `yaml`, `text` or `undefined`
+ */
+function getBodyType(request) {
+  if (!BODY_METHODS.includes(request.method)) {
+    return undefined;
+  }
+  const mediaType = (request.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  const subtype = mediaType.split('/')[1] || '';
+  if (subtype === 'json' || subtype.endsWith('+json')) {
+    return 'json';
+  }
+  if (subtype === 'yaml' || subtype === 'x-yaml') {
+    return 'yaml';
+  }
+  if (mediaType === 'application/x-www-form-urlencoded') {
+    return 'form';
+  }
+  if (mediaType.startsWith('text/')) {
+    return 'text';
+  }
+  return undefined;
+}
+
+function checkSize(size, maxBodySize) {
+  if (maxBodySize !== undefined && size > maxBodySize) {
+    const error = new Error(`request body too large: ${size} bytes, limit is ${maxBodySize}`);
+    error.status = 413;
+    throw error;
+  }
+}
+
+/**
+ * Reads and parses the request body.
+ *
+ * @param {Request} request The universal request
+ * @param {string} type the body type
+ * @param {import('./body-data-wrapper').BodyDataOptions} opts Options
+ * @returns {Promise<{ raw: Buffer, body: any }>} the raw bytes and the parsed body
+ */
+async function readBody(request, type, opts) {
+  const { maxBodySize } = opts;
+  const declaredSize = Number.parseInt(request.headers.get('content-length'), 10);
+  if (!Number.isNaN(declaredSize)) {
+    checkSize(declaredSize, maxBodySize);
+  }
+  const raw = await request.buffer();
+  checkSize(raw.length, maxBodySize);
+
+  if (type === 'json') {
+    const json = JSON.parse(raw.toString());
+    if (typeof json !== 'object' || json === null) {
+      throw new Error('JSON body must be an object');
+    }
+    return { raw, body: json };
+  }
+  if (type === 'form') {
+    return { raw, body: parseParams(new URLSearchParams(raw.toString()), opts) };
+  }
+  return { raw, body: raw.toString() };
+}
+
+/**
+ * Wraps a function with a body data middleware that sets `context.data` to
+ * `{ query, body, type }`.
  *
  * @param {UniversalFunction} func the universal function
  * @param {BodyDataOptions} [opts] Options
  * @returns {UniversalFunction} an universal function with the added middleware.
  */
 export default function bodyData(func, opts = {}) {
+  const { maxBodySize } = opts;
+  if (maxBodySize !== undefined && !(Number.isInteger(maxBodySize) && maxBodySize >= 0)) {
+    throw new TypeError(`maxBodySize must be a non-negative integer, got ${maxBodySize}`);
+  }
+
   return async (request, context) => {
+    let req = request;
     try {
-      context.data = await getData(request, opts);
+      const query = parseParams(new URL(request.url).searchParams, opts);
+      const type = getBodyType(request);
+      if (type) {
+        const { raw, body } = await readBody(request, type, opts);
+        context.data = { query, body, type };
+        // the body is used up now, so hand the function a request with the same bytes
+        req = new Request(request.url, {
+          ...request.init,
+          method: request.method,
+          headers: request.headers,
+          body: raw,
+        });
+      } else {
+        context.data = { query };
+      }
     } catch (e) {
       const { log = console } = context;
+      const status = e.status || 400;
       log.info(`error parsing post body: ${e.message}`);
       return new Response('', {
-        status: 400,
+        status,
         headers: {
-          'x-error': 'error parsing request body',
+          'x-error': status === 413 ? 'request body too large' : 'error parsing request body',
         },
       });
     }
-    const newreq = new Request(request.url, request.init);
-    return func(newreq, context);
+    return func(req, context);
   };
 }
