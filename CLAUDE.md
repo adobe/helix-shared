@@ -38,7 +38,7 @@ Each package releases independently via **semantic-release** with `semantic-rele
 Most packages are middleware "wrappers" composed via `@adobe/helix-shared-wrap`'s `.with()` chain on a main handler. A few (`config`, `git`, `storage`, `queue`, `string`, `utils`, `async`, `process-queue`, `prune`, `tokencache`, `indexer`) are plain libraries.
 
 - **helix-shared-async** — Tiny async primitives (`sleep(ms)`, `nextTick()`). Used to yield to the event loop or pause within async flows.
-- **helix-shared-body-data** — Wrap middleware that parses form/JSON request bodies (POST/PUT) and exposes them on `context.data` for Helix Universal serverless functions.
+- **helix-shared-body-data** — Wrap middleware that sets `context.data` to `{ query, body, type }` for Helix Universal serverless functions: the query parameters always, plus a JSON, form, YAML or text body on POST/PUT/PATCH.
 - **helix-shared-bounce** — Wrap middleware that races a "fast" responder against the slow main handler and returns whichever finishes first; the slow side keeps running via fetch so it isn't aborted. Supports a `debounce` predicate to skip bouncing per request.
 - **helix-shared-config** — Loads, validates, and exposes Helix YAML configs (`helix-config.yaml`, `helix-fstab.yaml`, `helix-query.yaml`, `helix-markup.yaml`) via JSON Schema. The largest package; see "Architecture notes" below.
 - **helix-shared-git** — `GitUrl` class that parses, normalizes, and re-emits Git URLs with `protocol/hostname/owner/repo/ref/path`. Used everywhere Helix needs to identify a repo+ref.
