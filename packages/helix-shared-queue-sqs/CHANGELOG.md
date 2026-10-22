@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-queue-sqs-v1.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-sqs-v1.0.1...@adobe/helix-shared-queue-sqs-v1.0.2) (2026-10-22)
+
+
+### Bug Fixes
+
+* return cleanup from `deserialize` ([#1307](https://github.com/adobe/helix-shared/issues/1307)) ([9882fcf](https://github.com/adobe/helix-shared/commit/9882fcf05b6201ec673f870b2b37c5e61332e909))
+
 # [@adobe/helix-shared-queue-sqs-v1.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-sqs-v1.0.0...@adobe/helix-shared-queue-sqs-v1.0.1) (2026-10-22)
 
 
