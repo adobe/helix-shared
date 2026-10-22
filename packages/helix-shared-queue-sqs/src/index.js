@@ -12,8 +12,7 @@
 
 export { SqsBackend } from './SqsBackend.js';
 export {
-  createDefaultBackendFactory,
-  createBackendFactory,
+  createDefaultBackendFactory, createBackendFactory,
 } from './createDefaultBackendFactory.js';
 export { QueueServiceSqs } from './QueueServiceSqs.js';
 export { dereferenceMessageBody, isSwappedBody } from './dereferenceMessageBody.js';
