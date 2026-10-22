@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-queue-sqs-v1.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-sqs-v1.0.0...@adobe/helix-shared-queue-sqs-v1.0.1) (2026-10-22)
+
+
+### Bug Fixes
+
+* make a small commit that creates a new release ([6f65030](https://github.com/adobe/helix-shared/commit/6f65030277f144c1f4c4b2730dc82184dc68e30c))
+
 # @adobe/helix-shared-queue-sqs-v1.0.0 (2026-09-15)
 
 
