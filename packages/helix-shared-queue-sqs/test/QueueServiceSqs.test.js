@@ -104,6 +104,8 @@ describe('QueueServiceSqs', () => {
       assert.strictEqual(await service.isSwapped(message), true);
       const resolved = await service.deserialize(message);
       assert.deepStrictEqual(JSON.parse(resolved.body), { owner: 'adobe', repo: 'helix-indexer', data: 'the real body' });
+      await resolved.cleanup();
+      assert.strictEqual(await bucket.get('k.json'), null);
     });
 
     it('isSwapped() returns false for a plain (non-swapped) message', async () => {

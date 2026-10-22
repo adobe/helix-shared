@@ -79,10 +79,10 @@ export class QueueServiceSqs extends QueueService {
    * @returns {Promise<import('@adobe/helix-shared-queue').ReceivedMessage>}
    */
   async deserialize(message) {
-    const { body } = await dereferenceMessageBody(message.body, {
+    const { body, cleanup } = await dereferenceMessageBody(message.body, {
       storage: this.storage,
       log: this.log,
     });
-    return body === message.body ? message : { ...message, body };
+    return body === message.body ? message : { ...message, body, cleanup };
   }
 }
