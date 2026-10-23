@@ -33,9 +33,10 @@ export declare interface BodyDataOptions {
   coerceNumber?:boolean;
 
   /**
-   * Largest body in bytes that the wrapper reads. A bigger body gets a 413 response.
-   * Only applies to the bodies the wrapper parses (json, form, yaml, text).
-   * No limit if not set.
+   * Largest body in bytes that the wrapper accepts. A bigger body gets a 413 response.
+   * Only applies to the bodies the wrapper parses (json, form, yaml, text). Unless the
+   * content-length is already too big, the whole body is read before the size is checked,
+   * so this doesn't limit memory. Must be a non-negative integer. No limit if not set.
    */
   maxBodySize?:number;
 }

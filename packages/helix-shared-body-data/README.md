@@ -34,13 +34,14 @@ when the wrapper read the body:
 
 A JSON type is `*/json` or `*/*+json`, a YAML type is `*/yaml` or `*/x-yaml`. Only the media type
 counts, not its parameters, and case doesn't matter. `text/json` is JSON and `text/yaml` is YAML.
+A content type that isn't exactly `type/subtype`, like `application/json/x` or `text/`, isn't read.
 
 `query` and a form `body` are objects without a prototype. Repeated keys (`foo=a&foo=b`) become
 arrays, and so do indexed keys (`foo[]=a` or `foo[2]=a`), with indices up to 99.
 
-When the wrapper read the body, the function gets a new request with the same method, headers and
-body bytes, so it can still call `json()`, `text()` or `buffer()`. Otherwise the function gets the
-original request.
+When the wrapper read the body, the function gets a new request with the same method, headers, body
+bytes and options (signal, redirect mode and so on), so it can still call `json()`, `text()` or
+`buffer()`. Otherwise the function gets the original request.
 
 ## Options
 
@@ -52,9 +53,12 @@ export const main = wrap(run)
 - `coerceBoolean`: turns `'true'` and `'false'` into booleans.
 - `coerceInt`: turns integer strings into numbers.
 - `coerceNumber`: turns number strings like `-1.5` or `2e3` into numbers.
-- `maxBodySize`: the largest body in bytes the wrapper reads. Not set means no limit. It only
-  applies to bodies the wrapper parses (JSON, form, YAML, text). It is checked against the
-  `content-length` header before reading and against the bytes read after.
+- `maxBodySize`: the largest body in bytes the wrapper accepts. A bigger body gets a 413. Not set
+  means no limit. It only applies to bodies the wrapper parses (JSON, form, YAML, text). A
+  `content-length` above the limit is turned down before anything is read. Without one, or when
+  it's too small, the wrapper reads the whole body and then checks its size, so the option doesn't
+  limit memory. It has to be a non-negative integer; anything else throws when you wrap the
+  function.
 
 The coerce options apply to `query` and to form bodies, not to JSON.
 
@@ -74,7 +78,9 @@ read `context.data.x` got `x` from the body if there was a JSON or form body (or
 
 - Read `context.data.query.x` or `context.data.body?.x`, depending on where `x` comes from.
 - If a parameter can come from either, decide in your code which one wins. To keep the 2.x
-  behaviour: `const params = ['json', 'form'].includes(type) ? body : query;`
+  behaviour: `const params = ['json', 'form'].includes(type) ? body : query;`. If you passed
+  `supportYAML: true`, add `'yaml'` to that list: 2.x then put the YAML string into `context.data`
+  instead of the query.
 - YAML bodies are always read now and the `supportYAML` option is gone. The YAML string is in
   `context.data.body`, with `type` set to `yaml`.
 - `text/*` bodies are read now. In 2.x they were left alone and `context.data` held the query.

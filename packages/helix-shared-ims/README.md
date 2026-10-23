@@ -105,7 +105,8 @@ Request parameters, including the `access_token` that IMS sends back to the logi
 routes, are read from `context.data`, which `@adobe/helix-shared-body-data` 3.x sets. Add
 `.with(bodyData)` after `.with(ims)` so that body-data runs first, as in the example below.
 When body-data read a JSON or form body, the parameters come from that body, otherwise from
-the query.
+the query. That's what body-data 2.x did by default. If your app passed `supportYAML: true` to
+body-data 2.x, a YAML body used to hide the query; now the token in the query is used.
 
 ## Context Properties
 
