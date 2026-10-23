@@ -198,7 +198,7 @@ describe('SqsBackend', () => {
       const attributes = {
         type: {
           DataType: 'String',
-          StringValue: 'webhook',
+          StringValue: 'my-message-type',
         },
       };
       nock('https://sqs.fake.amazonaws.com')
