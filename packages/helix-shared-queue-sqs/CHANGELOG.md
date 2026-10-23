@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-queue-sqs-v1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-sqs-v1.0.2...@adobe/helix-shared-queue-sqs-v1.1.0) (2026-10-23)
+
+
+### Features
+
+* **sqs:** support passing attributes to messages ([#1308](https://github.com/adobe/helix-shared/issues/1308)) ([f5b2588](https://github.com/adobe/helix-shared/commit/f5b258813b6af069be2b43571967378d063e4fe5))
+
 # [@adobe/helix-shared-queue-sqs-v1.0.2](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-sqs-v1.0.1...@adobe/helix-shared-queue-sqs-v1.0.2) (2026-10-22)
 
 
