@@ -28,6 +28,11 @@ import { toReceivedMessage } from './toReceivedMessage.js';
 const MAX_BATCH_ENTRIES = 10;
 
 /**
+ * Concurrency when receiving and deleting messages.
+ */
+const CONCURRENCY = 10;
+
+/**
  * Maximum total serialized size of a single `SendMessageBatchCommand` call (SQS API limit,
  * with a small per-entry fudge factor for request overhead, matching `BatchedQueueClient`).
  */
@@ -90,6 +95,8 @@ export class SqsBackend extends AbstractQueueBackend {
 
   #swapPrefix;
 
+  #concurrency;
+
   #queueUrlPromise;
 
   /**
@@ -97,7 +104,7 @@ export class SqsBackend extends AbstractQueueBackend {
    */
   constructor({
     client, queueName, log = console, storage, bucketName,
-    swapPrefix = DEFAULT_SWAP_PREFIX,
+    swapPrefix = DEFAULT_SWAP_PREFIX, concurrency = CONCURRENCY,
   }) {
     super();
     this.#client = client;
@@ -106,6 +113,7 @@ export class SqsBackend extends AbstractQueueBackend {
     this.#storage = storage;
     this.#bucketName = bucketName;
     this.#swapPrefix = swapPrefix;
+    this.#concurrency = concurrency;
   }
 
   // eslint-disable-next-line class-methods-use-this -- fixed tag, like S3Backend's `name`
@@ -278,38 +286,47 @@ export class SqsBackend extends AbstractQueueBackend {
   async receiveBatch({ minTime = 10, maxTime = 30, maxMessages = 1000 } = {}) {
     const queueUrl = await this.#resolveQueueUrl();
     const rawMessages = [];
+    let reserved = 0;
     const endMinTime = Date.now() + minTime * 1000;
     const endMaxTime = Date.now() + maxTime * 1000;
 
-    let maybeMore = false;
-    while (rawMessages.length < maxMessages) {
-      let timeRemaining = Math.round((endMinTime - Date.now()) / 1000);
-      if (timeRemaining <= 0 && maybeMore) {
-        timeRemaining = Math.round((endMaxTime - Date.now()) / 1000);
-      }
-      if (timeRemaining <= 0) {
-        break;
-      }
-      const waitTime = Math.min(20, timeRemaining);
-      const maxMsgs = Math.min(MAX_BATCH_ENTRIES, maxMessages - rawMessages.length);
+    const poller = async () => {
+      let maybeMore = false;
+      while (reserved < maxMessages) {
+        let timeRemaining = Math.round((endMinTime - Date.now()) / 1000);
+        if (timeRemaining <= 0 && maybeMore) {
+          timeRemaining = Math.round((endMaxTime - Date.now()) / 1000);
+        }
+        if (timeRemaining <= 0) {
+          break;
+        }
+        const waitTime = Math.min(20, timeRemaining);
+        const maxMsgs = Math.min(MAX_BATCH_ENTRIES, maxMessages - rawMessages.length);
+        reserved += maxMsgs;
 
-      let result;
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        result = await this.#client.send(new ReceiveMessageCommand({
-          QueueUrl: queueUrl,
-          MaxNumberOfMessages: maxMsgs,
-          WaitTimeSeconds: waitTime,
-          MessageAttributeNames: ['All'],
-          AttributeNames: ['All'],
-        }));
-      } catch (e) {
-        throw this._wrapError(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
+        let result;
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          result = await this.#client.send(new ReceiveMessageCommand({
+            QueueUrl: queueUrl,
+            MaxNumberOfMessages: maxMsgs,
+            WaitTimeSeconds: waitTime,
+            MessageAttributeNames: ['All'],
+            AttributeNames: ['All'],
+          }));
+        } catch (e) {
+          throw this._wrapError(e, e.message, {
+            status: e.$metadata?.httpStatusCode, code: e.Code,
+          });
+        }
+        const { Messages = [] } = result;
+        reserved -= (maxMsgs - Messages.length);
+        rawMessages.push(...Messages);
+        maybeMore = Messages.length > 0;
       }
-      const { Messages = [] } = result;
-      rawMessages.push(...Messages);
-      maybeMore = Messages.length > 0;
-    }
+    };
+    await Promise.all(Array.from({ length: this.#concurrency }, poller));
+    this.#log.info(`received ${rawMessages.length} messages from queue ${this.#queueName}`);
 
     const messages = rawMessages.map((raw) => this.#toReceivedMessage(raw));
     return { messages };
@@ -363,28 +380,41 @@ export class SqsBackend extends AbstractQueueBackend {
     const deleted = [];
     const failed = [];
 
-    for (let i = 0; i < messages.length; i += MAX_BATCH_ENTRIES) {
-      const chunk = messages.slice(i, i + MAX_BATCH_ENTRIES);
-      const entries = chunk.map((m) => ({ Id: m.id, ReceiptHandle: m.raw.ReceiptHandle }));
-      let result;
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        result = await this.#client.send(new DeleteMessageBatchCommand({
-          QueueUrl: queueUrl,
-          Entries: entries,
+    const messagesCopy = [...messages];
+
+    const worker = async () => {
+      while (messagesCopy.length) {
+        const chunk = messagesCopy.splice(0, 10);
+        const entries = chunk.map((msg) => ({
+          Id: msg.id,
+          ReceiptHandle: msg.raw.ReceiptHandle,
         }));
-      } catch (e) {
-        throw this._wrapError(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
-      }
-      const { Successful = [], Failed = [] } = result;
-      Successful.forEach(({ Id }) => deleted.push(byId.get(Id)));
-      Failed.forEach(({ Id, Code, Message }) => {
-        failed.push({
-          message: byId.get(Id),
-          error: this._wrapError(new Error(Message), Message, { code: Code }),
+
+        let result;
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          result = await this.#client.send(new DeleteMessageBatchCommand({
+            QueueUrl: queueUrl,
+            Entries: entries,
+          }));
+        } catch (e) {
+          throw this._wrapError(e, e.message, {
+            status: e.$metadata?.httpStatusCode, code: e.Code,
+          });
+        }
+        const { Successful = [], Failed = [] } = result;
+        Successful.forEach(({ Id }) => deleted.push(byId.get(Id)));
+        Failed.forEach(({ Id, Code, Message }) => {
+          failed.push({
+            message: byId.get(Id),
+            error: this._wrapError(new Error(Message), Message, { code: Code }),
+          });
         });
-      });
-    }
+      }
+    };
+    await Promise.all(Array.from({ length: this.#concurrency }, worker));
+    this.#log.info(`deleted ${deleted.length}/${messages.length} messages from queue ${this.#queueName} (${failed.length} failed)`);
+
     await Promise.all(deleted.map((m) => this.#cleanupSwap(m)));
     return { deleted, failed };
   }

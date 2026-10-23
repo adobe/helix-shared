@@ -560,7 +560,7 @@ describe('SqsBackend', () => {
     it('keeps polling until minTime elapses when nothing arrives, one call per wait window', async () => {
       const clock = sinon.useFakeTimers({ toFake: ['Date'], now: 0 });
       try {
-        const backend = buildTestBackend();
+        const backend = buildTestBackend({ concurrency: 1 });
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
           .post('/')
@@ -585,10 +585,38 @@ describe('SqsBackend', () => {
       }
     });
 
+    it('starts pollers according to concurrency setting', async () => {
+      const clock = sinon.useFakeTimers({ toFake: ['Date'], now: 0 });
+      try {
+        const backend = buildTestBackend({ concurrency: 5 });
+        nock('https://sqs.fake.amazonaws.com')
+          .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+          .post('/')
+          .reply(200, { QueueUrl: QUEUE_URL });
+
+        let calls = 0;
+        nock('https://sqs.fake.amazonaws.com')
+          .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
+          .post('/', (body) => {
+            calls += 1;
+            clock.tick(body.WaitTimeSeconds * 1000);
+            return true;
+          })
+          .times(5)
+          .reply(200, { Messages: [] });
+
+        const result = await backend.receiveBatch({ minTime: 45, maxTime: 60, maxMessages: 1000 });
+        assert.deepStrictEqual(result.messages, []);
+        assert.strictEqual(calls, 5);
+      } finally {
+        clock.restore();
+      }
+    });
+
     it('keeps polling past minTime up to maxTime while messages keep arriving', async () => {
       const clock = sinon.useFakeTimers({ toFake: ['Date'], now: 0 });
       try {
-        const backend = buildTestBackend();
+        const backend = buildTestBackend({ concurrency: 1 });
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
           .post('/')
