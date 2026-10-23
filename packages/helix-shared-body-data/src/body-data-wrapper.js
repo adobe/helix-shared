@@ -16,6 +16,8 @@ const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 
 const NUMBER_PATTERN = /^-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 
+const MEDIA_TYPE_PATTERN = /^([!#$%&'*+.^_`|~0-9a-z-]+)\/([!#$%&'*+.^_`|~0-9a-z-]+)$/;
+
 export const MAX_ARRAY_INDEX = 99;
 
 /**
@@ -75,17 +77,21 @@ function getBodyType(request) {
     return undefined;
   }
   const mediaType = (request.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
-  const subtype = mediaType.split('/')[1] || '';
+  const match = MEDIA_TYPE_PATTERN.exec(mediaType);
+  if (!match) {
+    return undefined;
+  }
+  const [, type, subtype] = match;
   if (subtype === 'json' || subtype.endsWith('+json')) {
     return 'json';
   }
   if (subtype === 'yaml' || subtype === 'x-yaml') {
     return 'yaml';
   }
-  if (mediaType === 'application/x-www-form-urlencoded') {
+  if (type === 'application' && subtype === 'x-www-form-urlencoded') {
     return 'form';
   }
-  if (mediaType.startsWith('text/')) {
+  if (type === 'text') {
     return 'text';
   }
   return undefined;
@@ -151,12 +157,21 @@ export default function bodyData(func, opts = {}) {
       if (type) {
         const { raw, body } = await readBody(request, type, opts);
         context.data = { query, body, type };
-        // the body is used up now, so hand the function a request with the same bytes
+        // the body is used up now, so hand the function a request with the same bytes.
+        // the headers go in as a plain object, since the request may come from another
+        // copy of @adobe/fetch, whose Headers this copy doesn't recognise.
         req = new Request(request.url, {
           ...request.init,
           method: request.method,
-          headers: request.headers,
+          headers: request.headers.raw(),
           body: raw,
+          signal: request.signal,
+          redirect: request.redirect,
+          cache: request.cache,
+          follow: request.follow,
+          counter: request.counter,
+          compress: request.compress,
+          decode: request.decode,
         });
       } else {
         context.data = { query };
