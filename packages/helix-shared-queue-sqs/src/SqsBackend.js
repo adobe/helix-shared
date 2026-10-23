@@ -325,8 +325,10 @@ export class SqsBackend extends AbstractQueueBackend {
         maybeMore = Messages.length > 0;
       }
     };
-    await Promise.all(Array.from({ length: this.#concurrency }, poller));
-
+    const result = await Promise.allSettled(Array.from({ length: this.#concurrency }, poller));
+    if (result.every(({ status }) => status === 'rejected')) {
+      throw result[0].reason;
+    }
     const messages = rawMessages.map((raw) => this.#toReceivedMessage(raw));
     return { messages };
   }
@@ -407,7 +409,10 @@ export class SqsBackend extends AbstractQueueBackend {
         });
       }
     };
-    await Promise.all(Array.from({ length: this.#concurrency }, worker));
+    const result = await Promise.allSettled(Array.from({ length: this.#concurrency }, worker));
+    if (result.every(({ status }) => status === 'rejected')) {
+      throw result[0].reason;
+    }
 
     await Promise.all(deleted.map((m) => this.#cleanupSwap(m)));
     return { deleted, failed };

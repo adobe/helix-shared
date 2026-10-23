@@ -803,7 +803,7 @@ describe('SqsBackend', () => {
     });
 
     it('throws a QueueError when the DeleteMessageBatchCommand call itself fails', async () => {
-      const backend = buildTestBackend();
+      const backend = buildTestBackend({ concurrency: 1 });
       nock('https://sqs.fake.amazonaws.com')
         .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
         .post('/')
