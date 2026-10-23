@@ -62,6 +62,37 @@ function send(url, body, contentType, method = 'POST', headers = {}) {
   });
 }
 
+/**
+ * Headers from another installed copy of @adobe/fetch: same methods, but not an instance of the
+ * Headers class this package imports. The helix-universal adapters can bring their own copy.
+ */
+class OtherHeaders {
+  constructor(headers) {
+    this.headers = headers;
+  }
+
+  get(name) {
+    return this.headers.get(name);
+  }
+
+  raw() {
+    return this.headers.raw();
+  }
+}
+
+function fromOtherFetchCopy(request) {
+  const headers = new OtherHeaders(request.headers);
+  return new Proxy(request, {
+    get: (target, prop) => {
+      if (prop === 'headers') {
+        return headers;
+      }
+      const value = Reflect.get(target, prop, target);
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+  });
+}
+
 async function assertError(response, status, error) {
   assert.strictEqual(response.status, status);
   assert.strictEqual(response.headers.get('x-error'), error);
@@ -357,6 +388,11 @@ describe('Body Data Wrapper (bodies it does not read)', () => {
     'multipart/form-data; boundary="x/json;y"',
     'multipart/form-data; boundary=x/yaml',
     'json',
+    'application/json/extra',
+    '/json',
+    'text/',
+    'text/plain/x',
+    'application/x-www-form-urlencoded/x',
   ].forEach((type) => {
     it(`passes the request on unchanged for type ${type}`, async () => {
       const bytes = Buffer.from([0, 1, 2, 250, 251, 252]);
@@ -411,6 +447,46 @@ describe('Body Data Wrapper (request handed to the function)', () => {
     assert.deepStrictEqual(seen.data.body, { a: 1 });
     assert.strictEqual(seen.request.method, 'POST');
     assert.strictEqual(await seen.request.text(), json);
+  });
+
+  it('keeps the headers of a request made with another copy of @adobe/fetch', async () => {
+    const request = fromOtherFetchCopy(send('http://localhost', json, 'application/json', 'POST', {
+      authorization: 'Bearer token',
+      cookie: 'ims_access_token=abc',
+      'x-forwarded-host': 'www.example.com',
+    }));
+    const { seen } = await run(request);
+    assert.deepStrictEqual(seen.data.body, { a: 1 });
+    assert.strictEqual(seen.request.headers.get('authorization'), 'Bearer token');
+    assert.strictEqual(seen.request.headers.get('cookie'), 'ims_access_token=abc');
+    assert.strictEqual(seen.request.headers.get('x-forwarded-host'), 'www.example.com');
+    assert.strictEqual(seen.request.headers.get('content-type'), 'application/json');
+    assert.strictEqual(await seen.request.text(), json);
+  });
+
+  it('keeps the options of a cloned request', async () => {
+    const controller = new AbortController();
+    const request = new Request('http://localhost', {
+      method: 'POST',
+      body: json,
+      headers: { 'content-type': 'application/json' },
+      signal: controller.signal,
+      redirect: 'manual',
+      cache: 'no-store',
+      follow: 1,
+      counter: 2,
+      compress: false,
+      decode: false,
+    }).clone();
+    const { seen } = await run(request);
+    assert.deepStrictEqual(seen.data.body, { a: 1 });
+    assert.strictEqual(seen.request.signal, controller.signal);
+    assert.strictEqual(seen.request.redirect, 'manual');
+    assert.strictEqual(seen.request.cache, 'no-store');
+    assert.strictEqual(seen.request.follow, 1);
+    assert.strictEqual(seen.request.counter, 2);
+    assert.strictEqual(seen.request.compress, false);
+    assert.strictEqual(seen.request.decode, false);
   });
 
   it('lets the function read a URLSearchParams body again', async () => {
