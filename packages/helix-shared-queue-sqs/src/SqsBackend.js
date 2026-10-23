@@ -326,7 +326,6 @@ export class SqsBackend extends AbstractQueueBackend {
       }
     };
     await Promise.all(Array.from({ length: this.#concurrency }, poller));
-    this.#log.info(`received ${rawMessages.length} messages from queue ${this.#queueName}`);
 
     const messages = rawMessages.map((raw) => this.#toReceivedMessage(raw));
     return { messages };
@@ -385,11 +384,7 @@ export class SqsBackend extends AbstractQueueBackend {
     const worker = async () => {
       while (messagesCopy.length) {
         const chunk = messagesCopy.splice(0, 10);
-        const entries = chunk.map((msg) => ({
-          Id: msg.id,
-          ReceiptHandle: msg.raw.ReceiptHandle,
-        }));
-
+        const entries = chunk.map((m) => ({ Id: m.id, ReceiptHandle: m.raw.ReceiptHandle }));
         let result;
         try {
           // eslint-disable-next-line no-await-in-loop
@@ -413,7 +408,6 @@ export class SqsBackend extends AbstractQueueBackend {
       }
     };
     await Promise.all(Array.from({ length: this.#concurrency }, worker));
-    this.#log.info(`deleted ${deleted.length}/${messages.length} messages from queue ${this.#queueName} (${failed.length} failed)`);
 
     await Promise.all(deleted.map((m) => this.#cleanupSwap(m)));
     return { deleted, failed };
