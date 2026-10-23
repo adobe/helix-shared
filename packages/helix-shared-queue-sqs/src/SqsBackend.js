@@ -193,10 +193,13 @@ export class SqsBackend extends AbstractQueueBackend {
    */
   async sendBatch(messages) {
     const queueUrl = await this.#resolveQueueUrl();
-    const pending = messages.map(({ body, groupId, dedupId }) => ({
+    const pending = messages.map(({
+      body, groupId, dedupId, attributes,
+    }) => ({
       MessageBody: body,
       MessageGroupId: groupId,
       MessageDeduplicationId: dedupId,
+      ...(attributes ? { MessageAttributes: attributes } : {}),
     }));
 
     const messageIds = [];

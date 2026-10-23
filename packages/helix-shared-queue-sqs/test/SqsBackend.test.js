@@ -193,6 +193,45 @@ describe('SqsBackend', () => {
       assert.strictEqual(result.messageIds.length, 12);
     });
 
+    it('includes attributes passed in the message', async () => {
+      const backend = buildTestBackend();
+      const attributes = {
+        type: {
+          DataType: 'String',
+          StringValue: 'webhook',
+        },
+      };
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
+        .post('/')
+        .reply(200, { QueueUrl: QUEUE_URL });
+
+      let entries;
+      nock('https://sqs.fake.amazonaws.com')
+        .matchHeader('x-amz-target', 'AmazonSQS.SendMessageBatch')
+        .post('/')
+        .reply(200, (uri, rawBody) => {
+          const body = JSON.parse(rawBody);
+          entries = body.Entries;
+          return {
+            Successful: body.Entries.map(({ Id }) => ({ Id, MessageId: `mid-${Id}` })),
+            Failed: [],
+          };
+        });
+
+      const message = {
+        body: 'msg-1',
+        attributes,
+      };
+      const result = await backend.sendBatch([message]);
+      assert.strictEqual(result.messageIds.length, 1);
+      assert.deepStrictEqual(entries, [{
+        Id: 'msg0',
+        MessageAttributes: attributes,
+        MessageBody: 'msg-1',
+      }]);
+    });
+
     it('flushes a non-empty batch early when the next message would not fit', async () => {
       const backend = buildTestBackend();
       nock('https://sqs.fake.amazonaws.com')
