@@ -414,7 +414,7 @@ export class SqsBackend extends AbstractQueueBackend {
     };
     const result = await Promise.allSettled(Array.from({ length: this.#concurrency }, worker));
     if (result.every(({ status, value }) => (status === 'rejected' || value === 0))) {
-      throw result[0].reason;
+      throw result.find(({ status }) => status === 'rejected').reason;
     }
 
     await Promise.all(deleted.map((m) => this.#cleanupSwap(m)));
