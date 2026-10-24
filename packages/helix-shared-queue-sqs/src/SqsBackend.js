@@ -210,36 +210,58 @@ export class SqsBackend extends AbstractQueueBackend {
       ...(attributes ? { MessageAttributes: attributes } : {}),
     }));
 
-    const messageIds = [];
+    // pass 1: build batches (<= MAX_BATCH_ENTRIES entries, <= MAX_BATCH_BYTES)
+    const batches = [];
     let batch = [];
     let batchSize = 0;
+    const flush = () => {
+      if (batch.length) {
+        batches.push(batch);
+        batch = [];
+        batchSize = 0;
+      }
+    };
 
-    while (pending.length) {
-      let entry = pending.shift();
+    for (let entry of pending) {
       let size = entrySize(entry);
-      let flush = false;
-
-      if (batchSize + size <= MAX_BATCH_BYTES) {
-        batch.push(entry);
-        batchSize += size;
-      } else if (batch.length === 0) {
+      if (size > MAX_BATCH_BYTES) {
+        // can never fit in a batch, even alone
         this.#log.debug(`message too big: ${size} bytes. spilling...`);
         // eslint-disable-next-line no-await-in-loop
         entry = await this.#spill(entry);
         size = entrySize(entry);
-        batch.push(entry);
-        batchSize += size;
-      } else {
-        pending.unshift(entry);
-        flush = true;
       }
+      if (batch.length === MAX_BATCH_ENTRIES || batchSize + size > MAX_BATCH_BYTES) {
+        flush();
+      }
+      batch.push(entry);
+      batchSize += size;
+    }
+    flush();
 
-      if (flush || batch.length === MAX_BATCH_ENTRIES || pending.length === 0) {
-        // eslint-disable-next-line no-await-in-loop
-        messageIds.push(...(await this.#sendChunk(queueUrl, batch)));
-        batch = [];
-        batchSize = 0;
+    // pass 2: send batches concurrently
+    const messageIds = [];
+    let next = 0;
+    let aborted = false;
+
+    const worker = async () => {
+      while (!aborted && next < batches.length) {
+        const chunk = batches[next];
+        next += 1; // no await between the check and the increment, so no two workers share a batch
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          messageIds.push(...(await this.#sendChunk(queueUrl, chunk)));
+        } catch (e) {
+          aborted = true; // stop picking up new batches, then propagate
+          throw e;
+        }
       }
+    };
+    const result = await Promise.allSettled(Array.from({
+      length: Math.min(this.#concurrency, batches.length),
+    }, worker));
+    if (result.some(({ status }) => status === 'rejected')) {
+      throw result.find(({ status }) => status === 'rejected').reason;
     }
     return { messageIds };
   }
