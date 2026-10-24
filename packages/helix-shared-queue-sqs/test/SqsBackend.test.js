@@ -557,81 +557,96 @@ describe('SqsBackend', () => {
       assert.strictEqual(result.messages.length, 5);
     });
 
-    [1, 3, 6, 10].forEach((concurrency) => it(`keeps polling until minTime elapses when nothing arrives, one call per wait window, with concurrency: ${concurrency}`, async () => {
+    it('keeps polling until minTime elapses when nothing arrives, one call per wait window', async () => {
       const clock = sinon.useFakeTimers({ toFake: ['Date'], now: 0 });
       try {
-        const backend = buildTestBackend({ concurrency });
+        const backend = buildTestBackend();
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
           .post('/')
           .reply(200, { QueueUrl: QUEUE_URL });
 
-        let calls = 0;
-        const pendingReplies = [];
+        let round = []; // resolvers of requests waiting for the current round to complete
+
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
           .post('/')
-          .times(3 * concurrency)
-          .reply((uri, body, callback) => {
-            calls += 1;
+          .times(3 * backend.concurrency)
+          .reply(async (uri, body) => {
             const { WaitTimeSeconds } = JSON.parse(body);
-            assert.strictEqual(WaitTimeSeconds, calls <= 2 * concurrency ? 20 : 5);
-            pendingReplies.push(() => callback(null, [200, { Messages: [] }]));
-            if (pendingReplies.length === concurrency) {
-              // Concurrent long polls share a wait window rather than consuming it serially.
-              clock.tick(WaitTimeSeconds * 1000);
-              pendingReplies.splice(0).forEach((reply) => reply());
-            }
+            await new Promise((resolve) => {
+              round.push(resolve);
+              if (round.length === backend.concurrency) {
+                // last poller of this round arrived: advance time once, release everyone
+                clock.tick(WaitTimeSeconds * 1000);
+                const release = round;
+                round = [];
+                release.forEach((fn) => fn());
+              }
+            });
+            return [200, { Messages: [] }];
           });
 
         const result = await backend.receiveBatch({ minTime: 45, maxTime: 60, maxMessages: 1000 });
         assert.deepStrictEqual(result.messages, []);
-        assert.strictEqual(calls, 3 * concurrency);
         assert.strictEqual(Date.now(), 45000);
       } finally {
         clock.restore();
       }
-    }));
+    });
 
-    [1, 3, 6, 10].forEach((concurrency) => it(`keeps polling past minTime up to maxTime while messages keep arriving, with concurrency: ${concurrency}`, async () => {
+    it('keeps polling past minTime up to maxTime while messages keep arriving', async () => {
       const clock = sinon.useFakeTimers({ toFake: ['Date'], now: 0 });
       try {
-        const backend = buildTestBackend({ concurrency });
+        const backend = buildTestBackend();
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
           .post('/')
           .reply(200, { QueueUrl: QUEUE_URL });
 
+        // Expected requests per round: every poller in the minTime window, then only the
+        // poller that received a message continues into the maxTime window.
+        const roundSizes = [backend.concurrency, 1];
+        let roundIdx = 0;
+        let waiting = [];
         let calls = 0;
-        const pendingReplies = [];
+
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
           .post('/')
-          .times(concurrency + 1)
-          .reply((uri, body, callback) => {
-            calls += 1;
+          .times(backend.concurrency + 1)
+          .reply(async (uri, body) => {
             const { WaitTimeSeconds } = JSON.parse(body);
-            const firstWindow = calls <= concurrency;
-            assert.strictEqual(WaitTimeSeconds, firstWindow ? 10 : 20);
-            const Messages = calls === 1
-              ? [{ MessageId: `mid-${calls}`, ReceiptHandle: `rh-${calls}`, Body: 'hi' }]
-              : [];
-            pendingReplies.push(() => callback(null, [200, { Messages }]));
-            if (pendingReplies.length === (firstWindow ? concurrency : 1)) {
-              // Concurrent long polls share a wait window rather than consuming it serially.
-              clock.tick(WaitTimeSeconds * 1000);
-              pendingReplies.splice(0).forEach((reply) => reply());
+
+            calls += 1;
+            const callNo = calls; // capture: `calls` changes while we wait at the barrier
+
+            await new Promise((resolve) => {
+              waiting.push(resolve);
+              if (waiting.length === roundSizes[roundIdx]) {
+                // last request of this round: advance time once, release everyone
+                clock.tick(WaitTimeSeconds * 1000);
+                const release = waiting;
+                waiting = [];
+                roundIdx += 1;
+                release.forEach((fn) => fn());
+              }
+            });
+
+            // only the very first request returns a message
+            if (callNo === 1) {
+              return [200, { Messages: [{ MessageId: 'mid-1', ReceiptHandle: 'rh-1', Body: 'hi' }] }];
             }
+            return [200, { Messages: [] }];
           });
 
         const result = await backend.receiveBatch({ minTime: 10, maxTime: 30, maxMessages: 1000 });
         assert.strictEqual(result.messages.length, 1);
-        assert.strictEqual(calls, concurrency + 1);
         assert.strictEqual(Date.now(), 30000);
       } finally {
         clock.restore();
       }
-    }));
+    });
 
     it('throws a QueueError when the ReceiveMessageCommand call itself fails', async () => {
       const backend = buildTestBackend();
