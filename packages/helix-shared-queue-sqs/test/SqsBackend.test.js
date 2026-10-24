@@ -593,7 +593,7 @@ describe('SqsBackend', () => {
       }
     }));
 
-    [1, 3, 6, 10].forEach((concurrency) => it(`keeps polling past minTime up to maxTime while messages keep arriving with concurrency: ${concurrency}`, async () => {
+    [1, 3, 6, 10].forEach((concurrency) => it(`keeps polling past minTime up to maxTime while messages keep arriving, with concurrency: ${concurrency}`, async () => {
       const clock = sinon.useFakeTimers({ toFake: ['Date'], now: 0 });
       try {
         const backend = buildTestBackend({ concurrency });
