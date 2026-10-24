@@ -566,20 +566,30 @@ describe('SqsBackend', () => {
           .post('/')
           .reply(200, { QueueUrl: QUEUE_URL });
 
-        let calls = 0;
+        let round = []; // resolvers of requests waiting for the current round to complete
+
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
-          .post('/', (body) => {
-            calls += 1;
-            clock.tick(body.WaitTimeSeconds * 1000);
-            return true;
-          })
-          .times(3)
-          .reply(200, { Messages: [] });
+          .post('/')
+          .times(3 * backend.concurrency)
+          .reply(async (uri, body) => {
+            const { WaitTimeSeconds } = JSON.parse(body);
+            await new Promise((resolve) => {
+              round.push(resolve);
+              if (round.length === backend.concurrency) {
+                // last poller of this round arrived: advance time once, release everyone
+                clock.tick(WaitTimeSeconds * 1000);
+                const release = round;
+                round = [];
+                release.forEach((fn) => fn());
+              }
+            });
+            return [200, { Messages: [] }];
+          });
 
         const result = await backend.receiveBatch({ minTime: 45, maxTime: 60, maxMessages: 1000 });
         assert.deepStrictEqual(result.messages, []);
-        assert.strictEqual(calls, 3);
+        assert.strictEqual(Date.now(), 45000);
       } finally {
         clock.restore();
       }
@@ -594,27 +604,45 @@ describe('SqsBackend', () => {
           .post('/')
           .reply(200, { QueueUrl: QUEUE_URL });
 
+        // Expected requests per round: every poller in the minTime window, then only the
+        // poller that received a message continues into the maxTime window.
+        const roundSizes = [backend.concurrency, 1];
+        let roundIdx = 0;
+        let waiting = [];
         let calls = 0;
+
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
-          .post('/', (body) => {
+          .post('/')
+          .times(backend.concurrency + 1)
+          .reply(async (uri, body) => {
+            const { WaitTimeSeconds } = JSON.parse(body);
+
             calls += 1;
-            clock.tick(body.WaitTimeSeconds * 1000);
-            return true;
-          })
-          .times(2)
-          .reply(200, () => {
-            // first call (minTime window) returns a message, prompting extra polling up to
-            // maxTime; the second call (maxTime window) returns nothing, ending the loop.
-            if (calls === 1) {
-              return { Messages: [{ MessageId: 'mid-1', ReceiptHandle: 'rh-1', Body: 'hi' }] };
+            const callNo = calls; // capture: `calls` changes while we wait at the barrier
+
+            await new Promise((resolve) => {
+              waiting.push(resolve);
+              if (waiting.length === roundSizes[roundIdx]) {
+                // last request of this round: advance time once, release everyone
+                clock.tick(WaitTimeSeconds * 1000);
+                const release = waiting;
+                waiting = [];
+                roundIdx += 1;
+                release.forEach((fn) => fn());
+              }
+            });
+
+            // only the very first request returns a message
+            if (callNo === 1) {
+              return [200, { Messages: [{ MessageId: 'mid-1', ReceiptHandle: 'rh-1', Body: 'hi' }] }];
             }
-            return { Messages: [] };
+            return [200, { Messages: [] }];
           });
 
         const result = await backend.receiveBatch({ minTime: 10, maxTime: 30, maxMessages: 1000 });
         assert.strictEqual(result.messages.length, 1);
-        assert.strictEqual(calls, 2);
+        assert.strictEqual(Date.now(), 30000);
       } finally {
         clock.restore();
       }
