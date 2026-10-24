@@ -384,6 +384,7 @@ export class SqsBackend extends AbstractQueueBackend {
     const messagesCopy = [...messages];
 
     const worker = async () => {
+      let processed = 0;
       while (messagesCopy.length) {
         const chunk = messagesCopy.splice(0, 10);
         const entries = chunk.map((m) => ({ Id: m.id, ReceiptHandle: m.raw.ReceiptHandle }));
@@ -407,10 +408,12 @@ export class SqsBackend extends AbstractQueueBackend {
             error: this._wrapError(new Error(Message), Message, { code: Code }),
           });
         });
+        processed += Successful.length + Failed.length;
       }
+      return processed;
     };
     const result = await Promise.allSettled(Array.from({ length: this.#concurrency }, worker));
-    if (result.every(({ status }) => status === 'rejected')) {
+    if (result.every(({ status, value }) => (status === 'rejected' || value === 0))) {
       throw result[0].reason;
     }
 
