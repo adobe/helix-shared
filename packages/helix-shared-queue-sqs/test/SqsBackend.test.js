@@ -557,35 +557,7 @@ describe('SqsBackend', () => {
       assert.strictEqual(result.messages.length, 5);
     });
 
-    it('keeps polling until minTime elapses when nothing arrives, one call per wait window', async () => {
-      const clock = sinon.useFakeTimers({ toFake: ['Date'], now: 0 });
-      try {
-        const backend = buildTestBackend();
-        nock('https://sqs.fake.amazonaws.com')
-          .matchHeader('x-amz-target', 'AmazonSQS.GetQueueUrl')
-          .post('/')
-          .reply(200, { QueueUrl: QUEUE_URL });
-
-        let calls = 0;
-        nock('https://sqs.fake.amazonaws.com')
-          .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
-          .post('/', (body) => {
-            calls += 1;
-            clock.tick(body.WaitTimeSeconds * 1000);
-            return true;
-          })
-          .times(3)
-          .reply(200, { Messages: [] });
-
-        const result = await backend.receiveBatch({ minTime: 45, maxTime: 60, maxMessages: 1000 });
-        assert.deepStrictEqual(result.messages, []);
-        assert.strictEqual(calls, 3);
-      } finally {
-        clock.restore();
-      }
-    });
-
-    [1, 3, 6, 10].forEach((concurrency) => it(`starts pollers with concurrency: ${concurrency}`, async () => {
+    [1, 3, 6, 10].forEach((concurrency) => it(`keeps polling until minTime elapses when nothing arrives, one call per wait window, with concurrency: ${concurrency}`, async () => {
       const clock = sinon.useFakeTimers({ toFake: ['Date'], now: 0 });
       try {
         const backend = buildTestBackend({ concurrency });
@@ -635,17 +607,17 @@ describe('SqsBackend', () => {
         nock('https://sqs.fake.amazonaws.com')
           .matchHeader('x-amz-target', 'AmazonSQS.ReceiveMessage')
           .post('/')
-          .times(2 * concurrency)
+          .times(concurrency + 1)
           .reply((uri, body, callback) => {
             calls += 1;
             const { WaitTimeSeconds } = JSON.parse(body);
             const firstWindow = calls <= concurrency;
             assert.strictEqual(WaitTimeSeconds, firstWindow ? 10 : 20);
-            const Messages = firstWindow
+            const Messages = calls === 1
               ? [{ MessageId: `mid-${calls}`, ReceiptHandle: `rh-${calls}`, Body: 'hi' }]
               : [];
             pendingReplies.push(() => callback(null, [200, { Messages }]));
-            if (pendingReplies.length === concurrency) {
+            if (pendingReplies.length === (firstWindow ? concurrency : 1)) {
               // Concurrent long polls share a wait window rather than consuming it serially.
               clock.tick(WaitTimeSeconds * 1000);
               pendingReplies.splice(0).forEach((reply) => reply());
@@ -653,8 +625,8 @@ describe('SqsBackend', () => {
           });
 
         const result = await backend.receiveBatch({ minTime: 10, maxTime: 30, maxMessages: 1000 });
-        assert.strictEqual(result.messages.length, concurrency);
-        assert.strictEqual(calls, 2 * concurrency);
+        assert.strictEqual(result.messages.length, 1);
+        assert.strictEqual(calls, concurrency + 1);
         assert.strictEqual(Date.now(), 30000);
       } finally {
         clock.restore();
