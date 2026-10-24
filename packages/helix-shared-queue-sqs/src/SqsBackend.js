@@ -260,8 +260,9 @@ export class SqsBackend extends AbstractQueueBackend {
     const result = await Promise.allSettled(Array.from({
       length: Math.min(this.#concurrency, batches.length),
     }, worker));
-    if (result.some(({ status }) => status === 'rejected')) {
-      throw result.find(({ status }) => status === 'rejected').reason;
+    const rejected = result.find(({ status }) => status === 'rejected');
+    if (rejected) {
+      throw rejected.reason;
     }
     return { messageIds };
   }
