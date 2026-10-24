@@ -347,7 +347,9 @@ export class SqsBackend extends AbstractQueueBackend {
         maybeMore = Messages.length > 0;
       }
     };
-    const result = await Promise.allSettled(Array.from({ length: this.#concurrency }, poller));
+    const result = await Promise.allSettled(Array.from({
+      length: Math.min(this.#concurrency, maxMessages),
+    }, poller));
     if (result.every(({ status }) => status === 'rejected')) {
       throw result[0].reason;
     }
@@ -434,7 +436,9 @@ export class SqsBackend extends AbstractQueueBackend {
       }
       return processed;
     };
-    const result = await Promise.allSettled(Array.from({ length: this.#concurrency }, worker));
+    const result = await Promise.allSettled(Array.from({
+      length: Math.min(this.#concurrency, messages.length),
+    }, worker));
     if (result.every(({ status, value: processed }) => (status === 'rejected' || processed === 0))) {
       throw result.find(({ status }) => status === 'rejected').reason;
     }
