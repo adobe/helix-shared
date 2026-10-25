@@ -16,8 +16,6 @@ const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 
 const NUMBER_PATTERN = /^-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 
-const MEDIA_TYPE_PATTERN = /^([!#$%&'*+.^_`|~0-9a-z-]+)\/([!#$%&'*+.^_`|~0-9a-z-]+)$/;
-
 export const MAX_ARRAY_INDEX = 99;
 
 /**
@@ -77,11 +75,10 @@ function getBodyType(request) {
     return undefined;
   }
   const mediaType = (request.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
-  const match = MEDIA_TYPE_PATTERN.exec(mediaType);
-  if (!match) {
+  const [type, subtype, ...rest] = mediaType.split('/');
+  if (!type || !subtype || rest.length) {
     return undefined;
   }
-  const [, type, subtype] = match;
   if (subtype === 'json' || subtype.endsWith('+json')) {
     return 'json';
   }
