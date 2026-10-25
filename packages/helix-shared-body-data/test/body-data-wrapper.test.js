@@ -441,6 +441,14 @@ describe('Body Data Wrapper (request handed to the function)', () => {
     });
   });
 
+  it('hands the function the original request after reading its body', async () => {
+    const request = send('http://localhost', json, 'application/json');
+    const { seen } = await run(request);
+    assert.deepStrictEqual(seen.data.body, { a: 1 });
+    assert.strictEqual(seen.request, request);
+    assert.strictEqual(await seen.request.text(), json);
+  });
+
   it('lets the function read the body of a cloned request again', async () => {
     const request = send('http://localhost', json, 'application/json').clone();
     const { seen } = await run(request);
