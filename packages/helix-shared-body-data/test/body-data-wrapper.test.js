@@ -522,12 +522,18 @@ describe('Body Data Wrapper (maxBodySize)', () => {
     assert.strictEqual(seen.data.body.length, big.length);
   });
 
-  it('responds with 413 when the content-length is too big, without reading the body', async () => {
+  it('responds with 413 when the body and its content-length are too big', async () => {
     const request = send('http://localhost', '{"a":1}', 'application/json', 'POST', { 'content-length': '7' });
     const { response, seen } = await run(request, { maxBodySize: 5 });
     await assertError(response, 413, 'request body too large');
     assert.strictEqual(seen.data, undefined);
-    assert.strictEqual(request.bodyUsed, false);
+  });
+
+  it('goes by the bytes it reads, not by a bigger content-length', async () => {
+    const request = send('http://localhost', '{"a":1}', 'application/json', 'POST', { 'content-length': '100' });
+    const { response, seen } = await run(request, { maxBodySize: 7 });
+    assert.strictEqual(response.status, 200);
+    assert.deepStrictEqual(seen.data.body, { a: 1 });
   });
 
   it('responds with 413 when the body is too big and there is no content-length', async () => {
