@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-disable no-param-reassign */
-import { Request, Response } from '@adobe/fetch';
+import { Response } from '@adobe/fetch';
 
 const BODY_METHODS = ['POST', 'PUT', 'PATCH'];
 
@@ -106,16 +106,19 @@ function checkSize(size, maxBodySize) {
 }
 
 /**
- * Reads and parses the request body.
+ * Reads and parses the request body from a clone, so the function can still read the request.
+ * A clone of a stream body made of several chunks stalls once the unread side holds about
+ * 32 KB. The helix-universal adapters pass the body as a string or a Buffer, which is one
+ * chunk, so that doesn't happen with them.
  *
  * @param {Request} request The universal request
  * @param {string} type the body type
  * @param {import('./body-data-wrapper').BodyDataOptions} opts Options
- * @returns {Promise<{ raw: Buffer, body: any }>} the raw bytes and the parsed body
+ * @returns {Promise<any>} the parsed body
  */
 async function readBody(request, type, opts) {
   const { maxBodySize } = opts;
-  const raw = await request.buffer();
+  const raw = await request.clone().buffer();
   checkSize(raw.length, maxBodySize);
 
   if (type === 'json') {
@@ -123,12 +126,12 @@ async function readBody(request, type, opts) {
     if (typeof json !== 'object' || json === null) {
       throw new Error('JSON body must be an object');
     }
-    return { raw, body: json };
+    return json;
   }
   if (type === 'form') {
-    return { raw, body: parseParams(new URLSearchParams(raw.toString()), opts) };
+    return parseParams(new URLSearchParams(raw.toString()), opts);
   }
-  return { raw, body: raw.toString() };
+  return raw.toString();
 }
 
 /**
@@ -146,29 +149,12 @@ export default function bodyData(func, opts = {}) {
   }
 
   return async (request, context) => {
-    let req = request;
     try {
       const query = parseParams(new URL(request.url).searchParams, opts);
       const type = getBodyType(request);
       if (type) {
-        const { raw, body } = await readBody(request, type, opts);
+        const body = await readBody(request, type, opts);
         context.data = { query, body, type };
-        // the body is used up now, so hand the function a request with the same bytes.
-        // the headers go in as a plain object, since the request may come from another
-        // copy of @adobe/fetch, whose Headers this copy doesn't recognise.
-        req = new Request(request.url, {
-          ...request.init,
-          method: request.method,
-          headers: request.headers.raw(),
-          body: raw,
-          signal: request.signal,
-          redirect: request.redirect,
-          cache: request.cache,
-          follow: request.follow,
-          counter: request.counter,
-          compress: request.compress,
-          decode: request.decode,
-        });
       } else {
         context.data = { query };
       }
@@ -183,6 +169,6 @@ export default function bodyData(func, opts = {}) {
         },
       });
     }
-    return func(req, context);
+    return func(request, context);
   };
 }

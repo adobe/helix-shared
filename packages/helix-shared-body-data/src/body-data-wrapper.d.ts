@@ -72,7 +72,8 @@ export declare interface BodyData {
  * Body data middleware that sets the universal context 'data' property to
  * `{ query, body, type }` (see {@link BodyData}). The query parameters are always parsed.
  * For POST, PUT and PATCH requests with a json, form, yaml or text body, the body is
- * parsed too and the wrapped function gets a request with the same body bytes.
+ * parsed too. The body is read from a clone, so the wrapped function gets the original
+ * request and can still read it.
  *
  * Indexed parameters (e.g. `foo[2]=bar`) are limited to indices up to
  * {@link MAX_ARRAY_INDEX}; larger indices result in a 400 response.

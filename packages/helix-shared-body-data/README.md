@@ -39,9 +39,10 @@ A content type that isn't exactly `type/subtype`, like `application/json/x` or `
 `query` and a form `body` are objects without a prototype. Repeated keys (`foo=a&foo=b`) become
 arrays, and so do indexed keys (`foo[]=a` or `foo[2]=a`), with indices up to 99.
 
-When the wrapper read the body, the function gets a new request with the same method, headers, body
-bytes and options (signal, redirect mode and so on), so it can still call `json()`, `text()` or
-`buffer()`. Otherwise the function gets the original request.
+The function always gets the original request. The wrapper reads the body from a clone, so the
+function can still call `json()`, `text()` or `buffer()`. A clone of a stream body made of several
+chunks stalls once the unread side holds about 32 KB; the helix-universal adapters pass the body as
+a string or a Buffer, so requests coming through them aren't affected.
 
 ## Options
 
@@ -89,4 +90,4 @@ read `context.data.x` got `x` from the body if there was a JSON or form body (or
   also fails JSON, form and YAML requests with a 400.
 - 2.x always passed `new Request(request.url, request.init)` to the function. That lost stream
   bodies and turned cloned requests into GET requests without a body. 3.x passes the original
-  request, or a copy with the same body bytes when it read the body.
+  request.
