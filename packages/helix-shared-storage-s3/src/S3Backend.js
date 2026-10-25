@@ -246,7 +246,7 @@ export class S3Backend extends AbstractStorageBackend {
     const input = this._buildPutInput(key, body, opts);
     try {
       const raw = await this._client.send(new PutObjectCommand(input));
-      this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
+      this._log.debug(`object uploaded to: ${input.Bucket}/${input.Key}`);
       return {
         etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
       };
@@ -269,7 +269,7 @@ export class S3Backend extends AbstractStorageBackend {
     try {
       const upload = new Upload({ client: this._client, params: input });
       const raw = await upload.done();
-      this._log.info(`object uploaded to: ${input.Bucket}/${input.Key}`);
+      this._log.debug(`object uploaded to: ${input.Bucket}/${input.Key}`);
       return {
         etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
       };
@@ -362,7 +362,7 @@ export class S3Backend extends AbstractStorageBackend {
     });
     try {
       const raw = await this._client.send(new CopyObjectCommand(input));
-      this._log.info(`object copied from ${input.CopySource} to: ${input.Bucket}/${input.Key}`);
+      this._log.debug(`object copied from ${input.CopySource} to: ${input.Bucket}/${input.Key}`);
       return { etag: raw.CopyObjectResult?.ETag, raw };
     } catch (e) {
       const status = e.$metadata?.httpStatusCode;
