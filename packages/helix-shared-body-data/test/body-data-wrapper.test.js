@@ -547,13 +547,6 @@ describe('Body Data Wrapper (maxBodySize)', () => {
     await assertError(response, 413, 'request body too large');
   });
 
-  it('ignores a content-length that is not a number', async () => {
-    const request = send('http://localhost', '{"a":1}', 'application/json', 'POST', { 'content-length': 'abc' });
-    const { response, seen } = await run(request, { maxBodySize: 7 });
-    assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(seen.data.body, { a: 1 });
-  });
-
   it('accepts a body exactly at the limit', async () => {
     const { response, seen } = await run(send('http://localhost', '{"a":1}', 'application/json'), { maxBodySize: 7 });
     assert.strictEqual(response.status, 200);

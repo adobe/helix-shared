@@ -54,11 +54,9 @@ export const main = wrap(run)
 - `coerceInt`: turns integer strings into numbers.
 - `coerceNumber`: turns number strings like `-1.5` or `2e3` into numbers.
 - `maxBodySize`: the largest body in bytes the wrapper accepts. A bigger body gets a 413. Not set
-  means no limit. It only applies to bodies the wrapper parses (JSON, form, YAML, text). A
-  `content-length` above the limit is turned down before anything is read. Without one, or when
-  it's too small, the wrapper reads the whole body and then checks its size, so the option doesn't
-  limit memory. It has to be a non-negative integer; anything else throws when you wrap the
-  function.
+  means no limit. It only applies to bodies the wrapper parses (JSON, form, YAML, text). The
+  wrapper reads the whole body and then checks its size, so the option doesn't limit memory. It
+  has to be a non-negative integer; anything else throws when you wrap the function.
 
 The coerce options apply to `query` and to form bodies, not to JSON.
 

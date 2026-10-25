@@ -115,10 +115,6 @@ function checkSize(size, maxBodySize) {
  */
 async function readBody(request, type, opts) {
   const { maxBodySize } = opts;
-  const declaredSize = Number.parseInt(request.headers.get('content-length'), 10);
-  if (!Number.isNaN(declaredSize)) {
-    checkSize(declaredSize, maxBodySize);
-  }
   const raw = await request.buffer();
   checkSize(raw.length, maxBodySize);
 
