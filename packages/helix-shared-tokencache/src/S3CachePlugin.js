@@ -80,6 +80,8 @@ export class S3CachePlugin {
         Bucket: bucket,
         Key: key,
       }));
+      this.lastModified = res.LastModified;
+
       let raw = await new Response(res.Body, {}).buffer();
       if (secret) {
         raw = decrypt(secret, raw).toString('utf-8');
@@ -142,6 +144,8 @@ export class S3CachePlugin {
         Body: raw,
         ContentType: secret ? 'application/octet-stream' : 'text/plain',
       }));
+      // save a roundtrip to the server doing a HEAD
+      this.lastModified = new Date();
       return true;
     } catch (e) {
       log.warn('s3: unable to serialize token cache', e);
@@ -184,6 +188,10 @@ export class S3CachePlugin {
 
   get location() {
     return `${this.bucket}/${this.key}`;
+  }
+
+  getLastModified() {
+    return this.lastModified;
   }
 }
 

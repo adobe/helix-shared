@@ -208,6 +208,7 @@ describe('MemCachePlugin Test', () => {
     assert.strictEqual(ret, true);
     assert.strictEqual(ctx.token, '1234');
     assert.deepStrictEqual(caches.get('foobar-key'), { data: JSON.stringify(data) });
+    assert.strictEqual(p.getLastModified(), null);
   });
 
   it('read the cache from base is missing', async () => {
