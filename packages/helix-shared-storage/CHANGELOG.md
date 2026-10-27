@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-storage-v4.0.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v4.0.0...@adobe/helix-shared-storage-v4.0.1) (2026-10-27)
+
+
+### Bug Fixes
+
+* **storage:** allow disabling compression in Bucket.store() ([#1316](https://github.com/adobe/helix-shared/issues/1316)) ([3b0550b](https://github.com/adobe/helix-shared/commit/3b0550b2b3231fe2cf853ada5a1effea9fc16bf0)), closes [#1315](https://github.com/adobe/helix-shared/issues/1315)
+
 # [@adobe/helix-shared-storage-v4.0.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-storage-v3.3.0...@adobe/helix-shared-storage-v4.0.0) (2026-09-17)
 
 
