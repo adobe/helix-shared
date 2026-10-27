@@ -77,6 +77,14 @@ const response = new Response('Hello World', {
 await bucket.store('/path/to/file.txt', response);
 ```
 
+Pass `{ compress: false }` as the third argument to `store()` to skip gzip compression:
+
+```js
+await bucket.store('/path/to/file.txt', response, { compress: false });
+```
+
+Responses that already have `content-encoding: gzip` are stored unchanged, even when compression is disabled.
+
 Store data directly with optional compression:
 
 ```js

@@ -203,21 +203,28 @@ export class Bucket {
   }
 
   /**
-   * Store an object body and headers from a fetch `Response`. The body is gzipped (or passed
-   * through if the response already has `content-encoding: gzip`); response headers are
+   * Store an object body and headers from a fetch `Response`. The body is gzipped by default
+   * (or passed through if the response already has `content-encoding: gzip`); response headers are
    * translated into common system fields (`cache-control`, `content-type`, `expires`) or
    * written as user metadata.
    *
    * @param {string} key object key
    * @param {import('@adobe/fetch').Response} res response whose body and headers should be stored
+   * @param {object} [opts] storage options
+   * @param {boolean} [opts.compress=true] whether to gzip an uncompressed response body
    * @returns {Promise<void>}
    */
-  async store(key, res) {
+  async store(key, res, { compress = true } = {}) {
     const buffer = await res.buffer();
-    const contentEncoding = res.headers.get('content-encoding');
-    const zipped = contentEncoding === 'gzip' ? buffer : await gzip(buffer);
+    const putOpts = { metadata: {} };
+    let payload = buffer;
+    if (res.headers.get('content-encoding') === 'gzip') {
+      putOpts.contentEncoding = 'gzip';
+    } else if (compress) {
+      putOpts.contentEncoding = 'gzip';
+      payload = await gzip(buffer);
+    }
 
-    const putOpts = { contentEncoding: 'gzip', metadata: {} };
     Array.from(res.headers.entries()).forEach(([name, value]) => {
       const common = SYSTEM_HEADER_TO_COMMON[name];
       if (common) {
@@ -228,7 +235,7 @@ export class Bucket {
     });
 
     const dstKey = sanitizeKey(key);
-    await this._backend.put(dstKey, zipped, putOpts);
+    await this._backend.put(dstKey, payload, putOpts);
     this._log.info(`object uploaded to: ${this.bucket}/${dstKey}`);
   }
 
