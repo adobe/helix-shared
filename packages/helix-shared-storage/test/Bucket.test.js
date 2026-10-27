@@ -198,17 +198,42 @@ describe('Bucket', () => {
       assert.notStrictEqual(obj.body.toString('utf-8'), 'hello, world.');
     });
 
-    it('passes through an already-gzipped body unchanged', async () => {
-      const zlib = await import('zlib');
-      const { promisify } = await import('util');
-      const gzip = promisify(zlib.gzip);
-      const zipped = await gzip('hello, world.');
-      const res = new Response(zipped, {
-        headers: { 'content-type': 'text/plain', 'content-encoding': 'gzip' },
+    it('skips gzip when compress is false, preserving header mapping', async () => {
+      const body = Buffer.from('hello, world.');
+      const date = 'Mon, 03 Nov 2025 07:08:10 GMT';
+      const res = new Response(body, {
+        headers: {
+          'content-type': 'text/plain',
+          'cache-control': 'max-age=3600',
+          expires: date,
+          'last-modified': date,
+          myid: '1234',
+        },
       });
-      await bucket.store('/foo', res);
+      await bucket.store('/foo', res, { compress: false });
       const obj = backend.objects.get('foo');
-      assert.deepStrictEqual(obj.body, zipped);
+      assert.deepStrictEqual(obj.body, body);
+      assert.strictEqual(obj.contentEncoding, undefined);
+      assert.strictEqual(obj.contentType, 'text/plain');
+      assert.strictEqual(obj.cacheControl, 'max-age=3600');
+      assert.strictEqual(obj.expires, date);
+      assert.deepStrictEqual(obj.metadata, { 'x-source-last-modified': date, myid: '1234' });
+    });
+
+    [undefined, { compress: false }].forEach((opts) => {
+      it(`passes through an already-gzipped body unchanged with options ${JSON.stringify(opts)}`, async () => {
+        const zlib = await import('zlib');
+        const { promisify } = await import('util');
+        const gzip = promisify(zlib.gzip);
+        const zipped = await gzip('hello, world.');
+        const res = new Response(zipped, {
+          headers: { 'content-type': 'text/plain', 'content-encoding': 'gzip' },
+        });
+        await bucket.store('/foo', res, opts);
+        const obj = backend.objects.get('foo');
+        assert.deepStrictEqual(obj.body, zipped);
+        assert.strictEqual(obj.contentEncoding, 'gzip');
+      });
     });
 
     it('renames the last-modified header before writing it as metadata', async () => {
