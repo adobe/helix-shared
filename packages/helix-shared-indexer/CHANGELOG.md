@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-indexer-v2.2.11](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.2.10...@adobe/helix-shared-indexer-v2.2.11) (2026-10-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency jsep to v1.6.0 ([#1314](https://github.com/adobe/helix-shared/issues/1314)) ([9cc31da](https://github.com/adobe/helix-shared/commit/9cc31da1005ad975a84326dc46c43b454324d9f6))
+
 # [@adobe/helix-shared-indexer-v2.2.10](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-indexer-v2.2.9...@adobe/helix-shared-indexer-v2.2.10) (2026-08-31)
 
 
