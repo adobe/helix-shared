@@ -661,7 +661,8 @@ jobs:
             await post(`repos/${repo}/statuses/${SHA}`, {
               state,
               context: `review / ${agent}`,
-              description: (findings?.summary ?? 'no findings').slice(0, 140),
+              // commit statuses reject 4-byte characters (emoji), and slice() could split a pair
+              description: Array.from(findings?.summary ?? 'no findings').filter((char) => char.codePointAt(0) <= 0xffff).slice(0, 140).join(''),
               target_url: RUN_URL,
             });
             if (!findings) continue;
