@@ -22,6 +22,7 @@
 
 * [API Documentation](docs/API.md)
 * [Configuration File Schema](docs/README.md)
+* [AI Review workflow](docs/ai-review.md): reusable Claude + Codex pull request review on Amazon Bedrock
 
 ### Using `HelixConfig` to read Helix configuration files
 

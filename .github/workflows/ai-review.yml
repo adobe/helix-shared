@@ -1,0 +1,650 @@
+name: AI Review
+
+# Reusable pull request review by Claude and Codex on Amazon Bedrock.
+#
+# Adapted from the review jobs of ai-ecoverse/slicc-shared-web's pipeline.yml
+# (context -> reviewer -> post -> review), without the slicc browser harness:
+#
+# - `tests` runs the repository's tests on the pull request's head and on its
+#   base, and hands the logs, exit codes and report files (JUnit, coverage) to
+#   the reviewers.
+# - `reviewer` gives each agent a debuggable environment: both trees checked
+#   out with dependencies installed, the test command to re-run, and, with
+#   `browsers`, Playwright Chromium on a virtual display.
+# - `post` publishes each agent's verdict as a `review / <agent>` status, a
+#   sticky summary comment and line comments, and files follow-up issues.
+# - `review` fails unless every agent approved.
+#
+# See docs/ai-review.md for how to call it.
+
+on:
+  workflow_call:
+    inputs:
+      runs-on:
+        description: Runner label for every job.
+        type: string
+        default: ubuntu-latest
+      node-version:
+        type: string
+        default: '24'
+      setup:
+        description: Installs dependencies; runs in the head and in the base tree.
+        type: string
+        default: npm ci
+      test:
+        description: >-
+          Runs the tests in both trees. REVIEW_RESULTS points to a directory
+          for report files. Empty skips the tests job.
+        type: string
+        default: npm test
+      test-results:
+        description: Newline-separated globs, relative to the tree, of report files to hand to the reviewers.
+        type: string
+        default: |
+          junit.xml
+          test-results.xml
+          coverage/lcov.info
+          coverage/coverage-summary.json
+          lcov.info
+      test-timeout-minutes:
+        type: number
+        default: 20
+      browsers:
+        description: Install Playwright Chromium and start Xvfb for the tests and the reviewers.
+        type: boolean
+        default: false
+      staging-url:
+        description: Where the pull request's head is deployed, if anywhere.
+        type: string
+        default: ''
+      base-url:
+        description: Where the base is deployed, if anywhere, to compare with.
+        type: string
+        default: ''
+      review-prompt:
+        description: Repository-specific instructions appended to the prompt.
+        type: string
+        default: ''
+      review-renovate:
+        description: Newline-separated globs of Renovate branch slugs that still get reviewed.
+        type: string
+        default: ''
+      review-timeout-minutes:
+        type: number
+        default: 60
+      review-screenshots:
+        type: number
+        default: 30
+      agents:
+        description: JSON array of reviewers, out of claude and codex.
+        type: string
+        default: '["claude","codex"]'
+      claude-model:
+        type: string
+        default: ''
+      codex-model:
+        type: string
+        default: ''
+      aws-region:
+        type: string
+        default: ''
+    secrets:
+      AWS_BEARER_TOKEN_BEDROCK:
+        required: false
+      ISSUES_TOKEN:
+        description: Optional token that may open issues in other repositories of the same owner.
+        required: false
+
+permissions:
+  contents: read
+
+env:
+  FINDINGS_SCHEMA: >-
+    {"type":"object","additionalProperties":false,"required":["verdict","summary","comments","issues"],"properties":{"verdict":{"type":"string","enum":["approved","denied"]},"summary":{"type":"string"},"comments":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["path","line","body"],"properties":{"path":{"type":"string"},"line":{"type":"integer"},"body":{"type":"string"}}}},"issues":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["repo","title","body","security"],"properties":{"repo":{"type":"string"},"title":{"type":"string"},"body":{"type":"string"},"security":{"type":"boolean"}}}}}}
+
+jobs:
+  prepare:
+    runs-on: ${{ inputs.runs-on }}
+    outputs:
+      review: ${{ steps.review.outputs.review }}
+      bedrock: ${{ steps.bedrock.outputs.bedrock }}
+    steps:
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - id: review
+        env:
+          EVENT: ${{ github.event_name }}
+          BRANCH: ${{ github.head_ref }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          SENDER: ${{ github.event.sender.login }}
+          RENOVATE_GROUPS: ${{ inputs.review-renovate }}
+        run: |
+          node --input-type=module <<'EOF' | tee -a "$GITHUB_OUTPUT"
+          import { matchesGlob } from 'node:path';
+          const { EVENT, BRANCH = '', AUTHOR, SENDER, RENOVATE_GROUPS = '' } = process.env;
+          const slug = BRANCH.replace(/^renovate\//, '').replace(/^major-/, '');
+          const groups = RENOVATE_GROUPS.split('\n').map((group) => group.trim()).filter(Boolean);
+          const renovate = AUTHOR === 'renovate[bot]' && SENDER === 'renovate[bot]' && BRANCH.startsWith('renovate/');
+          const review = EVENT === 'pull_request' && (!renovate || groups.some((group) => matchesGlob(slug, group)));
+          console.log(`review=${review}`);
+          EOF
+
+      - id: bedrock
+        env:
+          BEDROCK: ${{ secrets.AWS_BEARER_TOKEN_BEDROCK != '' }}
+        run: echo "bedrock=$BEDROCK" >> "$GITHUB_OUTPUT"
+
+  context:
+    needs: prepare
+    if: needs.prepare.outputs.review == 'true'
+    runs-on: ${{ inputs.runs-on }}
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: The pull request, from git and the event
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/context"
+          git diff "$BASE...$HEAD" > "$RUNNER_TEMP/context/pr.diff"
+          git diff --name-status "$BASE...$HEAD" > "$RUNNER_TEMP/context/files.txt"
+          git log --format='%H%x09%an%x09%s' "$BASE..$HEAD" > "$RUNNER_TEMP/context/commits.txt"
+          node --input-type=module <<'EOF'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const { pull_request: pr } = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+          const out = { number: pr.number, title: pr.title, body: pr.body, author: pr.user.login, labels: pr.labels.map((label) => label.name), draft: pr.draft, base: pr.base.ref, head: pr.head.ref };
+          writeFileSync(`${process.env.RUNNER_TEMP}/context/pr.json`, JSON.stringify(out, null, 2));
+          EOF
+
+      - name: Comments, reviews, issues and pull requests, as far as the API allows
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          node --input-type=module <<'EOF'
+          import { writeFile } from 'node:fs/promises';
+          const { GITHUB_API_URL: api, GITHUB_REPOSITORY: repo, GH_TOKEN, PR, RUNNER_TEMP } = process.env;
+          const dir = `${RUNNER_TEMP}/context`;
+          const missing = [];
+          const get = async (path) => {
+            for (let attempt = 1; ; attempt += 1) {
+              const res = await fetch(`${api}/${path}`, { headers: { authorization: `Bearer ${GH_TOKEN}`, accept: 'application/vnd.github+json' } });
+              if (res.ok) return res.json();
+              if (attempt === 2) throw new Error(`${path}: ${res.status} ${(await res.text()).slice(0, 200)}`);
+              await new Promise((resolve) => setTimeout(resolve, 20000));
+            }
+          };
+          const pages = async (path, most) => {
+            const items = [];
+            for (let page = 1; page <= most; page += 1) {
+              const batch = await get(`${path}${path.includes('?') ? '&' : '?'}per_page=100&page=${page}`);
+              items.push(...batch);
+              if (batch.length < 100) break;
+            }
+            return items;
+          };
+          const save = async (name, what) => {
+            try {
+              await writeFile(`${dir}/${name}`, JSON.stringify(await what(), null, 2));
+            } catch (error) {
+              missing.push(`${name}: ${error.message}`);
+            }
+          };
+          await save('comments.json', () => pages(`repos/${repo}/issues/${PR}/comments`, 3));
+          await save('reviews.json', () => pages(`repos/${repo}/pulls/${PR}/reviews`, 3));
+          await save('review-comments.json', () => pages(`repos/${repo}/pulls/${PR}/comments`, 3));
+          let all;
+          await save('issues.json', async () => {
+            all = await pages(`repos/${repo}/issues?state=all&sort=updated`, 5);
+            return all.filter((item) => !item.pull_request).map(({ number, title, state, body, labels, created_at, closed_at }) => ({ number, title, state, body, labels: labels.map((label) => label.name), created_at, closed_at }));
+          });
+          await save('pulls.json', async () => {
+            if (!all) throw new Error('the issues listing it comes from failed');
+            return all.filter((item) => item.pull_request).map(({ number, title, state, body, pull_request }) => ({ number, title, state, body, merged_at: pull_request.merged_at }));
+          });
+          await writeFile(`${dir}/missing.txt`, missing.join('\n'));
+          for (const line of missing) console.log(`::warning title=Review context::${line}`);
+          EOF
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: context
+          overwrite: true
+          path: ${{ runner.temp }}/context/
+
+  tests:
+    needs: prepare
+    if: needs.prepare.outputs.review == 'true' && inputs.test != ''
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: ${{ inputs.review-timeout-minutes }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Browsers
+        if: inputs.browsers
+        run: |
+          npx --yes playwright install --with-deps chromium
+          sudo apt-get install -y -qq xvfb > /dev/null
+          nohup Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp > "$RUNNER_TEMP/xvfb.log" 2>&1 &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
+
+      - name: Tests on the head and on the base
+        env:
+          SETUP: ${{ inputs.setup }}
+          TEST: ${{ inputs.test }}
+          RESULTS: ${{ inputs.test-results }}
+          MINUTES: ${{ inputs.test-timeout-minutes }}
+        run: |
+          set +e
+          shopt -s globstar nullglob
+          mv base "$RUNNER_TEMP/base"
+          for side in head base; do
+            tree=$GITHUB_WORKSPACE
+            [ "$side" = head ] || tree=$RUNNER_TEMP/base
+            out=$RUNNER_TEMP/tests/$side
+            mkdir -p "$out/files"
+            (cd "$tree" && bash -eo pipefail -c "$SETUP") > "$out/setup.log" 2>&1
+            echo $? > "$out/setup-exit-code"
+            if [ "$(cat "$out/setup-exit-code")" = 0 ]; then
+              (cd "$tree" && REVIEW_RESULTS="$out/files" timeout "${MINUTES}m" bash -o pipefail -c "$TEST") > "$out/test.log" 2>&1
+              echo $? > "$out/test-exit-code"
+            else
+              echo "setup failed, see setup.log" > "$out/test-exit-code"
+            fi
+            (
+              cd "$tree" || exit
+              while IFS= read -r pattern; do
+                [ -n "$pattern" ] || continue
+                # shellcheck disable=SC2206
+                matches=($pattern)
+                for file in "${matches[@]}"; do
+                  [ -f "$file" ] || continue
+                  mkdir -p "$out/files/$(dirname "$file")"
+                  cp "$file" "$out/files/$file"
+                done
+              done <<< "$RESULTS"
+            )
+            echo "::group::$side: setup $(cat "$out/setup-exit-code"), tests $(cat "$out/test-exit-code")"
+            tail -n 40 "$out/test.log" 2>/dev/null || tail -n 40 "$out/setup.log"
+            echo "::endgroup::"
+            echo "- **$side**: setup exit $(cat "$out/setup-exit-code"), tests exit $(cat "$out/test-exit-code")" >> "$GITHUB_STEP_SUMMARY"
+          done
+          exit 0
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: tests
+          overwrite: true
+          path: ${{ runner.temp }}/tests/
+
+  reviewer:
+    needs: [prepare, context, tests]
+    if: needs.prepare.outputs.review == 'true' && needs.prepare.outputs.bedrock == 'true' && !cancelled() && needs.context.result == 'success'
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: ${{ inputs.review-timeout-minutes }}
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    strategy:
+      fail-fast: false
+      matrix:
+        agent: ${{ fromJSON(inputs.agents) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Dependencies, in the head and in the base
+        env:
+          SETUP: ${{ inputs.setup }}
+        run: |
+          mv base "$RUNNER_TEMP/base"
+          bash -eo pipefail -c "$SETUP"
+          (cd "$RUNNER_TEMP/base" && bash -eo pipefail -c "$SETUP") || echo "::warning title=Base::setup failed in the base tree; it stays as checked out"
+
+      - name: Browsers
+        if: inputs.browsers
+        run: |
+          npx --yes playwright install --with-deps chromium
+          sudo apt-get install -y -qq xvfb > /dev/null
+          nohup Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp > "$RUNNER_TEMP/xvfb.log" 2>&1 &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: context
+          path: ${{ runner.temp }}/review/context
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        if: needs.tests.result == 'success'
+        continue-on-error: true
+        with:
+          name: tests
+          path: ${{ runner.temp }}/review/tests
+
+      - name: Prompt
+        env:
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          SETUP: ${{ inputs.setup }}
+          TEST: ${{ inputs.test }}
+          TESTS: ${{ needs.tests.result }}
+          BROWSERS: ${{ inputs.browsers && 'yes' || '' }}
+          STAGING_URL: ${{ inputs.staging-url }}
+          BASE_URL: ${{ inputs.base-url }}
+          EXTRA: ${{ inputs.review-prompt }}
+          SHOTS: ${{ inputs.review-screenshots }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/review/shots"
+          T=$RUNNER_TEMP
+          more=
+          add() { more+=$'\n'"- $1"; }
+          if [ "$TESTS" = success ]; then
+            add "$T/review/tests/head/ and $T/review/tests/base/: \"$TEST\" run on each tree before this review: setup.log, test.log, setup-exit-code, test-exit-code, and the report files it left (JUnit, coverage) under files/. Compare them: a test that passes on the base and fails on the head is a regression; one that fails on both is not caused by this change."
+          fi
+          if [ -n "$TEST" ]; then
+            add "You can re-run the tests, or a single test, in either tree yourself; the full command is \"$TEST\"."
+          fi
+          if [ -n "$BROWSERS" ]; then
+            add "Playwright Chromium is installed and an X server runs on $DISPLAY, so browser tests and scripted page checks work in either tree."
+          fi
+          if [ -n "$STAGING_URL" ]; then
+            add "The head of the pull request is deployed at $STAGING_URL."
+          fi
+          if [ -n "$BASE_URL" ]; then
+            add "The base is deployed at $BASE_URL, to compare with."
+          fi
+          cat > "$T/review/prompt.txt" <<EOF
+          Review pull request $PR of $REPO.
+
+          The working directory holds:
+          - .: the pull request's head, set up with "$SETUP", with full history, so git diff BASE...HEAD and git log work (BASE is the base commit: git merge-base HEAD origin/BASE_REF, or the diff in $T/review/context/pr.diff). Your scratch files go in $T/review, never in the checkout.
+          - $T/base: its base, to compare with, set up the same way if that worked.
+          - $T/review/context/: the pull request (pr.json, pr.diff, files.txt, commits.txt, comments.json, reviews.json, review-comments.json), the repository's issues (issues.json) and recent pull requests (pulls.json). missing.txt names any the GitHub API wouldn't give; read those with gh if you need them.$more
+
+          Read the change, run what you need, and decide whether it should be merged.
+          Deny only for a problem you confirmed that users or operators are likely to hit: a security or secret exposure, data loss or corruption, a crash, a regression in a common path, or a behaviour change without a test.
+          A race or edge case that needs unlikely timing (a window of seconds, a person acting in the middle of a run) or a rare combination of events doesn't block: approve, describe the scenario in a comment, and add an issue if it's worth tracking.
+          Don't deny for a risk the base already has. On a pull request that has been reviewed before (reviews.json, comments.json), deny only for something new and at least as serious as what earlier rounds fixed; don't move from one narrow case to the next.
+          Answer with JSON that matches the schema you were given:
+          - verdict: "approved" or "denied".
+          - summary: a few sentences on the change and your verdict.
+          - comments: findings on lines the pull request adds or changes, with path relative to the repository root and the line number in the head.
+          - issues: problems worth tracking outside this pull request, each with repo as owner/name, a title, a body and security.
+            Leave out any that $T/review/context/issues.json already has open, even under another title.
+            security is true for anything about a security or secret exposure, a guard bypass, or protected data reaching where it shouldn't, and false for everything else.
+            Put a security finding in the summary or a line comment of this review, never as an issue: an issue with security true is never filed.
+          Screenshots: when a finding is about what a page shows, save a PNG to $T/review/shots/ (a name of letters, digits, dots, dashes or underscores; at most $SHOTS files) and mention it in the summary, a comment or an issue body as ![what it shows](shots/name.png). They're attached to the run's findings artifact.
+
+          $EXTRA
+          EOF
+          cat "$RUNNER_TEMP/review/prompt.txt"
+
+      - id: claude-code
+        if: matrix.agent == 'claude'
+        env:
+          # renovate: datasource=npm depName=@anthropic-ai/claude-code
+          CLAUDE_CODE: 2.1.303
+        run: |
+          npm install --prefix "$RUNNER_TEMP/claude-code" --no-save --no-audit --no-fund "@anthropic-ai/claude-code@$CLAUDE_CODE"
+          "$RUNNER_TEMP/claude-code/node_modules/.bin/claude" --version
+          echo "path=$RUNNER_TEMP/claude-code/node_modules/.bin/claude" >> "$GITHUB_OUTPUT"
+
+      - id: claude
+        if: matrix.agent == 'claude'
+        uses: anthropics/claude-code-action@5eb090f3c3afd701a0672cd32981197ca27688f6
+        env:
+          AWS_BEARER_TOKEN_BEDROCK: ${{ secrets.AWS_BEARER_TOKEN_BEDROCK }}
+          AWS_REGION: ${{ inputs.aws-region || vars.AI_REVIEW_AWS_REGION || 'us-west-2' }}
+        with:
+          prompt: Follow the instructions in ${{ runner.temp }}/review/prompt.txt.
+          use_bedrock: 'true'
+          path_to_claude_code_executable: ${{ steps.claude-code.outputs.path }}
+          github_token: ${{ github.token }}
+          allowed_bots: renovate[bot]
+          claude_args: >-
+            --model ${{ inputs.claude-model || vars.AI_REVIEW_CLAUDE_MODEL || 'global.anthropic.claude-opus-5-5' }}
+            --add-dir ${{ runner.temp }}/base
+            --add-dir ${{ runner.temp }}/review
+            --allowedTools Bash,Read,Glob,Grep,WebFetch
+            --json-schema '${{ env.FINDINGS_SCHEMA }}'
+
+      - if: matrix.agent == 'claude'
+        env:
+          FINDINGS: ${{ steps.claude.outputs.structured_output }}
+        run: printf '%s' "$FINDINGS" > "$RUNNER_TEMP/review/findings.json"
+
+      - if: matrix.agent == 'codex'
+        name: Codex on Bedrock
+        run: |
+          mkdir -p "$RUNNER_TEMP/codex-home"
+          echo 'model_provider = "amazon-bedrock-runtime"' > "$RUNNER_TEMP/codex-home/config.toml"
+          echo '{"port":0}' > "$RUNNER_TEMP/codex-home/$GITHUB_RUN_ID.json"
+
+      - if: matrix.agent == 'codex'
+        uses: openai/codex-action@bdf19a4a223ec2549a3e2274a0cf61556bc07675
+        env:
+          AWS_BEARER_TOKEN_BEDROCK: ${{ secrets.AWS_BEARER_TOKEN_BEDROCK }}
+          AWS_REGION: ${{ inputs.aws-region || vars.AI_REVIEW_AWS_REGION || 'us-west-2' }}
+        with:
+          prompt-file: ${{ runner.temp }}/review/prompt.txt
+          output-file: ${{ runner.temp }}/review/findings.json
+          output-schema: ${{ env.FINDINGS_SCHEMA }}
+          codex-home: ${{ runner.temp }}/codex-home
+          model: ${{ inputs.codex-model || vars.AI_REVIEW_CODEX_MODEL || 'global.openai.gpt-6.1-sol' }}
+          sandbox: danger-full-access
+          safety-strategy: ${{ runner.environment == 'github-hosted' && 'drop-sudo' || 'unsafe' }}
+          allow-bot-users: renovate
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: findings-${{ matrix.agent }}
+          overwrite: true
+          path: |
+            ${{ runner.temp }}/review/findings.json
+            ${{ runner.temp }}/review/shots/
+          if-no-files-found: ignore
+
+  post:
+    needs: reviewer
+    if: '!cancelled() && needs.reviewer.result != ''skipped'''
+    runs-on: ${{ inputs.runs-on }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      statuses: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        continue-on-error: true
+        with:
+          pattern: findings-*
+          path: findings
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUES_TOKEN: ${{ secrets.ISSUES_TOKEN }}
+          AGENTS: ${{ inputs.agents }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node --input-type=module <<'EOF'
+          import { readFile } from 'node:fs/promises';
+          const { GITHUB_API_URL: api, GITHUB_REPOSITORY: repo, GH_TOKEN, ISSUES_TOKEN, AGENTS, PR, SHA, RUN_URL } = process.env;
+          const call = async (method, path, body, token = GH_TOKEN) => {
+            const res = await fetch(`${api}/${path}`, {
+              method,
+              headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json', 'content-type': 'application/json' },
+              body: body === undefined ? undefined : JSON.stringify(body),
+            });
+            if (!res.ok) throw new Error(`${method} ${path}: ${res.status} ${await res.text()}`);
+            return res.json();
+          };
+          const post = (path, body, token) => call('POST', path, body, token);
+          const pages = async (path, token) => {
+            const items = [];
+            for (let page = 1; ; page += 1) {
+              const batch = await call('GET', `${path}${path.includes('?') ? '&' : '?'}per_page=100&page=${page}`, undefined, token);
+              items.push(...batch);
+              if (batch.length < 100) return items;
+            }
+          };
+          const said = await pages(`repos/${repo}/issues/${PR}/comments`);
+          const inline = await pages(`repos/${repo}/pulls/${PR}/comments`);
+          const once = async (body, send) => {
+            if (said.some((comment) => comment.body === body) || inline.some((comment) => comment.body === body)) return;
+            await send();
+          };
+          let failed = false;
+          for (const agent of JSON.parse(AGENTS)) {
+            const findings = await readFile(`findings/findings-${agent}/findings.json`, 'utf8').then(JSON.parse).catch(() => undefined);
+            const shots = (text) => text.replace(/!\[([^\]]*)\]\((?:\.\/)?shots\/([^)\s]+)\)/g, (_, alt, name) =>
+              `📷 _${alt || name}_ ([\`${name}\` in findings-${agent}](${RUN_URL}))`);
+            if (findings) {
+              findings.summary = shots(findings.summary);
+              for (const comment of findings.comments) comment.body = shots(comment.body);
+              for (const issue of findings.issues) issue.body = shots(issue.body);
+            }
+            const state = !findings ? 'error' : findings.verdict === 'approved' ? 'success' : 'failure';
+            await post(`repos/${repo}/statuses/${SHA}`, {
+              state,
+              context: `review / ${agent}`,
+              description: (findings?.summary ?? 'no findings').slice(0, 140),
+              target_url: RUN_URL,
+            });
+            if (!findings) continue;
+            const marker = `<!-- ai-review:${agent} -->`;
+            const summary = `${marker}\n**${agent}: ${findings.verdict}** on ${SHA.slice(0, 7)}\n\n${findings.summary}`;
+            const sticky = said.find((comment) => comment.body.startsWith(marker));
+            await (sticky ? call('PATCH', `repos/${repo}/issues/comments/${sticky.id}`, { body: summary }) : post(`repos/${repo}/issues/${PR}/comments`, { body: summary }));
+            for (const { path, line, body } of findings.comments) {
+              const text = `**${agent}:** ${body}`;
+              const fallback = `**${agent}** on \`${path}:${line}\`: ${body}`;
+              if (inline.some((comment) => comment.path === path && comment.body === text)) continue;
+              await post(`repos/${repo}/pulls/${PR}/comments`, { commit_id: SHA, path, line, side: 'RIGHT', body: text })
+                .catch(() => once(fallback, () => post(`repos/${repo}/issues/${PR}/comments`, { body: fallback })));
+            }
+            for (const issue of findings.issues) {
+              if (issue.security !== false) {
+                console.log(`kept ${issue.security === true ? 'a security finding' : 'an issue without a boolean security field'} out of the issue tracker (${agent})`);
+                continue;
+              }
+              const target = issue.repo || repo;
+              if (target.split('/')[0] !== repo.split('/')[0]) {
+                console.log(`skipped an issue for ${target}, outside ${repo.split('/')[0]}: ${issue.title}`);
+                continue;
+              }
+              const token = target === repo ? GH_TOKEN : ISSUES_TOKEN || GH_TOKEN;
+              const open = await pages(`repos/${target}/issues?state=open`, token).catch(() => []);
+              const same = open.find((existing) => existing.title.trim().toLowerCase() === issue.title.trim().toLowerCase());
+              if (same) {
+                console.log(`already open: ${same.html_url}`);
+                continue;
+              }
+              await post(`repos/${target}/issues`, { title: issue.title, body: `${issue.body}\n\nFrom ${agent}'s review of ${repo}#${PR}.` }, token)
+                .then((created) => console.log(created.html_url))
+                .catch(async (error) => {
+                  console.error(error.message);
+                  if (target === repo) {
+                    failed = true;
+                    return;
+                  }
+                  const note = `**${agent}** wanted to open an issue in ${target} but couldn't (${ISSUES_TOKEN ? 'ISSUES_TOKEN was refused' : 'no ISSUES_TOKEN'}):\n\n### ${issue.title}\n\n${issue.body}`;
+                  await once(note, () => post(`repos/${repo}/issues/${PR}/comments`, { body: note }));
+                });
+            }
+          }
+          process.exit(failed ? 1 : 0);
+          EOF
+
+  review:
+    needs: [prepare, reviewer]
+    if: (github.event_name == 'pull_request' || github.event_name == 'merge_group') && !cancelled()
+    runs-on: ${{ inputs.runs-on }}
+    steps:
+      - if: needs.prepare.outputs.review == 'true'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        continue-on-error: true
+        with:
+          pattern: findings-*
+          path: findings
+
+      - env:
+          EVENT: ${{ github.event_name }}
+          REVIEW: ${{ needs.prepare.outputs.review }}
+          BEDROCK: ${{ needs.prepare.outputs.bedrock }}
+          FORK: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+          AGENTS: ${{ inputs.agents }}
+        run: |
+          if [ "$EVENT" = merge_group ]; then
+            echo "merge queue: reviewed on the pull request"
+            exit 0
+          fi
+          if [ "$REVIEW" != true ]; then
+            echo "no review for this pull request"
+            exit 0
+          fi
+          if [ "$BEDROCK" != true ]; then
+            if [ "$FORK" = true ]; then
+              echo "::warning title=Review::A pull request from a fork gets no secrets, so it isn't reviewed: a maintainer can open the change again from a branch in this repo"
+              exit 0
+            fi
+            echo "::error title=Review::AWS_BEARER_TOKEN_BEDROCK isn't available to this repo: add it as a repository or organization secret, then re-run"
+            exit 1
+          fi
+          failed=0
+          for agent in $(jq -r '.[]' <<< "$AGENTS"); do
+            verdict=$(jq -r .verdict "findings/findings-$agent/findings.json" 2>/dev/null || true)
+            echo "$agent: ${verdict:-no findings}"
+            [ "$verdict" = approved ] || failed=1
+          done
+          exit "$failed"
