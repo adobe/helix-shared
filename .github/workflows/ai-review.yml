@@ -9,8 +9,11 @@ name: AI Review
 #   base, and hands the logs, exit codes and report files (JUnit, coverage) to
 #   the reviewers.
 # - `reviewer` gives each agent a debuggable environment: both trees checked
-#   out with dependencies installed, the test command to re-run, and, with
-#   `browsers`, Playwright Chromium on a virtual display.
+#   out with dependencies installed and the test command to re-run. With
+#   `browsers`, each tree gets a headed Chrome for Testing on a virtual display
+#   with CDP enabled, driven by ai-ecoverse/slicc-cdp's playwright-cli and
+#   curlwright. The `environment` hook lets the repository start what it needs
+#   in each tree (a dev server, fixtures) and point that tree's browser at it.
 # - `post` publishes each agent's verdict as a `review / <agent>` status, a
 #   sticky summary comment and line comments, and files follow-up issues.
 # - `review` fails unless every agent approved.
@@ -50,9 +53,32 @@ on:
         type: number
         default: 20
       browsers:
-        description: Install Playwright Chromium and start Xvfb for the tests and the reviewers.
+        description: >-
+          Install Chrome for Testing (slicc-cdp) and start Xvfb. In the tests
+          job CHROME_PATH points at it; for the reviewers each tree gets its own
+          headed Chrome with CDP enabled, plus playwright-cli and curlwright.
         type: boolean
         default: false
+      chrome:
+        description: Chrome for Testing version or milestone for slicc-cdp install-browser; empty is the current stable.
+        type: string
+        default: ''
+      environment:
+        description: >-
+          Hook that brings up a test environment, run in each tree (head, then
+          base) after setup. It gets REVIEW_SIDE (head or base), REVIEW_PORT (a
+          free port for that tree), REVIEW_CDP (that tree's browser, with
+          `browsers`) and REVIEW_ENV_DIR (for its logs). Start long-running
+          processes in the background (nohup ... &). Write the URL to open to
+          $REVIEW_ENV_DIR/url and anything the reviewers should know to
+          $REVIEW_ENV_DIR/notes.md. The default runs the package's review:env
+          script, if it has one.
+        type: string
+        default: npm run --if-present review:env
+      environment-timeout-seconds:
+        description: How long to wait for each environment's URL to answer.
+        type: number
+        default: 120
       staging-url:
         description: Where the pull request's head is deployed, if anywhere.
         type: string
@@ -250,11 +276,16 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
-      - name: Browsers
+      - name: Browser and display
         if: inputs.browsers
+        env:
+          CHROME: ${{ inputs.chrome }}
+          # renovate: datasource=npm depName=@ai-ecoverse/slicc-cdp
+          SLICC_CDP: 1.42.3
         run: |
-          npx --yes playwright install --with-deps chromium
-          sudo apt-get install -y -qq xvfb > /dev/null
+          npx --yes "@ai-ecoverse/slicc-cdp@$SLICC_CDP" install-browser --with-deps ${CHROME:+--version "$CHROME"}
+          echo "CHROME_PATH=$(npx --yes "@ai-ecoverse/slicc-cdp@$SLICC_CDP" find-browser ${CHROME:+--version "$CHROME"} | tail -1)" >> "$GITHUB_ENV"
+          command -v Xvfb > /dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq xvfb > /dev/null; }
           nohup Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp > "$RUNNER_TEMP/xvfb.log" 2>&1 &
           echo "DISPLAY=:99" >> "$GITHUB_ENV"
 
@@ -345,14 +376,6 @@ jobs:
           bash -eo pipefail -c "$SETUP"
           (cd "$RUNNER_TEMP/base" && bash -eo pipefail -c "$SETUP") || echo "::warning title=Base::setup failed in the base tree; it stays as checked out"
 
-      - name: Browsers
-        if: inputs.browsers
-        run: |
-          npx --yes playwright install --with-deps chromium
-          sudo apt-get install -y -qq xvfb > /dev/null
-          nohup Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp > "$RUNNER_TEMP/xvfb.log" 2>&1 &
-          echo "DISPLAY=:99" >> "$GITHUB_ENV"
-
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           name: context
@@ -365,6 +388,76 @@ jobs:
           name: tests
           path: ${{ runner.temp }}/review/tests
 
+      - name: Browsers, playwright-cli and curlwright
+        if: inputs.browsers
+        env:
+          CHROME: ${{ inputs.chrome }}
+          # renovate: datasource=npm depName=@ai-ecoverse/slicc-cdp
+          SLICC_CDP: 1.42.3
+        run: |
+          npx --yes "@ai-ecoverse/slicc-cdp@$SLICC_CDP" install-browser --with-deps ${CHROME:+--version "$CHROME"}
+          browser=$(npx --yes "@ai-ecoverse/slicc-cdp@$SLICC_CDP" find-browser ${CHROME:+--version "$CHROME"} | tail -1)
+          echo "CHROME_PATH=$browser" >> "$GITHUB_ENV"
+          curl -fsSL "https://github.com/ai-ecoverse/slicc-cdp/releases/download/v$SLICC_CDP/install.sh" \
+            | sh -s -- --version "$SLICC_CDP" --dir "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          command -v Xvfb > /dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq xvfb > /dev/null; }
+          nohup Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp > "$RUNNER_TEMP/xvfb.log" 2>&1 &
+          for _ in $(seq 50); do [ -S /tmp/.X11-unix/X99 ] && break; sleep 0.2; done
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
+          port=9301
+          for side in head base; do
+            profile=$RUNNER_TEMP/browser-$side
+            mkdir -p "$profile"
+            DISPLAY=:99 nohup "$browser" --no-sandbox --no-first-run --no-default-browser-check --window-size=1280,800 \
+              --remote-debugging-port="$port" --user-data-dir="$profile" about:blank > "$profile.log" 2>&1 &
+            for _ in $(seq 50); do curl -fs "http://127.0.0.1:$port/json/version" > /dev/null && break; sleep 0.2; done
+            curl -fs "http://127.0.0.1:$port/json/version" > /dev/null || { echo "::error title=Browser::the $side browser didn't answer on $port"; cat "$profile.log"; exit 1; }
+            port=$((port + 1))
+          done
+          "$RUNNER_TEMP/bin/playwright-cli" --version
+
+      - name: Test environments
+        if: inputs.environment != ''
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          BROWSERS: ${{ inputs.browsers && 'yes' || '' }}
+          WAIT: ${{ inputs.environment-timeout-seconds }}
+        run: |
+          list=
+          for side in head base; do
+            tree=$GITHUB_WORKSPACE port=8801 cdp=http://127.0.0.1:9301
+            [ "$side" = head ] || { tree=$RUNNER_TEMP/base port=8802 cdp=http://127.0.0.1:9302; }
+            [ -n "$BROWSERS" ] || cdp=
+            dir=$RUNNER_TEMP/review/env/$side
+            mkdir -p "$dir"
+            (cd "$tree" && REVIEW_SIDE=$side REVIEW_PORT=$port REVIEW_CDP=$cdp REVIEW_ENV_DIR=$dir \
+              bash -eo pipefail -c "$ENVIRONMENT") > "$dir/hook.log" 2>&1
+            code=$?
+            echo "$code" > "$dir/hook-exit-code"
+            url=$(head -1 "$dir/url" 2>/dev/null)
+            state=none
+            if [ "$code" != 0 ]; then
+              state="hook failed ($code)"
+              echo "::warning title=Environment::the $side hook exited $code"
+            elif [ -n "$url" ]; then
+              state="not answering after ${WAIT}s"
+              for _ in $(seq "$WAIT"); do
+                curl -fsS -o /dev/null --max-time 5 "$url" && { state=up; break; }
+                sleep 1
+              done
+              [ "$state" = up ] || echo "::warning title=Environment::$url ($side) didn't answer within ${WAIT}s"
+              if [ "$state" = up ] && [ -n "$cdp" ]; then
+                playwright-cli --cdp="$cdp" goto "$url" > "$dir/browser.log" 2>&1 || echo "::warning title=Environment::couldn't open $url in the $side browser"
+              fi
+            fi
+            echo "::group::$side environment: $state"
+            cat "$dir/hook.log"
+            echo "::endgroup::"
+            list="$list{\"side\":\"$side\",\"tree\":\"$tree\",\"url\":\"$url\",\"state\":\"$state\",\"cdp\":\"$cdp\",\"logs\":\"$dir\"},"
+          done
+          echo "[${list%,}]" | tee "$RUNNER_TEMP/review/environments.json"
+
       - name: Prompt
         env:
           REPO: ${{ github.repository }}
@@ -373,6 +466,7 @@ jobs:
           TEST: ${{ inputs.test }}
           TESTS: ${{ needs.tests.result }}
           BROWSERS: ${{ inputs.browsers && 'yes' || '' }}
+          ENVIRONMENT: ${{ inputs.environment }}
           STAGING_URL: ${{ inputs.staging-url }}
           BASE_URL: ${{ inputs.base-url }}
           EXTRA: ${{ inputs.review-prompt }}
@@ -389,7 +483,15 @@ jobs:
             add "You can re-run the tests, or a single test, in either tree yourself; the full command is \"$TEST\"."
           fi
           if [ -n "$BROWSERS" ]; then
-            add "Playwright Chromium is installed and an X server runs on $DISPLAY, so browser tests and scripted page checks work in either tree."
+            add "Two headed Chrome for Testing instances run on the virtual display $DISPLAY with CDP enabled: the head's on http://127.0.0.1:9301 and the base's on http://127.0.0.1:9302. CHROME_PATH points at the browser. Drive them with playwright-cli (snapshot, click, fill, eval, console, requests, screenshot; run playwright-cli --help), always naming the browser, e.g. playwright-cli --cdp=http://127.0.0.1:9301 goto <url>; curlwright makes HTTP requests through a browser the same way. Compare what the head shows with what the base shows."
+          fi
+          if [ -f "$T/review/environments.json" ]; then
+            add "$T/review/environments.json: the test environment the repository's hook (\"$ENVIRONMENT\") brought up in each tree: its URL, whether it answered, the browser it was opened in, and the directory with its logs (hook.log, and notes.md with anything the repository wants you to know, if present). Its processes keep running for this review; the head's uses port 8801 and the base's 8802."
+            for side in head base; do
+              if [ -s "$T/review/env/$side/notes.md" ]; then
+                add "Notes from the $side environment's hook: $(head -c 4000 "$T/review/env/$side/notes.md")"
+              fi
+            done
           fi
           if [ -n "$STAGING_URL" ]; then
             add "The head of the pull request is deployed at $STAGING_URL."
