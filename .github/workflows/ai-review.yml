@@ -431,11 +431,12 @@ jobs:
             [ -n "$BROWSERS" ] || cdp=
             dir=$RUNNER_TEMP/review/env/$side
             mkdir -p "$dir"
+            code=0
             (cd "$tree" && REVIEW_SIDE=$side REVIEW_PORT=$port REVIEW_CDP=$cdp REVIEW_ENV_DIR=$dir \
-              bash -eo pipefail -c "$ENVIRONMENT") > "$dir/hook.log" 2>&1
-            code=$?
+              bash -eo pipefail -c "$ENVIRONMENT") > "$dir/hook.log" 2>&1 || code=$?
             echo "$code" > "$dir/hook-exit-code"
-            url=$(head -1 "$dir/url" 2>/dev/null)
+            url=
+            [ -s "$dir/url" ] && url=$(head -1 "$dir/url")
             state=none
             if [ "$code" != 0 ]; then
               state="hook failed ($code)"
@@ -485,7 +486,7 @@ jobs:
           if [ -n "$BROWSERS" ]; then
             add "Two headed Chrome for Testing instances run on the virtual display $DISPLAY with CDP enabled: the head's on http://127.0.0.1:9301 and the base's on http://127.0.0.1:9302. CHROME_PATH points at the browser. Drive them with playwright-cli (snapshot, click, fill, eval, console, requests, screenshot; run playwright-cli --help), always naming the browser, e.g. playwright-cli --cdp=http://127.0.0.1:9301 goto <url>; curlwright makes HTTP requests through a browser the same way. Compare what the head shows with what the base shows."
           fi
-          if [ -f "$T/review/environments.json" ]; then
+          if grep -q '"url":"http' "$T/review/environments.json" 2>/dev/null; then
             add "$T/review/environments.json: the test environment the repository's hook (\"$ENVIRONMENT\") brought up in each tree: its URL, whether it answered, the browser it was opened in, and the directory with its logs (hook.log, and notes.md with anything the repository wants you to know, if present). Its processes keep running for this review; the head's uses port 8801 and the base's 8802."
             for side in head base; do
               if [ -s "$T/review/env/$side/notes.md" ]; then
