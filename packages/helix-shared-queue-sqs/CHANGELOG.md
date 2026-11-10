@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-queue-sqs-v1.1.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-sqs-v1.1.0...@adobe/helix-shared-queue-sqs-v1.1.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **queue-sqs:** make `owner` and `repo` optional in spilling ([#1318](https://github.com/adobe/helix-shared/issues/1318)) ([c6e2eed](https://github.com/adobe/helix-shared/commit/c6e2eed856f9fae976680eba06e1ff4d15db1f15))
+
 # [@adobe/helix-shared-queue-sqs-v1.1.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-queue-sqs-v1.0.2...@adobe/helix-shared-queue-sqs-v1.1.0) (2026-10-23)
 
 
