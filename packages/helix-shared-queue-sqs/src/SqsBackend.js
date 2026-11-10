@@ -166,8 +166,15 @@ export class SqsBackend extends AbstractQueueBackend {
     } catch (e) {
       throw this._wrapError(e, 'spilling requires a JSON message body', { status: 400 });
     }
-    const { owner, repo, key = `${owner}/${repo}` } = parsed;
-    if (!owner || !repo) {
+
+    const { owner, repo } = parsed;
+    let { key } = parsed;
+    if (!key) {
+      if (owner && repo) {
+        key = `${owner}/${repo}`;
+      }
+    }
+    if (!key) {
       throw this._wrapError(
         new Error('spilling requires an "owner"/"repo" (or explicit "key") field on the message body'),
         'spilling requires an "owner"/"repo" (or explicit "key") field on the message body',
@@ -182,7 +189,10 @@ export class SqsBackend extends AbstractQueueBackend {
     return {
       ...entry,
       MessageBody: JSON.stringify({
-        owner, repo, key, swapS3Url,
+        key,
+        swapS3Url,
+        ...(owner ? { owner } : {}),
+        ...(repo ? { repo } : {}),
       }),
     };
   }

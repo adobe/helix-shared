@@ -272,15 +272,13 @@ describe('SqsBackend', () => {
         .matchHeader('x-amz-target', 'AmazonSQS.SendMessageBatch')
         .post('/', (body) => {
           const pointer = JSON.parse(body.Entries[0].MessageBody);
-          assert.strictEqual(pointer.owner, 'adobe');
-          assert.strictEqual(pointer.repo, 'helix-indexer');
           assert.strictEqual(pointer.key, 'adobe/helix-indexer');
           assert.match(pointer.swapS3Url, /^s3:\/\/fake-spill-bucket\/default\/sqs-swap\/adobe\/helix-indexer-\d+-\w+\.json$/);
           return true;
         })
         .reply(200, { Successful: [{ Id: 'msg0', MessageId: 'mid-1' }], Failed: [] });
 
-      const big = JSON.stringify({ owner: 'adobe', repo: 'helix-indexer', data: 'x'.repeat(300_000) });
+      const big = JSON.stringify({ key: 'adobe/helix-indexer', data: 'x'.repeat(300_000) });
       const result = await backend.sendBatch([{ body: big }]);
       assert.deepStrictEqual(result.messageIds, ['mid-1']);
     });
