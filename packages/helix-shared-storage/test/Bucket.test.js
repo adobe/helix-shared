@@ -165,6 +165,15 @@ describe('Bucket', () => {
       assert.deepStrictEqual(obj.metadata, { a: '1' });
     });
 
+    it('forwards ifMatch/ifNoneMatch preconditions to the backend', async () => {
+      await bucket.put('/foo', 'a', 'text/plain', {}, false, { ifNoneMatch: '*' });
+      assert.strictEqual(backend.objects.get('foo').ifNoneMatch, '*');
+      assert.strictEqual(backend.objects.get('foo').ifMatch, undefined);
+      await bucket.put('/foo', 'b', 'text/plain', {}, false, { ifMatch: '"etag-foo"' });
+      assert.strictEqual(backend.objects.get('foo').ifMatch, '"etag-foo"');
+      assert.strictEqual(backend.objects.get('foo').ifNoneMatch, undefined);
+    });
+
     it('skips gzip when compress is false', async () => {
       await bucket.put('/foo', 'hello, world.', 'text/plain', {}, false);
       const obj = backend.objects.get('foo');

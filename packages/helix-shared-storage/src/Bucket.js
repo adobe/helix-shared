@@ -249,10 +249,29 @@ export class Bucket {
    * @param {Record<string, string>} [meta] metadata to store with the object. Defaults to `{}`.
    * @param {boolean} [compress] whether to gzip the body and set `contentEncoding: 'gzip'`.
    *  Defaults to `true`.
+   * @param {Object} [conditions] optional preconditions for optimistic concurrency
+   * @param {string} [conditions.ifMatch] only write if the existing object's etag equals this
+   * @param {string} [conditions.ifNoneMatch] pass `'*'` to only write if no object exists yet
    * @returns {Promise<CommonObjectMeta>}
+   * @throws an error with a normalized `status` (typically `412` or `409`) if a precondition
+   *  fails. Preconditions are evaluated per backend, so a mirrored write is not atomic across
+   *  backends.
    */
-  async put(path, body, contentType = 'application/octet-stream', meta = {}, compress = true) {
+  async put(
+    path,
+    body,
+    contentType = 'application/octet-stream',
+    meta = {},
+    compress = true,
+    { ifMatch, ifNoneMatch } = {},
+  ) {
     const putOpts = { contentType, metadata: meta };
+    if (ifMatch !== undefined) {
+      putOpts.ifMatch = ifMatch;
+    }
+    if (ifNoneMatch !== undefined) {
+      putOpts.ifNoneMatch = ifNoneMatch;
+    }
     let payload = body;
     if (compress) {
       putOpts.contentEncoding = 'gzip';

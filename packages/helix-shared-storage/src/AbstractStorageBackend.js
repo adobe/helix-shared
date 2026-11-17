@@ -57,6 +57,11 @@ export const SYSTEM_META_FIELD_NAMES = [
  * @property {string} [expires]
  * @property {string} [contentLanguage]
  * @property {Object.<string, string>} [metadata]
+ * @property {string} [ifMatch] normalized precondition, honored by `put()` only: the write
+ *  only succeeds if the existing object's etag equals this value (e.g. S3's `IfMatch` on
+ *  `PutObjectCommand`)
+ * @property {string} [ifNoneMatch] normalized precondition, typically `'*'`, honored by
+ *  `put()` only: the write only succeeds if no object exists yet (e.g. S3's `IfNoneMatch`)
  */
 
 /**

@@ -1926,6 +1926,29 @@ describe('Storage test', () => {
       });
     });
 
+    it('put() maps ifMatch/ifNoneMatch onto PutObjectCommand and normalizes a failed precondition', async () => {
+      nock('https://helix-code-bus.s3.fake.amazonaws.com')
+        .put('/foo?x-id=PutObject')
+        .matchHeader('if-none-match', '*')
+        .reply(200, '', { etag: '"v1"' })
+        .put('/foo?x-id=PutObject')
+        .matchHeader('if-match', '"v0"')
+        .reply(412, '<?xml version="1.0" encoding="UTF-8"?>\n<Error><Code>PreconditionFailed</Code><Message>At least one of the pre-conditions you specified did not hold</Message></Error>');
+
+      const bus = storage.codeBus({ disableR2: true });
+      const res = await bus.put('/foo', 'a', 'text/plain', {}, false, { ifNoneMatch: '*' });
+      assert.strictEqual(res.etag, '"v1"');
+      await assert.rejects(
+        bus.put('/foo', 'b', 'text/plain', {}, false, { ifMatch: '"v0"' }),
+        (e) => {
+          assert.ok(e instanceof StorageError);
+          assert.strictEqual(e.status, 412);
+          assert.strictEqual(e.backend, 'S3');
+          return true;
+        },
+      );
+    });
+
     it('putMeta() throws a StorageError on SDK failure', async () => {
       nock('https://helix-code-bus.s3.fake.amazonaws.com')
         .put('/owner/repo/ref?x-id=CopyObject')

@@ -244,6 +244,12 @@ export class S3Backend extends AbstractStorageBackend {
    */
   async put(key, body, opts = {}) {
     const input = this._buildPutInput(key, body, opts);
+    if (opts.ifMatch !== undefined) {
+      input.IfMatch = opts.ifMatch;
+    }
+    if (opts.ifNoneMatch !== undefined) {
+      input.IfNoneMatch = opts.ifNoneMatch;
+    }
     try {
       const raw = await this._client.send(new PutObjectCommand(input));
       this._log.debug(`object uploaded to: ${input.Bucket}/${input.Key}`);

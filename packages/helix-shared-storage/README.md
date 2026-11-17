@@ -97,6 +97,22 @@ await bucket.put('/path/to/file.txt', 'Hello World', 'text/plain', {
 await bucket.put('/path/to/file.txt', 'Hello World', 'text/plain', {}, false);
 ```
 
+Pass preconditions as the sixth argument for optimistic concurrency. The write fails with a
+normalized `status` (typically `412`) if the precondition does not hold:
+
+```js
+// Only create the object if it does not exist yet
+await bucket.put('/path/to/file.txt', 'Hello World', 'text/plain', {}, true, { ifNoneMatch: '*' });
+
+// Only replace the object if it is unchanged since it was read
+const meta = {};
+await bucket.get('/path/to/file.txt', meta);
+await bucket.put('/path/to/file.txt', 'Hello again', 'text/plain', {}, true, { ifMatch: meta.etag });
+```
+
+Preconditions are evaluated by each backend separately, so a mirrored write is not atomic
+across backends.
+
 ### Retrieving Objects
 
 Get object contents:
