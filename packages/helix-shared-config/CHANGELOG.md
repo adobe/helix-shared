@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.2.8...@adobe/helix-shared-config-v11.3.0) (2026-11-20)
+
+
+### Features
+
+* safe glob matching with self-and-descendants syntax ([#1325](https://github.com/adobe/helix-shared/issues/1325)) ([f3c209a](https://github.com/adobe/helix-shared/commit/f3c209aa0843f253ef556f8f0adc467d223debf6))
+
 # [@adobe/helix-shared-config-v11.2.8](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.2.7...@adobe/helix-shared-config-v11.2.8) (2026-11-17)
 
 
