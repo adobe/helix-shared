@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-string-v2.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string-v2.2.0...@adobe/helix-shared-string-v2.3.0) (2026-11-20)
+
+
+### Features
+
+* safe glob matching with self-and-descendants syntax ([#1325](https://github.com/adobe/helix-shared/issues/1325)) ([f3c209a](https://github.com/adobe/helix-shared/commit/f3c209aa0843f253ef556f8f0adc467d223debf6))
+
 # [@adobe/helix-shared-string-v2.2.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string-v2.1.0...@adobe/helix-shared-string-v2.2.0) (2025-12-09)
 
 
