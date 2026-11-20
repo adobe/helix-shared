@@ -16,7 +16,10 @@ import {
   splitByExtension,
   sanitizeName,
   sanitizePath,
-  editDistance
+  editDistance,
+  globToRegExp,
+  isValidGlobRule,
+  matchesGlob,
 } from '@adobe/helix-shared-string';
 ```
 
@@ -119,3 +122,35 @@ editDistance('My 1. Document', 'my-1-document');
 ```
 
 This function is optimized for relatively short strings like filenames and performs well even with moderately long inputs.
+
+### Globs: globToRegExp(glob), isValidGlobRule(glob), matchesGlob(path, glob)
+
+Path globbing without Node.js dependencies (e.g. usable in Cloudflare Workers).
+
+| Syntax | Matches | Example |
+|---|---|---|
+| `*` | any characters except `/` | `/blog/*` matches `/blog/a`, not `/blog/a/b` |
+| `**` | any characters, including `/` | `/blog/**` matches `/blog/a/b`, not `/blog` |
+| `(/*)?` | nothing or one child segment | `/en(/*)?` matches `/en` and `/en/a` |
+| `(/**)?` | nothing or any descendants | `/en(/**)?` matches `/en`, `/en/a` and `/en/a/b` |
+
+- All other characters match literally (e.g. `.` only matches a dot).
+- `/*` or `/**` segments directly following a `/**` are collapsed into it (`/a/**/*` is the same as `/a/**`).
+- A glob can contain at most `MAX_GLOB_WILDCARDS` (2) wildcards, which keeps matching fast for long paths.
+  Globs with more wildcards are invalid.
+
+```js
+globToRegExp('/en(/**)?');
+// Returns: /^\/en(?:\/.*)?$/
+
+globToRegExp('/*a*b*c');
+// Returns: null (too many wildcards)
+
+isValidGlobRule('**/blog/**');
+// Returns: true
+
+matchesGlob('/en', '/en(/**)?');
+// Returns: true
+```
+
+`matchesGlob` compiles the glob on every call; use `globToRegExp` and reuse the regexp when matching many paths.

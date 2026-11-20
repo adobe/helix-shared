@@ -175,3 +175,10 @@ export function toSISize(bytes, precision = 2) {
   const result = bytes / (1024 ** magnitude);
   return `${result.toFixed(magnitude === 0 ? 0 : precision)}${mags[magnitude]}`;
 }
+
+export {
+  MAX_GLOB_WILDCARDS,
+  globToRegExp,
+  isValidGlobRule,
+  matchesGlob,
+} from './glob.js';
