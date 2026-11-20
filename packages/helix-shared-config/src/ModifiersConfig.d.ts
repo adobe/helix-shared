@@ -58,11 +58,12 @@ export declare class ModifiersConfig {
   static toMetaName(text: string): string;
 
   /**
-   * Converts a globbing expression to regexp. Note that only `*` and `**` are supported yet.
+   * Converts a globbing expression to regexp.
+   * @deprecated use `globToRegExp` from `@adobe/helix-shared-string`
    * @param {string} glob
-   * @returns {RegExp}
+   * @returns {RegExp|null} the regexp or `null` if the glob is invalid
    */
-  static globToRegExp(glob:string): RegExp;
+  static globToRegExp(glob:string): RegExp|null;
 
   /**
    * Empty modifiers

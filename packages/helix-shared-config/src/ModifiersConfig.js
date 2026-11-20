@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import { globToRegExp } from '@adobe/helix-shared-string';
+
 /**
  * Converts all non-valid characters to `-`.
  * @param {string} text input text
@@ -26,16 +28,13 @@ function toMetaName(text) {
  */
 export class ModifiersConfig {
   /**
-   * Converts a globbing expression to regexp. Note that only `*` and `**` are supported yet.
+   * Converts a globbing expression to regexp.
+   * @deprecated use `globToRegExp` from `@adobe/helix-shared-string`
    * @param {string} glob
-   * @returns {RegExp}
+   * @returns {RegExp|null} the regexp or `null` if the glob is invalid
    */
   static globToRegExp(glob) {
-    const reString = glob
-      .replaceAll('**', '|')
-      .replaceAll('*', '[^/]*')
-      .replaceAll('|', '.*');
-    return new RegExp(`^${reString}$`);
+    return globToRegExp(glob);
   }
 
   /**
@@ -146,13 +145,17 @@ export class ModifiersConfig {
     if (!map) {
       return;
     }
-    this.modifiers = Object.entries(map).map(([url, mods]) => {
-      const pat = url.indexOf('*') >= 0 ? ModifiersConfig.globToRegExp(url) : url;
-      return {
-        pat,
-        mods: mods.filter(({ key }) => keyFilter(key)),
-      };
-    });
+    this.modifiers = [];
+    for (const [url, mods] of Object.entries(map)) {
+      const pat = url.includes('*') ? globToRegExp(url) : url;
+      // invalid globs are ignored
+      if (pat) {
+        this.modifiers.push({
+          pat,
+          mods: mods.filter(({ key }) => keyFilter(key)),
+        });
+      }
+    }
   }
 
   /**
