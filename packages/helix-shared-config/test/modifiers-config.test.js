@@ -240,4 +240,26 @@ describe('ModifiersConfig', () => {
     const actual = ModifiersConfig.fromModifierSheet(data).getModifiers('/nope');
     assert.deepEqual(actual, {});
   });
+
+  it('it matches self and descendants', () => {
+    const config = ModifiersConfig.fromModifierSheet([
+      { url: '/en(/**)?', key: 'a', value: 'self-and-descendants' },
+      { url: '/en.*', key: 'b', value: 'literal-dot' },
+    ]);
+    assert.deepEqual(config.getModifiers('/en'), { a: 'self-and-descendants' });
+    assert.deepEqual(config.getModifiers('/en/a/b'), { a: 'self-and-descendants' });
+    assert.deepEqual(config.getModifiers('/english'), {});
+    assert.deepEqual(config.getModifiers('/enXhtml'), {});
+    assert.deepEqual(config.getModifiers('/en.html'), { b: 'literal-dot' });
+  });
+
+  it('it ignores invalid globs', () => {
+    const config = ModifiersConfig.fromModifierSheet([
+      { url: '/**', key: 'a', value: 'all' },
+      { url: '/*a*a*b', key: 'b', value: 'invalid' },
+    ]);
+    assert.strictEqual(config.modifiers.length, 1);
+    assert.strictEqual(ModifiersConfig.globToRegExp('/*a*a*b'), null);
+    assert.deepEqual(config.getModifiers('/aab'), { a: 'all' });
+  });
 });

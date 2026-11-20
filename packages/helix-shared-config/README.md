@@ -141,6 +141,10 @@ const modifiers = config.getModifiers('/blog/post-1');
 // Returns: { 'cache-control': 'max-age=3600', 'title': 'Blog', 'description': 'Our blog' }
 ```
 
+The `url` column contains an exact path or a glob (see [globs in helix-shared-string](../helix-shared-string/README.md#globs-globtoregexpglob-isvalidglobruleglob-matchesglobpath-glob)):
+`*` matches within a path segment, `**` across segments, and `/en(/**)?` matches `/en` and all its descendants.
+Invalid globs (e.g. more than 2 wildcards) are ignored. If several rows set the same key, the last matching row wins.
+
 ### Config Wrappers for Serverless Functions
 
 Use `requiredConfig` or `optionalConfig` to automatically load configurations in serverless functions.
