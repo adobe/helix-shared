@@ -8,8 +8,8 @@
     "docs:schema": "jsonschema2md -d packages/helix-shared-config/src/schemas -o docs -x docs -f yaml",
     "docs:api": "jsdoc2md -c .jsdoc.json --files packages/*/src/*.js > docs/API.md",
     "docs": "npm run docs:schema && npm run docs:api",
-    "test": "nx run-many -t test",
-    "lint": "nx run-many -t lint",
+    "test": "npm test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
     "semantic-release": "npx --no --workspaces semantic-release",
     "semantic-release-dry": "npx --no --workspaces semantic-release --dry-run --branches $CI_BRANCH",
     "prepare": "husky",
@@ -44,7 +44,6 @@
     "mocha-multi-reporters": "1.5.2",
     "mocha-suppress-logs": "0.6.0",
     "nock": "14.0.17",
-    "nx": "23.3.1",
     "semantic-release": "25.0.9",
     "semantic-release-monorepo": "8.0.2"
   },
