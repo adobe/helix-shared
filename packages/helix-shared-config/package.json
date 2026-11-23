@@ -43,7 +43,7 @@
     "@adobe/helix-shared-utils": "^2.1.0",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
-    "cookie": "2.0.1",
+    "cookie": "2.0.2",
     "fs-extra": "11.4.1",
     "ignore": "7.0.14",
     "lru-cache": "11.5.3",
