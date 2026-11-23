@@ -171,6 +171,24 @@ describe('Bucket', () => {
       assert.strictEqual(obj.body.toString('utf-8'), 'hello, world.');
       assert.strictEqual(obj.contentEncoding, undefined);
     });
+
+    it('forwards ifMatch/ifNoneMatch to the backend and returns the new etag', async () => {
+      const res = await bucket.put('/foo', 'hello', 'text/plain', {}, false, {
+        ifMatch: '"old-etag"',
+        ifNoneMatch: '*',
+      });
+      const obj = backend.objects.get('foo');
+      assert.strictEqual(obj.ifMatch, '"old-etag"');
+      assert.strictEqual(obj.ifNoneMatch, '*');
+      assert.strictEqual(res.etag, '"etag-foo"');
+    });
+
+    it('omits conditions from the backend call when none are given', async () => {
+      await bucket.put('/foo', 'hello', 'text/plain', {}, false);
+      const obj = backend.objects.get('foo');
+      assert.ok(!('ifMatch' in obj));
+      assert.ok(!('ifNoneMatch' in obj));
+    });
   });
 
   describe('putStream()', () => {

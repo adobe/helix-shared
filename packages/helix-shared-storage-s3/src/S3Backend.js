@@ -244,6 +244,13 @@ export class S3Backend extends AbstractStorageBackend {
    */
   async put(key, body, opts = {}) {
     const input = this._buildPutInput(key, body, opts);
+    if (opts.ifMatch !== undefined) {
+      input.IfMatch = opts.ifMatch;
+    }
+    if (opts.ifNoneMatch !== undefined) {
+      input.IfNoneMatch = opts.ifNoneMatch;
+    }
+    const conditional = 'IfMatch' in input || 'IfNoneMatch' in input;
     try {
       const raw = await this._client.send(new PutObjectCommand(input));
       this._log.debug(`object uploaded to: ${input.Bucket}/${input.Key}`);
@@ -251,7 +258,11 @@ export class S3Backend extends AbstractStorageBackend {
         etag: raw.ETag, versionId: raw.VersionId, contentType: opts.contentType, raw,
       };
     } catch (e) {
-      throw this._wrapError(e, e.message, { status: e.$metadata?.httpStatusCode, code: e.Code });
+      let status = e.$metadata?.httpStatusCode;
+      if (conditional && (e.Code === 'NoSuchKey' || e.Code === 'ConditionalRequestConflict')) {
+        status = 412;
+      }
+      throw this._wrapError(e, e.message, { status, code: e.Code });
     }
   }
 

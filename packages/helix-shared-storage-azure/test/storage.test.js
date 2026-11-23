@@ -239,6 +239,70 @@ describe('AzureBackend storage test', () => {
     assert.strictEqual(raw.etag, '"abc"');
   });
 
+  it('maps put() ifMatch/ifNoneMatch onto upload conditions', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/foo')
+      .matchHeader('if-match', '"old-etag"')
+      .matchHeader('if-none-match', '*')
+      .reply(201, '', { etag: '"new-etag"' });
+    const raw = await backend.put('foo', 'hello', { ifMatch: '"old-etag"', ifNoneMatch: '*' });
+    assert.strictEqual(raw.etag, '"new-etag"');
+  });
+
+  it('put() sends no conditional headers when no conditions are given', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/foo')
+      .reply(function cb() {
+        assert.strictEqual(this.req.headers['if-match'], undefined);
+        assert.strictEqual(this.req.headers['if-none-match'], undefined);
+        return [201, '', { etag: '"new-etag"' }];
+      });
+    await backend.put('foo', 'hello');
+  });
+
+  it('put() surfaces a failed precondition as status 412', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/foo')
+      .reply(412, '<?xml version="1.0" encoding="utf-8"?><Error><Code>ConditionNotMet</Code></Error>', {
+        'content-type': 'application/xml',
+        'x-ms-error-code': 'ConditionNotMet',
+      });
+    await assert.rejects(
+      backend.put('foo', 'hello', { ifMatch: '"old-etag"' }),
+      (e) => e.status === 412,
+    );
+  });
+
+  it('put() with ifNoneMatch on an existing blob surfaces as status 412', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/foo')
+      .reply(409, '<?xml version="1.0" encoding="utf-8"?><Error><Code>BlobAlreadyExists</Code></Error>', {
+        'content-type': 'application/xml',
+        'x-ms-error-code': 'BlobAlreadyExists',
+      });
+    await assert.rejects(
+      backend.put('foo', 'hello', { ifNoneMatch: '*' }),
+      (e) => {
+        assert.strictEqual(e.status, 412);
+        assert.strictEqual(e.code, 'BlobAlreadyExists');
+        return true;
+      },
+    );
+  });
+
+  it('put() with ifMatch on a missing blob surfaces as status 412', async () => {
+    nock(BASE_URL)
+      .put('/helix-code-bus/foo')
+      .reply(404, '<?xml version="1.0" encoding="utf-8"?><Error><Code>BlobNotFound</Code></Error>', {
+        'content-type': 'application/xml',
+        'x-ms-error-code': 'BlobNotFound',
+      });
+    await assert.rejects(
+      backend.put('foo', 'hello', { ifMatch: '"old-etag"' }),
+      (e) => e.status === 412,
+    );
+  });
+
   it('can put a stream (staged block + commit block list, unlike put()\'s single upload())', async () => {
     nock(BASE_URL)
       .put((uri) => uri.startsWith('/helix-code-bus/foo?comp=block&blockid='))

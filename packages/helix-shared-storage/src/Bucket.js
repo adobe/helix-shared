@@ -249,10 +249,19 @@ export class Bucket {
    * @param {Record<string, string>} [meta] metadata to store with the object. Defaults to `{}`.
    * @param {boolean} [compress] whether to gzip the body and set `contentEncoding: 'gzip'`.
    *  Defaults to `true`.
-   * @returns {Promise<CommonObjectMeta>}
+   * @param {import('./storage.js').PutConditions} [conditions] write preconditions
+   * @returns {Promise<CommonObjectMeta>} including the new `etag`
+   * @throws a `StorageError` with `status: 412` if a condition fails
    */
-  async put(path, body, contentType = 'application/octet-stream', meta = {}, compress = true) {
+  async put(path, body, contentType = 'application/octet-stream', meta = {}, compress = true, conditions = {}) {
     const putOpts = { contentType, metadata: meta };
+    const { ifMatch, ifNoneMatch } = conditions;
+    if (ifMatch !== undefined) {
+      putOpts.ifMatch = ifMatch;
+    }
+    if (ifNoneMatch !== undefined) {
+      putOpts.ifNoneMatch = ifNoneMatch;
+    }
     let payload = body;
     if (compress) {
       putOpts.contentEncoding = 'gzip';

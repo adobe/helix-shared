@@ -226,17 +226,29 @@ export class AzureBackend extends AbstractStorageBackend {
   async put(key, body, opts = {}) {
     const data = typeof body === 'string' ? Buffer.from(body) : body;
     const blockBlobClient = this._client.getBlockBlobClient(key);
+    const uploadOpts = {
+      blobHTTPHeaders: buildBlobHTTPHeaders(opts),
+      metadata: toAzureMetadata(opts.metadata),
+    };
+    const conditional = opts.ifMatch !== undefined || opts.ifNoneMatch !== undefined;
+    if (conditional) {
+      uploadOpts.conditions = {
+        ...(opts.ifMatch !== undefined && { ifMatch: opts.ifMatch }),
+        ...(opts.ifNoneMatch !== undefined && { ifNoneMatch: opts.ifNoneMatch }),
+      };
+    }
     try {
-      const raw = await blockBlobClient.upload(data, data.length, {
-        blobHTTPHeaders: buildBlobHTTPHeaders(opts),
-        metadata: toAzureMetadata(opts.metadata),
-      });
+      const raw = await blockBlobClient.upload(data, data.length, uploadOpts);
       this._log.info(`object uploaded to: ${this._bucketName}/${key}`);
       return {
         etag: raw.etag, contentType: opts.contentType, raw,
       };
     } catch (e) {
-      throw this._wrapError(e, e.message, { status: e.statusCode, code: e.code });
+      let status = e.statusCode;
+      if (conditional && (e.code === 'BlobNotFound' || e.code === 'BlobAlreadyExists')) {
+        status = 412;
+      }
+      throw this._wrapError(e, e.message, { status, code: e.code });
     }
   }
 

@@ -58,6 +58,17 @@ import { Bucket } from './Bucket.js';
  */
 
 /**
+ * Write preconditions for {@link Bucket#put}. Each maps onto the backend's native conditional
+ * write. A failed condition throws a `StorageError` with `status: 412`.
+ *
+ * @typedef {Object} PutConditions
+ * @property {string} [ifMatch] the write only succeeds if the object's current etag equals
+ *  this value. Fails if the object does not exist.
+ * @property {string} [ifNoneMatch] pass `'*'` so the write only succeeds if no object exists
+ *  at the key.
+ */
+
+/**
  * @typedef {Object} BrowseOptions
  * @property {string} [continuationToken] continuation token returned by a previous
  *  {@link Bucket#browse} call. Pass it back unchanged to fetch the next page; omit to start

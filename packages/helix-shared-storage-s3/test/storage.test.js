@@ -1302,6 +1302,90 @@ describe('Storage test', () => {
     );
   });
 
+  it('maps put() ifMatch/ifNoneMatch onto PutObjectCommand and returns the new etag', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .matchHeader('if-match', '"old-etag"')
+      .matchHeader('if-none-match', '*')
+      .reply(200, '', { etag: '"new-etag"' });
+
+    const bus = storage.codeBus({ disableR2: true });
+    const res = await bus.put('/foo', 'hello', 'text/plain', {}, false, {
+      ifMatch: '"old-etag"',
+      ifNoneMatch: '*',
+    });
+    assert.strictEqual(res.etag, '"new-etag"');
+  });
+
+  it('put() sends no conditional headers when no conditions are given', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(function cb() {
+        assert.strictEqual(this.req.headers['if-match'], undefined);
+        assert.strictEqual(this.req.headers['if-none-match'], undefined);
+        return [200, '', { etag: '"new-etag"' }];
+      });
+
+    const bus = storage.codeBus({ disableR2: true });
+    await bus.put('/foo', 'hello', 'text/plain', {}, false);
+  });
+
+  it('put() surfaces a failed precondition as status 412', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(412, '<?xml version="1.0" encoding="UTF-8"?><Error><Code>PreconditionFailed</Code><Message>At least one of the pre-conditions you specified did not hold</Message></Error>');
+
+    const bus = storage.codeBus({ disableR2: true });
+    await assert.rejects(
+      bus.put('/foo', 'hello', 'text/plain', {}, false, { ifNoneMatch: '*' }),
+      (e) => {
+        assert.ok(e instanceof StorageError);
+        assert.strictEqual(e.status, 412);
+        return true;
+      },
+    );
+  });
+
+  it('put() with ifMatch on a missing object surfaces as status 412', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(404, '<?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message></Error>');
+
+    const bus = storage.codeBus({ disableR2: true });
+    await assert.rejects(
+      bus.put('/foo', 'hello', 'text/plain', {}, false, { ifMatch: '"old-etag"' }),
+      (e) => {
+        assert.strictEqual(e.status, 412);
+        assert.strictEqual(e.code, 'NoSuchKey');
+        return true;
+      },
+    );
+  });
+
+  it('put() surfaces a conditional write conflict as status 412', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(409, '<?xml version="1.0" encoding="UTF-8"?><Error><Code>ConditionalRequestConflict</Code><Message>A conflicting conditional operation is currently in progress against this resource.</Message></Error>');
+
+    const bus = storage.codeBus({ disableR2: true });
+    await assert.rejects(
+      bus.put('/foo', 'hello', 'text/plain', {}, false, { ifMatch: '"old-etag"' }),
+      (e) => e.status === 412,
+    );
+  });
+
+  it('put() without conditions keeps a 404 as 404', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(404, '<?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message></Error>');
+
+    const bus = storage.codeBus({ disableR2: true });
+    await assert.rejects(
+      bus.put('/foo', 'hello', 'text/plain', {}, false),
+      (e) => e.status === 404,
+    );
+  });
+
   it('normalizes a non-404 copy error\'s status onto e.status', async () => {
     const body = '<?xml version="1.0" encoding="UTF-8"?><Error><Code>PreconditionFailed</Code><Message>At least one of the pre-conditions you specified did not hold</Message></Error>';
     nock('https://helix-code-bus.s3.fake.amazonaws.com')

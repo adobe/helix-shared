@@ -57,6 +57,14 @@ export const SYSTEM_META_FIELD_NAMES = [
  * @property {string} [expires]
  * @property {string} [contentLanguage]
  * @property {Object.<string, string>} [metadata]
+ * @property {string} [ifMatch] normalized precondition: write only if the object's etag
+ *  matches. Implementors map it onto their native mechanism (S3's `IfMatch` on
+ *  `PutObjectCommand`; Azure's `conditions.ifMatch`). A failed condition, including a missing
+ *  object, must throw with `status: 412`. Only `put()` honors it.
+ * @property {string} [ifNoneMatch] normalized precondition, typically `'*'`: write only if
+ *  the object does not exist. Implementors map it onto their native mechanism (S3's
+ *  `IfNoneMatch`; Azure's `conditions.ifNoneMatch`). A failed condition must throw with
+ *  `status: 412`. Only `put()` honors it.
  */
 
 /**
