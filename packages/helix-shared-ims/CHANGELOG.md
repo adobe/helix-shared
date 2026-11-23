@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-ims-v2.0.24](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims-v2.0.23...@adobe/helix-shared-ims-v2.0.24) (2026-11-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency cookie to v2.0.2 ([#1326](https://github.com/adobe/helix-shared/issues/1326)) ([e6e982c](https://github.com/adobe/helix-shared/commit/e6e982c226056eb8443ad6c2c7e7bd816ba27836))
+
 # [@adobe/helix-shared-ims-v2.0.23](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-ims-v2.0.22...@adobe/helix-shared-ims-v2.0.23) (2026-08-31)
 
 
