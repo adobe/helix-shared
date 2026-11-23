@@ -109,8 +109,25 @@ export class MirroringBackend {
     return this._fanOutCalls(this._backends.map((b) => () => b[method](...args)));
   }
 
-  put(...args) {
-    return this._fanOut('put', args);
+  /**
+   * Without conditions, writes every backend in parallel. With `ifMatch`/`ifNoneMatch`, the
+   * conditional write goes to the primary first, since reads (and so the caller's etag) come
+   * from the primary. Only if it succeeds are the secondaries written, without conditions, so
+   * a secondary whose etag drifted from the primary cannot reject the write.
+   *
+   * @param {...*} args `(key, body, opts)` as for {@link StorageBackend#put}
+   */
+  async put(...args) {
+    const [key, body, opts] = args;
+    const { ifMatch, ifNoneMatch, ...mirrorOpts } = opts ?? {};
+    if (ifMatch === undefined && ifNoneMatch === undefined) {
+      return this._fanOut('put', args);
+    }
+    const result = await this._fanOutCalls([() => this._primary.put(key, body, opts)]);
+    return this._fanOutCalls([
+      async () => result,
+      ...this._backends.slice(1).map((b) => () => b.put(key, body, mirrorOpts)),
+    ]);
   }
 
   /**

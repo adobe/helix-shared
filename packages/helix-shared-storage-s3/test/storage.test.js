@@ -1317,6 +1317,23 @@ describe('Storage test', () => {
     assert.strictEqual(res.etag, '"new-etag"');
   });
 
+  it('put() with conditions checks them on S3 only and mirrors to R2 unconditionally', async () => {
+    nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .matchHeader('if-match', '"old-etag"')
+      .reply(200, '', { etag: '"new-etag"' });
+    nock(`https://helix-code-bus.${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`)
+      .put('/foo?x-id=PutObject')
+      .reply(function cb() {
+        assert.strictEqual(this.req.headers['if-match'], undefined);
+        return [200, '', { etag: '"r2-etag"' }];
+      });
+
+    const bus = storage.codeBus();
+    const res = await bus.put('/foo', 'hello', 'text/plain', {}, false, { ifMatch: '"old-etag"' });
+    assert.strictEqual(res.etag, '"new-etag"');
+  });
+
   it('put() sends no conditional headers when no conditions are given', async () => {
     nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .put('/foo?x-id=PutObject')

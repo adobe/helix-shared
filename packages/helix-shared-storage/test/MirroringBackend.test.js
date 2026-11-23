@@ -194,6 +194,76 @@ describe('MirroringBackend', () => {
     });
   });
 
+  describe('put() with conditions', () => {
+    const conditional = {
+      contentType: 'text/plain', ifMatch: '"old-etag"', ifNoneMatch: '*',
+    };
+
+    it('applies conditions to the primary only, then writes secondaries unconditionally', async () => {
+      const primary = new FakeBackend('S3');
+      const secondary = new FakeBackend('R2');
+      const mirror = new MirroringBackend({ primary, secondaries: [secondary] });
+      const result = await mirror.put('foo', 'bar', conditional);
+      assert.strictEqual(result.value, 'S3-value');
+      assert.deepStrictEqual(result.args, ['foo', 'bar', conditional]);
+      assert.strictEqual(secondary.calls.put, 1);
+    });
+
+    it('strips conditions from the secondary write', async () => {
+      const primary = new FakeBackend('S3');
+      const secondary = new FakeBackend('R2');
+      secondary.put = async (...args) => {
+        secondary.args = args;
+        return {};
+      };
+      const mirror = new MirroringBackend({ primary, secondaries: [secondary] });
+      await mirror.put('foo', 'bar', conditional);
+      assert.deepStrictEqual(secondary.args, ['foo', 'bar', { contentType: 'text/plain' }]);
+    });
+
+    it('does not write secondaries until the primary write succeeds', async () => {
+      let resolvePrimary;
+      const primary = new FakeBackend('S3');
+      primary.put = () => new Promise((resolve) => {
+        resolvePrimary = resolve;
+      });
+      const secondary = new FakeBackend('R2');
+      const mirror = new MirroringBackend({ primary, secondaries: [secondary] });
+      const promise = mirror.put('foo', 'bar', { ifMatch: '"old-etag"' });
+      await new Promise((resolve) => {
+        setImmediate(resolve);
+      });
+      assert.strictEqual(secondary.calls.put || 0, 0);
+      resolvePrimary({ value: 'S3-value' });
+      const result = await promise;
+      assert.strictEqual(result.value, 'S3-value');
+      assert.strictEqual(secondary.calls.put, 1);
+    });
+
+    it('skips secondaries and throws tagged with the primary name when the condition fails', async () => {
+      const primary = new FakeBackend('S3', {
+        throwError: new StorageError('precondition failed', { status: 412 }),
+      });
+      const secondary = new FakeBackend('R2');
+      const mirror = new MirroringBackend({ primary, secondaries: [secondary] });
+      await assert.rejects(mirror.put('foo', 'bar', { ifNoneMatch: '*' }), (err) => {
+        assert.strictEqual(err.status, 412);
+        assert.strictEqual(err.message, '[S3] precondition failed');
+        return true;
+      });
+      assert.strictEqual(secondary.calls.put || 0, 0);
+    });
+
+    it('throws tagged with the failing secondary name when a secondary write fails', async () => {
+      const primary = new FakeBackend('S3');
+      const ok = new FakeBackend('R2');
+      const bad = new FakeBackend('R2b', { fails: true });
+      const mirror = new MirroringBackend({ primary, secondaries: [ok, bad] });
+      await assert.rejects(mirror.put('foo', 'bar', { ifMatch: '"old-etag"' }), /^Error: \[R2b\] put failed$/);
+      assert.strictEqual(ok.calls.put, 1);
+    });
+  });
+
   describe('putStream()', () => {
     it('streams directly to the primary when there is a single backend (no tee)', async () => {
       const primary = new FakeBackend('S3');
