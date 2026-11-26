@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-config-v11.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.3.1...@adobe/helix-shared-config-v11.4.0) (2026-11-26)
+
+
+### Features
+
+* **sitemap:** allow customizing origin in language ([#1331](https://github.com/adobe/helix-shared/issues/1331)) ([da0a478](https://github.com/adobe/helix-shared/commit/da0a47822c7c77af514ac0889555ba7c5a7bba8a))
+
 # [@adobe/helix-shared-config-v11.3.1](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-config-v11.3.0...@adobe/helix-shared-config-v11.3.1) (2026-11-23)
 
 
