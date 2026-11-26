@@ -12,6 +12,8 @@
 
 import assert from 'assert';
 import {
+  createBelowMatcher,
+  globMayMatchBelow,
   globToRegExp,
   isValidGlobRule,
   matchesGlob,
@@ -43,6 +45,23 @@ const TESTS = [
   ['/foo(/**)?(/**)?', ['/foo', '/foo/a/b'], ['/foobar']],
 ];
 
+const BELOW_TESTS = [
+  // [glob, matching folders, non-matching folders]
+  ['/jp/**', ['', '/', '/jp/', '/jp/a/b/'], ['/en/', '/jpx/']],
+  ['/jp/page', ['/', '/jp/'], ['/en/', '/jp/page/']],
+  ['/jp', ['/'], ['/jp/']],
+  ['/*/docs/*', ['/', '/jp/', '/jp/docs/'], ['/jp/other/', '/jp/docs/a/']],
+  ['/en(/*)?', ['/', '/en/'], ['/en/a/', '/fr/']],
+  ['/en(/**)?', ['/', '/en/', '/en/a/b/'], ['/fr/', '/english/']],
+  ['/en(/**?)', ['/en/a/b/'], ['/fr/']],
+  ['/en.html', ['/'], ['/en/']],
+  ['**/blog/**', ['/', '/de/', '/de/blog/a/'], []],
+  ['/foo/*.html', ['/', '/foo/'], ['/foo/a/', '/bar/']],
+  ['/a+b(c)/*', ['/', '/a+b(c)/'], ['/a/', '/a+b(c)/d/']],
+  ['/ru**', ['/', '/ru/', '/rules/a/'], ['/r/', '/en/']],
+  ['/*a*/x', ['/', '/bab/'], ['/bb/', '/bab/x/']],
+];
+
 describe('Glob Tests', () => {
   for (const [glob, matches, nonMatches] of TESTS) {
     it(`glob '${glob}' matches correctly`, () => {
@@ -62,7 +81,7 @@ describe('Glob Tests', () => {
   });
 
   it('rejects invalid globs', () => {
-    for (const glob of ['', null, undefined, 42, '/*a*a*b', '**/a/*/**', '/a/**/b/**/c/**', '(/**)?/a/*(/**)?']) {
+    for (const glob of ['', null, undefined, 42, '/*a*a*b', '**/a/*/**', '/a/**/b/**/c/**', '(/**)?/a/*(/**)?', '/a(/*)?b', '/a(/**)?b', '/a(/*)?(/**)?']) {
       assert.strictEqual(globToRegExp(glob), null, `expected '${glob}' to be invalid`);
       assert.strictEqual(isValidGlobRule(glob), false);
       assert.strictEqual(matchesGlob('/a', glob), false);
@@ -80,6 +99,37 @@ describe('Glob Tests', () => {
     const t0 = Date.now();
     assert.strictEqual(matchesGlob(path, '/**a**b'), false);
     assert.strictEqual(matchesGlob(path, '/*a*b'), false);
+    assert.ok(Date.now() - t0 < 500);
+  });
+});
+
+describe('Glob may match below Tests', () => {
+  for (const [glob, matches, nonMatches] of BELOW_TESTS) {
+    it(`glob '${glob}' may match below folders correctly`, () => {
+      const matcher = createBelowMatcher(glob);
+      for (const folder of matches) {
+        assert.strictEqual(globMayMatchBelow(glob, folder), true, `expected '${glob}' to match below '${folder}'`);
+        assert.strictEqual(matcher(folder), true);
+      }
+      for (const folder of nonMatches) {
+        assert.strictEqual(globMayMatchBelow(glob, folder), false, `expected '${glob}' not to match below '${folder}'`);
+        assert.strictEqual(matcher(folder), false);
+      }
+    });
+  }
+
+  it('never matches invalid globs', () => {
+    for (const glob of ['', null, undefined, '/a/*/b/*/c/*', '/a(/*)?b']) {
+      assert.strictEqual(createBelowMatcher(glob), null);
+      assert.strictEqual(globMayMatchBelow(glob, '/'), false);
+    }
+  });
+
+  it('matches the worst case quickly', () => {
+    const folder = `/${'a'.repeat(4096)}/`;
+    const t0 = Date.now();
+    assert.strictEqual(globMayMatchBelow('/*a*b/', folder), false);
+    assert.strictEqual(globMayMatchBelow('/*(/*)?', `/${'a/'.repeat(4096)}`), false);
     assert.ok(Date.now() - t0 < 500);
   });
 });

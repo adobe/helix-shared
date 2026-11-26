@@ -44,6 +44,42 @@ function normalize(glob) {
 }
 
 /**
+ * Splits the normalized glob into literal strings and wildcard tokens (`*`, `**`, `(/*)?` and
+ * `(/**)?`). Wildcards are wrapped in objects to distinguish them from literals.
+ *
+ * @param {string} glob the glob
+ * @returns {Array<string|{wildcard: string}>|null} the tokens or `null` if the glob is invalid
+ */
+function tokenize(glob) {
+  if (typeof glob !== 'string' || !glob) {
+    return null;
+  }
+  const normalized = normalize(glob);
+  const tokens = [];
+  let last = 0;
+  let count = 0;
+  for (const match of normalized.matchAll(TOKENIZER)) {
+    count += 1;
+    if (count > MAX_GLOB_WILDCARDS) {
+      return null;
+    }
+    if (match.index > last) {
+      tokens.push(normalized.substring(last, match.index));
+    }
+    last = match.index + match[0].length;
+    // optional wildcards must end a segment, e.g. `/a(/*)?b` is invalid
+    if (match[0].startsWith('(') && last < normalized.length && normalized[last] !== '/') {
+      return null;
+    }
+    tokens.push({ wildcard: match[0] });
+  }
+  if (last < normalized.length) {
+    tokens.push(normalized.substring(last));
+  }
+  return tokens;
+}
+
+/**
  * Converts a glob to a regular expression. Supported syntax:
  *
  * - `*` matches any characters except `/` (within a path segment)
@@ -53,28 +89,20 @@ function normalize(glob) {
  * - all other characters match literally
  *
  * Whole-segment wildcards (`/*` or `/**`) directly following a `/**` are collapsed into it.
- * Globs with more than {@link MAX_GLOB_WILDCARDS} wildcards are rejected.
+ * Globs with more than {@link MAX_GLOB_WILDCARDS} wildcards, or with `(/*)?` or `(/**)?` not
+ * followed by `/` or the end of the glob, are rejected.
  *
  * @param {string} glob the glob
  * @returns {RegExp|null} the regular expression or `null` if the glob is invalid
  */
 export function globToRegExp(glob) {
-  if (typeof glob !== 'string' || !glob) {
+  const tokens = tokenize(glob);
+  if (!tokens) {
     return null;
   }
-  const normalized = normalize(glob);
-  let re = '';
-  let last = 0;
-  let count = 0;
-  for (const match of normalized.matchAll(TOKENIZER)) {
-    count += 1;
-    if (count > MAX_GLOB_WILDCARDS) {
-      return null;
-    }
-    re += escape(normalized.substring(last, match.index)) + TOKEN_REGEXPS[match[0]];
-    last = match.index + match[0].length;
-  }
-  re += escape(normalized.substring(last));
+  const re = tokens
+    .map((token) => (typeof token === 'string' ? escape(token) : TOKEN_REGEXPS[token.wildcard]))
+    .join('');
   return new RegExp(`^${re}$`);
 }
 
@@ -84,7 +112,7 @@ export function globToRegExp(glob) {
  * @returns {boolean} {@code true} if the glob is valid
  */
 export function isValidGlobRule(glob) {
-  return globToRegExp(glob) !== null;
+  return tokenize(glob) !== null;
 }
 
 /**
@@ -97,6 +125,98 @@ export function isValidGlobRule(glob) {
  * @returns {boolean} {@code true} if the path matches
  */
 export function matchesGlob(path, glob) {
-  const re = globToRegExp(glob);
-  return re !== null && re.test(path);
+  return Boolean(globToRegExp(glob)?.test(path));
+}
+
+/**
+ * Expands the optional wildcards (`(/*)?` and `(/**)?`) of the tokens into globs without and
+ * with the respective wildcard. The resulting globs only contain `*` and `**` wildcards.
+ *
+ * @param {Array<string|{wildcard: string}>} tokens glob tokens
+ * @returns {string[]} the expanded globs
+ */
+function expandOptionals(tokens) {
+  let globs = [''];
+  for (const token of tokens) {
+    if (typeof token === 'string') {
+      globs = globs.map((glob) => glob + token);
+    } else if (token.wildcard.startsWith('(')) {
+      const wildcard = token.wildcard.slice(1, -2);
+      globs = globs.flatMap((glob) => [glob, glob + wildcard]);
+    } else {
+      globs = globs.map((glob) => glob + token.wildcard);
+    }
+  }
+  return globs;
+}
+
+/**
+ * Compiles a single glob segment (without `/`). A segment containing `**` matches every path
+ * segment starting with the part before the `**`, as the `**` can consume the rest of the path.
+ *
+ * @param {string} segment glob segment
+ * @returns {{re: RegExp, descendants: boolean}} compiled segment
+ */
+function compileSegment(segment) {
+  const idx = segment.indexOf('**');
+  const descendants = idx >= 0;
+  const pattern = (descendants ? segment.substring(0, idx) : segment)
+    .split('*')
+    .map(escape)
+    .join('[^/]*');
+  return { re: new RegExp(`^${pattern}${descendants ? '' : '$'}`), descendants };
+}
+
+/**
+ * Creates a function that checks if the glob may match a folder or a path below it, i.e. if the
+ * folder path is a prefix of some path matched by the glob. Use this instead of
+ * {@link globMayMatchBelow} when checking many folders.
+ *
+ * @param {string} glob the glob
+ * @returns {function(string): boolean|null} matcher accepting a folder path ending with `/`, or
+ *          `null` if the glob is invalid
+ */
+export function createBelowMatcher(glob) {
+  const tokens = tokenize(glob);
+  if (!tokens) {
+    return null;
+  }
+  const alternatives = expandOptionals(tokens)
+    .map((expanded) => expanded.split('/').map(compileSegment));
+
+  return (folderPath) => {
+    // `/jp/` → ['', 'jp']
+    const folders = folderPath.split('/').slice(0, -1);
+    return alternatives.some((segments) => {
+      for (let k = 0; k < folders.length; k += 1) {
+        if (k >= segments.length) {
+          return false;
+        }
+        const { re, descendants } = segments[k];
+        if (descendants) {
+          return re.test(folders[k]);
+        }
+        if (!re.test(folders[k])) {
+          return false;
+        }
+      }
+      // the glob must continue below the folder
+      return segments.length > folders.length;
+    });
+  };
+}
+
+/**
+ * Checks if the glob may match the given folder or a path below it, i.e. if the folder path
+ * is a prefix of some path matched by the glob. Invalid globs never match.
+ * Note that the glob is compiled on every invocation; use {@link createBelowMatcher} when
+ * checking many folders.
+ *
+ * @param {string} glob the glob
+ * @param {string} folderPath folder path, ending with `/`
+ * @returns {boolean} {@code true} if the glob may match the folder or a path below it
+ */
+export function globMayMatchBelow(glob, folderPath) {
+  const matcher = createBelowMatcher(glob);
+  return matcher !== null && matcher(folderPath);
 }

@@ -138,6 +138,7 @@ Path globbing without Node.js dependencies (e.g. usable in Cloudflare Workers).
 - `/*` or `/**` segments directly following a `/**` are collapsed into it (`/a/**/*` is the same as `/a/**`).
 - A glob can contain at most `MAX_GLOB_WILDCARDS` (2) wildcards, which keeps matching fast for long paths.
   Globs with more wildcards are invalid.
+- `(/*)?` and `(/**)?` must be followed by `/` or the end of the glob (e.g. `/a(/*)?b` is invalid).
 
 ```js
 globToRegExp('/en(/**)?');
@@ -154,3 +155,23 @@ matchesGlob('/en', '/en(/**)?');
 ```
 
 `matchesGlob` compiles the glob on every call; use `globToRegExp` and reuse the regexp when matching many paths.
+
+### Globs below folders: globMayMatchBelow(glob, folderPath), createBelowMatcher(glob)
+
+Checks if a glob may match a folder or a path below it, i.e. if the folder path (ending with `/`) is a prefix
+of some path matched by the glob. This is useful to decide if a folder should be visible in a listing.
+Invalid globs never match.
+
+```js
+globMayMatchBelow('/jp/**', '/');
+// Returns: true
+
+globMayMatchBelow('/*/docs/*', '/jp/other/');
+// Returns: false
+
+const matcher = createBelowMatcher('/en(/*)?'); // `null` if the glob is invalid
+matcher('/en/');
+// Returns: true
+matcher('/en/a/');
+// Returns: false
+```
