@@ -1,3 +1,10 @@
+# [@adobe/helix-shared-string-v2.4.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string-v2.3.0...@adobe/helix-shared-string-v2.4.0) (2026-11-26)
+
+
+### Features
+
+* **string:** add globMayMatchBelow and createBelowMatcher ([#1333](https://github.com/adobe/helix-shared/issues/1333)) ([3666145](https://github.com/adobe/helix-shared/commit/36661459f5400e8aa94dca675c6c3dfe8e72c76d)), closes [#1330](https://github.com/adobe/helix-shared/issues/1330)
+
 # [@adobe/helix-shared-string-v2.3.0](https://github.com/adobe/helix-shared/compare/@adobe/helix-shared-string-v2.2.0...@adobe/helix-shared-string-v2.3.0) (2026-11-20)
 
 
