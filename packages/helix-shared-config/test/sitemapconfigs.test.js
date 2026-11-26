@@ -43,6 +43,11 @@ const tests = [
     result: 'multilang-extension.json',
   },
   {
+    title: 'loads an example with multiple languages and a custom origin in a language',
+    config: 'multilang-origin.yaml',
+    result: 'multilang-origin.json',
+  },
+  {
     title: 'loads an example without hreflang',
     config: 'broken.yaml',
     error: `Error: Invalid sitemap configuration:

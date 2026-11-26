@@ -63,6 +63,11 @@
       "examples": [
         ".html"
       ]
+    },
+    "origin": {
+      "type": "string",
+      "title": "Origin",
+      "description": "The origin to prepend to paths found in the source."
     }
   },
   "additionalProperties": false,
