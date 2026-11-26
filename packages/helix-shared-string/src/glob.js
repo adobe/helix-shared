@@ -43,6 +43,31 @@ function normalize(glob) {
     .replace(/(?:\(\/\*\*\)\?){2,}/g, '(/**)?');
 }
 
+function tokenize(glob) {
+  if (typeof glob !== 'string' || !glob) {
+    return null;
+  }
+  const normalized = normalize(glob);
+  const tokens = [];
+  let last = 0;
+  let count = 0;
+  for (const match of normalized.matchAll(TOKENIZER)) {
+    count += 1;
+    if (count > MAX_GLOB_WILDCARDS) {
+      return null;
+    }
+    if (match.index > last) {
+      tokens.push({ type: 'lit', value: normalized.substring(last, match.index) });
+    }
+    tokens.push({ type: match[0] });
+    last = match.index + match[0].length;
+  }
+  if (last < normalized.length) {
+    tokens.push({ type: 'lit', value: normalized.substring(last) });
+  }
+  return tokens;
+}
+
 /**
  * Converts a glob to a regular expression. Supported syntax:
  *
@@ -59,22 +84,13 @@ function normalize(glob) {
  * @returns {RegExp|null} the regular expression or `null` if the glob is invalid
  */
 export function globToRegExp(glob) {
-  if (typeof glob !== 'string' || !glob) {
+  const tokens = tokenize(glob);
+  if (!tokens) {
     return null;
   }
-  const normalized = normalize(glob);
-  let re = '';
-  let last = 0;
-  let count = 0;
-  for (const match of normalized.matchAll(TOKENIZER)) {
-    count += 1;
-    if (count > MAX_GLOB_WILDCARDS) {
-      return null;
-    }
-    re += escape(normalized.substring(last, match.index)) + TOKEN_REGEXPS[match[0]];
-    last = match.index + match[0].length;
-  }
-  re += escape(normalized.substring(last));
+  const re = tokens
+    .map((tok) => (tok.type === 'lit' ? escape(tok.value) : TOKEN_REGEXPS[tok.type]))
+    .join('');
   return new RegExp(`^${re}$`);
 }
 
@@ -99,4 +115,80 @@ export function isValidGlobRule(glob) {
 export function matchesGlob(path, glob) {
   const re = globToRegExp(glob);
   return re !== null && re.test(path);
+}
+
+/**
+ * Checks if the glob may match the given folder or a path below it, i.e. if the folder path
+ * is a prefix of some path matched by the glob. Invalid globs never match.
+ *
+ * @param {string} glob the glob
+ * @param {string} folderPath folder path, ending with `/`
+ * @returns {boolean} {@code true} if a path at or below the folder may match
+ */
+export function globMayMatchBelow(glob, folderPath) {
+  if (typeof folderPath !== 'string' || !folderPath.endsWith('/')) {
+    return false;
+  }
+  const tokens = tokenize(glob);
+  if (!tokens) {
+    return false;
+  }
+
+  const seen = new Set();
+  function matchPrefix(ti, pos) {
+    if (ti === tokens.length) {
+      return false;
+    }
+    const key = `${ti}:${pos}`;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+
+    const tok = tokens[ti];
+    if (tok.type === 'lit') {
+      const rem = folderPath.length - pos;
+      if (tok.value.length >= rem) {
+        return tok.value.startsWith(folderPath.substring(pos));
+      }
+      if (!folderPath.startsWith(tok.value, pos)) {
+        return false;
+      }
+      return matchPrefix(ti + 1, pos + tok.value.length);
+    }
+    if (tok.type === '**') {
+      return true;
+    }
+    if (tok.type === '*') {
+      const end = folderPath.indexOf('/', pos);
+      for (let next = end; next >= pos; next -= 1) {
+        if (matchPrefix(ti + 1, next)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (tok.type === '(/**)?') {
+      return matchPrefix(ti + 1, pos) || folderPath[pos] === '/';
+    }
+    // '(/*)?'
+    if (matchPrefix(ti + 1, pos)) {
+      return true;
+    }
+    if (folderPath[pos] !== '/') {
+      return false;
+    }
+    if (pos + 1 === folderPath.length) {
+      return true;
+    }
+    const end = folderPath.indexOf('/', pos + 1);
+    for (let next = end; next >= pos + 1; next -= 1) {
+      if (matchPrefix(ti + 1, next)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  return matchPrefix(0, 0);
 }

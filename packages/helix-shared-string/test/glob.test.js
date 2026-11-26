@@ -12,6 +12,7 @@
 
 import assert from 'assert';
 import {
+  globMayMatchBelow,
   globToRegExp,
   isValidGlobRule,
   matchesGlob,
@@ -81,5 +82,47 @@ describe('Glob Tests', () => {
     assert.strictEqual(matchesGlob(path, '/**a**b'), false);
     assert.strictEqual(matchesGlob(path, '/*a*b'), false);
     assert.ok(Date.now() - t0 < 500);
+  });
+
+  it('globMayMatchBelow checks prefix compatibility cleanly', () => {
+    const cases = [
+      ['/jp/**', ['/', '/jp/', '/jp/a/b/'], ['/en/']],
+      ['/jp/page', ['/', '/jp/'], ['/en/', '/jp/page/']],
+      ['/jp', ['/'], ['/jp/', '/en/']],
+      ['/*/docs/*', ['/', '/jp/'], ['/jp/other/', '/jp/docs/a/']],
+      ['/en(/*)?', ['/', '/en/'], ['/en/a/', '/fr/']],
+      ['/en(/**)?', ['/', '/en/', '/en/a/b/'], ['/english/', '/fr/']],
+      ['/en(/**?)', ['/en/', '/en/a/b/'], ['/english/']],
+      ['/en.html', ['/'], ['/en/']],
+      ['/a/*/b/*/c/*', [], ['/']],
+      ['/**a**b', [`/${'a'.repeat(64)}/`], []],
+      ['/a(/*)?/c', ['/a/b/'], ['/a/b/d/']],
+      ['/*', ['/'], ['/a/']],
+      ['/a/*a*b', [], ['/a/b/']],
+      ['/*/docs(/*)?', ['/jp/docs/'], ['/jp/other/']],
+      ['/a/*b/c', ['/a/b/'], ['/a/x/']],
+      ['/a/*x/c', [], ['/a/b/']],
+      ['/a(/*)?/b/c', ['/a/b/'], []],
+      ['/a(/*)?', [], ['/ab/']],
+      ['/*a*b/c', [], ['/aaaa/']],
+      ['/a/(/*)?', ['/a/'], ['/a/x']],
+    ];
+    for (const [glob, yes, no] of cases) {
+      for (const folder of yes) {
+        assert.strictEqual(globMayMatchBelow(glob, folder), true, `expected '${glob}' below '${folder}' to be true`);
+      }
+      for (const folder of no) {
+        assert.strictEqual(globMayMatchBelow(glob, folder), false, `expected '${glob}' below '${folder}' to be false`);
+      }
+    }
+    for (const badFolder of ['', null, undefined, 42, '/jp']) {
+      assert.strictEqual(globMayMatchBelow('/jp/**', badFolder), false);
+    }
+    assert.strictEqual(globMayMatchBelow('', '/'), false);
+    assert.strictEqual(globMayMatchBelow(null, '/'), false);
+    assert.strictEqual(globMayMatchBelow('/*a*b', `/${'a'.repeat(64)}/`), false);
+    assert.strictEqual(globMayMatchBelow('/a*b', '/ax/'), false);
+    assert.strictEqual(globMayMatchBelow('/a/*x', '/a/y/'), false);
+    assert.strictEqual(globMayMatchBelow('/a/*', '/a/b/'), false);
   });
 });

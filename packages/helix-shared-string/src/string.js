@@ -178,6 +178,7 @@ export function toSISize(bytes, precision = 2) {
 
 export {
   MAX_GLOB_WILDCARDS,
+  globMayMatchBelow,
   globToRegExp,
   isValidGlobRule,
   matchesGlob,
